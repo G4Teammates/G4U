@@ -1,0 +1,2 @@
+# GameRac
+Thùng rác
