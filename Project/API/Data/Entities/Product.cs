@@ -6,7 +6,7 @@
         public required string Name { get; set; }
         public string? Description { get; set; }
         public decimal Price { get; set; }
-        public int Quantity { get; set; } = 0
+        public int Quantity { get; set; } = 0;
         public int NumberOfViews { get; set; } = 0;
         public int NumberOfPlays { get; set; } = 0;
         public int NumberOfLikes { get; set; } = 0;
