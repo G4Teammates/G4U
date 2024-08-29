@@ -1,4 +1,4 @@
-namespace Category
+namespace CategoryMicroservice
 {
     public class WeatherForecast
     {

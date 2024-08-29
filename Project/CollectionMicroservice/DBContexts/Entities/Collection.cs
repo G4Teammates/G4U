@@ -1,6 +1,6 @@
-﻿using Collection.DBContexts.Enum;
+﻿using CollectionMicroservice.DBContexts.Enum;
 
-namespace Collection.DBContexts.Entities
+namespace CollectionMicroservice.DBContexts.Entities
 {
     public class Collection
     {

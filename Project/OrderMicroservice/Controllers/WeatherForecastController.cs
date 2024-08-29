@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
-using Order;
+using OrderMicroservice;
 
-namespace Order.Controllers
+namespace OrderMicroservice.Controllers
 {
     [ApiController]
     [Route("[controller]")]

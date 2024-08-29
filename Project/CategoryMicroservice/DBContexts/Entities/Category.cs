@@ -1,4 +1,6 @@
-﻿namespace Category.DBContexts.Entities
+﻿using CategoryMicroservice.DBContexts.Enum;
+
+namespace CategoryMicroservice.DBContexts.Entities
 {
     public class Category
     {
@@ -7,5 +9,6 @@
         public CategoryType Type { get; set; }
         public string? Description { get; set; }
         public CategoryStatus Status { get; set; }
+        public virtual ICollection<CategoryDetail>? CategoryDetails { get; set; }
     }
 }

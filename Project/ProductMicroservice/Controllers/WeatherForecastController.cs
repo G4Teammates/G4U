@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
-using Product;
+using ProductMicroservice;
 
-namespace Product.Controllers
+namespace ProductMicroservice.Controllers
 {
     [ApiController]
     [Route("[controller]")]

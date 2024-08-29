@@ -1,8 +1,8 @@
-﻿using Link.DBContexts.Enum;
+﻿using LinkMicroservice.DBContexts.Enum;
 using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 
-namespace Link.DBContexts.Entities
+namespace LinkMicroservice.DBContexts.Entities
 {
     public class Link
     {

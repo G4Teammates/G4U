@@ -1,4 +1,4 @@
-﻿namespace Collection.DBContexts.Enum
+﻿namespace CollectionMicroservice.DBContexts.Enum
 {
     public enum CollectionStatus
     {

@@ -1,4 +1,4 @@
-namespace Order
+namespace OrderMicroservice
 {
     public class WeatherForecast
     {

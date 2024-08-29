@@ -1,10 +1,12 @@
-﻿using Order.DBContexts.Enum;
+﻿using OrderMicroservice.DBContexts.Enum;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Order.DBContexts.Entities
+namespace OrderMicroservice.DBContexts.Entities
 {
     public class Order
     {
         public Guid Id { get; set; } = Guid.NewGuid();
+        [Column(TypeName = "decimal(18,2)")]
         public decimal TotalPrice { get; set; }
         public OrderStatus OrderStatus { get; set; }
         public PaymentStatus PaymentStatus { get; set; }

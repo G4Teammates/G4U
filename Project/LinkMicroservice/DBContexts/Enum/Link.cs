@@ -1,4 +1,4 @@
-﻿namespace Link.DBContexts.Enum
+﻿namespace LinkMicroservice.DBContexts.Enum
 {
     public enum LinkStatus
     {

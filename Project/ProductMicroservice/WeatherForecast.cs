@@ -1,4 +1,4 @@
-namespace Product
+namespace ProductMicroservice
 {
     public class WeatherForecast
     {

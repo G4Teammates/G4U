@@ -9,19 +9,19 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Gateways", "Gateways", "{39
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Website", "Website", "{0397FF4F-C471-4DF2-96C2-D20A8DEFBD51}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "User", "UserMicroservice\User.csproj", "{D570F2B1-E3D3-4D3C-8EF2-BCA6B225E29E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserMicroservice", "UserMicroservice\UserMicroservice.csproj", "{D570F2B1-E3D3-4D3C-8EF2-BCA6B225E29E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Product", "ProductMicroservice\Product.csproj", "{21BA477C-36D2-4F86-8E3F-02CB52971AB0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProductMicroservice", "ProductMicroservice\ProductMicroservice.csproj", "{21BA477C-36D2-4F86-8E3F-02CB52971AB0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Order", "OrderMicroservice\Order.csproj", "{F4312692-F27D-462D-9CE0-C477328C139E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OrderMicroservice", "OrderMicroservice\OrderMicroservice.csproj", "{F4312692-F27D-462D-9CE0-C477328C139E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Collection", "CollectionMicroservice\Collection.csproj", "{070073C5-AD45-452D-9E13-2A5BBD67F202}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CollectionMicroservice", "CollectionMicroservice\CollectionMicroservice.csproj", "{070073C5-AD45-452D-9E13-2A5BBD67F202}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Comment", "CommentMicroservice\Comment.csproj", "{DBDDDA76-D1A3-4783-A23C-2BC6E8A817DF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommentMicroservice", "CommentMicroservice\CommentMicroservice.csproj", "{DBDDDA76-D1A3-4783-A23C-2BC6E8A817DF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Link", "LinkMicroservice\Link.csproj", "{749788A7-647E-44BD-8237-2A45E2AD1373}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LinkMicroservice", "LinkMicroservice\LinkMicroservice.csproj", "{749788A7-647E-44BD-8237-2A45E2AD1373}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Category", "CategoryMicroservice\Category.csproj", "{56E6BCF3-F8D0-4142-BC92-8B1366CAE7DA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CategoryMicroservice", "CategoryMicroservice\CategoryMicroservice.csproj", "{56E6BCF3-F8D0-4142-BC92-8B1366CAE7DA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

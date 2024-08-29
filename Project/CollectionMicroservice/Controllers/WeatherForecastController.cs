@@ -1,7 +1,7 @@
-using Collection;
+using CollectionMicroservice;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Collection.Controllers
+namespace CollectionMicroservice.Controllers
 {
     [ApiController]
     [Route("[controller]")]

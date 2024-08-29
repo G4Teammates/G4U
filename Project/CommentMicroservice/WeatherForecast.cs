@@ -1,4 +1,4 @@
-namespace Comment
+namespace CommentMicroservice
 {
     public class WeatherForecast
     {

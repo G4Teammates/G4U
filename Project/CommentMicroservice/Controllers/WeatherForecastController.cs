@@ -1,7 +1,6 @@
-using Comment;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Comment.Controllers
+namespace CommentMicroservice.Controllers
 {
     [ApiController]
     [Route("[controller]")]

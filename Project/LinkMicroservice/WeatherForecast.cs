@@ -1,4 +1,4 @@
-namespace Link
+namespace LinkMicroservice
 {
     public class WeatherForecast
     {

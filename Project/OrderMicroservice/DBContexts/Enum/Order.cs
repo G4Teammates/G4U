@@ -1,4 +1,4 @@
-﻿namespace Order.DBContexts.Enum
+﻿namespace OrderMicroservice.DBContexts.Enum
 {
     public enum OrderStatus
     {

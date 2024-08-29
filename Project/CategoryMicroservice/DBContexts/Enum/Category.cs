@@ -1,4 +1,4 @@
-﻿namespace Category.DBContexts.Enum
+﻿namespace CategoryMicroservice.DBContexts.Enum
 {
     public enum CategoryStatus
     {
