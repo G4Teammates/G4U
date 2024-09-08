@@ -1,0 +1,518 @@
+﻿html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+/*body {
+  margin-bottom: 60px;
+}*/
+
+
+/*Header*/
+.container-fluid {
+    width: 100%;
+    margin: auto;
+}
+/* Định dạng cho logo */
+.logo {
+    width: 100%;
+    min-height: 70px;
+}
+
+.logo-img {
+    width: 100px; /* Kích thước chiều rộng của hình ảnh */
+    height: auto; /* Để chiều cao tự động điều chỉnh theo tỷ lệ khung hình */
+    display: block; /* Đảm bảo hình ảnh được căn chỉnh tốt trong khối */
+    margin: 0 auto; /* Canh giữa hình ảnh trong phần tử chứa */
+}
+
+.search {
+    width: max-content;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid rgba(43, 223, 70, 0.979);
+    margin: 30px 5px;
+}
+
+.search-input {
+    width: 350px;
+    font-size: 16px;
+    font-family: 'Lexend', sans-serif;
+    border: none;
+    outline: none;
+    background-color: #E0F2F1;
+}
+
+
+
+
+/* Định dạng cho nút */
+.btn {
+    padding: 0.6em 1.75em;
+    width: 170px;
+    height: 45px;
+    border-radius: 6px;
+    transition: .5s;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    z-index: 2; /* Đặt z-index cao hơn để nút không bị che khuất */
+    font-weight: 300;
+    font-size: 17px;
+    font-family: 'Roboto', 'Segoe UI', sans-serif;
+    text-transform: uppercase;
+}
+
+    /* Định dạng cho phần tử pseudo trước và sau nút */
+    .btn::after, .btn::before {
+        content: '';
+        display: block;
+        height: 100%;
+        width: 100%;
+        transform: skew(90deg) translate(-50%, -50%);
+        position: absolute;
+        inset: 50%;
+        left: 25%;
+        z-index: -1; /* Đặt z-index thấp hơn để nền không bị che khuất */
+        transition: .5s ease-out;
+        background-color: #00A97F;
+    }
+
+    .btn::before {
+        top: -50%;
+        left: -25%;
+        transform: skew(90deg) rotate(180deg) translate(-50%, -50%);
+    }
+
+    /* Định dạng khi hover */
+    .btn:hover::before {
+        transform: skew(45deg) rotate(180deg) translate(-50%, -50%);
+    }
+
+    .btn:hover::after {
+        transform: skew(45deg) translate(-50%, -50%);
+    }
+
+    /* Định dạng màu chữ khi hover */
+    .btn:hover {
+        color: white; /* Đổi màu chữ thành trắng khi hover */
+    }
+
+    /* Định dạng khi nút đang được nhấn */
+    .btn:active {
+        filter: brightness(.7);
+        transform: scale(.98);
+    }
+
+/* Định dạng cho dropdown-menu */
+.dropdown-menu {
+    background-color: #ffffff; /* Màu nền mặc định của dropdown-menu */
+    display: none; /* Ẩn mặc định dropdown-menu */
+    position: absolute; /* Đảm bảo dropdown-menu không ảnh hưởng đến layout */
+    top: 100%; /* Đặt menu ngay dưới nút */
+    left: 0; /* Căn trái của menu với nút */
+    z-index: 1; /* Đảm bảo dropdown-menu nằm trên các phần tử khác */
+    transition: opacity 0.3s ease;
+    border: none;
+    width: 100%; /* Đặt chiều rộng của dropdown-menu bằng với button */
+}
+
+/* Định dạng cho dropdown-menu khi hover vào button hoặc menu */
+.dropdown:hover .dropdown-menu {
+    display: block; /* Hiển thị dropdown-menu khi hover vào button hoặc menu */
+    width: 100%; /* Đảm bảo width của dropdown-menu bằng với button */
+}
+/* Định dạng cho các item trong dropdown-menu */
+.navelement {
+    display: block;
+    padding: 10px;
+    color: black;
+    transition-duration: 0.7s;
+    border: 1px solid transparent; /* Thêm border với màu trong suốt */
+    font-family: 'Roboto', 'Segoe UI', sans-serif;
+    width: 100%; /* Đảm bảo width của các li bằng với dropdown-menu */
+}
+
+    /* Định dạng khi hover trên các item trong dropdown-menu */
+    .navelement:hover {
+        background-color: rgba(43, 223, 70, 0.979); /* Màu nền khi hover */
+        color: black; /* Màu chữ khi hover */
+        cursor: pointer;
+        transform: translateX(20px); /* Dịch sang phải 20px khi hover */
+    }
+
+
+
+/* From Uiverse.io by vinodjangid07 */
+.Btn-Container {
+    display: flex;
+    width: 170px;
+    height: fit-content;
+    background-color: #E0F2F1; /* Đổi màu nền thành trong suốt */
+    border-radius: 10px;
+    box-shadow: 0px 5px 10px #bebebe;
+    justify-content: space-between;
+    align-items: center;
+    border: none;
+    cursor: pointer;
+}
+
+.icon-Container {
+    width: 45px;
+    height: 45px;
+    background-color: #00A97F;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 3px solid #1d2129;
+}
+
+.text {
+    width: calc(170px - 45px);
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #00A97F;
+    font-size: 17px;
+    letter-spacing: 1.2px;
+    font-family: 'Lexend', sans-serif;
+}
+
+.icon-Container svg {
+    transition-duration: 1.5s;
+}
+
+.Btn-Container:hover .icon-Container svg {
+    transition-duration: 1.5s;
+    animation: arrow 1s linear infinite;
+}
+
+@keyframes arrow {
+    0% {
+        opacity: 0;
+        margin-left: 0px;
+    }
+
+    100% {
+        opacity: 1;
+        margin-left: 10px;
+    }
+}
+
+
+
+/*MAIN*/
+.wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* Optional: Add padding for better spacing */
+    padding: 20px;
+}
+
+.container_main {
+    height: 400px;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+    /* Set the container width to a percentage to ensure centering */
+    width: 100%;
+}
+
+
+.card {
+    width: 100px;
+    border-radius: .75rem;
+    background-size: cover;
+    cursor: pointer;
+    overflow: hidden;
+    border-radius: 2rem;
+    margin: 0px 5px;
+    display: flex;
+    align-items: flex-start;
+    transition: .6s cubic-bezier(.28, -0.03, 0, .99);
+    box-shadow: 0px 10px 30px -5px rgba(0,0,0,0.8);
+}
+
+    .card > .row {
+        color: white;
+        display: flex;
+        flex-wrap: nowrap;
+    }
+
+        .card > .row > .icon {
+            background: #223;
+            color: white;
+            border-radius: 50%;
+            width: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 15px;
+        }
+
+        .card > .row > .description {
+            display: flex;
+            justify-content: center;
+            flex-direction: column;
+            overflow: hidden;
+            height: 80px;
+            width: 520px;
+            opacity: 0;
+            transform: translateY(30px);
+            transition-delay: .3s;
+            transition: all .3s ease;
+            margin-left: 50px;
+        }
+
+.description p {
+    color: #b0b0ba;
+    padding-top: 5px;
+}
+
+.description h4 {
+    text-transform: uppercase;
+}
+
+.input {
+    display: none;
+}
+
+    .input:checked + label {
+        width: 850px;
+    }
+
+        .input:checked + label .description {
+            opacity: 1 !important;
+            transform: translateY(0) !important;
+        }
+
+.card[for="c1"] {
+    background-image: url('../image/game.jpg');
+}
+
+.card[for="c2"] {
+    background-image: url('../image/game.jpg');
+}
+
+.card[for="c3"] {
+    background-image: url('../image/game.jpg');
+}
+
+.card[for="c4"] {
+    background-image: url('../image/game.jpg');
+}
+
+
+
+
+.gamemonth {
+    width: 90%;
+    min-height: 800px;
+    margin: auto;
+}
+
+
+    .gamemonth .d-flex {
+        justify-content: center;
+        gap: 10px;
+    }
+
+
+.ortherproduct {
+    width: 70%;
+    margin: auto;
+}
+
+/* From Uiverse.io by Spacious74 */
+.radio-inputs {
+    position: relative;
+    display: flex;
+    border-radius: 0.5rem;
+    background-color: #E0F2F1; /* Màu nền mặc định */
+    box-sizing: border-box;
+    font-size: 20px;
+    width: 100%;
+    padding: 1rem 0; /* Điều chỉnh khoảng cách padding */
+    transition: background-color 0.3s ease; /* Hiệu ứng chuyển đổi màu nền */
+}
+
+    .radio-inputs .radio {
+        flex: 1; /* Cho phép phần tử mở rộng để chia đều không gian */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative; /* Để pseudo-element hoạt động chính xác */
+    }
+
+        .radio-inputs .radio input {
+            display: none;
+        }
+
+        .radio-inputs .radio .name {
+            display: flex;
+            cursor: pointer;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            padding: 0.5rem 0.8rem;
+            position: relative; /* Để gạch chân xuất hiện đúng vị trí */
+            transition: color 0.15s ease-in-out;
+            z-index: 1; /* Đảm bảo văn bản nằm trên background */
+            width: 100%; /* Chiếm toàn bộ chiều rộng của phần tử cha */
+            box-sizing: border-box; /* Đảm bảo padding không làm thay đổi kích thước */
+        }
+
+            .radio-inputs .radio .name::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: transparent;
+                z-index: -1; /* Đảm bảo nền nằm dưới văn bản */
+                transition: background-color 0.3s ease-in-out; /* Hiệu ứng chuyển đổi nền */
+            }
+
+            .radio-inputs .radio .name:hover::before {
+                background-color: rgba(43, 223, 70, 0.979); /* Màu nền khi hover */
+            }
+
+        .radio-inputs .radio input:checked + .name::before {
+            background-color: rgba(43, 223, 70, 0.979); /* Màu nền khi được chọn */
+        }
+
+        .radio-inputs .radio input:checked + .name {
+            font-weight: 600;
+        }
+
+        .radio-inputs .radio .name:hover {
+            color: #fff; /* Thay đổi màu chữ khi hover */
+        }
+
+
+
+/*FOOTER*/
+.logo-footer {
+    width: 150px;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+/* From Uiverse.io by david-mohseni */
+.wrapper-footer {
+    display: inline-flex;
+    list-style: none;
+    height: 120px;
+    width: 100%;
+    padding-top: 40px;
+    font-family: "Poppins", sans-serif;
+    justify-content: center;
+}
+
+    .wrapper-footer .icon {
+        position: relative;
+        background: #fff;
+        border-radius: 50%;
+        margin: 10px;
+        width: 50px;
+        height: 50px;
+        font-size: 18px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+        transition: all 0.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+
+    .wrapper-footer .tooltip {
+        position: absolute;
+        top: 0;
+        font-size: 14px;
+        background: #fff;
+        color: #fff;
+        padding: 5px 8px;
+        border-radius: 5px;
+        box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1);
+        opacity: 0;
+        pointer-events: none;
+        transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+
+        .wrapper-footer .tooltip::before {
+            position: absolute;
+            content: "";
+            height: 8px;
+            width: 8px;
+            background: #fff;
+            bottom: -3px;
+            left: 50%;
+            transform: translate(-50%) rotate(45deg);
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+    .wrapper-footer .icon:hover .tooltip {
+        top: -45px;
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+    }
+
+    .wrapper-footer .icon:hover span,
+    .wrapper-footer .icon:hover .tooltip {
+        text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.1);
+    }
+
+    .wrapper-footer .facebook:hover,
+    .wrapper-footer .facebook:hover .tooltip,
+    .wrapper-footer .facebook:hover .tooltip::before {
+        background: #1877f2;
+        color: #fff;
+    }
+
+    .wrapper-footer .twitter:hover,
+    .wrapper-footer .twitter:hover .tooltip,
+    .wrapper-footer .twitter:hover .tooltip::before {
+        background: #1da1f2;
+        color: #fff;
+    }
+
+    .wrapper-footer .instagram:hover,
+    .wrapper-footer .instagram:hover .tooltip,
+    .wrapper-footer .instagram:hover .tooltip::before {
+        background: #e4405f;
+        color: #fff;
+    }
+
+
+.icon.github {
+    background: linear-gradient(145deg, #2b2b2b, #242424);
+    box-shadow: 5px 5px 10px #1a1a1a, -5px -5px 10px #363636;
+    color: white;
+}
+
+    .icon.github .tooltip {
+        background: #333333;
+    }
