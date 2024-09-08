@@ -1,0 +1,54 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng Nhập - Chợ Tốt</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet"> <!-- Thêm Font Awesome -->
+</head>
+<div class="d-flex align-items-center justify-content-center" style="min-height: 100vh; background-image: url('/image/Bia.jpg'); background-size: contain; background-position: center; background-repeat: no-repeat;">
+    <div class="card p-4 shadow" style="width: 100%; max-width: 430px;">
+
+        <div class="card-body">
+            <!-- Logo -->
+            <div class="text-center mb-4">
+                <a asp-controller="Home" asp-action="Index">
+                    <img style="max-width: 150px;" src="~/Image/logo.png">
+                </a>
+            </div>
+
+            <h3 class="text-center mb-4">Đăng nhập</h3>
+            <form>
+                <div class="mb-3">
+                    <input type="text" class="form-control" id="phone" placeholder="Tài Khoản" required>
+                </div>
+                <div class="mb-3">
+                    <input type="password" class="form-control" id="password" placeholder="Mật khẩu" required>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <a asp-controller="Home" asp-action="Forgot" class="text-decoration-none">Quên mật khẩu?</a>
+                </div>
+                <button type="submit" class="btn btn-success w-100">Đăng Nhập</button>
+                <hr>
+                <div class="text-center">Hoặc đăng nhập bằng</div>
+                <div class="d-flex justify-content-center gap-2 mt-3">
+                    <button type="button" class="btn btn-outline-dark d-flex align-items-center">
+                        <i class="fab fa-github me-2"></i> GitHub
+                    </button>
+                    <button type="button" class="btn btn-outline-danger d-flex align-items-center">
+                        <i class="fab fa-google me-2"></i> Google
+                    </button>
+                </div>
+            </form>
+            <div class="text-center mt-4">
+                <span>Chưa có tài khoản? <a asp-controller="Home" asp-action="Register" class="text-decoration-none">Đăng ký tài khoản mới</a></span>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</div>
