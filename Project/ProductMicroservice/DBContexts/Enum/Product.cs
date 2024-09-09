@@ -1,4 +1,4 @@
-﻿namespace Product.DBContexts.Enum
+﻿namespace ProductMicroservice.DBContexts.Enum
 {
     public enum ProductStatus
     {

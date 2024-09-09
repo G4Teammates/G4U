@@ -1,6 +1,6 @@
-﻿using Comment.DBContexts.Enum;
+﻿using CommentMicroservice.DBContexts.Enum;
 
-namespace Comment.DBContexts.Entities
+namespace CommentMicroservice.DBContexts.Entities
 {
     public class Comment
     {

@@ -1,4 +1,4 @@
-﻿namespace Comment.DBContexts.Enum
+﻿namespace CommentMicroservice.DBContexts.Enum
 {
     public enum CommentStatus
     {

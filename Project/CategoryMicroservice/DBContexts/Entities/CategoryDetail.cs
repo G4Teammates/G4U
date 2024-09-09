@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 
-namespace Category.DBContexts.Entities
+namespace CategoryMicroservice.DBContexts.Entities
 {
     public class CategoryDetail
     {

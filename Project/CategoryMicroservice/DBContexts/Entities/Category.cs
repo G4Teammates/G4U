@@ -1,4 +1,4 @@
-﻿namespace Category.DBContexts.Entities
+﻿namespace CategoryMicroservice.DBContexts.Entities
 {
     public class Category
     {

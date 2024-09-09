@@ -1,7 +1,7 @@
-using Link;
+using LinkMicroservice;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Link.Controllers
+namespace LinkMicroservice.Controllers
 {
     [ApiController]
     [Route("[controller]")]

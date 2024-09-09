@@ -1,6 +1,6 @@
-﻿using Order.DBContexts.Enum;
+﻿using OrderMicroservice.DBContexts.Enum;
 
-namespace Order.DBContexts.Entities
+namespace OrderMicroservice.DBContexts.Entities
 {
     public class Order
     {

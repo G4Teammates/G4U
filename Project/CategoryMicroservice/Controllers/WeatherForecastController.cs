@@ -1,7 +1,7 @@
-using Category;
+using CategoryMicroservice;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Category.Controllers
+namespace CategoryMicroservice.Controllers
 {
     [ApiController]
     [Route("[controller]")]

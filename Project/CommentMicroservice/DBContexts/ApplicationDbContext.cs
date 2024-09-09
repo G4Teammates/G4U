@@ -1,9 +1,8 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
-namespace Comment.DBContexts
+namespace CommentMicroservice.DBContexts
 {
-    public class ApplicationDbContext : IdentityDbContext
+    public class ApplicationDbContext 
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {

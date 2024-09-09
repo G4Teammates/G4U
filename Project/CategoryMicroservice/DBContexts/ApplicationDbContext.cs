@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace Category.DBContexts
+namespace CategoryMicroservice.DBContexts
 {
     public class ApplicationDbContext : IdentityDbContext
     {

@@ -1,6 +1,6 @@
-﻿using Product.DBContexts.Enum;
+﻿using ProductMicroservice.DBContexts.Enum;
 
-namespace Product.DBContexts.Entities
+namespace ProductMicroservice.DBContexts.Entities
 {
     public class Product
     {

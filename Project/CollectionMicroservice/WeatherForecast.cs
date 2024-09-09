@@ -1,4 +1,4 @@
-namespace Collection
+namespace CollectionMicroservice
 {
     public class WeatherForecast
     {
