@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using User.DBContexts.Entities;
+using UserMicroservice.DBContexts.Entities;
 
 namespace UserMicroService.Models.CustomeValidation
 {

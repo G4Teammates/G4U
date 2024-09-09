@@ -1,6 +1,4 @@
-﻿using AutoMapper;
-using G4T.User.Models;
-namespace UserMicroService.Configure
+﻿namespace UserMicroService.Configure
 {
     public static class Mapper
     {

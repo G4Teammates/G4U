@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using User.DBContexts.Entities;
+using UserMicroservice.DBContexts.Entities;
 using UserMicroService.Models;
 
 namespace UserMicroService.Controllers
