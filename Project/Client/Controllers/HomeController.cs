@@ -83,6 +83,15 @@ namespace Client.Controllers
             return View();
         }
 
+        public IActionResult EditProductDetail()
+        {
+            return View();
+        }
+        public IActionResult UsersManager()
+        {
+            return View();
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
