@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
-using UserMicroservice.DBContexts.Enum;
+using UserMicroService.DBContexts.Enum;
 
 namespace UserMicroservice.DBContexts.Entities
 {
@@ -24,8 +24,7 @@ namespace UserMicroservice.DBContexts.Entities
         public override string? NormalizedUserName => UserName?.ToUpper();
 
         public required UserStatus Status { get; set; }
-
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
     }
 }

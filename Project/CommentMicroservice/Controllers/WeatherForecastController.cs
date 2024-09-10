@@ -1,3 +1,4 @@
+using CommentMicroservice;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CommentMicroservice.Controllers

@@ -1,4 +1,4 @@
-﻿using CategoryMicroservice.DBContexts.Enum;
+using CategoryMicroservice.DBContexts.Enum;
 using System.ComponentModel.DataAnnotations;
 
 namespace CategoryMicroservice.DBContexts.Entities

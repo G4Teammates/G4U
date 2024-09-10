@@ -1,4 +1,4 @@
-namespace UserMicroservice
+namespace UserMicroService
 {
     public class WeatherForecast
     {
