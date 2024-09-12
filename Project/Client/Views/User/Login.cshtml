@@ -31,7 +31,7 @@
                     <input type="password" class="form-control" id="password" placeholder="Mật khẩu" required>
                 </div>
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <a asp-controller="Home" asp-action="Forgot" class="text-decoration-none">Quên mật khẩu?</a>
+                    <a asp-controller="User" asp-action="ForgotPassword" class="text-decoration-none">Quên mật khẩu?</a>
                 </div>
                 <button type="submit" class="btn btn-success w-100">Đăng Nhập</button>
                 <hr>
@@ -46,7 +46,7 @@
                 </div>
             </form>
             <div class="text-center mt-4">
-                <span>Chưa có tài khoản? <a asp-controller="Home" asp-action="Register" class="text-decoration-none">Đăng ký tài khoản mới</a></span>
+                <span>Chưa có tài khoản? <a asp-controller="User" asp-action="Register" class="text-decoration-none">Đăng ký tài khoản mới</a></span>
             </div>
         </div>
     </div>
