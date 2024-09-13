@@ -1,14 +1,14 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Identity.Client;
-using UserMicroservice.DBContexts.Entities;
-using UserMicroservice.DBContexts;
+using CollectionMicroservice.DBContexts.Entities;
+using CollectionMicroservice.DBContexts;
 using Microsoft.EntityFrameworkCore;
 using Azure.Identity;
 using MongoDB.Driver;
 using MongoDB.Bson;
 
-namespace UserMicroService.Configure
+namespace CollectionMicroservice.Configure
 {
     public static class Startup
     {
@@ -22,13 +22,13 @@ namespace UserMicroService.Configure
         {
             #region Register Database
             #region SQL
-            //_ = services.AddDbContext<UserDbContext>(options =>
+            //_ = services.AddDbContext<CollectionDbContext>(options =>
             //{
-            //    options.UseSqlServer(config.GetConnectionString("AzureSQLUserDBConnection"));
+            //    options.UseSqlServer(config.GetConnectionString("AzureSQLCollectionDBConnection"));
             //});
 
-            //services.AddIdentity<User, IdentityRole<Guid>>()
-            //    .AddEntityFrameworkStores<UserDbContext>()
+            //services.AddIdentity<Collection, IdentityRole<Guid>>()
+            //    .AddEntityFrameworkStores<CollectionDbContext>()
             //    .AddDefaultTokenProviders();
             #endregion
 
@@ -36,8 +36,8 @@ namespace UserMicroService.Configure
             //Connect MongoDb by connection string
             var client = new MongoClient(config["1"]!);
             //Create or get if database exists
-            var database = client.GetDatabase("UserDb");
-            services.AddDbContext<UserDbContext>(option => option
+            var database = client.GetDatabase("CollectionDb");
+            services.AddDbContext<CollectionDbContext>(option => option
                 .UseMongoDB(client, database.DatabaseNamespace.DatabaseName)
             );
 
@@ -53,7 +53,7 @@ namespace UserMicroService.Configure
 
             #region Register DI
 
-            _ = DependencyInjection.AddDependencyInjection(services);
+            _ = services.AddDependencyInjection();
 
             #endregion
 

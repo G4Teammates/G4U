@@ -12,10 +12,6 @@ namespace UserMicroservice.DBContexts
 
         public DbSet<User> Users { get; init; }
 
-        public static UserDbContext Create(IMongoDatabase database) =>
-        new(new DbContextOptionsBuilder<UserDbContext>()
-            .UseMongoDB(database.Client, database.DatabaseNamespace.DatabaseName)
-            .Options);
 
         public UserDbContext(DbContextOptions<UserDbContext> options) : base(options)
         {
@@ -24,7 +20,7 @@ namespace UserMicroservice.DBContexts
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            modelBuilder.Entity<User>().ToCollection("users");
+            modelBuilder.Entity<User>().ToCollection("Users");
         }
     }
 }

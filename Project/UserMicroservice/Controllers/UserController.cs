@@ -21,10 +21,15 @@ namespace UserMicroService.Controllers
         [HttpPost]
         public ActionResult ActionResult(UserModel user)
         {
-
-            
             _context.Add(_mapper.Map<UserModel, User>(user));
             _context.SaveChanges();
+            return Ok(user);
+        }
+        [HttpGet]
+        public ActionResult Get1(Guid id)
+        {
+            var users = _context.Users.ToList();
+            var user = users.Find(u => u.Id == id);
             return Ok(user);
         }
 

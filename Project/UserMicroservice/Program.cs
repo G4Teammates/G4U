@@ -17,23 +17,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddAzureKeyVault(new Uri("https://duantotnghiep.vault.azure.net/"),
     new DefaultAzureCredential());
 builder.Services.AddStartupService(builder.Configuration);
-#region SQL
-//builder.Services.AddDbContext<UserDbContext>(options =>
-//{
-//    options.UseSqlServer(builder.Configuration.GetConnectionString("AzureSQLUserDBConnection"));
-//});
-#endregion
-
-#region noSQL
-var client = new MongoClient(builder.Configuration["1"]);
-//var myDB = client.GetDatabase("UserDb");
-//builder.Services.AddDbContext<UserDbContext>(options =>
-//{
-//    options.UseMongoDB(builder.Configuration["1"], "UserDb");
-//});
-//var db = UserDbContext.Create(client.GetDatabase("UserDb"));
-//db.Database.EnsureCreated();
-#endregion
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
