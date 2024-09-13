@@ -6,15 +6,16 @@ namespace UserMicroService.Models
 {
     public class UserModel
     {
-        private Guid _id = Guid.NewGuid();
-        public Guid Id { get => _id; }
+        public Guid Id { get; init; } = Guid.NewGuid();
 
+        [Required(ErrorMessage = "The {0} field is required.")]
         [StringLength(32, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
         [RegularExpression(@"^[a-zA-Z0-9_-]*$", ErrorMessage = "The {0} can only contain letters, numbers, underscores (_), and hyphens (-).")]
         public required string UserName { get; set; }
 
         public string NormalizedUserName => UserName.ToUpper();
 
+        [Required(ErrorMessage = "The {0} field is required.")]
         [StringLength(320, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 3)]
         [EmailAddress(ErrorMessage = "The {0} field is not a valid e-mail address.")]
         public required string Email { get; set; }
@@ -23,11 +24,9 @@ namespace UserMicroService.Models
 
         [StringLength(15, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 7)]
         [Phone(ErrorMessage = "The {0} field is not a valid phone number.")]
-
         public string? PhoneNumber { get; set; }
 
         [StringLength(256, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
-
         private string? _displayName;
         public string? DisplayName
         {
