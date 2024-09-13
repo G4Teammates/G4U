@@ -34,7 +34,6 @@ namespace CollectionMicroservice.DBContexts.Entities
         /// Định danh duy nhất cho bộ sưu tập.
         /// </summary>
         [BsonId]
-        [BsonElement("id")]
         public Guid Id { get; set; }
 
         /// <summary>

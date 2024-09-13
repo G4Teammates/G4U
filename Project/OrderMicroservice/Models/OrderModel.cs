@@ -12,7 +12,7 @@ namespace OrderMicroservice.Models
         public decimal TotalPrice { get; set; }
         public OrderStatus OrderStatus { get; set; } = OrderStatus.Pending;
         public PaymentStatus PaymentStatus { get; set; } = PaymentStatus.Pending;
-        public required string PaymentMethod { get; set; }
+        public PaymentMethod PaymentMethod { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 

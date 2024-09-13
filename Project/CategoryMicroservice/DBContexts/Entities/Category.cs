@@ -32,7 +32,6 @@ namespace CategoryMicroservice.DBContexts.Entities
         /// Định danh duy nhất cho danh mục.
         /// </summary>
         [BsonId]
-        [BsonElement("id")]
         public Guid Id { get; set; }
 
         /// <summary>
@@ -41,7 +40,7 @@ namespace CategoryMicroservice.DBContexts.Entities
         /// Tên của danh mục.
         /// </summary>
         [BsonElement("name")]
-        public required string Name { get; set; }
+        public string? Name { get; set; }
 
         /// <summary>
         /// The type of the category such as: Tag, Category, Genre
@@ -73,7 +72,7 @@ namespace CategoryMicroservice.DBContexts.Entities
         /// Một tập hợp các chi tiết danh mục liên kết với danh mục này, được đại diện bởi các GUID.
         /// </summary>
         [BsonElement("categoryDetails")]
-        public virtual ICollection<Guid>? CategoryDetails { get; set; }
+        public virtual List<Guid>? CategoryDetails { get; set; }
     }
 
     #endregion

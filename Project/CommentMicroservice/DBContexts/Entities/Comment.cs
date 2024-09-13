@@ -43,7 +43,6 @@ namespace CommentMicroservice.DBContexts.Entities
         /// ID của bình luận.
         /// </summary>
         [BsonId]
-        [BsonElement("id")]
         public Guid Id { get; set; }
 
         /// <summary>
@@ -98,8 +97,9 @@ namespace CommentMicroservice.DBContexts.Entities
         /// A list of replies to this comment, if applicable.
         /// <br/>
         /// Danh sách các bình luận trả lời bình luận này, nếu có.
-        /// </summary>
-        [BsonElement("replies")]
+        /// </summary>    
+        [BsonIgnore]
+        //[BsonElement("replies")]
         public List<Comment>? Replies { get; set; }
 
         /// <summary>

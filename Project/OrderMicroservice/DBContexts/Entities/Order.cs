@@ -74,8 +74,8 @@ namespace OrderMicroservice.DBContexts.Entities
         /// List Product Id of Order
         /// </summary>
         //Get from Collection Table
-        [BsonElement("products")]
-        public required List<Guid> Products { get; set; }
+        [BsonElement("cartId")]
+        public Guid CartId { get; set; }
 
         /// <summary>
         /// User Id of Order
