@@ -10,6 +10,6 @@ namespace CategoryMicroservice.DBContexts
         }
 
         public DbSet<Category> Categories { get; set; }
-        public DbSet<CategoryDetail> CategoryDetails { get; set; }
+        //public DbSet<CategoryDetail> CategoryDetails { get; set; }
     }
 }

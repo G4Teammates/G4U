@@ -2,16 +2,13 @@
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace CategoryMicroservice.DBContexts.Entities
 {
-    [PrimaryKey(nameof(CategoryId), nameof(ProductId))]
     public class CategoryDetail
     {
-        public Category? Category { get; set; }
-        [ForeignKey(nameof(Category))]
-        public virtual Guid CategoryId { get; set; }
+        [BsonElement("productId")]
         public virtual Guid ProductId { get; set; }
-
     }
 }

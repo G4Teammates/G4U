@@ -9,8 +9,14 @@
     }
     public enum LinkType
     {
-        Internal,  // Liên kết nội bộ, dùng cho các server
-        External   // Liên kết với các dịch vụ third-party hoặc cloud
+        /// <summary>
+        /// Liên kết nội bộ, dùng cho các server
+        /// </summary>
+        Internal,
+        /// <summary>
+        /// Liên kết với các dịch vụ third-party hoặc cloud
+        /// </summary>
+        External
     }
 
 }
