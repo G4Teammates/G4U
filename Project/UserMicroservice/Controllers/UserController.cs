@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
+using UserMicroservice.DBContexts;
 using UserMicroservice.DBContexts.Entities;
 using UserMicroService.Models;
 
@@ -8,17 +10,27 @@ namespace UserMicroService.Controllers
     [Route("api/[controller]")]
     public class UserController : ControllerBase
     {
-
-        public UserController()
+        private readonly UserDbContext _context;
+        private readonly IMapper _mapper;
+        public UserController(UserDbContext context, IMapper mapper)
         {
-
+            _context = context;
+            _mapper = mapper;
         }
 
         [HttpPost]
-        public ActionResult ActionResult(UserInput user)
+        public ActionResult ActionResult(UserModel user)
         {
-
-            return Ok();
+            _context.Add(_mapper.Map<UserModel, User>(user));
+            _context.SaveChanges();
+            return Ok(user);
+        }
+        [HttpGet]
+        public ActionResult Get1(Guid id)
+        {
+            var users = _context.Users.ToList();
+            var user = users.Find(u => u.Id == id);
+            return Ok(user);
         }
 
     }

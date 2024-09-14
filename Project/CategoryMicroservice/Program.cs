@@ -1,3 +1,5 @@
+using Azure.Identity;
+using CategoryMicroservice.Configure;
 using CategoryMicroservice.DBContexts;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,10 +12,10 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<CategoryDbContext>(options =>
-{
-    options.UseSqlServer(builder.Configuration.GetConnectionString("AzureSQLCategoryDBConnection"));
-});
+builder.Configuration.AddAzureKeyVault(new Uri("https://duantotnghiep.vault.azure.net/"),
+    new DefaultAzureCredential());
+builder.Services.AddStartupService(builder.Configuration);
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
