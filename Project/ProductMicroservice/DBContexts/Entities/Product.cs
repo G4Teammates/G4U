@@ -30,7 +30,6 @@ namespace ProductMicroservice.DBContexts.Entities
     #endregion
 
     #region noSQL
-    #region noSQL
     /// <summary>
     /// Represents a product in the system.
     /// <br/>
@@ -152,7 +151,5 @@ namespace ProductMicroservice.DBContexts.Entities
         [BsonElement("userId")]
         public Guid UserId { get; set; }
     }
-    #endregion
-
     #endregion
 }
