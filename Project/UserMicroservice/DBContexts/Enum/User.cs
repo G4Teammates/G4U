@@ -7,9 +7,4 @@
         Block,
         Deleted
     }
-    public enum EmailStatus
-    {
-        Unconfirmed,
-        Confirmed
-    }
 }
