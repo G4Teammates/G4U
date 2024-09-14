@@ -1,6 +1,4 @@
-using Azure.Identity;
 using Microsoft.EntityFrameworkCore;
-using OrderMicroservice.Configure;
 using OrderMicroservice.DBContexts;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,11 +9,10 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
-builder.Configuration.AddAzureKeyVault(new Uri("https://duantotnghiep.vault.azure.net/"),
-    new DefaultAzureCredential());
-builder.Services.AddStartupService(builder.Configuration);
-
+builder.Services.AddDbContext<OrderDbContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("AzureSQLOrderDBConnection"));
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
