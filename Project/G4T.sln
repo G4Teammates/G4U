@@ -23,7 +23,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LinkMicroservice", "LinkMic
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CategoryMicroservice", "CategoryMicroservice\CategoryMicroservice.csproj", "{56E6BCF3-F8D0-4142-BC92-8B1366CAE7DA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client", "Client\Client.csproj", "{C9DB6113-1626-46BC-B9C8-7F17CAF48E7A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Client", "Client\Client.csproj", "{C9DB6113-1626-46BC-B9C8-7F17CAF48E7A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
