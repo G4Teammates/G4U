@@ -53,8 +53,9 @@ namespace UserMicroservice.DBContexts.Entities
         /// <br/>
         /// Tên người dùng.
         /// </summary>
-        [BsonElement("userName")]
-        public required string UserName { get; set; }
+        [BsonElement("username")]
+        //[Required]
+        public string Username { get; set; }
 
         /// <summary>
         /// The phone number of the user.
@@ -70,7 +71,8 @@ namespace UserMicroservice.DBContexts.Entities
         /// Địa chỉ email của người dùng.
         /// </summary>
         [BsonElement("email")]
-        public required string Email { get; set; }
+        [Required]
+        public string Email { get; set; }
 
         /// <summary>
         /// The display name of the user.
@@ -118,7 +120,7 @@ namespace UserMicroservice.DBContexts.Entities
         /// Tên người dùng chuẩn hóa của người dùng (là chữ hoa).
         /// </summary>
         [BsonElement("normalizedUserName")]
-        public string? NormalizedUserName { get; set; }
+        public string? NormalizedUsername { get; set; }
 
         /// <summary>
         /// The status of the user account.
@@ -126,7 +128,7 @@ namespace UserMicroservice.DBContexts.Entities
         /// Trạng thái của tài khoản người dùng.
         /// </summary>
         [BsonElement("status")]
-        public required UserStatus Status { get; set; }
+        public UserStatus Status { get; set; }
 
         /// <summary>
         /// The date and time when the user account was created.

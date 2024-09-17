@@ -11,9 +11,9 @@ namespace UserMicroService.Models
         [Required(ErrorMessage = "The {0} field is required.")]
         [StringLength(32, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
         [RegularExpression(@"^[a-zA-Z0-9_-]*$", ErrorMessage = "The {0} can only contain letters, numbers, underscores (_), and hyphens (-).")]
-        public required string UserName { get; set; }
+        public required string Username { get; set; }
 
-        public string NormalizedUserName => UserName.ToUpper();
+        public string NormalizedUsername => Username.ToUpper();
 
         [Required(ErrorMessage = "The {0} field is required.")]
         [StringLength(320, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 3)]

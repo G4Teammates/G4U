@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using UserMicroservice.Repositories.IRepositories;
+using UserMicroservice.Repositories.RepositoryService;
 
 namespace UserMicroService.Configure
 {
@@ -12,8 +14,7 @@ namespace UserMicroService.Configure
         public static IServiceCollection AddDependencyInjection(this IServiceCollection services)
         {
             //Register DI here ⬇️
-
-            //services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IUserService, UserService>();
             //services.AddScoped<IUserRepository, UserRepository>();
             //services.AddScoped<IUserMapper, UserMapper>();
 
