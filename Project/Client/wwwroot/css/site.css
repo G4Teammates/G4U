@@ -21,8 +21,6 @@ html {
   margin-bottom: 60px;
 }*/
 
-
-/*Header*/
 .container-fluid {
     width: 100%;
     margin: auto;
@@ -220,7 +218,9 @@ html {
 
 
 
+
 /*MAIN*/
+
 .wrapper {
     display: flex;
     align-items: center;
@@ -412,7 +412,11 @@ html {
 
 
 
-/*FOOTER*/
+
+/*Footer*/
+
+
+
 .logo-footer {
     width: 150px;
     height: auto;

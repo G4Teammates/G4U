@@ -18,55 +18,6 @@ namespace Client.Controllers
             return View();
         }
 
-        public IActionResult Product()
-        {
-            return View();
-        }
-
-        public IActionResult History()
-        {
-            return View();
-        }
-
-        public IActionResult Login()
-        {
-            return View();
-        }
-
-        public IActionResult Register()
-        {
-            return View();
-        }
-
-        public IActionResult Information()
-        {
-            return View();
-        }
-
-        public IActionResult Forgot()
-        {
-            return View();
-        }
-
-        public IActionResult ChangePassword()
-        {
-            return View();
-        }
-
-        public IActionResult Cart()
-        {
-            return View();
-        }
-
-        public IActionResult ProductDetail()
-        {
-            return View();
-        }
-
-        public IActionResult Collection()
-        {
-            return View();
-        }
 
         public IActionResult Privacy()
         {
