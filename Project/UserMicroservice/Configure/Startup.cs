@@ -10,6 +10,11 @@ using MongoDB.Bson;
 
 namespace UserMicroService.Configure
 {
+    /// <summary>
+    /// Setup config about database, mapper, DI, Authen
+    /// <br/>
+    /// Cài đặt các cấu hình về cơ sở dữ liệu, ánh xạ, DI, xác thực
+    /// </summary>
     public static class Startup
     {
         /// <summary>
@@ -34,7 +39,7 @@ namespace UserMicroService.Configure
 
             #region noSQL
             //Connect MongoDb by connection string
-            var client = new MongoClient(config["1"]!);
+            var client = new MongoClient(config["1"]!+ "?connect=replicaSet");
             //Create or get if database exists
             var database = client.GetDatabase("UserDb");
             services.AddDbContext<UserDbContext>(option => option
