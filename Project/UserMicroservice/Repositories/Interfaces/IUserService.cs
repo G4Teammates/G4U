@@ -5,12 +5,12 @@ namespace UserMicroservice.Repositories.IRepositories
 {
     public interface IUserService
     {
-        Task<ICollection<UserModel>> GetAll();
-        Task<UserModel> GetUser(Guid id);
-        Task<UserModel> AddUser(UserModel user);
-        Task<UserModel> UpdateUser(UserModel user);
-        Task<UserModel> DeleteUser(Guid id);
-        Task<ICollection<UserViewModel>>? FindUsers(string? query);
+        Task<ResponseModel> GetAll();
+        Task<ResponseModel> GetUser(Guid id);
+        Task<ResponseModel> AddUser(UserModel user);
+        Task<ResponseModel> UpdateUser(UserModel user);
+        Task<ResponseModel> DeleteUser(Guid id);
+        Task<ResponseModel>? FindUsers(string? query);
 
 
         //Task<ICollection<UserModel>> FindUsersCriteria(SearchCriteria criteria);

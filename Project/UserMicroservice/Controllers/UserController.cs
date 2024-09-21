@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using MongoDB.Driver;
 using UserMicroservice.DBContexts;
 using UserMicroservice.DBContexts.Entities;
+using UserMicroservice.Models;
 using UserMicroservice.Repositories.IRepositories;
 using UserMicroService.Models;
 
@@ -22,14 +24,24 @@ namespace UserMicroService.Controllers
         }
 
         [HttpPost]
-        public ActionResult ActionResult(UserModel user)
+        public async Task<ActionResult> Add([FromBody]UserModel user)
         {
-            _context.Add(_mapper.Map<UserModel, User>(user));
-            _context.SaveChanges();
-            return Ok(user);
+            ResponseModel response = new();
+            try
+            {
+                response = await _userService.AddUser(user);
+                if (response.IsSuccess)
+                    return Ok(response);
+                return BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                // Trả về lỗi 500 cho các lỗi chưa dự đoán
+                return StatusCode(500, new { message = "An unexpected error occurred. Detail" + ex.Message });
+            }
         }
         [HttpGet("/{id:guid}")]
-        public ActionResult Get1(Guid id)
+        public ActionResult Get(Guid id)
         {
             var users = _context.Users.ToList();
             var user = users.Find(u => u.Id == id);
@@ -37,12 +49,22 @@ namespace UserMicroService.Controllers
         }
 
         [HttpGet("/search")]
-        public async Task<ActionResult> FindUsers([FromQuery] string query)
+        public async Task<ActionResult> FindUsers([FromQuery] string? query)
         {
-            var users = await _userService.FindUsers(query);
-            return Ok(users);
+            ResponseModel response = new();
+            try
+            {
+                response = await _userService.FindUsers(query);
+                if (response.IsSuccess)
+                    return Ok(response);
+                return BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                // Trả về lỗi 500 cho các lỗi chưa dự đoán
+                return StatusCode(500, new { message = "An unexpected error occurred. Detail" + ex.Message });
+            }
         }
-
 
         //[HttpGet("find")]
         //public async Task<ActionResult> SearchAsync([FromQuery]SearchCriteria query)

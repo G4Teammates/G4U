@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using Amazon.Auth.AccessControlPolicy;
+using AutoMapper;
 using UserMicroservice.DBContexts.Entities;
 using UserMicroservice.Models;
 using UserMicroService.Models;
@@ -24,9 +25,8 @@ namespace UserMicroService.Configure
             {
                 //Register mapper here⬇️
 
-                cfg.CreateMap<User, UserModel>().ReverseMap();
-                cfg.CreateMap<UserModel, UserViewModel>().ReverseMap();
-
+                    //cfg.AllowNullCollections = true;
+                    cfg.CreateMap<User, UserModel>().ReverseMap();
                 //Register mapper here⬆️
             });
         }

@@ -54,8 +54,8 @@ namespace UserMicroservice.DBContexts.Entities
         /// Tên người dùng.
         /// </summary>
         [BsonElement("username")]
-        //[Required]
-        public string Username { get; set; }
+        [Required]
+        public required string Username { get; set; }
 
         /// <summary>
         /// The phone number of the user.
@@ -72,7 +72,7 @@ namespace UserMicroservice.DBContexts.Entities
         /// </summary>
         [BsonElement("email")]
         [Required]
-        public string Email { get; set; }
+        public required string Email { get; set; }
 
         /// <summary>
         /// The display name of the user.

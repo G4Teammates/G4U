@@ -41,6 +41,7 @@ namespace UserMicroService.Configure
             //Connect MongoDb by connection string
             var client = new MongoClient(config["1"]!+ "?connect=replicaSet");
             //Create or get if database exists
+            //client.DropDatabase("UserDb");
             var database = client.GetDatabase("UserDb");
             services.AddDbContext<UserDbContext>(option => option
                 .UseMongoDB(client, database.DatabaseNamespace.DatabaseName)
