@@ -1,0 +1,32 @@
+﻿/* Style cho sidebar */
+#filterSidebar {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #f8f9fa;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+}
+
+    /* Khi sidebar được mở */
+    #filterSidebar.open {
+        width: 250px;
+    }
+
+    /* Đóng nút */
+    #filterSidebar .closebtn {
+        position: absolute;
+        top: 10px;
+        right: 25px;
+        font-size: 36px;
+    }
+
+    /* Style cho danh sách bộ lọc */
+    #filterSidebar ul {
+        list-style-type: none;
+        padding-left: 20px;
+    }

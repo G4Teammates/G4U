@@ -5,14 +5,53 @@
 <div>
 	<h1>User Manager</h1>
 
+@* 	<div class="bg-light">
+		<table class="tableinfo table text-center">
+			<tbody>
+				<tr>
+					<th class="align-content-center border">Avatar</th>
+					<td class="align-content-center text-center">
+						<div class="w-100">
+							<img src="~/image/avatar.jpeg" class="rounded me-3" alt="Avatar" style="width:70px; height70px;" />
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<th class="align-content-center border">User Name</th>
+					<td class="align-content-center text-center">Tuankhung</td>
+				</tr>
+				<tr>
+					<th class="align-content-center border">Display Name</th>
+					<td class="align-content-center text-center">tuandeptrai</td>
+				</tr>
+				<tr>
+					<th class="align-content-center border">Email</th>
+					<td class="align-content-center text-center">tuandeptrai@gmail.com</td>
+				</tr>
+				<tr>
+					<th class="align-content-center border">Phone Number</th>
+					<td class="align-content-center text-center">0379959385</td>
+				</tr>
+				<tr>
+					<th class="align-content-center border">Status</th>
+					<td class="align-content-center text-center">tuandeptrai</td>
+				</tr>
+				<tr>
+					<th class="align-content-center border">CreateAt</th>
+					<td class="align-content-center text-center">20/10/2023</td>
+				</tr>
+			</tbody>
+		</table>
+	</div> *@
+
 	<div class="container mt-4">
 		<!-- Thanh tìm kiếm và nút Thêm -->
 		<div class="d-flex justify-content-between mb-3">
 			<div class="col-md-4">
-				<input class="form-control" type="text" placeholder="Tìm kiếm theo Địa chỉ công trình..." />
+				<input class="form-control" type="text" placeholder="Tìm kiếm theo..." />
 			</div>
 			<div>
-				<button class="btn btn-success">+ Thêm</button>
+				<button class="btn btn-success" data-toggle="modal" data-target="#modalUser">+ Thêm</button>
 			</div>
 		</div>
 
@@ -280,7 +319,7 @@
 	</div> *@
 
 	@* Modal *@
-@* 	<div class="modal fade" id="modalUser" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal fade" id="modalUser" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 		<div class="modal-dialog modal-xl">
 			<div class="modal-content">
 				<div class="container-fluid p-5">
@@ -323,7 +362,7 @@
 				</div>
 			</div>
 		</div>
-	</div> *@
+	</div>
 
 @* 	<div class="container-fluid p-5">
 		<form class="row" asp-action="Create">
