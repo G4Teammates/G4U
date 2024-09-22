@@ -1,0 +1,85 @@
+﻿@{
+	Layout = "_LayoutAdmin";
+}
+
+<div>
+	<h1>Products Manager</h1>
+
+	<div class="container mt-4">
+		<!-- Thanh tìm kiếm và nút Thêm -->
+		<div class="d-flex justify-content-between mb-3">
+			<div class="col-md-4">
+				<input class="form-control" type="text" placeholder="Tìm kiếm theo Địa chỉ công trình..." />
+			</div>
+			<div>
+				<button class="btn btn-success">+ Thêm</button>
+			</div>
+		</div>
+
+		<!-- Bảng thông tin -->
+		<table class="table table-bordered table-hover align-middle">
+			<thead class="table-light">
+				<tr>
+					<th scope="col"><input type="checkbox" /></th>
+					<th scope="col">Avatar</th>
+					<th scope="col">User Name</th>
+					<th scope="col">Display Name</th>
+					<th scope="col">Email</th>
+					<th scope="col">Phone Number</th>
+					<th scope="col">Status</th>
+					<th scope="col">CreateAt</th>
+					@* <th scope="col">UpdateAt</th> *@
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td><input type="checkbox" /></td>
+					<td><img src="~/Image/avatar.jpeg" alt="Alternate Text" style="width: 80px; height: 80px" /></td>
+					<td>tuanlx123</td>
+					<td>Tuan Dep Trai</td>
+					<td>tuanpham147369@gmail.com</td>
+					<td><span class="text-success">0933 808 235</span></td>
+					<td>Đã kích hoạt</td>
+					<td>10/05/2024</td>
+					@* <td>-</td> *@
+				</tr>
+				<tr>
+					<td><input type="checkbox" /></td>
+					<td>-</td>
+					<td>-</td>
+					<td>Quá ok tụi anh q...</td>
+					<td>-</td>
+					<td><span class="text-success">024 3747 4700</span></td>
+					<td>-</td>
+					<td>-</td>
+					@* <td>-</td> *@
+				</tr>
+				<!-- Thêm các dòng dữ liệu tương tự -->
+			</tbody>
+		</table>
+
+		<!-- Phân trang -->
+		<div class="d-flex justify-content-between mt-3">
+			<div>Tổng số: 3,145</div>
+			<div>
+				<select class="form-select form-select-sm w-auto d-inline-block">
+					<option>20 Bản ghi trên trang</option>
+					<option>50 Bản ghi trên trang</option>
+					<option>100 Bản ghi trên trang</option>
+				</select>
+				<nav aria-label="Page navigation example" class="d-inline-block">
+					<ul class="pagination pagination-sm mb-0">
+						<li class="page-item disabled">
+							<a class="page-link" href="#">1 đến 20</a>
+						</li>
+						<li class="page-item"><a class="page-link" href="#">1</a></li>
+						<li class="page-item"><a class="page-link" href="#">2</a></li>
+						<li class="page-item"><a class="page-link" href="#">3</a></li>
+						<li class="page-item"><a class="page-link" href="#">></a></li>
+					</ul>
+				</nav>
+			</div>
+		</div>
+	</div>
+
+</div>
