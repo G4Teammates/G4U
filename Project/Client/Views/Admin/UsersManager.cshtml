@@ -5,43 +5,43 @@
 <div>
 	<h1>User Manager</h1>
 
-@* 	<div class="bg-light">
-		<table class="tableinfo table text-center">
-			<tbody>
-				<tr>
-					<th class="align-content-center border">Avatar</th>
-					<td class="align-content-center text-center">
-						<div class="w-100">
-							<img src="~/image/avatar.jpeg" class="rounded me-3" alt="Avatar" style="width:70px; height70px;" />
-						</div>
-					</td>
-				</tr>
-				<tr>
-					<th class="align-content-center border">User Name</th>
-					<td class="align-content-center text-center">Tuankhung</td>
-				</tr>
-				<tr>
-					<th class="align-content-center border">Display Name</th>
-					<td class="align-content-center text-center">tuandeptrai</td>
-				</tr>
-				<tr>
-					<th class="align-content-center border">Email</th>
-					<td class="align-content-center text-center">tuandeptrai@gmail.com</td>
-				</tr>
-				<tr>
-					<th class="align-content-center border">Phone Number</th>
-					<td class="align-content-center text-center">0379959385</td>
-				</tr>
-				<tr>
-					<th class="align-content-center border">Status</th>
-					<td class="align-content-center text-center">tuandeptrai</td>
-				</tr>
-				<tr>
-					<th class="align-content-center border">CreateAt</th>
-					<td class="align-content-center text-center">20/10/2023</td>
-				</tr>
-			</tbody>
-		</table>
+	@* 	<div class="bg-light">
+	<table class="tableinfo table text-center">
+	<tbody>
+	<tr>
+	<th class="align-content-center border">Avatar</th>
+	<td class="align-content-center text-center">
+	<div class="w-100">
+	<img src="~/image/avatar.jpeg" class="rounded me-3" alt="Avatar" style="width:70px; height70px;" />
+	</div>
+	</td>
+	</tr>
+	<tr>
+	<th class="align-content-center border">User Name</th>
+	<td class="align-content-center text-center">Tuankhung</td>
+	</tr>
+	<tr>
+	<th class="align-content-center border">Display Name</th>
+	<td class="align-content-center text-center">tuandeptrai</td>
+	</tr>
+	<tr>
+	<th class="align-content-center border">Email</th>
+	<td class="align-content-center text-center">tuandeptrai@gmail.com</td>
+	</tr>
+	<tr>
+	<th class="align-content-center border">Phone Number</th>
+	<td class="align-content-center text-center">0379959385</td>
+	</tr>
+	<tr>
+	<th class="align-content-center border">Status</th>
+	<td class="align-content-center text-center">tuandeptrai</td>
+	</tr>
+	<tr>
+	<th class="align-content-center border">CreateAt</th>
+	<td class="align-content-center text-center">20/10/2023</td>
+	</tr>
+	</tbody>
+	</table>
 	</div> *@
 
 	<div class="container mt-4">
@@ -50,8 +50,32 @@
 			<div class="col-md-4">
 				<input class="form-control" type="text" placeholder="Tìm kiếm theo..." />
 			</div>
-			<div>
-				<button class="btn btn-success" data-toggle="modal" data-target="#modalUser">+ Thêm</button>
+			<div class="w-100">
+				<div class="text-end">
+					<span class="dropdown" >
+						<button class="btn btn-secondary dropdown-toggle" type="button" style="width:100px">
+							Status
+						</button>
+						<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+							<a class="dropdown-item" href="#">Action</a>
+							<a class="dropdown-item" href="#">Another action</a>
+							<a class="dropdown-item" href="#">Something else here</a>
+						</div>
+					</span>
+
+					<span class="dropdown">
+						<button class="btn btn-secondary dropdown-toggle" type="button">
+							email confirm
+						</button>
+						<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+							<a class="dropdown-item" href="#">Action</a>
+							<a class="dropdown-item" href="#">Another action</a>
+							<a class="dropdown-item" href="#">Something else here</a>
+						</div>
+					</span>
+
+					<button class="btn btn-success" data-toggle="modal" data-target="#modalUser">+ Thêm</button>
+				</div>
 			</div>
 		</div>
 
@@ -318,51 +342,51 @@
 		</div>
 	</div> *@
 
-	@* Modal *@
-	<div class="modal fade" id="modalUser" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-		<div class="modal-dialog modal-xl">
-			<div class="modal-content">
-				<div class="container-fluid p-5">
-					<form class="row" asp-action="Create">
-						<div asp-validation-summary="ModelOnly" class="text-danger"></div>
-						<div class="row">
-							<div class="col">
-								<div class="mb-2">
-									<label class="form-label">Email address</label>
-									<input type="email" class="form-control">
-									<span class="text-danger"></span>
-								</div>
-								<div class="mb-2">
-									<label class="form-label">Email address</label>
-									<input type="email" class="form-control">
-									<span class="text-danger"></span>
-								</div>
-								<div class="mb-2">
-									<label class="form-label">Email address</label>
-									<input type="email" class="form-control">
-									<span class="text-danger"></span>
-								</div>
+@* Modal *@
+<div class="modal fade" id="modalUser" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-xl">
+		<div class="modal-content">
+			<div class="container-fluid p-5">
+				<form class="row" asp-action="Create">
+					<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+					<div class="row">
+						<div class="col">
+							<div class="mb-2">
+								<label class="form-label">Email address</label>
+								<input type="email" class="form-control">
+								<span class="text-danger"></span>
 							</div>
-							<div class="col">
-								<div class="text-center">
-									<div>
-										<img src="~/image/avatar.jpeg" alt="Alternate Text" style="width:200px; height200px;" />
-									</div>
-									<a class="btn btn-outline-dark text-center mt-2">Change Avatar</a>
-								</div>
+							<div class="mb-2">
+								<label class="form-label">Email address</label>
+								<input type="email" class="form-control">
+								<span class="text-danger"></span>
+							</div>
+							<div class="mb-2">
+								<label class="form-label">Email address</label>
+								<input type="email" class="form-control">
+								<span class="text-danger"></span>
 							</div>
 						</div>
-						<div class="form-group mt-3 text-center">
-							<input type="submit" value="Create" asp-action="CreateOrder" class="btn btn-danger w-50" />
+						<div class="col">
+							<div class="text-center">
+								<div>
+									<img src="~/image/avatar.jpeg" alt="Alternate Text" style="width:200px; height200px;" />
+								</div>
+								<a class="btn btn-outline-dark text-center mt-2">Change Avatar</a>
+							</div>
 						</div>
-						<div class="form-group mt-3 text-center">
-							<input type="submit" value="Save" asp-action="SaveEdit" class="btn btn-primary w-50" />
-						</div>
-					</form>
-				</div>
+					</div>
+					<div class="form-group mt-3 text-center">
+						<input type="submit" value="Create" asp-action="CreateOrder" class="btn btn-danger w-50" />
+					</div>
+					<div class="form-group mt-3 text-center">
+						<input type="submit" value="Save" asp-action="SaveEdit" class="btn btn-primary w-50" />
+					</div>
+				</form>
 			</div>
 		</div>
 	</div>
+</div>
 
 @* 	<div class="container-fluid p-5">
 		<form class="row" asp-action="Create">
