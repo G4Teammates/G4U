@@ -1,12 +1,16 @@
-﻿using System.ComponentModel;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.IdGenerators;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using UserMicroservice.DBContexts.Entities;
+using UserMicroservice.Models;
 using UserMicroService.DBContexts.Enum;
 
 namespace UserMicroService.Models
 {
     public class UserModel
     {
-        public Guid Id { get; init; } = Guid.NewGuid();
+        public string Id { get; } = ObjectId.GenerateNewId().ToString();
 
         [Required(ErrorMessage = "The {0} field is required.")]
         [StringLength(32, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
@@ -30,13 +34,19 @@ namespace UserMicroService.Models
         private string? _displayName;
         public string? DisplayName
         {
-            get => string.IsNullOrEmpty(_displayName) ? "User" + Id.ToString().Substring(0,8) : _displayName;
+            get => string.IsNullOrEmpty(_displayName) ? Username : _displayName;
             set => _displayName = value;
         }
 
         [Url(ErrorMessage = "The {0} field is not a valid URL.")]
         [MaxLength(2048)]
         public string Avatar { get; set; } = "https://static.vecteezy.com/system/resources/previews/020/911/747/non_2x/user-profile-icon-profile-avatar-user-icon-male-icon-face-icon-profile-icon-free-png.png";
+
+        public UserRole Role { get; set; }
+
+        public float TotalProfit { get; set; }
+
+        public ICollection<UserWishlistModel>? Wishlist { get; set; }
 
         public UserStatus Status { get; set; } = UserStatus.Inactive;
 

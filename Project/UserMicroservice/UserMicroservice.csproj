@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <Compile Remove="Models\SearchCriteria.cs" />
+    <Compile Remove="Models\UserViewModel.cs" />
     <Compile Remove="Utility\SearchCriteriaBuilder.cs" />
   </ItemGroup>
 
