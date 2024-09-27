@@ -40,13 +40,13 @@ namespace UserMicroService.Controllers
                 return StatusCode(500, new { message = "An unexpected error occurred. Detail" + ex.Message });
             }
         }
-        [HttpGet("/{id:guid}")]
-        public ActionResult Get(Guid id)
-        {
-            var users = _context.Users.ToList();
-            var user = users.Find(u => u.Id == id);
-            return Ok(user);
-        }
+        //[HttpGet("/{id:guid}")]
+        //public ActionResult Get(Guid id)
+        //{
+        //    var users = _context.Users.ToList();
+        //    var user = users.Find(u => u.Id == id);
+        //    return Ok(user);
+        //}
 
         [HttpGet("/search")]
         public async Task<ActionResult> FindUsers([FromQuery] string? query)
