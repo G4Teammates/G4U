@@ -6,6 +6,6 @@ namespace UserMicroservice.DBContexts.Entities
     public class UserWishlist
     {
         [BsonElement("productId")]
-        public ObjectId ProductId { get; set; }
+        public string? ProductId { get; set; }
     }
 }
