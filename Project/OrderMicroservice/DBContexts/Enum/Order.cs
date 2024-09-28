@@ -16,6 +16,7 @@
     }
     public enum PaymentMethod
     {
+        Pending,
         CreditCard,
         DebitCard,
         NetBanking,
