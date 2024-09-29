@@ -1,4 +1,5 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 using ProductMicroservice.DBContexts.Enum;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -30,7 +31,6 @@ namespace ProductMicroservice.DBContexts.Entities
     #endregion
 
     #region noSQL
-    #region noSQL
     /// <summary>
     /// Represents a product in the system.
     /// <br/>
@@ -44,8 +44,8 @@ namespace ProductMicroservice.DBContexts.Entities
         /// Định danh duy nhất cho sản phẩm.
         /// </summary>
         [BsonId]
-        [BsonElement("id")]
-        public Guid Id { get; set; }
+        [BsonRepresentation(BsonType.ObjectId)]
+        public required string Id { get; set; }
 
         /// <summary>
         /// The name of the product.
@@ -64,9 +64,9 @@ namespace ProductMicroservice.DBContexts.Entities
         public string? Description { get; set; }
 
         /// <summary>
-        /// The price of the product.
+        /// The original price of the product before any discounts are applied.
         /// <br/>
-        /// Giá của sản phẩm.
+        /// Giá gốc của sản phẩm trước khi áp dụng bất kỳ giảm giá nào.
         /// </summary>
         [BsonElement("price")]
         public decimal Price { get; set; }
@@ -79,38 +79,29 @@ namespace ProductMicroservice.DBContexts.Entities
         [BsonElement("sold")]
         public int Sold { get; set; }
 
-
         /// <summary>
-        /// The number of views the product has received.
+        /// The number of views <see cref="Interactions.NumberOfViews"/> and number of likes <see cref="Interactions.NumberOfLikes"/> the product has received. Default is 0.
         /// <br/>
-        /// Số lượt xem mà sản phẩm đã nhận được.
+        /// Số lượt xem <see cref="Interactions.NumberOfViews"/>  và lượt thích <see cref="Interactions.NumberOfLikes"/> mà sản phẩm nhận được. Mặc định là 0.
         /// </summary>
-        [BsonElement("numberOfViews")]
-        public int NumberOfViews { get; set; }
+        [BsonElement("interactions")]
+        public Interactions? Interactions { get; set; }
 
         /// <summary>
-        /// The number of plays or interactions with the product.
+        /// The discount applied to the product. Only valid values are between 0 and 100.
         /// <br/>
-        /// Số lượt chơi hoặc tương tác với sản phẩm.
-        /// </summary>
-        [BsonElement("numberOfPlays")]
-        public int NumberOfPlays { get; set; }
-
-        /// <summary>
-        /// The number of likes the product has received.
-        /// <br/>
-        /// Số lượt thích mà sản phẩm đã nhận được.
-        /// </summary>
-        [BsonElement("numberOfLikes")]
-        public int NumberOfLikes { get; set; }
-
-        /// <summary>
-        /// The discount applied to the product.
-        /// <br/>
-        /// Giảm giá áp dụng cho sản phẩm.
+        /// Giảm giá áp dụng cho sản phẩm. Chỉ có giá trị hợp lệ nằm giữa 0 và 100.
         /// </summary>
         [BsonElement("discount")]
         public float Discount { get; set; }
+
+        /// <summary>
+        /// A collection of categories that the product belongs to.
+        /// <br/>
+        /// Danh sách các danh mục mà sản phẩm thuộc về.
+        /// </summary>
+        [BsonElement("categories")]
+        public ICollection<Categories>? Categories { get; set; }
 
         /// <summary>
         /// The platform where the product is available (e.g., Window, Android, WebGL,...).
@@ -151,8 +142,8 @@ namespace ProductMicroservice.DBContexts.Entities
         /// </summary>
         [BsonElement("userId")]
         public Guid UserId { get; set; }
-    }
-    #endregion
 
+
+    }
     #endregion
 }

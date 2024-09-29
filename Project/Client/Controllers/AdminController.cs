@@ -18,5 +18,15 @@ namespace Client.Controllers
         {
             return View();
         }
+
+		public IActionResult ProductsManager()
+		{
+			return View();
+		}
+
+        public IActionResult OrdersManager()
+        {
+            return View();
+        }
     }
 }

@@ -1,0 +1,42 @@
+﻿.sidebar {
+    height: 100vh; /* 100% chiều cao của viewport */
+    width: 250px; /* Chiều rộng tùy chỉnh */
+    background-color: white; /* Màu nền tùy chỉnh */
+    position: fixed; /* Để sidebar cố định bên trái hoặc bên phải */
+    top: 0; /* Bắt đầu từ trên cùng */
+    left: 0; /* Bên trái */
+}
+
+.content {
+    margin-left: 250px; /* Để nội dung cách sidebar */
+    padding: 20px; /* Khoảng cách bên trong nội dung */
+}
+
+.nav-link {
+    font-size: 18px;
+    padding: 10px;
+    border-radius: 8px;
+    color: #6c757d; /* Default text color */
+    background-color: #F8F8F8;
+}
+
+    .nav-link.active {
+        background-color: #28a745; /* Active button color */
+        color: #fff;
+        pointer-events: none;
+    }
+
+        .nav-link.active span {
+            color: white;
+        }
+
+    .nav-link:hover {
+        background-color: lightgray; /* Hover color */
+        /* color: white; */
+        transition: background-color 0.3s ease-in-out;
+    }
+
+a.nav-link.mt-auto {
+    font-size: 16px;
+    margin-top: auto;
+}

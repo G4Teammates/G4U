@@ -11,15 +11,13 @@ using UserMicroService.Configure;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-//builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-//    .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
+//Get connect string
 builder.Configuration.AddAzureKeyVault(new Uri("https://duantotnghiep.vault.azure.net/"),
     new DefaultAzureCredential());
+
 builder.Services.AddStartupService(builder.Configuration);
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

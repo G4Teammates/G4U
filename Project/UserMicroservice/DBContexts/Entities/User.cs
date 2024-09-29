@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using MongoDB.Bson.Serialization.IdGenerators;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using UserMicroService.DBContexts.Enum;
@@ -45,16 +47,17 @@ namespace UserMicroservice.DBContexts.Entities
         /// Định danh duy nhất cho người dùng.
         /// </summary>
         [BsonId]
-        [BsonElement("id")]
-        public Guid Id { get; set; }
+        [BsonRepresentation(BsonType.ObjectId)]
+        public required string Id { get; set; }
 
         /// <summary>
         /// The username of the user.
         /// <br/>
         /// Tên người dùng.
         /// </summary>
-        [BsonElement("userName")]
-        public required string UserName { get; set; }
+        [BsonElement("username")]
+        [Required]
+        public required string Username { get; set; }
 
         /// <summary>
         /// The phone number of the user.
@@ -70,6 +73,7 @@ namespace UserMicroservice.DBContexts.Entities
         /// Địa chỉ email của người dùng.
         /// </summary>
         [BsonElement("email")]
+        [Required]
         public required string Email { get; set; }
 
         /// <summary>
@@ -118,7 +122,7 @@ namespace UserMicroservice.DBContexts.Entities
         /// Tên người dùng chuẩn hóa của người dùng (là chữ hoa).
         /// </summary>
         [BsonElement("normalizedUserName")]
-        public string? NormalizedUserName { get; set; }
+        public string? NormalizedUsername { get; set; }
 
         /// <summary>
         /// The status of the user account.
@@ -126,7 +130,32 @@ namespace UserMicroservice.DBContexts.Entities
         /// Trạng thái của tài khoản người dùng.
         /// </summary>
         [BsonElement("status")]
-        public required UserStatus Status { get; set; }
+        public UserStatus Status { get; set; }
+
+        /// <summary>
+        /// The role of the user account, include <see cref="UserRole.User"/>,<see cref="UserRole.Admin"/>,<see cref="UserRole.Developer"/>.
+        /// <br/>
+        /// Vai trò của tài khoản người dùng, bao gồm <see cref="UserRole.User"/>(người dùng mặc định), <see cref="UserRole.Admin"/>(quản trị viên) và <see cref="UserRole.Developer"/>(lập trình viên).
+        /// </summary>
+        [BsonElement("role")]
+        public UserRole Role { get; set; }
+
+        /// <summary>
+        /// The total profit earned by the user from selling games. 
+        /// <br/>
+        /// Tổng số tiền lời cuối cùng mà người dùng kiếm được từ việc bán game.
+        /// </summary>
+        [BsonElement("totalProfit")]
+        public float TotalProfit { get; set; }
+
+
+        /// <summary>
+        /// The collection of games added by the user to their wishlist.
+        /// <br/>
+        /// Danh sách các game được người dùng thêm vào danh sách yêu thích.
+        /// </summary>
+        public ICollection<UserWishlist>? Wishlist { get; set; }
+
 
         /// <summary>
         /// The date and time when the user account was created.

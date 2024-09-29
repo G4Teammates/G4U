@@ -12,4 +12,10 @@
         Unconfirmed,
         Confirmed
     }
+    public enum UserRole
+    {
+        User,
+        Admin,
+        Developer
+    }
 }
