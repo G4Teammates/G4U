@@ -2,119 +2,119 @@
 	Layout = "_LayoutAdmin";
 }
 
-<div>
-	<h1>Products Manager</h1>
-
-	<!-- Nút mở sidebar -->
-	<button class="btn btn-primary mt-4" onclick="openSidebar()">Mở Bộ Lọc</button>
-
-	<!-- Sidebar cho bộ lọc -->
-	<div id="filterSidebar">
-		<a href="javascript:void(0)" class="closebtn" onclick="closeSidebar()">&times;</a>
-		<h5 class="text-center mt-3">Lọc Khách Hàng Theo</h5>
-		<ul>
-			<li><input type="checkbox" id="the"> <label for="the">Thẻ</label></li>
-			<li><input type="checkbox" id="maKH"> <label for="maKH">Mã khách hàng</label></li>
-			<li><input type="checkbox" id="tenKH"> <label for="tenKH">Tên khách hàng</label></li>
-			<li><input type="checkbox" id="maST"> <label for="maST">Mã số thuế</label></li>
-			<li><input type="checkbox" id="tenVT"> <label for="tenVT">Tên viết tắt</label></li>
-			<li><input type="checkbox" id="loaiKH"> <label for="loaiKH">Loại khách hàng</label></li>
-			<li><input type="checkbox" id="dienThoai"> <label for="dienThoai">Điện thoại</label></li>
-			<li><input type="checkbox" id="email"> <label for="email">Email</label></li>
-			<li><input type="checkbox" id="diaChiGD"> <label for="diaChiGD">Địa chỉ (Giao hàng)</label></li>
-			<li><input type="checkbox" id="diaChiHD"> <label for="diaChiHD">Địa chỉ (Hóa đơn)</label></li>
-			<li><input type="checkbox" id="moTa"> <label for="moTa">Mô tả</label></li>
-			<li><input type="checkbox" id="doanhSo"> <label for="doanhSo">Doanh số đơn hàng</label></li>
-			<li><input type="checkbox" id="congNo"> <label for="congNo">Công nợ</label></li>
-			<li><input type="checkbox" id="hanMuc"> <label for="hanMuc">Hạn mức nợ</label></li>
-			<li><input type="checkbox" id="doanhThu"> <label for="doanhThu">Doanh thu</label></li>
-			<li><input type="checkbox" id="chuSoHuu"> <label for="chuSoHuu">Chủ sở hữu</label></li>
-		</ul>
-	</div>
-
-	<div class="container mt-4">
-		<!-- Thanh tìm kiếm và nút Thêm -->
-		<div class="d-flex justify-content-between mb-3">
-			<div class="col-md-4">
-				<input class="form-control" type="text" placeholder="Tìm kiếm theo..." />
-			</div>
-			<div>
-				<button class="btn btn-success" data-toggle="modal" data-target="#modalProduct">+ Thêm</button>
-			</div>
-		</div>
-
-		<!-- Bảng thông tin -->
-		<div class="text-end m-2">
-			<a id="deleteButton" class="text-danger" href="" style="display:none">
-				<i class="fas fa-trash"></i>
-			</a>
-		</div>
-		<table class="table table-bordered table-hover align-middle">
-			<thead class="table-light">
-				<tr>
-					<th scope="col"><input type="checkbox" id="selectAll"></th>
-					<th scope="col">Avatar</th>
-					<th scope="col">User Name</th>
-					<th scope="col">Display Name</th>
-					<th scope="col">Email</th>
-					<th scope="col">Phone Number</th>
-					<th scope="col">Status</th>
-					<th scope="col">CreateAt</th>
-					@* <th scope="col">UpdateAt</th> *@
-				</tr>
-			</thead>
-			<tbody>
-				<tr>
-					<td><input type="checkbox" class="user-checkbox"></td>
-					<td><img src="~/Image/avatar.jpeg" alt="Alternate Text" style="width: 80px; height: 80px" /></td>
-					<td>tuanlx123</td>
-					<td>Tuan Dep Trai</td>
-					<td>tuanpham147369@gmail.com</td>
-					<td><span class="text-success">0933 808 235</span></td>
-					<td>Đã kích hoạt</td>
-					<td>10/05/2024</td>
-					@* <td>-</td> *@
-				</tr>
-				<tr>
-					<td><input type="checkbox" class="user-checkbox"></td>
-					<td>-</td>
-					<td>-</td>
-					<td>Quá ok tụi anh q...</td>
-					<td>-</td>
-					<td><span class="text-success">024 3747 4700</span></td>
-					<td>-</td>
-					<td>-</td>
-					@* <td>-</td> *@
-				</tr>
-				<!-- Thêm các dòng dữ liệu tương tự -->
-			</tbody>
-		</table>
-
-		<!-- Phân trang -->
-		<div class="d-flex justify-content-between mt-3">
-			<div>Tổng số: 3,145</div>
-			<div>
-				<select class="form-select form-select-sm w-auto d-inline-block">
-					<option>20 Bản ghi trên trang</option>
-					<option>50 Bản ghi trên trang</option>
-					<option>100 Bản ghi trên trang</option>
-				</select>
-				<nav aria-label="Page navigation example" class="d-inline-block">
-					<ul class="pagination pagination-sm mb-0">
-						<li class="page-item disabled">
-							<a class="page-link" href="#">1 đến 20</a>
-						</li>
-						<li class="page-item"><a class="page-link" href="#">1</a></li>
-						<li class="page-item"><a class="page-link" href="#">2</a></li>
-						<li class="page-item"><a class="page-link" href="#">3</a></li>
-						<li class="page-item"><a class="page-link" href="#">></a></li>
-					</ul>
-				</nav>
-			</div>
-		</div>
-	</div>
-
+<div class="pt-3 pb-4">
+	<span class="titleManager bg-success py-3 px-5 rounded-4 fw-bold text-white">Products Manager</span>
 </div>
+
+<!-- Nút mở sidebar -->
+<button class="btn btn-primary mt-4" onclick="openSidebar()">Filter</button>
+
+<!-- Sidebar cho bộ lọc -->
+<div id="filterSidebar">
+	<a href="javascript:void(0)" class="closebtn" onclick="closeSidebar()">&times;</a>
+	<h5 class="text-center mt-3">Lọc Khách Hàng Theo</h5>
+	<ul>
+		<li><input type="checkbox" id="the"> <label for="the">Thẻ</label></li>
+		<li><input type="checkbox" id="maKH"> <label for="maKH">Mã khách hàng</label></li>
+		<li><input type="checkbox" id="tenKH"> <label for="tenKH">Tên khách hàng</label></li>
+		<li><input type="checkbox" id="maST"> <label for="maST">Mã số thuế</label></li>
+		<li><input type="checkbox" id="tenVT"> <label for="tenVT">Tên viết tắt</label></li>
+		<li><input type="checkbox" id="loaiKH"> <label for="loaiKH">Loại khách hàng</label></li>
+		<li><input type="checkbox" id="dienThoai"> <label for="dienThoai">Điện thoại</label></li>
+		<li><input type="checkbox" id="email"> <label for="email">Email</label></li>
+		<li><input type="checkbox" id="diaChiGD"> <label for="diaChiGD">Địa chỉ (Giao hàng)</label></li>
+		<li><input type="checkbox" id="diaChiHD"> <label for="diaChiHD">Địa chỉ (Hóa đơn)</label></li>
+		<li><input type="checkbox" id="moTa"> <label for="moTa">Mô tả</label></li>
+		<li><input type="checkbox" id="doanhSo"> <label for="doanhSo">Doanh số đơn hàng</label></li>
+		<li><input type="checkbox" id="congNo"> <label for="congNo">Công nợ</label></li>
+		<li><input type="checkbox" id="hanMuc"> <label for="hanMuc">Hạn mức nợ</label></li>
+		<li><input type="checkbox" id="doanhThu"> <label for="doanhThu">Doanh thu</label></li>
+		<li><input type="checkbox" id="chuSoHuu"> <label for="chuSoHuu">Chủ sở hữu</label></li>
+	</ul>
+</div>
+
+<div class="container mt-4">
+	<!-- Thanh tìm kiếm và nút Thêm -->
+	<div class="d-flex justify-content-between mb-3">
+		<div class="col-md-4">
+			<input class="form-control" type="text" placeholder="Search by..." />
+		</div>
+		<div>
+			<button class="btn btn-success" data-toggle="modal" data-target="#modalProduct">+ Add</button>
+		</div>
+	</div>
+
+	<!-- Bảng thông tin -->
+	<div class="text-end m-2">
+		<a id="deleteButton" class="text-danger" href="" style="display:none">
+			<i class="fas fa-trash"></i>
+		</a>
+	</div>
+	<table class="table table-bordered table-hover align-middle">
+		<thead class="table-light">
+			<tr>
+				<th scope="col"><input type="checkbox" id="selectAll"></th>
+				<th scope="col">Avatar</th>
+				<th scope="col">User Name</th>
+				<th scope="col">Display Name</th>
+				<th scope="col">Email</th>
+				<th scope="col">Phone Number</th>
+				<th scope="col">Status</th>
+				<th scope="col">CreateAt</th>
+				@* <th scope="col">UpdateAt</th> *@
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td><input type="checkbox" class="user-checkbox"></td>
+				<td><img src="~/Image/avatar.jpeg" alt="Alternate Text" style="width: 80px; height: 80px" /></td>
+				<td>tuanlx123</td>
+				<td>Tuan Dep Trai</td>
+				<td>tuanpham147369@gmail.com</td>
+				<td><span class="text-success">0933 808 235</span></td>
+				<td>Đã kích hoạt</td>
+				<td>10/05/2024</td>
+				@* <td>-</td> *@
+			</tr>
+			<tr>
+				<td><input type="checkbox" class="user-checkbox"></td>
+				<td>-</td>
+				<td>-</td>
+				<td>Quá ok tụi anh q...</td>
+				<td>-</td>
+				<td><span class="text-success">024 3747 4700</span></td>
+				<td>-</td>
+				<td>-</td>
+				@* <td>-</td> *@
+			</tr>
+			<!-- Thêm các dòng dữ liệu tương tự -->
+		</tbody>
+	</table>
+
+	<!-- Phân trang -->
+	<div class="d-flex justify-content-between mt-3">
+		<div>Total: 3,145</div>
+		<div>
+			<select class="form-select form-select-sm w-auto d-inline-block">
+				<option>20 records per page</option>
+				<option>50 records per page</option>
+				<option>100 records per page</option>
+			</select>
+			<nav aria-label="Page navigation example" class="d-inline-block">
+				<ul class="pagination pagination-sm mb-0">
+					<li class="page-item disabled">
+						<a class="page-link" href="#">1 to 20</a>
+					</li>
+					<li class="page-item"><a class="page-link" href="#">1</a></li>
+					<li class="page-item"><a class="page-link" href="#">2</a></li>
+					<li class="page-item"><a class="page-link" href="#">3</a></li>
+					<li class="page-item"><a class="page-link" href="#">></a></li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+
 
 <script>
 	// Mở sidebar
