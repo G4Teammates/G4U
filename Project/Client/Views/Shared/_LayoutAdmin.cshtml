@@ -15,7 +15,7 @@
 <body style="background-color: #E0F2F1;">
 	<div class="d-flex">
 		<div id="sidebar" class="sidebar d-flex flex-column p-3" style="width: 250px">
-			<h3 class="text-success p-3">VENUS DASHBOARD</h3>
+			<h3 class="text-success p-3">G4T ADMIN DASHBOARD</h3>
 			<hr />
 			<ul class="navbar-nav flex-grow-1">
 				<li class="nav-item m-2">
@@ -46,6 +46,14 @@
 					<form action="OrdersManager" method="get">
 						<button id="orders-manager-btn" class="nav-link text-start border-0 w-100">
 							<span class="p-2 fs-6 fw-bold">Orders Manager</span>
+						</button>
+					</form>
+				</li>
+
+				<li class="nav-item m-2">
+					<form action="CategoriesManager" method="get">
+						<button id="categories-manager-btn" class="nav-link text-start border-0 w-100">
+							<span class="p-2 fs-6 fw-bold">Categories Manager</span>
 						</button>
 					</form>
 				</li>
@@ -139,6 +147,8 @@
 			$('#products-manager-btn').addClass('active');
 		} else if (currentPath.includes("OrdersManager")) {
 			$('#orders-manager-btn').addClass('active');
+		} else if (currentPath.includes("CategoriesManager")) {
+			$('#categories-manager-btn').addClass('active');
 		}
 
 		// Khi DOM đã sẵn sàng
