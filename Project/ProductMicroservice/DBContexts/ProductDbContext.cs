@@ -10,6 +10,6 @@ namespace ProductMicroservice.DBContexts
         {
         }
 
-        public DbSet<Product> Products { get; set; }
+        public DbSet<Products> Products { get; set; }
     }
 }
