@@ -21,7 +21,7 @@ namespace ProductMicroService.Controllers
         [HttpPost]
         public ActionResult ActionResult(ProductModel Product)
         {
-            _context.Add(_mapper.Map<ProductModel, Product>(Product));
+            _context.Add(_mapper.Map<ProductModel, Products>(Product));
             _context.SaveChanges();
             return Ok(Product);
         }
