@@ -1,7 +1,6 @@
 ﻿using ProductMicroservice.DBContexts.Enum;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
-using ProductMicroservice.DBContexts.Entities;
 using MongoDB.Bson;
 
 namespace ProductMicroservice.Models
@@ -59,7 +58,7 @@ namespace ProductMicroservice.Models
         /// <br/>
         /// Số lượt xem và lượt thích mà sản phẩm nhận được. Mặc định là 0.
         /// </summary>
-        public InteractionModel? Interactions { get; set; }
+        public InteractionModel? Interactions { get; set; } = new InteractionModel { NumberOfLikes = 0, NumberOfViews = 0 };
 
         /// <summary>
         /// The discount applied to the product. Only valid values are between 0 and 100.
@@ -68,14 +67,7 @@ namespace ProductMicroservice.Models
         /// </summary>
         [RegularExpression(@"^\d+(\.\d{1,2})?$", ErrorMessage = "The {0} must have no more than 2 decimal places")]
         [Range(0, 100, ErrorMessage = "The {0} must be greater or equal than {1}")]
-        public float Discount { get; set; }
-
-        /// <summary>
-        /// A collection of categories that the product belongs to.
-        /// <br/>
-        /// Danh sách các danh mục mà sản phẩm thuộc về.
-        /// </summary>
-        public ICollection<CategoryModel>? Categories { get; set; }
+        public float Discount { get; set; } = 0;
 
         /// <summary>
         /// The platform where the product is available (e.g., Window, Android, WebGL,...).
@@ -83,6 +75,19 @@ namespace ProductMicroservice.Models
         /// Nền tảng nơi sản phẩm có sẵn (ví dụ: Window, Android, WebGL,...).
         /// </summary>
         public PlatformType Platform { get; set; } = PlatformType.Unknown;
+
+        /// <summary>
+        /// Represents a Link entity in the system. Each link is associated with a user and can optionally be tied to a product.<br/>
+        /// Đại diện cho một thực thể liên kết trong hệ thống. Mỗi liên kết được gắn với một người dùng và có thể được liên kết với một sản phẩm.
+        /// </summary>
+        public ICollection<LinkModel>? Links { get; set; }
+
+        /// <summary>
+        /// A collection of categories that the product belongs to.
+        /// <br/>
+        /// Danh sách các danh mục mà sản phẩm thuộc về.
+        /// </summary>
+        public ICollection<CategoryModel>? Categories { get; set; }
 
         /// <summary>
         /// The status of the product (e.g., Inactive, Active, Block, Deleted). 
