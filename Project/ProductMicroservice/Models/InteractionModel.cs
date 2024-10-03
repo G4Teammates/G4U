@@ -17,7 +17,7 @@ namespace ProductMicroservice.Models
         /// Số lần sản phẩm đã được chơi hoặc truy cập.
         /// </summary>
         [Range(0, int.MaxValue, ErrorMessage = "The {0} must be greater or equal than {1}")]
-        public int NumberOfPlays { get; set; }
+        public int NumberOfViews { get; set; }
 
         /// <summary>
         /// The number of likes or positive feedback the item has received.

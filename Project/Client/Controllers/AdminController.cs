@@ -28,5 +28,10 @@ namespace Client.Controllers
         {
             return View();
         }
-    }
+
+		public IActionResult CategoriesManager()
+		{
+			return View();
+		}
+	}
 }

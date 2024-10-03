@@ -44,10 +44,15 @@
 		</div>
 
 		<!-- Bảng thông tin -->
+		<div class="text-end m-2">
+			<a id="deleteButton" class="text-danger" href="" style="display:none">
+				<i class="fas fa-trash"></i>
+			</a>
+		</div>
 		<table class="table table-bordered table-hover align-middle">
 			<thead class="table-light">
 				<tr>
-					<th scope="col"><input type="checkbox" /></th>
+					<th scope="col"><input type="checkbox" id="selectAll"></th>
 					<th scope="col">Avatar</th>
 					<th scope="col">User Name</th>
 					<th scope="col">Display Name</th>
@@ -60,7 +65,7 @@
 			</thead>
 			<tbody>
 				<tr>
-					<td><input type="checkbox" /></td>
+					<td><input type="checkbox" class="user-checkbox"></td>
 					<td><img src="~/Image/avatar.jpeg" alt="Alternate Text" style="width: 80px; height: 80px" /></td>
 					<td>tuanlx123</td>
 					<td>Tuan Dep Trai</td>
@@ -71,7 +76,7 @@
 					@* <td>-</td> *@
 				</tr>
 				<tr>
-					<td><input type="checkbox" /></td>
+					<td><input type="checkbox" class="user-checkbox"></td>
 					<td>-</td>
 					<td>-</td>
 					<td>Quá ok tụi anh q...</td>

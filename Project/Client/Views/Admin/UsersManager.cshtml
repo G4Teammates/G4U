@@ -52,26 +52,26 @@
 			</div>
 			<div class="w-100">
 				<div class="text-end">
-					<span class="dropdown" >
+					<span class="dropdown">
 						<button class="btn btn-secondary dropdown-toggle" type="button" style="width:100px">
 							Status
 						</button>
-						<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+						<span class="dropdown-menu" aria-labelledby="dropdownMenuButton">
 							<a class="dropdown-item" href="#">Action</a>
 							<a class="dropdown-item" href="#">Another action</a>
 							<a class="dropdown-item" href="#">Something else here</a>
-						</div>
+						</span>
 					</span>
 
 					<span class="dropdown">
 						<button class="btn btn-secondary dropdown-toggle" type="button">
 							email confirm
 						</button>
-						<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+						<span class="dropdown-menu" aria-labelledby="dropdownMenuButton">
 							<a class="dropdown-item" href="#">Action</a>
 							<a class="dropdown-item" href="#">Another action</a>
 							<a class="dropdown-item" href="#">Something else here</a>
-						</div>
+						</span>
 					</span>
 
 					<button class="btn btn-success" data-toggle="modal" data-target="#modalUser">+ Thêm</button>
@@ -80,10 +80,15 @@
 		</div>
 
 		<!-- Bảng thông tin -->
+		<div class="text-end m-2">
+			<a id="deleteButton" class="text-danger" href="" style="display:none">
+				<i class="fas fa-trash"></i>
+			</a>
+		</div>
 		<table class="table table-bordered table-hover align-middle">
 			<thead class="table-light">
 				<tr>
-					<th scope="col"><input type="checkbox" /></th>
+					<th scope="col"><input type="checkbox" id="selectAll"></th>
 					<th scope="col">Avatar</th>
 					<th scope="col">User Name</th>
 					<th scope="col">Display Name</th>
@@ -91,12 +96,13 @@
 					<th scope="col">Phone Number</th>
 					<th scope="col">Status</th>
 					<th scope="col">CreateAt</th>
+					<th scope="col"></th>
 					@* <th scope="col">UpdateAt</th> *@
 				</tr>
 			</thead>
 			<tbody>
 				<tr>
-					<td><input type="checkbox" /></td>
+					<td><input type="checkbox" class="user-checkbox"></td>
 					<td><img src="~/Image/avatar.jpeg" alt="Alternate Text" style="width: 80px; height: 80px" /></td>
 					<td>tuanlx123</td>
 					<td>Tuan Dep Trai</td>
@@ -104,10 +110,10 @@
 					<td><span class="text-success">0933 808 235</span></td>
 					<td>Đã kích hoạt</td>
 					<td>10/05/2024</td>
-					@* <td>-</td> *@
+					<td><span><i class="fa-regular fa-pen-to-square"></i></span></td>
 				</tr>
 				<tr>
-					<td><input type="checkbox" /></td>
+					<td><input type="checkbox" class="user-checkbox"></td>
 					<td>-</td>
 					<td>-</td>
 					<td>Quá ok tụi anh q...</td>

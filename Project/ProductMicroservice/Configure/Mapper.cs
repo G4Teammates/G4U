@@ -16,7 +16,7 @@ namespace ProductMicroservice.Configure
             {
                 //Register mapper here⬇️
 
-                cfg.CreateMap<Product, ProductModel>().ReverseMap();
+                cfg.CreateMap<Products, ProductModel>().ReverseMap();
 
 
                 //Register mapper here⬆️

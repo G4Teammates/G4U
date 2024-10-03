@@ -15,42 +15,95 @@
 html {
   position: relative;
   min-height: 100%;
+  scroll-behavior:smooth;
+
 }
 
-/*body {
-  margin-bottom: 60px;
+/** {
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
 }*/
 
 .container-fluid {
     width: 100%;
     margin: auto;
 }
+
+/* Kiểu mặc định cho header */
+header {
+    width: 100%;
+    background-color: transparent; /* Màu nền ban đầu */
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    position: relative; /* Đảm bảo header nằm trong luồng tài liệu */
+    z-index: 1000; /* Đảm bảo header nằm trên các phần tử khác */
+}
+
+    /* Kiểu khi header trở thành sticky */
+    header.sticky {
+        position: fixed;
+        top: 0;
+        left: 0;
+        background-color: #ffffff; /* Màu nền khi sticky */
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Thêm bóng để nổi bật */
+    }
+
+        header.sticky .search-input {
+            background-color: #ffffff; /* Màu nền trắng khi sticky */
+            color: #000000; /* Màu chữ đen khi sticky */
+            border: none; /* Viền đen khi sticky */
+        }
+
 /* Định dạng cho logo */
-.logo {
+/*.logo {
     width: 100%;
     min-height: 70px;
 }
 
 .logo-img {
-    width: 100px; /* Kích thước chiều rộng của hình ảnh */
-    height: auto; /* Để chiều cao tự động điều chỉnh theo tỷ lệ khung hình */
-    display: block; /* Đảm bảo hình ảnh được căn chỉnh tốt trong khối */
-    margin: 0 auto; /* Canh giữa hình ảnh trong phần tử chứa */
-}
+    width: 100px;*/ /* Kích thước chiều rộng của hình ảnh */
+    /*height: auto;*/ /* Để chiều cao tự động điều chỉnh theo tỷ lệ khung hình */
+    /*display: block;*/ /* Đảm bảo hình ảnh được căn chỉnh tốt trong khối */
+    /*margin: 0 auto;*/ /* Canh giữa hình ảnh trong phần tử chứa */
+/*}*/
 
-.search {
-    width: max-content;
-    height: 40px;
+/* Kiểu mặc định cho search-bar */
+.search-bar {
+    flex: 1; /* Cho phép search-bar mở rộng để chiếm không gian có sẵn */
     display: flex;
     align-items: center;
+    height: 40px;
     padding: 20px;
     border-radius: 10px;
-    border: 1px solid rgba(43, 223, 70, 0.979);
-    margin: 30px 5px;
+    border: 1px solid #00A97F;
+    margin: 30px 5px; /* Khoảng cách bên ngoài */
+    max-width: 300px; /* Giới hạn kích thước tối đa */
+    min-width: 150px; /* Giới hạn kích thước tối thiểu */
 }
 
+/* Ẩn search-bar bên ngoài khi màn hình nhỏ */
+@media(max-width: 610px) {
+    .search-bar {
+        display: none; /* Ẩn search-bar bên ngoài */
+    }
+
+    /* Thêm search-bar vào menu */
+    .menu {
+        display: flex; /* Đảm bảo menu hiển thị dưới dạng flex */
+        flex-direction: column; /* Sắp xếp theo cột */
+        align-items: center; /* Căn giữa các phần tử trong menu */
+    }
+
+        .menu .search-bar {
+            display: flex; /* Hiện thị search-bar trong menu */
+            margin: 10px 0; /* Tạo khoảng cách đồng đều */
+            max-width: 80%; /* Kích thước tối đa của search-bar trong màn hình nhỏ */
+        }
+}
+
+/* Cập nhật CSS cho input */
 .search-input {
-    width: 350px;
+    width: 100%; /* Chiếm toàn bộ không gian của search-bar */
     font-size: 16px;
     font-family: 'Lexend', sans-serif;
     border: none;
@@ -60,25 +113,118 @@ html {
 
 
 
+.nav-bar {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    list-style: none;
+    position: relative;
+    padding:12px 20px;
+}
+
+.logo img {
+    width: 100px;
+}
+
+.menu{
+    display:flex;
+}
+
+.menu li {
+    padding: 10px 15px; /* Cách nhau khoảng 10px trên và dưới, 15px trái và phải */
+}
+.menu li a{
+    display:inline-block;
+    text-decoration:none;
+    color:black;
+    text-align:center;
+    transition: 0.15s ease-in-out;
+    position:relative;
+}
+
+/*.menu li a::after{
+    content:"";
+    position:absolute;
+    bottom:0;
+    left:0;
+    width:100%;
+    height:1px;
+    transition:0.15s ease-in-out;
+}
+.menu li a:hover:after{
+    width:100%;
+}*/
+
+.open-menu, .close-menu {
+    position: absolute;
+    color: black;
+    cursor: pointer;
+    font-size: 1.5rem;
+    display: none;
+}
+.open-menu{
+    top:50%;
+    right:20px;
+    transform:translateY(-50%);
+    
+}
+
+.close-menu{
+    top:20px;
+    right:20px;
+}
+
+#check{
+    display:none;
+}
+ @media(max-width:610px){
+     .menu{
+         flex-direction:column;
+         align-items:center;
+         justify-content:center;
+         width:80%;
+         height:100vh;
+         position:fixed;
+         top:0;
+         right:-100%;
+         z-index:100;
+         transition:all 0.2s ease-in-out;
+         background-color:white;
+     }
+     .menu li{
+         margin-top:40px;
+     }
+     .menu li a{
+         padding:10px;
+     }
+     .open-menu, .close-menu{
+         display:block;
+     }
+     #check:checked ~ .menu{
+         right:0;         
+     }
+ }
+
+
 
 /* Định dạng cho nút */
 .btn {
     padding: 0.6em 1.75em;
-    width: 170px;
+    width: 150px;
     height: 45px;
     border-radius: 6px;
     transition: .5s;
     position: relative;
     overflow: hidden;
     cursor: pointer;
-    z-index: 2; /* Đặt z-index cao hơn để nút không bị che khuất */
+    z-index: 2;
     font-weight: 300;
     font-size: 17px;
     font-family: 'Roboto', 'Segoe UI', sans-serif;
     text-transform: uppercase;
 }
 
-    /* Định dạng cho phần tử pseudo trước và sau nút */
     .btn::after, .btn::before {
         content: '';
         display: block;
@@ -88,7 +234,7 @@ html {
         position: absolute;
         inset: 50%;
         left: 25%;
-        z-index: -1; /* Đặt z-index thấp hơn để nền không bị che khuất */
+        z-index: -1;
         transition: .5s ease-out;
         background-color: #00A97F;
     }
@@ -99,7 +245,6 @@ html {
         transform: skew(90deg) rotate(180deg) translate(-50%, -50%);
     }
 
-    /* Định dạng khi hover */
     .btn:hover::before {
         transform: skew(45deg) rotate(180deg) translate(-50%, -50%);
     }
@@ -108,12 +253,10 @@ html {
         transform: skew(45deg) translate(-50%, -50%);
     }
 
-    /* Định dạng màu chữ khi hover */
     .btn:hover {
-        color: white; /* Đổi màu chữ thành trắng khi hover */
+        color: white;
     }
 
-    /* Định dạng khi nút đang được nhấn */
     .btn:active {
         filter: brightness(.7);
         transform: scale(.98);
@@ -121,56 +264,54 @@ html {
 
 /* Định dạng cho dropdown-menu */
 .dropdown-menu {
-    background-color: #ffffff; /* Màu nền mặc định của dropdown-menu */
-    display: none; /* Ẩn mặc định dropdown-menu */
-    position: absolute; /* Đảm bảo dropdown-menu không ảnh hưởng đến layout */
-    top: 100%; /* Đặt menu ngay dưới nút */
-    left: 0; /* Căn trái của menu với nút */
-    z-index: 1; /* Đảm bảo dropdown-menu nằm trên các phần tử khác */
+    background-color: #ffffff;
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1;
     transition: opacity 0.3s ease;
     border: none;
-    width: 100%; /* Đặt chiều rộng của dropdown-menu bằng với button */
+    width: 100%;
 }
 
-/* Định dạng cho dropdown-menu khi hover vào button hoặc menu */
 .dropdown:hover .dropdown-menu {
-    display: block; /* Hiển thị dropdown-menu khi hover vào button hoặc menu */
-    width: 100%; /* Đảm bảo width của dropdown-menu bằng với button */
+    display: block;
+    width: 100%;
 }
+
 /* Định dạng cho các item trong dropdown-menu */
 .navelement {
     display: block;
     padding: 10px;
-    color: black;
+    color: black !important;
     transition-duration: 0.7s;
-    border: 1px solid transparent; /* Thêm border với màu trong suốt */
+    border: 1px solid transparent;
     font-family: 'Roboto', 'Segoe UI', sans-serif;
-    width: 100%; /* Đảm bảo width của các li bằng với dropdown-menu */
+    width: 100%;
+    text-decoration: none;
 }
 
-    /* Định dạng khi hover trên các item trong dropdown-menu */
     .navelement:hover {
-        background-color: rgba(43, 223, 70, 0.979); /* Màu nền khi hover */
-        color: black; /* Màu chữ khi hover */
+        background-color: rgba(43, 223, 70, 0.979);
+        color: black;
         cursor: pointer;
-        transform: translateX(20px); /* Dịch sang phải 20px khi hover */
+        transform: translateX(20px);
     }
 
-
-
-/* From Uiverse.io by vinodjangid07 */
-.Btn-Container {
-    display: flex;
-    width: 170px;
-    height: fit-content;
-    background-color: #E0F2F1; /* Đổi màu nền thành trong suốt */
-    border-radius: 10px;
-    box-shadow: 0px 5px 10px #bebebe;
-    justify-content: space-between;
-    align-items: center;
-    border: none;
-    cursor: pointer;
-}
+    /* From Uiverse.io by vinodjangid07 */
+    .Btn-Container {
+        display: flex;
+        width: 170px;
+        height: fit-content;
+        background-color: #E0F2F1;
+        border-radius: 10px;
+        box-shadow: 0px 5px 10px #bebebe;
+        justify-content: space-between;
+        align-items: center;
+        border: none;
+        cursor: pointer;
+    }
 
 .icon-Container {
     width: 45px;
@@ -219,212 +360,447 @@ html {
 
 
 
+
+
+
 /*MAIN*/
 
-.wrapper {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    /* Optional: Add padding for better spacing */
-    padding: 20px;
+.header_section{
+    margin-top:50px;
+    text-align:center;
 }
-
-.container_main {
-    height: 400px;
-    display: flex;
-    flex-wrap: nowrap;
-    justify-content: center;
-    /* Set the container width to a percentage to ensure centering */
-    width: 100%;
-}
-
-
-.card {
-    width: 100px;
-    border-radius: .75rem;
-    background-size: cover;
-    cursor: pointer;
-    overflow: hidden;
-    border-radius: 2rem;
-    margin: 0px 5px;
-    display: flex;
-    align-items: flex-start;
-    transition: .6s cubic-bezier(.28, -0.03, 0, .99);
-    box-shadow: 0px 10px 30px -5px rgba(0,0,0,0.8);
-}
-
-    .card > .row {
-        color: white;
-        display: flex;
-        flex-wrap: nowrap;
+    .header_section h1 {
+        font-size: 60px;
+        color: #62e079;
     }
-
-        .card > .row > .icon {
-            background: #223;
-            color: white;
-            border-radius: 50%;
-            width: 50px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 15px;
-        }
-
-        .card > .row > .description {
-            display: flex;
-            justify-content: center;
-            flex-direction: column;
-            overflow: hidden;
-            height: 80px;
-            width: 520px;
-            opacity: 0;
-            transform: translateY(30px);
-            transition-delay: .3s;
-            transition: all .3s ease;
-            margin-left: 50px;
-        }
-
-.description p {
-    color: #b0b0ba;
-    padding-top: 5px;
-}
-
-.description h4 {
-    text-transform: uppercase;
-}
-
-.input {
-    display: none;
-}
-
-    .input:checked + label {
-        width: 850px;
-    }
-
-        .input:checked + label .description {
-            opacity: 1 !important;
-            transform: translateY(0) !important;
-        }
-
-.card[for="c1"] {
-    background-image: url('../image/game.jpg');
-}
-
-.card[for="c2"] {
-    background-image: url('../image/game.jpg');
-}
-
-.card[for="c3"] {
-    background-image: url('../image/game.jpg');
-}
-
-.card[for="c4"] {
-    background-image: url('../image/game.jpg');
-}
-
-
-
-
 .gamemonth {
-    width: 90%;
-    min-height: 800px;
-    margin: auto;
+    display: flex;
+    justify-content:center;
+    align-items: center;
+    flex-direction: column;
+    gap: 30px;
+    min-height: 100vh;
 }
 
+.wrapper_gamemonth{
+    width:95%;
+    max-width:1400px;
+    margin:0 auto;
+}
 
-    .gamemonth .d-flex {
-        justify-content: center;
-        gap: 10px;
+.container_gamemonth{
+    position:relative;
+}
+
+    .container_gamemonth .card_gamemonth {
+        width: 380px;
+        border-radius: 25px;
+        background: #fff;
+        box-shadow: 0 0 20px #E0F2F1;
+    }
+
+.container_gamemonth .card_gamemonth .img_gamemonth{
+    padding: 25px;
+    padding-bottom:40px;
+}
+
+.img_gamemonth img {
+    width: 100%;
+    height: 170px;
+    border-radius: 20px;
+    border: 2px solid #E0F2F1;
+}
+
+.card_gamemonth .info {
+    border-top: 2px solid #E0F2F1;
+    position: relative;
+}
+
+    .card_gamemonth .info .name {
+        position: absolute;
+        left: 50%;
+        top: -22px;
+        transform: translate(-50%);
+        padding: 10px;
+        font-size: 20px;
+        border-radius: 50px;
+        background: #E0F2F1;
+        font-weight: bold;
+        white-space: nowrap;
+        box-shadow: 0px 10px 20px -10px #E0F2F1;
+        font-family: 'Poppins';
+    }
+
+    .card_gamemonth .info .about {
+        margin-top: 30px;
+        text-align: center;
+        font-size: 16px;
+        color: black;
+        font-family:'Poppins';
     }
 
 
-.ortherproduct {
-    width: 70%;
-    margin: auto;
+.card_gamemonth .footeer_card{
+    padding:20px;
+    padding-top:0;
+    display:flex;
+    justify-content:flex-end;
+    align-items:center;
 }
 
-/* From Uiverse.io by Spacious74 */
-.radio-inputs {
+.footeer_card .btn_card button {
+    padding: 5px 10px;
+    background: #E0F2F1;
+    font-size: 16px;
+    border: none;
+    outline: none;
+    border-radius: 25px;
+    cursor: pointer;
+    box-shadow: 0px 10px 10px -10px #E0F2F1;
+    font-family: 'Poppins';
+}
+
+    .footeer_card .btn_card button:hover {
+        background:rgb(60, 222, 84, 0.98)
+    }
+
+.owl-carousel .owl-stage{
+    display:flex;
+    justify-content:center;
+}
+
+.owl-carousel .owl-item {
+    display: flex;
+    justify-content: center;
+}
+
+.owl-nav .owl-prev {
+    width:20px;
+    position:absolute;
+    top:calc(50% - 25px);
+    transform:translateY(-50%);
+    left:-10px;
+    font-size:50px !important;
+    color: black !important;
+    opacity:1;
+    z-index:1;
+}
+
+.owl-nav .owl-next {
+    width: 20px;
+    position: absolute;
+    top: calc(50% - 25px);
+    transform: translateY(-50%);
+    right: -10px;
+    font-size: 50px !important;
+    color: black !important;
+    opacity: 1;
+    z-index: 1;
+}
+
+.owl-dots {
+    margin-top: 30px;
+}
+    .owl-dots .owl-dot span {
+        background: #4bcab6 !important;
+    }
+    .owl-dots .owl-dot.active span {
+        transform: scale(1.6);
+        background: #fff !important;
+        border: 2px solid #57b639;
+    }
+
+
+
+/*Other Product*/
+.ortherproduct{
+    width:95%;
+    min-height:500px;
+    margin:0 auto;
+}
+.lisotherproduct_name {
+    width: 100%;
+    min-height: 50px;
+    justify-content: center;
+    align-items: center;
+    font-size: 22px;
+    font-weight:bold;
+    text-align:center;
+}
+
+.lisotherproduct_name a{
+    color:#62e079;
+    text-decoration:none;
+    text-align:center;
+    align-items:center;
+    justify-content: center;
+    min-height:40px;
+    padding:5px;
+}
+.lisotherproduct_name a:hover{
+    background-color:#0c9a77;
+    color:white;
+}
+
+
+/*#foryou, #popular, #free, #new, #more {
+    width:100%;
+    height:100%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}*/
+
+
+/*#foryou img, #popular img, #free img, #new img, #more img{
+    width:100%;
+    max-height:250px;
+    border-radius:5px;
+    margin-top:20px;
+}*/
+
+
+
+#foryou a, #popular a, #free a, #new a, #more a{
+    text-decoration:none;
+    color:#303030;
+}
+
+#foryou a:hover, #popular a:hover, #free a:hover, #new a:hover, #more a:hover{
+    color:#1cab35;
+}
+
+
+.wrapper_other {
+    display: flex;
+    flex-wrap: wrap; /* Cho phép các card chuyển xuống hàng mới khi cần */
+    justify-content: space-between; /* Đảm bảo các card trải đều */
+    margin: -5px; /* Để bù trừ khoảng cách từ margin của card_other */
+}
+
+.card_other {
+    width: calc(25% - 10px); /* 4 card cho mỗi hàng với khoảng cách */
+    height: 360px;
+    padding: 2rem 1rem;
     position: relative;
     display: flex;
-    border-radius: 0.5rem;
-    background-color: #E0F2F1; /* Màu nền mặc định */
-    box-sizing: border-box;
-    font-size: 20px;
-    width: 100%;
-    padding: 1rem 0; /* Điều chỉnh khoảng cách padding */
-    transition: background-color 0.3s ease; /* Hiệu ứng chuyển đổi màu nền */
+    align-items: flex-end;
+    box-shadow: 0px 7px 10px rgba(0, 0, 0, 0.5);
+    transition: 0.5s ease-in-out;
+    margin: 5px; /* Thêm khoảng cách giữa các card */
 }
 
-    .radio-inputs .radio {
-        flex: 1; /* Cho phép phần tử mở rộng để chia đều không gian */
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: relative; /* Để pseudo-element hoạt động chính xác */
+@media (max-width: 768px) {
+    .card_other {
+        width: calc(50% - 10px); /* 2 card cho mỗi hàng */
+    }
+}
+
+@media (max-width: 576px) {
+    .card_other {
+        width: calc(100% - 10px); /* 1 card cho mỗi hàng */
+    }
+}
+
+.card_other:hover {
+    transform: translateY(-20px);
+}
+
+.card_other:before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, rgba(0, 176, 155, 0.5), rgba(150, 201, 61, 1));
+    z-index: 2;
+    transition: 0.5s all;
+    opacity: 0;
+}
+
+.card_other:hover:before {
+    opacity: 1;
+}
+
+.card_other img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.card_other .info_other {
+    position: relative;
+    z-index: 3;
+    color: #E0F2F1;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: 0.5s all;
+}
+
+.card_other:hover .info_other {
+    opacity: 1;
+    transform: translateY(0px);
+}
+
+.card_other .info_other h1 {
+    margin: 0;
+}
+
+.card_other .info_other p {
+    letter-spacing: 1px;
+    font-size: 15px;
+    margin-top: 8px;
+    margin-bottom: 20px;
+}
+
+.card_other .info_other .btn_orther {
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    background: #fff;
+    color: #000;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.4s ease-in-out;
+}
+
+    .card_other .info_other .btn_orther:hover {
+        background: #62e079;
+        box-shadow: 0px 7px 10px rgba(0, 0, 0, 0.5);
     }
 
-        .radio-inputs .radio input {
-            display: none;
-        }
+    /*Srcoll To Top*/
+    /* CSS cho Nút Scroll to Top */
+    #scrollToTopBtn {
+        display: none; /* Ẩn nút khi chưa cuộn */
+        position: fixed; /* Cố định vị trí */
+        bottom: 40px; /* Khoảng cách từ dưới cùng */
+        right: 40px; /* Khoảng cách từ bên phải */
+        z-index: 1000; /* Đảm bảo nút nằm trên các phần tử khác */
+        background-color: #00A97F; /* Màu nền nút */
+        color: white; /* Màu icon */
+        border: none; /* Không có viền */
+        outline: none; /* Không có đường viền khi focus */
+        width: 50px; /* Chiều rộng nút */
+        height: 50px; /* Chiều cao nút */
+        border-radius: 50%; /* Làm tròn nút */
+        cursor: pointer; /* Con trỏ khi hover */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Thêm bóng */
+        transition: opacity 0.3s ease, visibility 0.3s ease; /* Hiệu ứng mượt mà */
+    }
 
-        .radio-inputs .radio .name {
-            display: flex;
-            cursor: pointer;
-            align-items: center;
-            justify-content: center;
-            border: none;
-            padding: 0.5rem 0.8rem;
-            position: relative; /* Để gạch chân xuất hiện đúng vị trí */
-            transition: color 0.15s ease-in-out;
-            z-index: 1; /* Đảm bảo văn bản nằm trên background */
-            width: 100%; /* Chiếm toàn bộ chiều rộng của phần tử cha */
-            box-sizing: border-box; /* Đảm bảo padding không làm thay đổi kích thước */
-        }
+    /* Hiển thị nút khi cuộn */
+    #scrollToTopBtn.show {
+        display: block;
+        opacity: 1;
+        visibility: visible;
+    }
 
-            .radio-inputs .radio .name::before {
-                content: "";
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background-color: transparent;
-                z-index: -1; /* Đảm bảo nền nằm dưới văn bản */
-                transition: background-color 0.3s ease-in-out; /* Hiệu ứng chuyển đổi nền */
-            }
+    /* Hiệu ứng hover cho nút */
+    #scrollToTopBtn:hover {
+        background-color: #028f68; /* Màu nền khi hover */
+    }
 
-            .radio-inputs .radio .name:hover::before {
-                background-color: rgba(43, 223, 70, 0.979); /* Màu nền khi hover */
-            }
-
-        .radio-inputs .radio input:checked + .name::before {
-            background-color: rgba(43, 223, 70, 0.979); /* Màu nền khi được chọn */
-        }
-
-        .radio-inputs .radio input:checked + .name {
-            font-weight: 600;
-        }
-
-        .radio-inputs .radio .name:hover {
-            color: #fff; /* Thay đổi màu chữ khi hover */
-        }
-
-
-
+    /* Kiểu icon bên trong nút */
+    #scrollToTopBtn i {
+        font-size: 20px;
+    }
 
 /*Footer*/
 
+.container_footer {
+    max-width: 80%;
+    margin: auto;
+}
+ul{
+    list-style:none;
+}
+/*.row{
+    display:flex;
+    flex-wrap:wrap;
+}*/
 
 
-.logo-footer {
+.footer {
+    background-color: #24262b;
+    padding: 70px 0;
+}
+
+.footer_col h4 {
+    font-size: 18px;
+    color: #ffffff;
+    text-transform: capitalize;
+    margin-bottom: 30px; /* Giảm margin-bottom để các li gần hơn với h4 */
+    font-weight: 500;
+    position: relative;
+}
+
+.footer_col h4::before{
+    content:'';
+    position:absolute;
+    left:0;
+    bottom:-10px;
+    background-color:#e91e63;
+    height:2px;
+    box-sizing:border-box;
+    width:50px;
+}
+
+.footer_col ul {
+    padding-left: 0; /* Đảm bảo không có padding bên trái */
+}
+    .footer_col ul li {
+        margin-bottom: 5px; /* Giảm khoảng cách giữa các li */
+    }
+.footer_col ul li a {
+    margin-bottom: 1px;
+    font-size: 16px;
+    text-transform: capitalize;
+    color: #ffffff;
+    font-weight: 300;
+    color: #bbbbbb;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.footer_col ul li a:hover{
+    color:#ffffff;
+    padding-left:10px;
+}
+
+.footer_col .social-links a{
+    display:inline-block;
+    height:40px;
+    width:40px;
+    background-color:rgba(255,255,255,0.2);
+    margin:0 10px 10px 0;
+    text-align:center;
+    line-height:40px;
+    border-radius:50%;
+    color:#ffffff;
+    transition:all 0.3s ease;
+}
+
+
+.footer_col .social-links a:hover{
+    color:#24262b;
+    background-color:#ffffff;
+}
+
+
+/*.logo-footer {
     width: 150px;
     height: auto;
     display: block;
     margin: 0 auto;
-}
+}*/
 /* From Uiverse.io by david-mohseni */
-.wrapper-footer {
+/*.wrapper-footer {
     display: inline-flex;
     list-style: none;
     height: 120px;
@@ -519,4 +895,8 @@ html {
 
     .icon.github .tooltip {
         background: #333333;
-    }
+    }*/
+
+
+
+
