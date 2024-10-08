@@ -191,14 +191,14 @@
 			function toggleDeleteButton() {
 				// Kiểm tra nếu có ít nhất một checkbox được chọn (bao gồm checkbox tổng)
 				if ($('.user-checkbox:checked').length > 0 || $('#selectAll').is(':checked')) {
-					$('#deleteButton').show(); // Hiển thị nút delete
+					$('#checkBoxBar').show(); // Hiển thị nút delete
 				} else {
-					$('#deleteButton').hide(); // Ẩn nút delete
+					$('#checkBoxBar').hide(); // Ẩn nút delete
 				}
 			}
 
 			// Ẩn nút delete mặc định khi trang load
-			$('#deleteButton').hide();
+			$('#checkBoxBar').hide();
 		});
 	</script>
 

@@ -1,0 +1,23 @@
+﻿/* Common styles for status circles */
+.status-circle {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 5px;
+    vertical-align: middle;
+}
+
+/* Colors for different statuses */
+.status-intransit {
+    background-color: #FFA500; /* Orange for InTransit */
+}
+
+.status-delivered {
+    background-color: #28A745; /* Green for Delivered */
+}
+
+.status-cancelled {
+    background-color: #DC3545; /* Red for Cancelled */
+}
+
