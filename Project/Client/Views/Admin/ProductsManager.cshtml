@@ -12,25 +12,199 @@
 <!-- Sidebar cho bộ lọc -->
 <div id="filterSidebar">
     <a href="javascript:void(0)" class="closebtn" onclick="closeSidebar()">&times;</a>
-    <h5 class="text-center mt-3">Filter products by</h5>
-    <ul>
-        <li><input type="checkbox" id="price"> <label for="price">Price</label></li>
-        <li><input type="checkbox" id="category"> <label for="category">Category</label></li>
-        <li><input type="checkbox" id="platform"> <label for="platform">Platform - OS</label></li>
-        <li><input type="checkbox" id="releaseDate"> <label for="releaseDate">Release Date</label></li>
-        <li><input type="checkbox" id="status"> <label for="status">Status</label></li>
-        @* 		<li><input type="checkbox" id="loaiKH"> <label for="loaiKH">Loại khách hàng</label></li>
-        <li><input type="checkbox" id="dienThoai"> <label for="dienThoai">Điện thoại</label></li>
-        <li><input type="checkbox" id="email"> <label for="email">Email</label></li>
-        <li><input type="checkbox" id="diaChiGD"> <label for="diaChiGD">Địa chỉ (Giao hàng)</label></li>
-        <li><input type="checkbox" id="diaChiHD"> <label for="diaChiHD">Địa chỉ (Hóa đơn)</label></li>
-        <li><input type="checkbox" id="moTa"> <label for="moTa">Mô tả</label></li>
-        <li><input type="checkbox" id="doanhSo"> <label for="doanhSo">Doanh số đơn hàng</label></li>
-        <li><input type="checkbox" id="congNo"> <label for="congNo">Công nợ</label></li>
-        <li><input type="checkbox" id="hanMuc"> <label for="hanMuc">Hạn mức nợ</label></li>
-        <li><input type="checkbox" id="doanhThu"> <label for="doanhThu">Doanh thu</label></li>
-        <li><input type="checkbox" id="chuSoHuu"> <label for="chuSoHuu">Chủ sở hữu</label></li> *@
-    </ul>
+    @* <h5 class="text-center mt-3">Filter products by</h5>
+    <ul class="mt-3">
+    <li class="m-2"><input type="checkbox" id="price"> <label for="price" class="fw-bold">Price</label></li>
+    <li class="m-2"><input type="checkbox" id="category"> <label for="category" class="fw-bold">Category</label></li>
+    <li class="m-2"><input type="checkbox" id="platform"> <label for="platform" class="fw-bold">Platform - OS</label></li>
+    <li class="m-2"><input type="checkbox" id="releaseDate"> <label for="releaseDate" class="fw-bold">Release Date</label></li>
+    <li class="m-2"><input type="checkbox" id="status"> <label for="status" class="fw-bold">Status</label></li>
+    <li><input type="checkbox" id="loaiKH"> <label for="loaiKH">Loại khách hàng</label></li>
+    <li><input type="checkbox" id="dienThoai"> <label for="dienThoai">Điện thoại</label></li>
+    <li><input type="checkbox" id="email"> <label for="email">Email</label></li>
+    <li><input type="checkbox" id="diaChiGD"> <label for="diaChiGD">Địa chỉ (Giao hàng)</label></li>
+    <li><input type="checkbox" id="diaChiHD"> <label for="diaChiHD">Địa chỉ (Hóa đơn)</label></li>
+    <li><input type="checkbox" id="moTa"> <label for="moTa">Mô tả</label></li>
+    <li><input type="checkbox" id="doanhSo"> <label for="doanhSo">Doanh số đơn hàng</label></li>
+    <li><input type="checkbox" id="congNo"> <label for="congNo">Công nợ</label></li>
+    <li><input type="checkbox" id="hanMuc"> <label for="hanMuc">Hạn mức nợ</label></li>
+    <li><input type="checkbox" id="doanhThu"> <label for="doanhThu">Doanh thu</label></li>
+    <li><input type="checkbox" id="chuSoHuu"> <label for="chuSoHuu">Chủ sở hữu</label></li>
+    </ul> *@
+    <!-- Sidebar Filter -->
+    <div class="m-3">
+        <h4 class="mt-3">Filters</h4>
+        <hr>
+        @* <div class="accordion" id="filterAccordion">
+        <!-- Genres Filter -->
+        <div class="accordion-item">
+        <h2 class="accordion-header" id="headingGenres">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseGenres" aria-expanded="false" aria-controls="collapseGenres">
+        Genres
+        </button>
+        </h2>
+        <div id="collapseGenres" class="accordion-collapse collapse" aria-labelledby="headingGenres" data-bs-parent="#filterAccordion">
+        <div class="accordion-body">
+        <div class="form-check">
+        <input class="form-check-input" type="checkbox" value="Action" id="actionCheck">
+        <label class="form-check-label" for="actionCheck">Action</label>
+        </div>
+        <div class="form-check">
+        <input class="form-check-input" type="checkbox" value="Adventure" id="adventureCheck">
+        <label class="form-check-label" for="adventureCheck">Adventure</label>
+        </div>
+        <div class="form-check">
+        <input class="form-check-input" type="checkbox" value="RPG" id="rpgCheck">
+        <label class="form-check-label" for="rpgCheck">RPG</label>
+        </div>
+        </div>
+        </div>
+        </div>
+
+        <!-- Categories Filter -->
+        <div class="accordion-item">
+        <h2 class="accordion-header" id="headingCategories">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCategories" aria-expanded="false" aria-controls="collapseCategories">
+        Categories
+        </button>
+        </h2>
+        <div id="collapseCategories" class="accordion-collapse collapse" aria-labelledby="headingCategories" data-bs-parent="#filterAccordion">
+        <div class="accordion-body">
+        <div class="form-check">
+        <input class="form-check-input" type="checkbox" value="Simulation" id="simulationCheck">
+        <label class="form-check-label" for="simulationCheck">Simulation</label>
+        </div>
+        <div class="form-check">
+        <input class="form-check-input" type="checkbox" value="Strategy" id="strategyCheck">
+        <label class="form-check-label" for="strategyCheck">Strategy</label>
+        </div>
+        <div class="form-check">
+        <input class="form-check-input" type="checkbox" value="Puzzle" id="puzzleCheck">
+        <label class="form-check-label" for="puzzleCheck">Puzzle</label>
+        </div>
+        </div>
+        </div>
+        </div>
+
+        <!-- Price Range Filter -->
+        <div class="accordion-item">
+        <h2 class="accordion-header" id="headingPriceRange">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePriceRange" aria-expanded="false" aria-controls="collapsePriceRange">
+        Price Range
+        </button>
+        </h2>
+        <div id="collapsePriceRange" class="accordion-collapse collapse" aria-labelledby="headingPriceRange" data-bs-parent="#filterAccordion">
+        <div class="accordion-body">
+        <input type="range" class="form-range" min="0" max="500" id="priceRange">
+        <p>Price: <span id="priceValue">$0 - $500</span></p>
+        </div>
+        </div>
+        </div>
+
+        <!-- Platform Filter -->
+        <div class="accordion-item">
+        <h2 class="accordion-header" id="headingPlatform">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePlatform" aria-expanded="false" aria-controls="collapsePlatform">
+        Platform
+        </button>
+        </h2>
+        <div id="collapsePlatform" class="accordion-collapse collapse" aria-labelledby="headingPlatform" data-bs-parent="#filterAccordion">
+        <div class="accordion-body">
+        <select class="form-select">
+        <option value="">Select Platform</option>
+        <option value="PC">PC</option>
+        <option value="PlayStation">PlayStation</option>
+        <option value="Xbox">Xbox</option>
+        <option value="Nintendo">Nintendo</option>
+        </select>
+        </div>
+        </div>
+        </div>
+
+        <!-- Release Date Filter -->
+        <div class="accordion-item">
+        <h2 class="accordion-header" id="headingReleaseDate">
+        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseReleaseDate" aria-expanded="true" aria-controls="collapseReleaseDate">
+        Release Date
+        </button>
+        </h2>
+        <div id="collapseReleaseDate" class="accordion-collapse collapse show" aria-labelledby="headingReleaseDate" data-bs-parent="#filterAccordion">
+        <div class="accordion-body">
+        <input type="date" class="form-control">
+        </div>
+        </div>
+        </div>
+
+        </div>
+
+        <button class="btn btn-primary w-100 mt-3">Apply Filters</button> *@
+
+        <!-- -------------------------------------------------------------------------------------------------------------------------------------------------- -->
+        <!-- Price Filter -->
+        <div class="mb-4">
+            <h5>Price</h5>
+            <input type="range" class="form-range" min="0" max="500" id="priceRange">
+            <p>Price: <span id="priceValue">$0 - $500</span></p>
+        </div>
+
+        <!-- Category Filter -->
+        <div class="mb-4">
+            <h5>Category</h5>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="Action" id="actionCheck">
+                <label class="form-check-label" for="actionCheck">Action</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="Adventure" id="adventureCheck">
+                <label class="form-check-label" for="adventureCheck">Adventure</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="RPG" id="rpgCheck">
+                <label class="form-check-label" for="rpgCheck">RPG</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="Simulation" id="simulationCheck">
+                <label class="form-check-label" for="simulationCheck">Simulation</label>
+            </div>
+        </div>
+
+        <!-- Platform Filter -->
+        <div class="mb-4">
+            <h5>Platform</h5>
+            <select class="form-select">
+                <option value="">Select Platform</option>
+                <option value="PC">PC</option>
+                <option value="PlayStation">PlayStation</option>
+                <option value="Xbox">Xbox</option>
+                <option value="Nintendo">Nintendo</option>
+            </select>
+        </div>
+
+        <!-- Release Date Filter -->
+        <div class="mb-4">
+            <h5>Release Date</h5>
+            <input type="date" class="form-control">
+        </div>
+
+        <!-- Status Filter -->
+        <div class="mb-4">
+            <h5>Status</h5>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="status" id="statusReleased" value="Released">
+                <label class="form-check-label" for="statusReleased">Released</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="status" id="statusUpcoming" value="Upcoming">
+                <label class="form-check-label" for="statusUpcoming">Upcoming</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="status" id="statusInDevelopment" value="In Development">
+                <label class="form-check-label" for="statusInDevelopment">In Development</label>
+            </div>
+        </div>
+
+        <button class="btn btn-primary w-100">Apply Filters</button>
+    </div>
 </div>
 
 <div class="container mt-4">
@@ -64,7 +238,7 @@
                 <th scope="col">Phone Number</th>
                 <th scope="col">Status</th>
                 <th scope="col">CreateAt</th>
-                @* <th scope="col">UpdateAt</th> *@
+                <th scope="col"></th>
             </tr>
         </thead>
         <tbody>
@@ -77,7 +251,7 @@
                 <td><span class="text-success">0933 808 235</span></td>
                 <td>Đã kích hoạt</td>
                 <td>10/05/2024</td>
-                @* <td>-</td> *@
+                <td><a href="" data-toggle="modal" data-target="#modalProduct"><i class="fa-regular fa-pen-to-square"></i></a></td>
             </tr>
             <tr>
                 <td><input type="checkbox" class="user-checkbox"></td>
@@ -88,7 +262,7 @@
                 <td><span class="text-success">024 3747 4700</span></td>
                 <td>-</td>
                 <td>-</td>
-                @* <td>-</td> *@
+                <td><a href="" data-toggle="modal" data-target="#modalProduct"><i class="fa-regular fa-pen-to-square"></i></a></td>
             </tr>
             <!-- Thêm các dòng dữ liệu tương tự -->
         </tbody>
@@ -205,43 +379,47 @@
                             </div>
                             <div class="mb-2">
                                 <label class="form-label fw-bold fs-5">Details</label>
-                                <div class="mb-2">
-                                    <label class="form-label fw-bold fs-6">Description</label>
-                                    <div>
-                                        <textarea id="descriptionEditor"></textarea>
+                                <div class="m-2">
+                                    <div class="mb-2">
+                                        <label class="form-label fw-bold fs-6">Description</label>
+                                        <div>
+                                            <textarea id="descriptionEditor"></textarea>
+                                        </div>
+                                        <span class="text-danger"></span>
                                     </div>
-                                    <span class="text-danger"></span>
-                                </div>
-                                <div class="mb-2">
-                                    <label class="form-label fw-bold fs-6">Category</label>
-                                    <div>
-                                        <select id="dropdown" class="form-select">
-                                            <option value="default">Please choose an option</option>
-                                            <option value="option1">Option 1</option>
-                                            <option value="option2">Option 2</option>
-                                            <option value="option3">Option 3</option>
-                                        </select>
+                                    <div class="mb-2">
+                                        <label class="form-label fw-bold fs-6">Category</label>
+                                        <div>
+                                            <select id="dropdown" class="form-select">
+                                                <option value="default">Please choose an option</option>
+                                                <option value="option1">Option 1</option>
+                                                <option value="option2">Option 2</option>
+                                                <option value="option3">Option 3</option>
+                                            </select>
+                                        </div>
+                                        <span class="text-danger"></span>
                                     </div>
-                                    <span class="text-danger"></span>
+                                    <div class="mb-2">
+                                        <label class="form-label fw-bold fs-6">Status</label>
+                                        <div>
+                                            <select id="dropdown" class="form-select">
+                                                <option value="default">Please choose an option</option>
+                                                <option value="option1">Option 1</option>
+                                                <option value="option2">Option 2</option>
+                                                <option value="option3">Option 3</option>
+                                            </select>
+                                        </div>
+                                        <span class="text-danger"></span>
+                                    </div>
                                 </div>
                             </div>
-                            @* <div class="mb-2">
-                                <label class="form-label">Email address</label>
-                                <input type="text" class="form-control">
-                                <span class="text-danger"></span>
-                            </div>
-                            <div class="mb-2">
-                                <label class="form-label">Email address</label>
-                                <input type="text" class="form-control">
-                                <span class="text-danger"></span>
-                            </div> *@
                         </div>
-                        <div class="col">
+                        <div class="col-4">
                             <div class="text-center">
                                 <div>
                                     <img src="~/image/avatar.jpeg" alt="Alternate Text" style="width:200px; height200px;" />
                                 </div>
-                                <a class="btn btn-outline-dark align-content-center mt-2 w-50">Upload Cover Image</a>
+                                <a class="btn btn-outline-dark align-content-center mt-2 w-100">Upload Cover Image</a>
                             </div>
                         </div>
                     </div>
@@ -320,21 +498,21 @@
 
             // Hiển thị thông tin file
             const fileInfo = `
-                <strong>File Name:</strong> ${file.name} <br>
-                <strong>File Size:</strong> ${(file.size / 1024 / 1024).toFixed(2)} MB <br>
-                <strong>File Type:</strong> ${file.type}
-                <div class="m-2">
-                    <label class="p-2 border border-1">
-                        <input type="radio" value="Windows" name="Platforms" /> Windows
-                    </label>
-                    <label class="p-2 border border-1">
-                        <input type="radio" value="MacOS" name="Platforms" /> MacOS
-                    </label>
-                    <label class="p-2 border border-1">
-                        <input type="radio" value="Linux" name="Platforms" /> Linux
-                    </label>
-                </div>
-            `;
+                            <strong>File Name:</strong> ${file.name} <br>
+                            <strong>File Size:</strong> ${(file.size / 1024 / 1024).toFixed(2)} MB <br>
+                            <strong>File Type:</strong> ${file.type}
+                            <div class="m-2">
+                                <label class="p-2 border border-1">
+                                    <input type="radio" value="Windows" name="Platforms" /> Windows
+                                </label>
+                                <label class="p-2 border border-1">
+                                    <input type="radio" value="MacOS" name="Platforms" /> MacOS
+                                </label>
+                                <label class="p-2 border border-1">
+                                    <input type="radio" value="Linux" name="Platforms" /> Linux
+                                </label>
+                            </div>
+                        `;
             document.getElementById('fileInfo').innerHTML = fileInfo;
         }
     }
