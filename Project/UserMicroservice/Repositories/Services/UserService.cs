@@ -4,6 +4,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.IdentityModel.Tokens;
 using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
+using MongoDB.Bson.Serialization.Serializers;
+using MongoDB.EntityFrameworkCore.Storage.ValueConversion;
 using UserMicroservice.DBContexts;
 using UserMicroservice.DBContexts.Entities;
 using UserMicroservice.Models;
@@ -35,6 +38,10 @@ namespace UserMicroservice.Repositories.RepositoryService
                 if (response.IsSuccess)
                 {
                     response = await _helper.IsUserNotExist(user.Username, user.Email);
+                    user.Id = ObjectId.GenerateNewId().ToString();
+
+                    // Còn thiếu tạo mật khẩu ngẫu nhiên, mã hóa mật khẩu, gửi email xác thực và kích hoạt tài khoản.
+
                     if (response.IsSuccess)
                     {
                         var newUser = _mapper.Map<User>(user);
@@ -64,9 +71,11 @@ namespace UserMicroservice.Repositories.RepositoryService
             return new ResponseModel { Result = _mapper.Map<ICollection<UserModel>>(users) };
         }
 
-        public Task<ResponseModel> GetUser(Guid id)
+        public async Task<ResponseModel> GetUser(string id)
         {
-            throw new NotImplementedException();
+
+            var user = await _context.Users.FindAsync(id);
+            return new ResponseModel { Result = _mapper.Map<UserModel>(user) };
         }
 
         public Task<ResponseModel> UpdateUser(UserModel user)
@@ -105,7 +114,7 @@ namespace UserMicroservice.Repositories.RepositoryService
                     if (users.Count == 0)
                     {
                         response.Message = $"'{query}' not found";
-                        response.Result = null;
+                        response.Result = null!;
                     }
 
                     else
