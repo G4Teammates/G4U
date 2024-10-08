@@ -26,7 +26,7 @@ namespace ProductMicroService.Controllers
             return Ok(Product);
         }
         [HttpGet]
-        public ActionResult Get1(Guid id)
+        public ActionResult Get1(string id)
         {
             var Products = _context.Products.ToList();
             var Product = Products.Find(u => u.Id == id);

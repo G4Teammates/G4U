@@ -18,6 +18,7 @@ namespace UserMicroService.Configure
             //Register DI here ⬇️
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IHelperService, HelperService>();
+            services.AddScoped<IAuthenticationService,AuthenticationService>();
 
             //Register DI here ⬆️
 

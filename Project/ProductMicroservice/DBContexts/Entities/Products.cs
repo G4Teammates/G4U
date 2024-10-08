@@ -96,15 +96,6 @@ namespace ProductMicroservice.DBContexts.Entities
         public float Discount { get; set; }
 
         /// <summary>
-        /// The platform where the product is available (e.g., Window, Android, WebGL,...).
-        /// <br/>
-        /// Nền tảng nơi sản phẩm có sẵn (ví dụ: Window, Android, WebGL,...).
-        /// </summary>
-        [BsonElement("platform")]
-        public PlatformType Platform { get; set; }
-
-
-        /// <summary>
         /// A collection of related links associated with the product or content.
         /// <br/>
         /// Tập hợp các liên kết liên quan đến sản phẩm hoặc nội dung.
