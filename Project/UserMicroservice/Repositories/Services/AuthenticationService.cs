@@ -3,7 +3,9 @@ using BCrypt.Net;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using MongoDB.Bson;
 using UserMicroservice.DBContexts;
+using UserMicroservice.DBContexts.Entities;
 using UserMicroservice.Models;
 using UserMicroservice.Repositories.Interfaces;
 using UserMicroservice.Repositories.IRepositories;
@@ -18,8 +20,8 @@ namespace UserMicroservice.Repositories.Services
         private readonly IHelperService _helper;
         private readonly IMapper _mapper;
         public AuthenticationService(
-            UserDbContext context, 
-            IUserService userService, 
+            UserDbContext context,
+            IUserService userService,
             IHelperService helper,
             IMapper mapper
             )
@@ -39,9 +41,9 @@ namespace UserMicroservice.Repositories.Services
 
         public async Task<ResponseModel> LoginAsync(LoginRequestModel loginRequestModel)
         {
+            loginRequestModel.UsernameOrEmail=loginRequestModel.UsernameOrEmail.ToUpper();
             var response = new ResponseModel();
 
-            // Kiểm tra nếu `loginRequestModel` là null
             if (loginRequestModel == null)
             {
                 return new ResponseModel
@@ -53,12 +55,10 @@ namespace UserMicroservice.Repositories.Services
 
             try
             {
-                // Tìm người dùng dựa trên Username hoặc Email
-                var user = await _context.Users.FirstOrDefaultAsync(x =>
+                var user = await _context.Users.SingleOrDefaultAsync(x =>
                     x.NormalizedUsername == loginRequestModel.UsernameOrEmail ||
                     x.NormalizedEmail == loginRequestModel.UsernameOrEmail);
 
-                // Kiểm tra nếu người dùng không tồn tại
                 if (user == null)
                 {
                     return new ResponseModel
@@ -69,15 +69,15 @@ namespace UserMicroservice.Repositories.Services
                 }
 
                 // Xác minh mật khẩu
-                //bool isPasswordCorrect = BCrypt.Net.BCrypt.Verify(loginRequestModel.Password, user.PasswordHash);
-                //if (!isPasswordCorrect)
-                //{
-                //    return new ResponseModel
-                //    {
-                //        IsSuccess = false,
-                //        Message = "Username or password is incorrect"
-                //    };
-                //}
+                bool isPasswordCorrect = BCrypt.Net.BCrypt.Verify(loginRequestModel.Password, user.PasswordHash);
+                if (!isPasswordCorrect)
+                {
+                    return new ResponseModel
+                    {
+                        IsSuccess = false,
+                        Message = "Username or password is incorrect"
+                    }; 
+                }
 
                 // Tạo JWT Token
                 string token = _helper.GenerateJwtAsync(user);
@@ -115,9 +115,38 @@ namespace UserMicroservice.Repositories.Services
             throw new NotImplementedException();
         }
 
-        public Task<ResponseModel> SignUpAsync()
+        public async Task<ResponseModel> RegisterAsync(RegisterRequestModel registerRequestModel)
         {
-            throw new NotImplementedException();
+            var response = new ResponseModel();
+
+            if (registerRequestModel == null)
+            {
+                return new ResponseModel
+                {
+                    IsSuccess = false,
+                    Message = "RegisterRequestModel is null"
+                };
+            }
+
+            try
+            {
+                // Kiểm tra xem username và email đã tồn tại chưa
+                var isUserExist = await _helper.IsUserNotExist(registerRequestModel.Username, registerRequestModel.Email);
+                if (!isUserExist.IsSuccess)
+                {
+                    return isUserExist;
+                }
+                UserModel userModel = _mapper.Map<UserModel>(registerRequestModel);
+                userModel.Id = ObjectId.GenerateNewId().ToString();
+                response.Result = await _userService.AddUserAsync(userModel,false,registerRequestModel.Password);
+
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+            }
+            return response;
         }
     }
 }
