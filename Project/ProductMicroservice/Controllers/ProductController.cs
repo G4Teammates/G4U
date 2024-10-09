@@ -1,8 +1,12 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProductMicroservice.DBContexts;
 using ProductMicroservice.DBContexts.Entities;
+using ProductMicroservice.DBContexts.Enum;
 using ProductMicroservice.Models;
+using ProductMicroservice.Models.DTO;
+using ProductMicroservice.Repostories;
 
 namespace ProductMicroService.Controllers
 {
@@ -10,28 +14,153 @@ namespace ProductMicroService.Controllers
     [Route("api/[controller]")]
     public class ProductController : ControllerBase
     {
-        private readonly ProductDbContext _context;
-        private readonly IMapper _mapper;
-        public ProductController(ProductDbContext context, IMapper mapper)
+        private ResponseDTO _responseDTO;
+        private readonly IRepoProduct _repoProduct;
+        public ProductController(IRepoProduct repoProduct)
         {
-            _context = context;
-            _mapper = mapper;
+            _responseDTO = new ResponseDTO();
+            _repoProduct = repoProduct;
         }
 
         [HttpPost]
-        public ActionResult ActionResult(ProductModel Product)
+        [RequestSizeLimit(60 * 1024 * 1024)] // 50MB
+        [RequestFormLimits(MultipartBodyLengthLimit = 60 * 1024 * 1024)] // Đặt giới hạn cho form multipart
+        public async Task<IActionResult> CreateProduct(
+                                [FromForm] string name,
+                                [FromForm] string description,
+                                [FromForm] decimal price,
+                                [FromForm] float discount,
+                                [FromForm] List<string> categories,
+                                [FromForm] int platform,    
+                                [FromForm] int status,
+                                [FromForm] List<IFormFile> imageFiles,
+                                [FromForm] ScanFileRequest request
+                                )
         {
-            _context.Add(_mapper.Map<ProductModel, Products>(Product));
-            _context.SaveChanges();
-            return Ok(Product);
-        }
-        [HttpGet]
-        public ActionResult Get1(string id)
-        {
-            var Products = _context.Products.ToList();
-            var Product = Products.Find(u => u.Id == id);
-            return Ok(Product);
+            try
+            {
+                // Chuyển đổi danh sách chuỗi thành danh sách CategoryModel
+                var categoryModels = categories.Select(c => new CategoryModel { CategoryId = c }).ToList();
+                var gameFile = request.gameFile;
+                var product = new CreateProductModel
+                {
+                    Name = name,
+                    Description = description,
+                    Price = price,
+                    Discount = discount,
+                    Categories = categoryModels,
+                    Platform = (PlatformType)platform,
+                    Status = (ProductStatus)status
+
+                };
+
+                var newProduct = await _repoProduct.ModerateImages(imageFiles, product, gameFile);
+                _responseDTO.Result = newProduct;
+                return Ok(_responseDTO);
+            }
+            catch (Exception ex)
+            {
+                _responseDTO.IsSuccess = false;
+                _responseDTO.Message = "An error occurred while creating the Product: " + ex.Message;
+                return StatusCode(500, _responseDTO);
+            }
         }
 
+
+
+
+
+
+        [HttpGet("{id?}")]
+        public IActionResult GetById([FromRoute] string id)
+        {
+            try
+            {
+                var Products = _repoProduct.GetById(id);
+                /* Products.Interactions.NumberOfViews++;
+                 _repoProduct.UpdateProduct(Products);*/
+                _responseDTO.Result = Products;
+                return Ok(_responseDTO);
+            }
+            catch (Exception ex)
+            {
+                _responseDTO.IsSuccess = false;
+                _responseDTO.Message = "An error occurred while getting the Products: " + ex.Message;
+                return StatusCode(500, _responseDTO); // Trả về mã lỗi 500 với thông báo lỗi chi tiết
+            }
+        }
+
+
+        [HttpGet]
+
+        public IActionResult GetAll()
+        {
+            try
+            {
+                var Products = _repoProduct.Products;
+                _responseDTO.Result = Products;
+                return Ok(_responseDTO);
+            }
+            catch (Exception ex)
+            {
+                _responseDTO.IsSuccess = false;
+                _responseDTO.Message = "An error occurred while getting the Products: " + ex.Message;
+                return StatusCode(500, _responseDTO); // Trả về mã lỗi 500 với thông báo lỗi chi tiết
+            }
+        }
+
+
+        [HttpDelete("{id?}")]
+        public IActionResult DeleteSanPham([FromRoute] string id)
+
+        {
+
+            try
+            {
+                _repoProduct.DeleteProduct(id);
+                _responseDTO.Result = null;
+                return Ok(_responseDTO);
+            }
+            catch (Exception ex)
+            {
+                _responseDTO.IsSuccess = false;
+                _responseDTO.Message = "An error occurred while getting the Products: " + ex.Message;
+                return StatusCode(500, _responseDTO); // Trả về mã lỗi 500 với thông báo lỗi chi tiết
+            }
+        }
+
+        [HttpPut]
+        public IActionResult UpdateProduct([FromBody] UpdateProductModel Product)
+        {
+            try
+            {
+                var upProduct = _repoProduct.UpdateProduct(Product);
+                _responseDTO.Result = upProduct;
+                return Ok(_responseDTO);
+            }
+            catch (Exception ex)
+            {
+                _responseDTO.IsSuccess = false;
+                _responseDTO.Message = "An error occurred while creating the Products: " + ex.Message;
+                return StatusCode(500, _responseDTO); // Trả về mã lỗi 500 với thông báo lỗi chi tiết
+            }
+        }
+
+        [HttpGet("sort={sort}")]
+        public IActionResult Sort([FromRoute] string sort)
+        {
+            try
+            {
+                var SanPhams = _repoProduct.Sort(sort);
+                _responseDTO.Result = SanPhams;
+                return Ok(_responseDTO);
+            }
+            catch (Exception ex)
+            {
+                _responseDTO.IsSuccess = false;
+                _responseDTO.Message = "An error occurred while creating the Categrori: " + ex.Message;
+                return StatusCode(500, _responseDTO); // Trả về mã lỗi 500 với thông báo lỗi chi tiết
+            }
+        }
     }
 }

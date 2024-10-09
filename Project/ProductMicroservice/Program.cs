@@ -2,6 +2,7 @@ using Azure.Identity;
 using Microsoft.EntityFrameworkCore;
 using ProductMicroservice.Configure;
 using ProductMicroservice.DBContexts;
+using ProductMicroservice.Repostories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,7 +16,7 @@ builder.Services.AddSwaggerGen();
 builder.Configuration.AddAzureKeyVault(new Uri("https://duantotnghiep.vault.azure.net/"),
     new DefaultAzureCredential());
 builder.Services.AddStartupService(builder.Configuration);
-
+builder.Services.AddScoped<IRepoProduct, RepoProduct>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
