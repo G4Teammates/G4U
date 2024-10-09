@@ -1,4 +1,5 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 using ProductMicroservice.DBContexts.Enum;
 using System.ComponentModel.DataAnnotations;
 
@@ -11,6 +12,7 @@ namespace ProductMicroservice.Models
     public class LinkModel
     {
 
+        public string Id { get; set; } = ObjectId.GenerateNewId().ToString();
         /// <summary>
         /// The name of the link provider (social media or other platforms such as Facebook, Google Drive, TerraBox, GitHub, etc.).<br/>
         /// Tên của nhà cung cấp liên kết (mạng xã hội hoặc các nền tảng khác như Facebook, Google Drive, TerraBox, GitHub, v.v.).
@@ -42,7 +44,7 @@ namespace ProductMicroservice.Models
         /// <summary>
         /// Represents the censorship information related to the product or content.
         /// <br/>
-        /// Đại diện cho thông tin kiểm duyệt liên quan đến sản phẩm hoặc nội dung.
+        /// Đại diện cho thông tin kiểm duyệt liênnn quan đến sản phẩm hoặc nội dung.
         /// </summary>
         public required CensorshipModel Censorship { get; set; }
 
