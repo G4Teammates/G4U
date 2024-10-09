@@ -38,6 +38,14 @@ namespace ProductMicroservice.DBContexts.Entities
         public LinkType Type { get; set; }
 
         /// <summary>
+        /// The platform where the product is available (e.g., Window, Android, WebGL,...).
+        /// <br/>
+        /// Nền tảng nơi sản phẩm có sẵn (ví dụ: Window, Android, WebGL,...).
+        /// </summary>
+        [BsonElement("platform")]
+        public PlatformType Platform { get; set; }
+
+        /// <summary>
         /// The status of the link (Active, Inactive, Block, Deleted).<br/>
         /// Trạng thái của liên kết (Kích hoạt, Không kích hoạt, Bị chặn, Đã xóa).
         /// </summary>

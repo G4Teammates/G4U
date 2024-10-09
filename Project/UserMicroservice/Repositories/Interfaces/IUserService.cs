@@ -1,4 +1,5 @@
-﻿using UserMicroservice.DBContexts.Entities;
+﻿using MongoDB.Bson;
+using UserMicroservice.DBContexts.Entities;
 using UserMicroservice.Models;
 using UserMicroService.Models;
 namespace UserMicroservice.Repositories.IRepositories
@@ -6,10 +7,10 @@ namespace UserMicroservice.Repositories.IRepositories
     public interface IUserService
     {
         Task<ResponseModel> GetAll();
-        Task<ResponseModel> GetUser(Guid id);
-        Task<ResponseModel> AddUser(UserModel user);
+        Task<ResponseModel> GetUser(string id);
+        Task<ResponseModel> AddUserAsync(UserModel user, bool isAdmin, string? passsword = null);
         Task<ResponseModel> UpdateUser(UserModel user);
-        Task<ResponseModel> DeleteUser(Guid id);
+        Task<ResponseModel> DeleteUser(string id);
         Task<ResponseModel>? FindUsers(string? query);
 
 

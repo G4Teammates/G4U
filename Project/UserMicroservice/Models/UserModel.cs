@@ -15,7 +15,7 @@ namespace UserMicroService.Models
         /// <br/>
         /// Định danh duy nhất cho người dùng.
         /// </summary>
-        public string Id { get; } = ObjectId.GenerateNewId().ToString();
+        public required string Id { get; set; }
 
         /// <summary>
         /// The username of the user.

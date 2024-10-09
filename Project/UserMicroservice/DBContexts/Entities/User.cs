@@ -48,7 +48,7 @@ namespace UserMicroservice.DBContexts.Entities
         /// </summary>
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public required string Id { get; set; }
+        public string Id { get; set; } = ObjectId.GenerateNewId().ToString();
 
         /// <summary>
         /// The username of the user.

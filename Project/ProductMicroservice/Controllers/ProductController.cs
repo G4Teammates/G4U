@@ -92,6 +92,7 @@ namespace ProductMicroService.Controllers
 
 
         [HttpGet]
+
         public IActionResult GetAll()
         {
             try
@@ -111,6 +112,7 @@ namespace ProductMicroService.Controllers
 
         [HttpDelete("{id?}")]
         public IActionResult DeleteSanPham([FromRoute] string id)
+
         {
 
             try

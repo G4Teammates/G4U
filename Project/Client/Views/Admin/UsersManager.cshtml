@@ -2,10 +2,10 @@
 	Layout = "_LayoutAdmin";
 }
 
-<div>
-	<h1>User Manager</h1>
-
-	@* 	<div class="bg-light">
+<div class="pt-3 pb-4">
+	<span class="titleManager bg-success py-3 px-5 rounded-4 fw-bold text-white">Users Manager</span>
+</div>
+@* 	<div class="bg-light">
 	<table class="tableinfo table text-center">
 	<tbody>
 	<tr>
@@ -44,114 +44,114 @@
 	</table>
 	</div> *@
 
-	<div class="container mt-4">
-		<!-- Thanh tìm kiếm và nút Thêm -->
-		<div class="d-flex justify-content-between mb-3">
-			<div class="col-md-4">
-				<input class="form-control" type="text" placeholder="Tìm kiếm theo..." />
-			</div>
-			<div class="w-100">
-				<div class="text-end">
-					<span class="dropdown">
-						<button class="btn btn-secondary dropdown-toggle" type="button" style="width:100px">
-							Status
-						</button>
-						<span class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-							<a class="dropdown-item" href="#">Action</a>
-							<a class="dropdown-item" href="#">Another action</a>
-							<a class="dropdown-item" href="#">Something else here</a>
-						</span>
-					</span>
-
-					<span class="dropdown">
-						<button class="btn btn-secondary dropdown-toggle" type="button">
-							email confirm
-						</button>
-						<span class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-							<a class="dropdown-item" href="#">Action</a>
-							<a class="dropdown-item" href="#">Another action</a>
-							<a class="dropdown-item" href="#">Something else here</a>
-						</span>
-					</span>
-
-					<button class="btn btn-success" data-toggle="modal" data-target="#modalUser">+ Thêm</button>
-				</div>
-			</div>
+<div class="container mt-4">
+	<!-- Thanh tìm kiếm và nút Thêm -->
+	<div class="d-flex justify-content-between mb-3">
+		<div class="col-md-4">
+			<input class="form-control" type="text" placeholder="Search by..." />
 		</div>
+		<div class="w-100">
+			<div class="text-end">
+				<span class="dropdown">
+					<button class="btn btn-secondary dropdown-toggle" type="button" style="width:100px">
+						Status
+					</button>
+					<span class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+						<a class="dropdown-item" href="#">Action</a>
+						<a class="dropdown-item" href="#">Another action</a>
+						<a class="dropdown-item" href="#">Something else here</a>
+					</span>
+				</span>
 
-		<!-- Bảng thông tin -->
-		<div class="text-end m-2">
-			<a id="deleteButton" class="text-danger" href="" style="display:none">
-				<i class="fas fa-trash"></i>
-			</a>
-		</div>
-		<table class="table table-bordered table-hover align-middle">
-			<thead class="table-light">
-				<tr>
-					<th scope="col"><input type="checkbox" id="selectAll"></th>
-					<th scope="col">Avatar</th>
-					<th scope="col">User Name</th>
-					<th scope="col">Display Name</th>
-					<th scope="col">Email</th>
-					<th scope="col">Phone Number</th>
-					<th scope="col">Status</th>
-					<th scope="col">CreateAt</th>
-					<th scope="col"></th>
-					@* <th scope="col">UpdateAt</th> *@
-				</tr>
-			</thead>
-			<tbody>
-				<tr>
-					<td><input type="checkbox" class="user-checkbox"></td>
-					<td><img src="~/Image/avatar.jpeg" alt="Alternate Text" style="width: 80px; height: 80px" /></td>
-					<td>tuanlx123</td>
-					<td>Tuan Dep Trai</td>
-					<td>tuanpham147369@gmail.com</td>
-					<td><span class="text-success">0933 808 235</span></td>
-					<td>Đã kích hoạt</td>
-					<td>10/05/2024</td>
-					<td><span><i class="fa-regular fa-pen-to-square"></i></span></td>
-				</tr>
-				<tr>
-					<td><input type="checkbox" class="user-checkbox"></td>
-					<td>-</td>
-					<td>-</td>
-					<td>Quá ok tụi anh q...</td>
-					<td>-</td>
-					<td><span class="text-success">024 3747 4700</span></td>
-					<td>-</td>
-					<td>-</td>
-					@* <td>-</td> *@
-				</tr>
-				<!-- Thêm các dòng dữ liệu tương tự -->
-			</tbody>
-		</table>
+				<span class="dropdown">
+					<button class="btn btn-secondary dropdown-toggle" type="button">
+						email confirm
+					</button>
+					<span class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+						<a class="dropdown-item" href="#">Action</a>
+						<a class="dropdown-item" href="#">Another action</a>
+						<a class="dropdown-item" href="#">Something else here</a>
+					</span>
+				</span>
 
-		<!-- Phân trang -->
-		<div class="d-flex justify-content-between mt-3">
-			<div>Tổng số: 3,145</div>
-			<div>
-				<select class="form-select form-select-sm w-auto d-inline-block">
-					<option>20 Bản ghi trên trang</option>
-					<option>50 Bản ghi trên trang</option>
-					<option>100 Bản ghi trên trang</option>
-				</select>
-				<nav aria-label="Page navigation example" class="d-inline-block">
-					<ul class="pagination pagination-sm mb-0">
-						<li class="page-item disabled">
-							<a class="page-link" href="#">1 đến 20</a>
-						</li>
-						<li class="page-item"><a class="page-link" href="#">1</a></li>
-						<li class="page-item"><a class="page-link" href="#">2</a></li>
-						<li class="page-item"><a class="page-link" href="#">3</a></li>
-						<li class="page-item"><a class="page-link" href="#">></a></li>
-					</ul>
-				</nav>
+				<button class="btn btn-success" data-toggle="modal" data-target="#modalUser">+ Add</button>
 			</div>
 		</div>
 	</div>
 
+	<!-- Bảng thông tin -->
+	<div id="checkBoxBar" style="display:none">
+		<div class="text-end m-2">
+			@* <button class="btn btn-success mx-2 w-100">Public All</button> *@
+			<a class="text-danger mx-2" href="" data-toggle="modal" data-target="#deleteProductModal">
+				<i class="fas fa-trash"></i>
+			</a>
+		</div>
+	</div>
+	<table class="table table-bordered table-hover align-middle">
+		<thead class="table-light">
+			<tr>
+				<th scope="col"><input type="checkbox" id="selectAll"></th>
+				<th scope="col">Avatar</th>
+				<th scope="col">User Name</th>
+				<th scope="col">Display Name</th>
+				<th scope="col">Email</th>
+				<th scope="col">Phone Number</th>
+				<th scope="col">Status</th>
+				<th scope="col">CreateAt</th>
+				<th scope="col"></th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td><input type="checkbox" class="user-checkbox"></td>
+				<td><img src="~/Image/avatar.jpeg" alt="Alternate Text" style="width: 80px; height: 80px" /></td>
+				<td>tuanlx123</td>
+				<td>Tuan Dep Trai</td>
+				<td>tuanpham147369@gmail.com</td>
+				<td><span class="text-success">0933 808 235</span></td>
+				<td>Đã kích hoạt</td>
+				<td>10/05/2024</td>
+				<td><span><i class="fa-regular fa-pen-to-square"></i></span></td>
+			</tr>
+			<tr>
+				<td><input type="checkbox" class="user-checkbox"></td>
+				<td>-</td>
+				<td>-</td>
+				<td>Quá ok tụi anh q...</td>
+				<td>-</td>
+				<td><span class="text-success">024 3747 4700</span></td>
+				<td>-</td>
+				<td>-</td>
+			</tr>
+			<!-- Thêm các dòng dữ liệu tương tự -->
+		</tbody>
+	</table>
+
+	<!-- Phân trang -->
+	<div class="d-flex justify-content-between mt-3">
+		<div>Total: 3,145</div>
+		<div>
+			<select class="form-select form-select-sm w-auto d-inline-block">
+				<option>20 records per page</option>
+				<option>50 records per page</option>
+				<option>100 records per page</option>
+			</select>
+			<nav aria-label="Page navigation example" class="d-inline-block">
+				<ul class="pagination pagination-sm mb-0">
+					<li class="page-item disabled">
+						<a class="page-link" href="#">1 to 20</a>
+					</li>
+					<li class="page-item"><a class="page-link" href="#">1</a></li>
+					<li class="page-item"><a class="page-link" href="#">2</a></li>
+					<li class="page-item"><a class="page-link" href="#">3</a></li>
+					<li class="page-item"><a class="page-link" href="#">></a></li>
+				</ul>
+			</nav>
+		</div>
+	</div>
 </div>
+
 
 
 

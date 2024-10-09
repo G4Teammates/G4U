@@ -30,3 +30,40 @@
         list-style-type: none;
         padding-left: 20px;
     }
+
+
+/* Custom styles for vertical tabs */
+.nav-tabs {
+    flex-direction: column;
+    align-items: flex-start; /* Align items to the left */
+}
+
+.nav-link {
+    border: none; /* Remove default borders */
+    border-radius: 0.25rem;
+    padding: 0.75rem 1.5rem;
+    margin-bottom: 0.5rem;
+    background-color: #f8f9fa; /* Default background color */
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+    .nav-link.active {
+        background-color: #28a745; /* Active background color */
+        color: white; /* Text color when active */
+        /*border-left: 4px solid #007bff;*/ /* Left border to indicate active state */
+    }
+
+    .nav-link:hover {
+        background-color: #e9ecef; /* Hover background color */
+        color: #28a745; /* Hover text color */
+    }
+
+/* Remove the border for the first column (td elements in the first column) */
+table tr td:first-child {
+    border: none;
+}
+
+/* Optional: Also remove border for th elements in the first column (header) */
+table tr th:first-child {
+    border: none;
+}

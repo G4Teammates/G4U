@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using UserMicroservice.Repositories.Interfaces;
 using UserMicroservice.Repositories.IRepositories;
-using UserMicroservice.Repositories.RepositoryService;
 using UserMicroservice.Repositories.Services;
 
 namespace UserMicroService.Configure
@@ -18,6 +17,7 @@ namespace UserMicroService.Configure
             //Register DI here ⬇️
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IHelperService, HelperService>();
+            services.AddScoped<IAuthenticationService,AuthenticationService>();
 
             //Register DI here ⬆️
 
