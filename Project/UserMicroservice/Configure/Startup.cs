@@ -51,17 +51,30 @@ namespace UserMicroService.Configure
                     ValidAudience = config["ApiSettings:JwtOptions:Audience"],
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["ApiSettings:JwtOptions:Secret"]!)),
                     ClockSkew = TimeSpan.Zero,
-                    LifetimeValidator = (before, expires, token, param) =>
-                    {
-                        return expires > DateTime.UtcNow;
-                    }
+                    RoleClaimType = ClaimTypes.Role
                 };
-            }).AddGoogle(googleOptions =>
-            {
-                googleOptions.ClientId = config["Authentication:Google:ClientId"]!;
-                googleOptions.ClientSecret = config["Authentication:Google:ClientSecret"]!;
-            })
-            ;
+            });
+
+
+            //services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(option => {
+            //    option.TokenValidationParameters = new TokenValidationParameters
+            //    {
+            //        ValidateIssuer = true,
+            //        ValidateAudience = true,
+            //        ValidateIssuerSigningKey = true,
+            //        ValidateLifetime = true,
+            //        ValidIssuer = config["ApiSettings:JwtOptions:Issuer"],
+            //        ValidAudience = config["ApiSettings:JwtOptions:Audience"],
+            //        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["ApiSettings:JwtOptions:Secret"]!)),
+            //        LifetimeValidator = (before, expires, token, param) =>
+            //        {
+            //            return expires > DateTime.UtcNow;
+            //        },
+            //        RoleClaimType = ClaimTypes.Role
+            //    };
+
+            //});
+
             #endregion
 
             #region Register Database

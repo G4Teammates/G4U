@@ -1,7 +1,22 @@
+﻿using Client.Configure;
+using Microsoft.AspNetCore.Authentication.Cookies;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+builder.Services.AddStartupService();
 builder.Services.AddControllersWithViews();
+builder.Services.AddRazorComponents();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddHttpClient();
+// Đăng ký thư viện
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddHttpClient();
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/login"; // Địa chỉ để người dùng được chuyển hướng khi không được xác thực
+        options.LogoutPath = "/logout"; // Địa chỉ để người dùng được chuyển hướng khi đăng xuất
+    });
 
 var app = builder.Build();
 
@@ -15,7 +30,7 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
+app.UseAntiforgery();
 app.UseRouting();
 
 app.UseAuthorization();

@@ -1,9 +1,9 @@
-﻿using AutoMapper;
-using UserMicroservice.Repositories.Interfaces;
-using UserMicroservice.Repositories.IRepositories;
-using UserMicroservice.Repositories.Services;
+﻿using Client.Repositories.Interfaces;
+using Client.Repositories.Interfaces.Authentication;
+using Client.Repositories.Services;
+using Client.Repositories.Services.AuthenticationService;
 
-namespace UserMicroService.Configure
+namespace Client.Configure
 {
     public static class DependencyInjection
     {
@@ -15,10 +15,9 @@ namespace UserMicroService.Configure
         public static IServiceCollection AddDependencyInjection(this IServiceCollection services)
         {
             //Register DI here ⬇️
-            services.AddScoped<IUserService, UserService>();
-            services.AddScoped<IHelperService, HelperService>();
-            services.AddScoped<IAuthenticationService,AuthenticationService>();
-
+            services.AddScoped<IAuthenticationService, AuthenticationService>();
+            services.AddScoped<IBaseService, BaseService>();
+            services.AddScoped<ITokenProvider, TokenProvider>();
             //Register DI here ⬆️
 
             return services;

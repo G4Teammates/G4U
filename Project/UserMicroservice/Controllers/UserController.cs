@@ -16,27 +16,17 @@ namespace UserMicroService.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class UserController : Controller
+    public class UserController(IAuthenService authenservice, IUserService userService) : ControllerBase
     {
-        private readonly UserDbContext _context;
-        private readonly IAuthenService _authenService;
-        private readonly IMapper _mapper;
-        private readonly IUserService _userService;
-        public UserController(UserDbContext context, IMapper mapper, IUserService userService, IAuthenService authenService)
-        {
-            _context = context;
-            _mapper = mapper;
-            _userService = userService;
-            _authenService = authenService;
-        }
+        private readonly IAuthenService _authenService = authenservice;
+        private readonly IUserService _userService = userService;
 
         [HttpPost("/create")]
         public async Task<ActionResult> Add([FromBody] UserModel user)
         {
-            ResponseModel response = new();
             try
             {
-                response = await _userService.AddUser(user);
+                ResponseModel response = await _userService.AddUserAsync(user, true);
                 if (response.IsSuccess)
                     return Ok(response);
                 return BadRequest(response);
@@ -48,14 +38,12 @@ namespace UserMicroService.Controllers
             }
         }
 
-        [Authorize]
         [HttpGet("/search")]
         public async Task<ActionResult> FindUsers([FromQuery] string? query)
         {
-            ResponseModel response = new();
             try
             {
-                response = await _userService.FindUsers(query);
+                ResponseModel response = await _userService.FindUsers(query)!;
                 if (response.IsSuccess)
                     return Ok(response);
                 return BadRequest(response);
@@ -68,14 +56,31 @@ namespace UserMicroService.Controllers
         }
 
 
-        [Authorize(Roles = "0,1,2,User,Admin")]
+        [Authorize(Roles = "User")]
         [HttpGet("/{id}")]
         public async Task<ActionResult> GetUser(string id)
         {
-            ResponseModel response = new();
             try
             {
-                response = await _userService.GetUser(id);
+                ResponseModel response = await _userService.GetUser(id);
+                if (response.IsSuccess)
+                    return Ok(response);
+                return BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                // Trả về lỗi 500 cho các lỗi chưa dự đoán
+                return StatusCode(500, new { message = "An unexpected error occurred. Detail" + ex.Message });
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpPost("/register")]
+        public async Task<ActionResult> Register([FromBody]RegisterRequestModel registerRequestModel)
+        {
+            try
+            {
+                ResponseModel response = await _authenService.RegisterAsync(registerRequestModel);
                 if (response.IsSuccess)
                     return Ok(response);
                 return BadRequest(response);
@@ -91,10 +96,9 @@ namespace UserMicroService.Controllers
         [HttpPost("/login")]
         public async Task<ActionResult> Login([FromBody]LoginRequestModel loginRequestModel)
         {
-            ResponseModel response = new();
             try
             {
-                response = await _authenService.LoginAsync(loginRequestModel);
+                ResponseModel response = await _authenService.LoginAsync(loginRequestModel);
                 if (response.IsSuccess)
                     return Ok(response);
                 return BadRequest(response);

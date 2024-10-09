@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace UserMicroservice.Models
+namespace Client.Models.AuthenModel
 {
     public class LoginRequestModel
     {
@@ -10,6 +10,7 @@ namespace UserMicroservice.Models
         public required string UsernameOrEmail { get; set; }
         [StringLength(64, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
         public required string Password { get; set; }
+
 
     }
 }
