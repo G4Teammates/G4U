@@ -11,28 +11,33 @@
             background-color: rgba(255, 255, 255, 0.9); /* Màu nền trắng nhẹ */
             border: 1px solid #90EE90; /* Xanh lá nhạt */
         }
-            /* Tùy chỉnh màu viền của các mục */
+
             .form-control:focus {
                 border-color: #32CD32; /* Xanh lá cây đậm khi focus */
                 box-shadow: none;
             }
-        /* Gạch ngang dưới mỗi nav-item khác biệt */
-        .custom-nav-item {
-            border-bottom: 2px solid #0f1113;
-            padding-bottom: 10px;
-        }
 
-            .custom-nav-item a {
+
+            .custom-nav-item button {
+                background-color: #f8f9fa; /* Màu xám mờ */
+                color: #6c757d; /* Màu chữ xám */
+                border: none;
+                border-radius: 10px;
                 margin-top: 2px;
+                width: 100%;
+                text-align: left;
+                padding: 10px;
             }
+
+                .custom-nav-item button:hover {
+                background-color: #198754;
+                color: white;
+                }
     </style>
 </head>
 <body>
-    <div class="main mt-5" style="max-width: 1150px;">
-        <!-- Điều chỉnh độ rộng và thêm margin-top -->
+    <div class="main mt-5 " style="max-width: 1150px;">
         <div class="row justify-content-center">
-            <!-- Căn giữa nội dung -->
-            <!-- Sidebar -->
             <div class="col-md-4 p-3">
                 <div class="d-flex align-items-center mb-3">
                     <img src="~/image/history-game-1.jpg" class="rounded me-3" alt="Avatar" style="width:70px; height:70px;" />
@@ -42,38 +47,37 @@
                     </div>
                 </div>
 
-                <!-- Button Edit Profile -->
                 <div class="d-grid mb-4">
                     <button class="btn btn-success fw-bold" type="button">
                         <i class="fas fa-edit me-2"></i>Edit Avatar
                     </button>
                 </div>
 
-                <ul class="nav flex-column nav-pills">
-                    <li class="custom-nav-item">
-                        <a class="nav-link text-black fw-bold" href="#">
+                <!-- Danh Muc -->
+                <div class="nav flex-column">
+                    <div class="custom-nav-item">
+                        <button type="button">
                             <i class="fas fa-user"></i> User information
-                        </a>
-                    </li>
-                    <li class="custom-nav-item">
-                        <a class="nav-link text-black fw-bold" href="#">
+                        </button>
+                    </div>
+                    <div class="custom-nav-item">
+                        <button type="button">
                             <i class="fas fa-info-circle"></i> Additional Information
-                        </a>
-                    </li>
-                    <li class="custom-nav-item">
-                        <a class="nav-link text-black fw-bold" href="#">
+                        </button>
+                    </div>
+                    <div class="custom-nav-item">
+                        <button type="button">
                             <i class="fas fa-lock"></i> Password and Security
-                        </a>
-                    </li>
-                    <li class="custom-nav-item">
-                        <a class="nav-link text-black fw-bold" href="#">
+                        </button>
+                    </div>
+                    <div class="custom-nav-item">
+                        <button type="button">
                             <i class="fas fa-heart"></i> Wishlist
-                        </a>
-                    </li>
-                </ul>
+                        </button>
+                    </div>
+                </div>
             </div>
 
-            <!-- Content -->
             <div class="col-md-8 p-4">
                 <h3 class="fw-bold text-success"><i class="fas fa-user"></i> USER INFORMATION</h3>
                 <form>
@@ -92,7 +96,6 @@
                     <div class="mb-3">
                         <input type="text" class="form-control text-danger" id="status" placeholder="Offline" readonly>
                     </div>
-                    <!-- Nút Cập Nhật -->
                     <button type="submit" class="btn btn-success fw-bold">
                         <i class="fas fa-save me-2"></i>Update
                     </button>
