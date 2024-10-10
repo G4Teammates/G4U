@@ -15,20 +15,13 @@ using UserMicroService.Models;
 
 namespace UserMicroservice.Repositories.Services
 {
-    public class HelperService : IHelperService
+    public class HelperService(UserDbContext context) : IHelperService
     {
-        private readonly JwtOptions _jwtOptions;
-        private readonly UserDbContext _context;
-        public HelperService(UserDbContext context, IOptions<JwtOptions> jwtOptions)
-        {
-            _context = context;
-            _jwtOptions = jwtOptions.Value;
-        }
-
+        private readonly UserDbContext _context = context;
 
         public string GenerateJwtAsync(User user)
         {
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.Secret));
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtOptions.Secret));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
             var claims = new[]
             {
@@ -39,8 +32,8 @@ namespace UserMicroservice.Repositories.Services
             };
 
             var token = new JwtSecurityToken(
-                issuer: _jwtOptions.Issuer,
-                audience: _jwtOptions.Audience,
+                issuer: JwtOptions.Issuer,
+                audience: JwtOptions.Audience,
                 claims,
                 expires: DateTime.Now.AddMinutes(120),
                 signingCredentials: credentials
@@ -48,8 +41,7 @@ namespace UserMicroservice.Repositories.Services
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-
-        public async Task<ResponseModel> IsUserNotExist(string username, string email)
+        public async Task<ResponseModel> IsUserNotExist(string username, string? email = null)
         {
             var response = new ResponseModel();
             response.Message = "Username and email are not exist in database. Ready to create new";
@@ -73,6 +65,7 @@ namespace UserMicroservice.Repositories.Services
             }
             return response;
         }
+
         public ResponseModel IsUserNotNull(User user)
         {
             var response = new ResponseModel();

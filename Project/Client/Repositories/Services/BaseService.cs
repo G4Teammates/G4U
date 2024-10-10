@@ -31,7 +31,7 @@ namespace Client.Repositories.Services
                     //message.Headers.Add("Authorization", $"Bearer {token}");
                 }
 
-                message.RequestUri = new Uri(requestDTO.Url);
+                message.RequestUri = new Uri(requestDTO.Url!);
                 if (requestDTO.Data != null)
                 {
                     message.Content = new StringContent(JsonConvert.SerializeObject(requestDTO.Data), Encoding.UTF8, "application/json");

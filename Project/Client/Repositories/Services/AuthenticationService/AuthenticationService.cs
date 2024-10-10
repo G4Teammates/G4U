@@ -8,7 +8,7 @@ namespace Client.Repositories.Services.AuthenticationService
     public class AuthenticationService(IBaseService baseService) : IAuthenticationService
     {
         readonly IBaseService _baseService = baseService;
-        readonly string _authenUrl = ApiUrl;
+        readonly string _authenUrl = ApiUrl + "api/user/";
         public Task<ResponseModel> ChangePasswordAsync(string username, string oldPassword, string newPassword)
         {
             throw new NotImplementedException();

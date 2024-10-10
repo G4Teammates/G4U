@@ -31,12 +31,10 @@ namespace UserMicroService.Configure
         public static IServiceCollection AddStartupService(this IServiceCollection services, IConfiguration config)
         {
             #region Register Authentication
-            JwtOptions jwtOptions = new JwtOptions
-            {
-                Secret = config["9"]!,
-                Issuer = config["10"]!,
-                Audience = config["11"]!
-            };
+            JwtOptions.Secret = config["9"]!;
+            JwtOptions.Issuer = config["10"]!;
+            JwtOptions.Audience = config["11"]!;
+
             services.AddAuthentication(options =>
             {
                 options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -52,9 +50,9 @@ namespace UserMicroService.Configure
                     ValidateAudience = true,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
-                    ValidIssuer = jwtOptions.Issuer,
-                    ValidAudience = jwtOptions.Audience,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.Secret)),
+                    ValidIssuer = JwtOptions.Issuer,
+                    ValidAudience = JwtOptions.Audience,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtOptions.Secret)),
                     ClockSkew = TimeSpan.Zero,
                     RoleClaimType = ClaimTypes.Role
                 };
