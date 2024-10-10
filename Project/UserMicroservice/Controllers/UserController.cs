@@ -21,7 +21,27 @@ namespace UserMicroService.Controllers
         private readonly IAuthenService _authenService = authenservice;
         private readonly IUserService _userService = userService;
 
-        [HttpPost("/create")]
+
+
+        [HttpGet]
+        public async Task<ActionResult> GetAll()
+        {
+            try
+            {
+                ResponseModel response = await _userService.GetAll();
+                if (response.IsSuccess)
+                    return Ok(response);
+                return BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                // Trả về lỗi 500 cho các lỗi chưa dự đoán
+                return StatusCode(500, new { message = "An unexpected error occurred. Detail" + ex.Message });
+            }
+        }
+
+
+        [HttpPost]
         public async Task<ActionResult> Add([FromBody] UserModel user)
         {
             try
@@ -38,7 +58,7 @@ namespace UserMicroService.Controllers
             }
         }
 
-        [HttpGet("/search")]
+        [HttpGet("search")]
         public async Task<ActionResult> FindUsers([FromQuery] string? query)
         {
             try
@@ -57,7 +77,7 @@ namespace UserMicroService.Controllers
 
 
         [Authorize(Roles = "User")]
-        [HttpGet("/{id}")]
+        [HttpGet("{id}")]
         public async Task<ActionResult> GetUser(string id)
         {
             try
@@ -75,7 +95,7 @@ namespace UserMicroService.Controllers
         }
 
         [AllowAnonymous]
-        [HttpPost("/register")]
+        [HttpPost("register")]
         public async Task<ActionResult> Register([FromBody]RegisterRequestModel registerRequestModel)
         {
             try
@@ -93,7 +113,7 @@ namespace UserMicroService.Controllers
         }
 
         [AllowAnonymous]
-        [HttpPost("/login")]
+        [HttpPost("login")]
         public async Task<ActionResult> Login([FromBody]LoginRequestModel loginRequestModel)
         {
             try

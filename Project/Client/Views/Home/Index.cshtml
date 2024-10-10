@@ -1,4 +1,12 @@
-﻿<div class="Image_Gallery">
+﻿@model Client.Controllers.UserController
+@{
+    if (ViewData["Login"] != null)
+    {
+        <h1>Hello, @(ViewData["Login"])</h1>
+    }
+}
+
+<div class="Image_Gallery">
     <div class="box">
         <span style="--i:1"><img src="~/image/history-game-1.jpg" /></span>
         <span style="--i:2"><img src="~/image/history-game-1.jpg" /></span>
@@ -130,7 +138,7 @@
         </div>
         <div class="col-3 col-sm-3 col-md-3 view-more-section">
             <button class="view-more-button">
-                <a href="">View More</a>
+                <a  href="">View More</a>
             </button>
         </div>
     </div>

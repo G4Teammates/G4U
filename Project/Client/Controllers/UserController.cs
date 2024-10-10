@@ -1,17 +1,24 @@
 ﻿using Client.Models.AuthenModel;
 using Client.Repositories.Interfaces.Authentication;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using UserMicroservice.Models;
 
 namespace Client.Controllers
 {
     public class UserController(IAuthenticationService authenService) : Controller
     {
         private readonly IAuthenticationService _authenService = authenService;
-
+        public static string? login;
+        [HttpGet]
         public IActionResult Index()
         {
-            return View();
+            ViewData["Login"] = login;
+            return View(login);
         }
+
+
 
         [HttpPost]
         public async Task<IActionResult> Login(LoginRequestModel loginModel)
@@ -19,8 +26,10 @@ namespace Client.Controllers
             if (ModelState.IsValid)
             {
                 var response = await _authenService.LoginAsync(loginModel);
+
                 if (response.IsSuccess)
-                { 
+                {
+                    login = loginModel.UsernameOrEmail;
                     return RedirectToAction("Index", "Home");
                 }
                 return RedirectToAction(nameof(Register), "User");
