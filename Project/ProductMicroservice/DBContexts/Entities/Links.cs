@@ -42,8 +42,8 @@ namespace ProductMicroservice.DBContexts.Entities
         /// <br/>
         /// Nền tảng nơi sản phẩm có sẵn (ví dụ: Window, Android, WebGL,...).
         /// </summary>
-        [BsonElement("platform")]
-        public PlatformType Platform { get; set; }
+        /*[BsonElement("platform")]
+        public PlatformType Platform { get; set; }*/
 
         /// <summary>
         /// The status of the link (Active, Inactive, Block, Deleted).<br/>

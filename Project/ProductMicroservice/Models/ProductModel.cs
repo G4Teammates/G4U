@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace ProductMicroservice.Models
 {
@@ -51,7 +52,7 @@ namespace ProductMicroservice.Models
         /// Số sản phẩm đã bán được.
         /// </summary>
         [Range(0, int.MaxValue, ErrorMessage = "The {0} must be greater or equal than {1}")]
-        public int Sold { get; set; }
+        public int Sold { get; set; } = 0;
 
         /// <summary>
         /// The number of views and likes the product has received. Default is 0.
@@ -108,7 +109,7 @@ namespace ProductMicroservice.Models
         /// <br/>
         /// Ngày và giờ khi sản phẩm được cập nhật lần cuối.
         /// </summary>
-        public DateTime UpdatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
         /// <summary>
         /// The identifier of the user who owns or created the product.

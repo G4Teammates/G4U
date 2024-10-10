@@ -12,6 +12,11 @@
     padding: 20px; /* Khoảng cách bên trong nội dung */
 }
 
+.navbaradmin {
+    margin-left: 250px; /* Để nội dung cách sidebar */
+    padding: 10px; /* Khoảng cách bên trong nội dung */
+}
+
 .nav-link {
     font-size: 18px;
     padding: 10px;

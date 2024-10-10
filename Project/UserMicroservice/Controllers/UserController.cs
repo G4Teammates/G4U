@@ -130,6 +130,51 @@ namespace UserMicroService.Controllers
             }
         }
 
+        //[Authorize(Roles = "Admin")]
+        [HttpDelete("/delete/{id}")]
+        public async Task<ActionResult> DeleteUser(string id)
+        {
+            try
+            {
+                ResponseModel response = await _userService.DeleteUser(id);
+                if (response.IsSuccess)
+                    return Ok(response);
+                return BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An unexpected error occurred. Detail: " + ex.Message });
+            }
+        }
+
+        // Phương thức cập nhật người dùng
+        [HttpPut("/{id}")]
+        public async Task<ActionResult> UpdateUser(string id, [FromBody] UserModel updatedUserModel)
+        {
+            // Kiểm tra xem ID trong URL có khớp với ID trong đối tượng được cập nhật không
+            if (id != updatedUserModel.Id)
+            {
+                return BadRequest("User ID mismatch.");
+            }
+
+            try
+            {
+                ResponseModel response = await _userService.UpdateUser(updatedUserModel);
+                if (response.IsSuccess)
+                    return Ok(response);
+                return BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An unexpected error occurred. Detail: " + ex.Message });
+            }
+        }
+
+
+
+
+
+
         //[HttpGet("find")]
         //public async Task<ActionResult> SearchAsync([FromQuery]SearchCriteria query)
         //{
