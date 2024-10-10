@@ -1,0 +1,175 @@
+﻿{
+  "Routes": [
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //                                                                                                                    //
+    //                                                PRODUCT                                                             //
+    //                                                                                                                    //
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+    //get all
+    {
+      "DownstreamPathTemplate": "/api/Product",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7159
+        }
+      ],
+      "UpstreamPathTemplate": "/Product",
+      "UpstreamHttpMethod": [ "Get" ]
+    },
+
+    //get by id
+    {
+      "DownstreamPathTemplate": "/api/Product/{id}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7159
+        }
+      ],
+      "UpstreamPathTemplate": "/Product/{id}",
+      "UpstreamHttpMethod": [ "Get" ]
+    },
+
+    //create
+    {
+      "DownstreamPathTemplate": "/api/Product",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7159
+        }
+      ],
+      "UpstreamPathTemplate": "/Product",
+      "UpstreamHttpMethod": [ "Post" ]
+    },
+
+    //update
+    {
+      "DownstreamPathTemplate": "/api/Product",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7159
+        }
+      ],
+      "UpstreamPathTemplate": "/Product",
+      "UpstreamHttpMethod": [ "Put" ]
+    },
+
+    //delete
+    {
+      "DownstreamPathTemplate": "/api/Product/{id}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7159
+        }
+      ],
+      "UpstreamPathTemplate": "/Product/{id}",
+      "UpstreamHttpMethod": [ "Delete" ]
+    },
+    //Sort
+    {
+      "DownstreamPathTemplate": "/api/Product/sort={sort}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7159
+        }
+      ],
+      "UpstreamPathTemplate": "/Product/sort={sort}",
+      "UpstreamHttpMethod": [ "Get" ]
+    },
+
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //                                                                                                                    //
+    //                                                User                                                                //
+    //                                                                                                                    //
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    //Search
+    {
+      "DownstreamPathTemplate": "/api/User/search",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7107
+        }
+      ],
+      "UpstreamPathTemplate": "/User/search",
+      "UpstreamHttpMethod": [ "Get" ]
+    },
+
+    //get by id
+    {
+      "DownstreamPathTemplate": "/api/User/{id}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7107
+        }
+      ],
+      "UpstreamPathTemplate": "/User/{id}",
+      "UpstreamHttpMethod": [ "Get" ]
+    },
+
+    //create
+    {
+      "DownstreamPathTemplate": "/api/User",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7107
+        }
+      ],
+      "UpstreamPathTemplate": "/User",
+      "UpstreamHttpMethod": [ "Post" ]
+    },
+
+    //register
+    {
+      "DownstreamPathTemplate": "/api/User/register",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7107
+        }
+      ],
+      "UpstreamPathTemplate": "/User/register",
+      "UpstreamHttpMethod": [ "Post" ]
+    },
+
+    //login
+    {
+      "DownstreamPathTemplate": "/api/User/login",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7107
+        }
+      ],
+      "UpstreamPathTemplate": "/User/login",
+      "UpstreamHttpMethod": [ "Post" ]
+    }
+  ],
+
+  "GlobalConfiguration": {
+    "BaseUrl": "https://localhost:7260"
+  }
+}
