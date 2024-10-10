@@ -56,6 +56,7 @@ namespace ProductMicroService.Controllers
 
                 var newProduct = await _repoProduct.ModerateImages(imageFiles, product, gameFile);
                 _responseDTO.Result = newProduct;
+                if (newProduct == null) { _responseDTO.Message = "There are some files that do not match"; }
                 return Ok(_responseDTO);
             }
             catch (Exception ex)
