@@ -1,4 +1,5 @@
 ﻿using Client.Configure;
+using Client.Utility;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,6 +18,7 @@ builder.Services.AddSession(options =>
 // Đăng ký thư viện
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddHttpClient();
+StaticTypeApi.APIGateWay = builder.Configuration["ServiceUrls:APIGateWay"];
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {

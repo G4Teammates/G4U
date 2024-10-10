@@ -2,6 +2,7 @@
 {
     public class StaticTypeApi
     {
+        public static string APIGateWay { get; set; }
         public static string? ApiUrl { get; set; } = "https://localhost:7107/";
         public const string RoleAdmin = "ADMIN";
         public const string RoleCustomer = "CUSTOMER";
