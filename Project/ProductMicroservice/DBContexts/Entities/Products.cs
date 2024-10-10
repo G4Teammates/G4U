@@ -36,7 +36,7 @@ namespace ProductMicroservice.DBContexts.Entities
     /// <br/>
     /// Đại diện cho một sản phẩm trong hệ thống.
     /// </summary>
-    public class Product
+    public class Products
     {
         /// <summary>
         /// Unique identifier for the product.
@@ -96,6 +96,15 @@ namespace ProductMicroservice.DBContexts.Entities
         public float Discount { get; set; }
 
         /// <summary>
+        /// A collection of related links associated with the product or content.
+        /// <br/>
+        /// Tập hợp các liên kết liên quan đến sản phẩm hoặc nội dung.
+        /// </summary>
+        [BsonElement("links")]
+        public ICollection<Link>? Links { get; set; }
+
+
+        /// <summary>
         /// A collection of categories that the product belongs to.
         /// <br/>
         /// Danh sách các danh mục mà sản phẩm thuộc về.
@@ -103,13 +112,6 @@ namespace ProductMicroservice.DBContexts.Entities
         [BsonElement("categories")]
         public ICollection<Categories>? Categories { get; set; }
 
-        /// <summary>
-        /// The platform where the product is available (e.g., Window, Android, WebGL,...).
-        /// <br/>
-        /// Nền tảng nơi sản phẩm có sẵn (ví dụ: Window, Android, WebGL,...).
-        /// </summary>
-        [BsonElement("platform")]
-        public PlatformType Platform { get; set; }
 
         /// <summary>
         /// The status of the product (e.g., Inactive, Active, Block, Deleted). 
@@ -118,6 +120,7 @@ namespace ProductMicroservice.DBContexts.Entities
         /// </summary>
         [BsonElement("status")]
         public ProductStatus Status { get; set; }
+
 
         /// <summary>
         /// The date and time when the product was created.
@@ -139,9 +142,12 @@ namespace ProductMicroservice.DBContexts.Entities
         /// The identifier of the user who owns or created the product.
         /// <br/>
         /// Định danh của người dùng sở hữu hoặc tạo ra sản phẩm.
+
         /// </summary>
         [BsonElement("userId")]
-        public Guid UserId { get; set; }
+        [BsonRepresentation(BsonType.ObjectId)]
+
+        public required string UserId { get; set; }
 
 
     }

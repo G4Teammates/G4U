@@ -1,35 +1,32 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using UserMicroservice.DBContexts;
 using UserMicroservice.DBContexts.Entities;
 using UserMicroservice.Models;
 using UserMicroservice.Repositories.IRepositories;
 using UserMicroService.Models;
-
+using UserMicroservice.Repositories.Interfaces;
+using IAuthenService = UserMicroservice.Repositories.Interfaces.IAuthenticationService;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 namespace UserMicroService.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class UserController : ControllerBase
+    public class UserController(IAuthenService authenservice, IUserService userService) : ControllerBase
     {
-        private readonly UserDbContext _context;
-        private readonly IMapper _mapper;
-        private readonly IUserService _userService;
-        public UserController(UserDbContext context, IMapper mapper, IUserService userService)
-        {
-            _context = context;
-            _mapper = mapper;
-            _userService = userService;
-        }
+        private readonly IAuthenService _authenService = authenservice;
+        private readonly IUserService _userService = userService;
 
-        [HttpPost]
-        public async Task<ActionResult> Add([FromBody]UserModel user)
+        [HttpPost("/create")]
+        public async Task<ActionResult> Add([FromBody] UserModel user)
         {
-            ResponseModel response = new();
             try
             {
-                response = await _userService.AddUser(user);
+                ResponseModel response = await _userService.AddUserAsync(user, true);
                 if (response.IsSuccess)
                     return Ok(response);
                 return BadRequest(response);
@@ -40,21 +37,68 @@ namespace UserMicroService.Controllers
                 return StatusCode(500, new { message = "An unexpected error occurred. Detail" + ex.Message });
             }
         }
-        //[HttpGet("/{id:guid}")]
-        //public ActionResult Get(Guid id)
-        //{
-        //    var users = _context.Users.ToList();
-        //    var user = users.Find(u => u.Id == id);
-        //    return Ok(user);
-        //}
 
         [HttpGet("/search")]
         public async Task<ActionResult> FindUsers([FromQuery] string? query)
         {
-            ResponseModel response = new();
             try
             {
-                response = await _userService.FindUsers(query);
+                ResponseModel response = await _userService.FindUsers(query)!;
+                if (response.IsSuccess)
+                    return Ok(response);
+                return BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                // Trả về lỗi 500 cho các lỗi chưa dự đoán
+                return StatusCode(500, new { message = "An unexpected error occurred. Detail" + ex.Message });
+            }
+        }
+
+
+        [Authorize(Roles = "User")]
+        [HttpGet("/{id}")]
+        public async Task<ActionResult> GetUser(string id)
+        {
+            try
+            {
+                ResponseModel response = await _userService.GetUser(id);
+                if (response.IsSuccess)
+                    return Ok(response);
+                return BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                // Trả về lỗi 500 cho các lỗi chưa dự đoán
+                return StatusCode(500, new { message = "An unexpected error occurred. Detail" + ex.Message });
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpPost("/register")]
+        public async Task<ActionResult> Register([FromBody]RegisterRequestModel registerRequestModel)
+        {
+            try
+            {
+                ResponseModel response = await _authenService.RegisterAsync(registerRequestModel);
+                if (response.IsSuccess)
+                    return Ok(response);
+                return BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                // Trả về lỗi 500 cho các lỗi chưa dự đoán
+                return StatusCode(500, new { message = "An unexpected error occurred. Detail" + ex.Message });
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpPost("/login")]
+        public async Task<ActionResult> Login([FromBody]LoginRequestModel loginRequestModel)
+        {
+            try
+            {
+                ResponseModel response = await _authenService.LoginAsync(loginRequestModel);
                 if (response.IsSuccess)
                     return Ok(response);
                 return BadRequest(response);

@@ -16,9 +16,15 @@ namespace ProductMicroservice.Configure
             {
                 //Register mapper here⬇️
 
-                cfg.CreateMap<Product, ProductModel>().ReverseMap();
+                cfg.CreateMap<Products, ProductModel>().ReverseMap();
 
+                cfg.CreateMap<Interactions, InteractionModel>().ReverseMap();
 
+                cfg.CreateMap<Categories, CategoryModel>().ReverseMap();
+
+                cfg.CreateMap<Link, LinkModel>().ReverseMap();
+
+                cfg.CreateMap<Censorship, CensorshipModel>().ReverseMap();
                 //Register mapper here⬆️
             });
         }

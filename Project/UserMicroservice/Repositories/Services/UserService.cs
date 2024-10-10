@@ -4,6 +4,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.IdentityModel.Tokens;
 using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
+using MongoDB.Bson.Serialization.Serializers;
+using MongoDB.EntityFrameworkCore.Storage.ValueConversion;
 using UserMicroservice.DBContexts;
 using UserMicroservice.DBContexts.Entities;
 using UserMicroservice.Models;
@@ -12,48 +15,69 @@ using UserMicroservice.Repositories.IRepositories;
 using UserMicroService.DBContexts.Enum;
 using UserMicroService.Models;
 
-namespace UserMicroservice.Repositories.RepositoryService
+namespace UserMicroservice.Repositories.Services
 {
-    public class UserService : IUserService
+    public class UserService(UserDbContext context, IMapper mapper, IHelperService helper) : IUserService
     {
-        private readonly UserDbContext _context;
-        private readonly IMapper _mapper;
-        private readonly IHelperService _helper;
-        public UserService(UserDbContext context, IMapper mapper, IHelperService helper)
-        {
-            _context = context;
-            _mapper = mapper;
-            _helper = helper;
-        }
+        private readonly UserDbContext _context = context;
+        private readonly IMapper _mapper = mapper;
+        private readonly IHelperService _helper = helper;
 
-        public async Task<ResponseModel> AddUser(UserModel user)
+        /// <summary>
+        /// Adds a user to the database. If it's an admin, the system generates a password and skips password input. 
+        /// If it's a user registration, the password is required.
+        /// </summary>
+        /// <param name="userModel">The user model containing user details</param>
+        /// <param name="isAdmin">Flag to indicate whether it's an admin or user registration</param>
+        /// <param name="password">Password input from the user or null if admin</param>
+        /// <returns>A response indicating the success or failure of the operation.</returns>
+        public async Task<ResponseModel> AddUserAsync(UserModel userModel, bool isAdmin, string? password = null)
         {
-            ResponseModel response = new ResponseModel();
+            ResponseModel response = new();
             try
             {
-                response = _helper.IsUserNotNull(user);
-                if (response.IsSuccess)
+                // Check if the user model is valid
+                response = _helper.IsUserNotNull(userModel);
+                if (!response.IsSuccess) return response;
+
+                // Check if username or email already exists
+                response = await _helper.IsUserNotExist(userModel.Username, userModel.Email);
+                if (!response.IsSuccess) return response;
+
+                // Map UserModel to User entity
+                User user = _mapper.Map<User>(userModel);
+
+                if (isAdmin)
                 {
-                    response = await _helper.IsUserNotExist(user.Username, user.Email);
-                    if (response.IsSuccess)
-                    {
-                        var newUser = _mapper.Map<User>(user);
-                        await _context.Users.AddAsync(newUser);
-                        await _context.SaveChangesAsync();
-                        response.Result = _mapper.Map<UserModel>(newUser);
-                        response.Message = "User was created successfully";
-                    }
+                    // Generate random password for admin creation (future functionality: send via email)
+                    user.PasswordHash = BCrypt.Net.BCrypt.HashPassword("Abc123!");
                 }
+                else
+                {
+                    // Hash the password provided by the user during registration
+                    user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(password!);
+                }
+
+                // Save the user to the database
+                await _context.Users.AddAsync(user);
+                await _context.SaveChangesAsync();
+
+                response.Message = "User created successfully";
+                response.Result = _mapper.Map<UserModel>(user);
             }
             catch (Exception ex)
             {
                 response.IsSuccess = false;
                 response.Message = ex.Message;
             }
+
             return response;
         }
 
-        public async Task<ResponseModel> DeleteUser(Guid id)
+
+
+
+        public Task<ResponseModel> DeleteUser(string id)
         {
             throw new NotImplementedException();
         }
@@ -64,9 +88,11 @@ namespace UserMicroservice.Repositories.RepositoryService
             return new ResponseModel { Result = _mapper.Map<ICollection<UserModel>>(users) };
         }
 
-        public Task<ResponseModel> GetUser(Guid id)
+        public async Task<ResponseModel> GetUser(string id)
         {
-            throw new NotImplementedException();
+
+            var user = await _context.Users.FindAsync(id);
+            return new ResponseModel { Result = _mapper.Map<UserModel>(user) };
         }
 
         public Task<ResponseModel> UpdateUser(UserModel user)
@@ -96,16 +122,16 @@ namespace UserMicroservice.Repositories.RepositoryService
                     query = response.Result.ToString();
 
                     ICollection<User> users = await _context.Users.Where(u =>
-                        u.DisplayName!.ToUpper().Contains(query!) ||
-                        u.NormalizedUsername!.Contains(query!) ||
-                        u.NormalizedEmail!.Contains(query!) ||
-                        u.PhoneNumber!.Contains(query!))
-                        .ToListAsync();
+                         u.DisplayName!.Contains(query!, StringComparison.OrdinalIgnoreCase) ||
+                         u.NormalizedUsername!.Contains(query!, StringComparison.OrdinalIgnoreCase) ||
+                         u.NormalizedEmail!.Contains(query!, StringComparison.OrdinalIgnoreCase) ||
+                         u.PhoneNumber!.Contains(query!, StringComparison.OrdinalIgnoreCase))
+                         .ToListAsync();
 
                     if (users.Count == 0)
                     {
                         response.Message = $"'{query}' not found";
-                        response.Result = null;
+                        response.Result = null!;
                     }
 
                     else

@@ -1,152 +1,120 @@
-﻿<div class="wrapper">
-    <div class="container_main">
-        <input class="input" type="radio" name="slide" id="c1" checked>
-        <label for="c1" class=card>
-            <div class="row">
-                <!-- <div class="icon">1</div> -->
-                <div class="description">
-                    <h4>Winter</h4>
-                    <p>Winter has so much to offer - creative activities</p>
-                </div>
-            </div>
-        </label>
-
-        <input class="input" type="radio" name="slide" id="c2">
-        <label for="c2" class=card>
-            <div class="row">
-                <!-- <div class="icon">2</div> -->
-                <div class="description">
-                    <h4>Digital Technology</h4>
-                    <p>Gets better every day - stay tuned </p>
-                </div>
-            </div>
-        </label>
-
-        <input class="input" type="radio" name="slide" id="c3">
-        <label for="c3" class=card>
-            <div class="row">
-                <!-- <div class="icon">3</div> -->
-                <div class="description">
-                    <h4>Globalization</h4>
-                    <p>Hello people all over the world </p>
-                </div>
-            </div>
-        </label>
-
-        <input class="input" type="radio" name="slide" id="c4">
-        <label for="c4" class=card>
-            <div class="row">
-                <!-- <div class="icon">4</div> -->
-                <div class="description">
-                    <h4>New Technologies</h4>
-                    <p>Space engineering becomes more and more advanced </p>
-                </div>
-            </div>
-        </label>
+﻿<div class="Image_Gallery">
+    <div class="box">
+        <span style="--i:1"><img src="~/image/history-game-1.jpg" /></span>
+        <span style="--i:2"><img src="~/image/history-game-1.jpg" /></span>
+        <span style="--i:3"><img src="~/image/history-game-1.jpg" /></span>
+        <span style="--i:4"><img src="~/image/history-game-1.jpg" /></span>
+        <span style="--i:5"><img src="~/image/history-game-1.jpg" /></span>
+        <span style="--i:6"><img src="~/image/history-game-1.jpg" /></span>
+        <span style="--i:7"><img src="~/image/history-game-1.jpg" /></span>
+        <span style="--i:8"><img src="~/image/history-game-1.jpg" /></span>
     </div>
 </div>
 
-<div class="gamemonth mt-5 pt-5">
-    <h2 class="text-center" style="font-family: 'Roboto', 'Segoe UI', sans-serif;">Game Of The Month</h2>
-    <div class="d-flex justify-content-center flex-wrap mt-3">
-        <div class="card cardgamemonth m-2" style="width: 22.7rem; height:310px;">
-            <img src="./Image/game.jpg" class="card-img-top" alt="...">
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-3 d-flex  justify-content-center">
-                        <img src="./Image/game.jpg" class="img-fluid" alt="...">
+
+<div id="carouselExampleInterval" class="carousel slide mt-4" data-bs-ride="carousel" style="width: 94%; min-height:300px; border-radius:5px; margin: 0 3%;">
+    <div class="carousel-inner">
+        <div class="carousel-item active" data-bs-interval="3000" style="width: 100%; height:350px;border-radius:5px;">
+            <img src="./Image/game.jpg" class="d-block w-100" alt="..." style="width: 100%; height:350px;border-radius:5px;">
+        </div>
+        <div class="carousel-item" data-bs-interval="3000" style="width: 100%; height:350px;border-radius:5px;">
+            <img src="./Image/game.jpg" class="d-block w-100" alt="..." style="width: 100%; height:350px;border-radius:5px;">
+        </div>
+        <div class="carousel-item" data-bs-interval="3000" style="width: 100%; height:350px;border-radius:5px;">
+            <img src="./Image/game.jpg  " class="d-block w-100" alt="..." style="width: 100%; height:350px;border-radius:5px;">
+        </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleInterval" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleInterval" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+    </button>
+</div>
+
+<div class="gamemonth">
+    <section class="header_section">
+        <h1>Game Of The Month</h1>
+    </section>
+    <div class="wrapper_gamemonth">
+        <div class="slider_gamemonth">
+            <div class="container_gamemonth owl-carousel owl-theme">
+                <div class="card_gamemonth item">
+                    <div class="img_gamemonth">
+                        <img src="~/Image/game.jpg" />
                     </div>
-                    <div class="col-md-6">
-                        <p class="card-text">The King is watching</p>
-                        <p class="card-text">Puzzle</p>
+                    <div class="info">
+                        <span class="name">Justin Laketimber</span>
+                        <p class="about">Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
                     </div>
-                    <div class="col-md-3 text-center">
-                        <h5 class="card-title">Free</h5>
+                    <div class="footeer_card">
+                        <div class="btn_card">
+                            <button>Read more...</button>
+                        </div>
+                    </div>
+                    @* Chứa thông tin chi tiết *@
+                    
+                </div>
+                <div class="card_gamemonth item">
+                    <div class="img_gamemonth">
+                        <img src="~/Image/game.jpg" />
+                    </div>
+                    <div class="info">
+                        <span class="name">Justin Laketimber</span>
+                        <p class="about">Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
+                    </div>
+                    <div class="footeer_card">
+                        <div class="btn_card">
+                            <button>Read more...</button>
+                        </div>
+
                     </div>
                 </div>
-            </div>
-        </div>
-        <div class=" card cardgamemonth m-2" style="width: 22.7rem; height:310px;">
-            <img src="./Image/game.jpg" class="card-img-top" alt="...">
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-3 d-flex  justify-content-center">
-                        <img src="./Image/game.jpg" class="img-fluid" alt="...">
+                <div class="card_gamemonth item">
+                    <div class="img_gamemonth">
+                        <img src="~/Image/game.jpg" />
                     </div>
-                    <div class="col-md-6">
-                        <p class="card-text">The King is watching</p>
-                        <p class="card-text">Puzzle</p>
+                    <div class="info">
+                        <span class="name">Justin Laketimber</span>
+                        <p class="about">Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
                     </div>
-                    <div class="col-md-3 text-center">
-                        <h5 class="card-title">Free</h5>
+                    <div class="footeer_card">
+                        <div class="btn_card">
+                            <button>Read more...</button>
+                        </div>
+
                     </div>
                 </div>
-            </div>
-        </div>
-        <div class=" card cardgamemonth m-2" style="width: 22.7rem; height:310px;">
-            <img src="./Image/game.jpg" class="card-img-top" alt="...">
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-3 d-flex  justify-content-center">
-                        <img src="./Image/game.jpg" class="img-fluid" alt="...">
+                <div class="card_gamemonth item">
+                    <div class="img_gamemonth">
+                        <img src="~/Image/game.jpg" />
                     </div>
-                    <div class="col-md-6">
-                        <p class="card-text">The King is watching</p>
-                        <p class="card-text">Puzzle</p>
+                    <div class="info">
+                        <span class="name">Justin Laketimber</span>
+                        <p class="about">Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
                     </div>
-                    <div class="col-md-3 text-center">
-                        <h5 class="card-title">Free</h5>
+                    <div class="footeer_card">
+                        <div class="btn_card">
+                            <button>Read more...</button>
+                        </div>
+                        
                     </div>
                 </div>
-            </div>
-        </div>
-        <div class=" card cardgamemonth m-2" style="width: 22.7rem; height:310px;">
-            <img src="./Image/game.jpg" class="card-img-top" alt="...">
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-3 d-flex  justify-content-center">
-                        <img src="./Image/game.jpg" class="img-fluid" alt="...">
+                <div class="card_gamemonth item">
+                    <div class="img_gamemonth">
+                        <img src="~/Image/game.jpg" />
                     </div>
-                    <div class="col-md-6">
-                        <p class="card-text">The King is watching</p>
-                        <p class="card-text">Puzzle</p>
+                    <div class="info">
+                        <span class="name">Justin Laketimber</span>
+                        <p class="about">Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
                     </div>
-                    <div class="col-md-3 text-center">
-                        <h5 class="card-title">Free</h5>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class=" card cardgamemonth m-2" style="width: 22.7rem; height:310px;">
-            <img src="./Image/game.jpg" class="card-img-top" alt="...">
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-3 d-flex  justify-content-center">
-                        <img src="./Image/game.jpg" class="img-fluid" alt="...">
-                    </div>
-                    <div class="col-md-6">
-                        <p class="card-text">The King is watching</p>
-                        <p class="card-text">Puzzle</p>
-                    </div>
-                    <div class="col-md-3 text-center">
-                        <h5 class="card-title">Free</h5>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class=" card cardgamemonth m-2" style="width: 22.7rem; height:310px;">
-            <img src="./Image/game.jpg" class="card-img-top" alt="...">
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-3 d-flex  justify-content-center">
-                        <img src="./Image/game.jpg" class="img-fluid" alt="...">
-                    </div>
-                    <div class="col-md-6">
-                        <p class="card-text">The King is watching</p>
-                        <p class="card-text">Puzzle</p>
-                    </div>
-                    <div class="col-md-3 text-center">
-                        <h5 class="card-title">Free</h5>
+                    <div class="footeer_card">
+                        <div class="btn_card">
+                            <button>Read more...</button>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -154,111 +122,428 @@
     </div>
 </div>
 
+<div class="gamefree row">
+    <div class="row">
+        <div class="col-9 col-sm-9 col-md-9 free-games-section">
+            <i class="fa-solid fa-gift"></i>
+            <span>Featured Discounts</span>
+        </div>
+        <div class="col-3 col-sm-3 col-md-3 view-more-section">
+            <button class="view-more-button">
+                <a href="">View More</a>
+            </button>
+        </div>
+    </div>
+
+    <div class="row" style="justify-content:space-around;">
+        <div class="col-12 col-sm-12 col-md-3 card_other mt-4">
+            <img src="~/Image/game.jpg" />
+            <div class="info_other">
+                <h1>Heading 2</h1>
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
+                <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
+            </div>
+        </div>
+        <div class="col-12 col-sm-12 col-md-3 card_other mt-4">
+            <img src="~/Image/game.jpg" />
+            <div class="info_other">
+                <h1>Heading 2</h1>
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
+                <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
+            </div>
+        </div>
+        <div class="col-12 col-sm-12 col-md-3 card_other mt-4">
+            <img src="~/Image/game.jpg" />
+            <div class="info_other">
+                <h1>Heading 2</h1>
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
+                <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
+            </div>
+        </div>
+    </div>
+    <p>Discounts Now - Dec 10</p>
+</div>
 <div class="ortherproduct">
-    <h1 class="text-center" style="font-family: 'Roboto', 'Segoe UI', sans-serif;">Orther Product</h1>
+    <section class="header_section">
+        <h1>Orther Product</h1>
+    </section>
 
-    <div class="radio-inputs">
-        <label class="radio">
-            <input type="radio" name="radio" checked="" />
-            <span class="name" style="font-family: 'Roboto', 'Segoe UI', sans-serif;">For you</span>
-        </label>
-        <label class="radio">
-            <input type="radio" name="radio" />
-            <span class="name" style="font-family: 'Roboto', 'Segoe UI', sans-serif;">Popular</span>
-        </label>
+    <!-- Danh sách Nút Điều Hướng -->
+    <div class="lisotherproduct_name row mt-3">
+        <a class="col-6 col-sm-2 col-md-2" href="#foryou">For You</a>
+        <a class="col-6 col-sm-2 col-md-2" href="#popular">Popular</a>
+        <a class="col-4 col-sm-2 col-md-2" href="#free">Free</a>
+        <a class="col-4 col-sm-2 col-md-2" href="#new">New</a>
+        <a class="col-4 col-sm-2 col-md-2" href="#more">More</a>
+    </div>
 
-        <label class="radio">
-            <input type="radio" name="radio" />
-            <span class="name" style="font-family: 'Roboto', 'Segoe UI', sans-serif;">Free</span>
-        </label>
+    <section id="foryou" class="mt-5">
+        <div class="d-flex justify-content-between align-items-center mb-1">
+            <h3>For You</h3>
+            <a href="">View More</a>
+        </div>
+        <div class="wrapper_other">
+            <div class="card_other mt-4">
+                <img src="~/Image/game.jpg" />
+                <div class="info_other">
+                    <h1>Heading 1</h1>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
+                    <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
+                </div>
+            </div>
 
-        <label class="radio">
-            <input type="radio" name="radio" />
-            <span class="name" style="font-family: 'Roboto', 'Segoe UI', sans-serif;">New</span>
-        </label>
-        <label class="radio">
-            <input type="radio" name="radio" />
-            <span class="name" style="font-family: 'Roboto', 'Segoe UI', sans-serif;">More</span>
-        </label>
+            <div class="card_other mt-4">
+                <img src="~/Image/game.jpg" />
+                <div class="info_other">
+                    <h1>Heading 2</h1>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
+                    <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
+                </div>
+            </div>
+
+            <div class="card_other mt-4">
+                <img src="~/Image/game.jpg" />
+                <div class="info_other">
+                    <h1>Heading 3</h1>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
+                    <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
+                </div>
+            </div>
+
+            <div class="card_other mt-4">
+                <img src="~/Image/game.jpg" />
+                <div class="info_other">
+                    <h1>Heading 4</h1>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
+                    <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <section id="popular" class="mt-5">
+        <div class="d-flex justify-content-between align-items-center mb-1">
+            <h3>Popular</h3>
+            <a href="">View More</a>
+        </div>
+        <div class="wrapper_other">
+            <div class="card_other mt-4">
+                <img src="~/Image/game.jpg" />
+                <div class="info_other">
+                    <h1>Heading 1</h1>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
+                    <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
+                </div>
+            </div>
+
+            <div class="card_other mt-4">
+                <img src="~/Image/game.jpg" />
+                <div class="info_other">
+                    <h1>Heading 2</h1>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
+                    <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
+                </div>
+            </div>
+
+            <div class="card_other mt-4">
+                <img src="~/Image/game.jpg" />
+                <div class="info_other">
+                    <h1>Heading 3</h1>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
+                    <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
+                </div>
+            </div>
+
+            <div class="card_other mt-4">
+                <img src="~/Image/game.jpg" />
+                <div class="info_other">
+                    <h1>Heading 4</h1>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
+                    <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="free" class="mt-5">
+        <div class="d-flex justify-content-between align-items-center mb-1">
+            <h3>Free</h3>
+            <a href="">View More</a>
+        </div>
+        <div class="wrapper_other">
+            <div class="card_other mt-4">
+                <img src="~/Image/game.jpg" />
+                <div class="info_other">
+                    <h1>Heading 1</h1>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
+                    <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
+                </div>
+            </div>
+
+            <div class="card_other mt-4">
+                <img src="~/Image/game.jpg" />
+                <div class="info_other">
+                    <h1>Heading 2</h1>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
+                    <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
+                </div>
+            </div>
+
+            <div class="card_other mt-4">
+                <img src="~/Image/game.jpg" />
+                <div class="info_other">
+                    <h1>Heading 3</h1>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
+                    <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
+                </div>
+            </div>
+
+            <div class="card_other mt-4">
+                <img src="~/Image/game.jpg" />
+                <div class="info_other">
+                    <h1>Heading 4</h1>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
+                    <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="new" class="mt-5">
+        <div class="d-flex justify-content-between align-items-center mb-1">
+            <h3>New</h3>
+            <a href="">View More</a>
+        </div>
+        <div class="wrapper_other">
+            <div class="card_other mt-4">
+                <img src="~/Image/game.jpg" />
+                <div class="info_other">
+                    <h1>Heading 1</h1>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
+                    <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
+                </div>
+            </div>
+
+            <div class="card_other mt-4">
+                <img src="~/Image/game.jpg" />
+                <div class="info_other">
+                    <h1>Heading 2</h1>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
+                    <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
+                </div>
+            </div>
+
+            <div class="card_other mt-4">
+                <img src="~/Image/game.jpg" />
+                <div class="info_other">
+                    <h1>Heading 3</h1>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
+                    <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
+                </div>
+            </div>
+
+            <div class="card_other mt-4">
+                <img src="~/Image/game.jpg" />
+                <div class="info_other">
+                    <h1>Heading 4</h1>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
+                    <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="more" class="mt-5">
+        <div class="d-flex justify-content-between align-items-center mb-1">
+            <h3>More</h3>
+            <a href="">View More</a>
+        </div>
+        <div class="wrapper_other">
+            <div class="card_other mt-4">
+                <img src="~/Image/game.jpg" />
+                <div class="info_other">
+                    <h1>Heading 1</h1>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
+                    <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
+                </div>
+            </div>
+
+            <div class="card_other mt-4">
+                <img src="~/Image/game.jpg" />
+                <div class="info_other">
+                    <h1>Heading 2</h1>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
+                    <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
+                </div>
+            </div>
+
+            <div class="card_other mt-4">
+                <img src="~/Image/game.jpg" />
+                <div class="info_other">
+                    <h1>Heading 3</h1>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
+                    <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
+                </div>
+            </div>
+
+            <div class="card_other mt-4">
+                <img src="~/Image/game.jpg" />
+                <div class="info_other">
+                    <h1>Heading 4</h1>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
+                    <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+<div class="best-seller_most-player_top-upcoming-wishlisted row mt-5">
+    <div class="col-12 col-sm-12 col-md-4" style="border-right:1px solid black;border-left:1px solid black;">
+        <h2>
+            <a href="" style="text-decoration:none;color:black;">Top Sellers <i class="fa-solid fa-angle-right"></i></a>
+        </h2>
+        <div class="row mt-3">
+            <div class="col-4 col-sm-4 col-md-4">
+                <img src="~/image/game.jpg" class="img-fluid"/>
+            </div>
+            <div class="col-8 col-sm-8 col-md-8">
+                Game ne
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-4 col-sm-4 col-md-4">
+                <img src="~/image/game.jpg" class="img-fluid" />
+            </div>
+            <div class="col-8 col-sm-8 col-md-8">
+                Game ne
+            </div>
+        </div>
+         <div class="row mt-3">
+            <div class="col-4 col-sm-4 col-md-4">
+                <img src="~/image/game.jpg" class="img-fluid"/>
+            </div>
+            <div class="col-8 col-sm-8 col-md-8">
+                Game ne
+            </div>
+        </div>
+         <div class="row mt-3">
+            <div class="col-4 col-sm-4 col-md-4">
+                <img src="~/image/game.jpg" class="img-fluid"/>
+            </div>
+            <div class="col-8 col-sm-8 col-md-8">
+                Game ne
+            </div>
+        </div>
+         <div class="row mt-3">
+            <div class="col-4 col-sm-4 col-md-4">
+                <img src="~/image/game.jpg" class="img-fluid"/>
+            </div>
+            <div class="col-8 col-sm-8 col-md-8">
+                Game ne
+            </div>
+        </div>
+        
+    </div>
+    <div class="col-12 col-sm-12 col-md-4" style="border-right:1px solid black;border-left:1px solid black;">
+        <h2>
+            <a href="" style="text-decoration:none;color:black;">Most Played<i class="fa-solid fa-angle-right"></i></a>
+        </h2>
+        <div class="row mt-3">
+            <div class="col-4 col-sm-4 col-md-4">
+                <img src="~/image/game.jpg" class="img-fluid" />
+            </div>
+            <div class="col-8 col-sm-8 col-md-8">
+                Game ne
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-4 col-sm-4 col-md-4">
+                <img src="~/image/game.jpg" class="img-fluid" />
+            </div>
+            <div class="col-8 col-sm-8 col-md-8">
+                Game ne
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-4 col-sm-4 col-md-4">
+                <img src="~/image/game.jpg" class="img-fluid" />
+            </div>
+            <div class="col-8 col-sm-8 col-md-8">
+                Game ne
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-4 col-sm-4 col-md-4">
+                <img src="~/image/game.jpg" class="img-fluid" />
+            </div>
+            <div class="col-8 col-sm-8 col-md-8">
+                Game ne
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-4 col-sm-4 col-md-4">
+                <img src="~/image/game.jpg" class="img-fluid" />
+            </div>
+            <div class="col-8 col-sm-8 col-md-8">
+                Game ne
+            </div>
+        </div>
+
+    </div>
+    <div class="col-12 col-sm-12 col-md-4" style="border-right:1px solid black;border-left:1px solid black;">
+        <h2>
+            <a href="" style="text-decoration:none;color:black;">Top Upcoming Wishlisted <i class="fa-solid fa-angle-right"></i></a>
+        </h2>
+        <div class="row mt-3">
+            <div class="col-4 col-sm-4 col-md-4">
+                <img src="~/image/game.jpg" class="img-fluid" />
+            </div>
+            <div class="col-8 col-sm-8 col-md-8">
+                Game ne
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-4 col-sm-4 col-md-4">
+                <img src="~/image/game.jpg" class="img-fluid" />
+            </div>
+            <div class="col-8 col-sm-8 col-md-8">
+                Game ne
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-4 col-sm-4 col-md-4">
+                <img src="~/image/game.jpg" class="img-fluid" />
+            </div>
+            <div class="col-8 col-sm-8 col-md-8">
+                Game ne
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-4 col-sm-4 col-md-4">
+                <img src="~/image/game.jpg" class="img-fluid" />
+            </div>
+            <div class="col-8 col-sm-8 col-md-8">
+                Game ne
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-4 col-sm-4 col-md-4">
+                <img src="~/image/game.jpg" class="img-fluid" />
+            </div>
+            <div class="col-8 col-sm-8 col-md-8">
+                Game ne
+            </div>
+        </div>
+
     </div>
 </div>
 
 
-<div class="gamemonth mt-3">
-    <div class="d-flex justify-content-center flex-wrap mt-3">
-        <div class=" card cardgamemonth m-2" style="width: 13rem; height:210px;">
-            <img src="./Image/game.jpg" class="card-img-top" alt="...">
-            <div class="card-body">
-                <h5 style="font-size:15px;">Trick Tactics - Card Adventure Game</h5>
-                <p class="text-end">109.000 <sup>đ</sup></p>
-            </div>
-        </div>
-        <div class=" card cardgamemonth m-2" style="width: 13rem; height:210px;">
-            <img src="./Image/game.jpg" class="card-img-top" alt="...">
-            <div class="card-body">
-                <h5 style="font-size:15px;">Trick Tactics - Card Adventure Game</h5>
-                <p class="text-end">109.000 <sup>đ</sup></p>
-            </div>
-        </div>
-        <div class=" card cardgamemonth m-2" style="width: 13rem; height:210px;">
-            <img src="./Image/game.jpg" class="card-img-top" alt="...">
-            <div class="card-body">
-                <h5 style="font-size:15px;">Trick Tactics - Card Adventure Game</h5>
-                <p class="text-end">109.000 <sup>đ</sup></p>
-            </div>
-        </div>
-        <div class=" card cardgamemonth m-2" style="width: 13rem; height:210px;">
-            <img src="./Image/game.jpg" class="card-img-top" alt="...">
-            <div class="card-body">
-                <h5 style="font-size:15px;">Trick Tactics - Card Adventure Game</h5>
-                <p class="text-end">109.000 <sup>đ</sup></p>
-            </div>
-        </div>
-        <div class=" card cardgamemonth m-2" style="width: 13rem; height:210px;">
-            <img src="./Image/game.jpg" class="card-img-top" alt="...">
-            <div class="card-body">
-                <h5 style="font-size:15px;">Trick Tactics - Card Adventure Game</h5>
-                <p class="text-end">109.000 <sup>đ</sup></p>
-            </div>
-        </div>
-        <div class=" card cardgamemonth m-2" style="width: 13rem; height:210px;">
-            <img src="./Image/game.jpg" class="card-img-top" alt="...">
-            <div class="card-body">
-                <h5 style="font-size:15px;">Trick Tactics - Card Adventure Game</h5>
-                <p class="text-end">109.000 <sup>đ</sup></p>
-            </div>
-        </div>
-        <div class=" card cardgamemonth m-2" style="width: 13rem; height:210px;">
-            <img src="./Image/game.jpg" class="card-img-top" alt="...">
-            <div class="card-body">
-                <h5 style="font-size:15px;">Trick Tactics - Card Adventure Game</h5>
-                <p class="text-end">109.000 <sup>đ</sup></p>
-            </div>
-        </div>
-        <div class=" card cardgamemonth m-2" style="width: 13rem; height:210px;">
-            <img src="./Image/game.jpg" class="card-img-top" alt="...">
-            <div class="card-body">
-                <h5 style="font-size:15px;">Trick Tactics - Card Adventure Game</h5>
-                <p class="text-end">109.000 <sup>đ</sup></p>
-            </div>
-        </div>
-        <div class=" card cardgamemonth m-2" style="width: 13rem; height:210px;">
-            <img src="./Image/game.jpg" class="card-img-top" alt="...">
-            <div class="card-body">
-                <h5 style="font-size:15px;">Trick Tactics - Card Adventure Game</h5>
-                <p class="text-end">109.000 <sup>đ</sup></p>
-            </div>
-        </div>
-        <div class=" card cardgamemonth m-2" style="width: 13rem; height:210px;">
-            <img src="./Image/game.jpg" class="card-img-top" alt="...">
-            <div class="card-body">
-                <h5 style="font-size:15px;">Trick Tactics - Card Adventure Game</h5>
-                <p class="text-end">109.000 <sup>đ</sup></p>
-            </div>
-        </div>
-    </div>
-    <a asp-controller="Product" asp-action="Product" class="btn dropdown-toggle fw-bold" style="margin-left: 45%;margin-top:80px;border: .3px solid #00A97F" type="button" id="dropdownMenuButton2" aria-expanded="false">
-        All Product
-    </a>
+<!-- Nút Scroll to Top -->
+<button id="scrollToTopBtn" title="Go to top">
+    <i class="fa-solid fa-chevron-up"></i>
+</button>
 
-</div>
+
+

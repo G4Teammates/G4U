@@ -15,7 +15,7 @@ namespace UserMicroService.Models
         /// <br/>
         /// Định danh duy nhất cho người dùng.
         /// </summary>
-        public string Id { get; } = ObjectId.GenerateNewId().ToString();
+        public required string Id { get; set; }
 
         /// <summary>
         /// The username of the user.
@@ -87,14 +87,14 @@ namespace UserMicroService.Models
         /// <br/>
         /// Vai trò của tài khoản người dùng, bao gồm <see cref="UserRole.User"/>(người dùng mặc định), <see cref="UserRole.Admin"/>(quản trị viên) và <see cref="UserRole.Developer"/>(lập trình viên).
         /// </summary>
-        public UserRole Role { get; set; }
+        public UserRole Role { get; set; } = UserRole.User;
 
         /// <summary>
         /// The total profit earned by the user from selling games. 
         /// <br/>
         /// Tổng số tiền lời cuối cùng mà người dùng kiếm được từ việc bán game.
         /// </summary>
-        public float TotalProfit { get; set; }
+        public float TotalProfit { get; set; } = 0;
 
         /// <summary>
         /// The collection of games added by the user to their wishlist.
