@@ -95,6 +95,15 @@ namespace ProductMicroservice.DBContexts.Entities
         [BsonElement("discount")]
         public float Discount { get; set; }
 
+
+        /// <summary>
+        /// The platform where the product is available (e.g., Window, Android, WebGL,...).
+        /// <br/>
+        /// Nền tảng nơi sản phẩm có sẵn (ví dụ: Window, Android, WebGL,...).
+        /// </summary>
+        [BsonElement("platform")]
+        public PlatformType Platform { get; set; }
+
         /// <summary>
         /// A collection of related links associated with the product or content.
         /// <br/>
@@ -102,6 +111,8 @@ namespace ProductMicroservice.DBContexts.Entities
         /// </summary>
         [BsonElement("links")]
         public ICollection<Link>? Links { get; set; }
+
+
 
 
         /// <summary>
@@ -121,6 +132,7 @@ namespace ProductMicroservice.DBContexts.Entities
         [BsonElement("status")]
         public ProductStatus Status { get; set; }
 
+        
 
         /// <summary>
         /// The date and time when the product was created.

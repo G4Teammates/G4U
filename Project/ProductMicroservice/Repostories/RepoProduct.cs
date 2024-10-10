@@ -163,9 +163,16 @@ namespace ProductMicroservice.Repostories
                 // Tạo một danh sách các đối tượng Link
                 var linkModel = new List<LinkModel>();
 
+                // Biến để theo dõi nếu phát hiện có bất kỳ file nào không hợp lệ
+                /*bool hasUnsafeFile = false;*/
+
+                var ListUnsafe = new List<bool>();
+
                 // Sử dụng xử lý song song để kiểm duyệt nhiều file cùng lúc
                 var tasks = imageFiles.Select<IFormFile, Task<object>>(async imageFile => 
                 {
+                    /*if (hasUnsafeFile) return null;*/ // Nếu đã phát hiện file không hợp lệ, dừng toàn bộ quá trình
+
                     // Đọc dữ liệu hình ảnh từ file upload vào MemoryStream
                     using (var imageStream = new MemoryStream())
                     {
@@ -186,6 +193,8 @@ namespace ProductMicroservice.Repostories
                         }
                         catch (RequestFailedException ex)
                         {
+                            /*hasUnsafeFile = true;*/
+                            ListUnsafe.Add(true);
                             return new { Error = $"Analyze image failed. Status code: {ex.Status}, Error code: {ex.ErrorCode}, Error message: {ex.Message}" };
                         }
 
@@ -196,19 +205,17 @@ namespace ProductMicroservice.Repostories
                         var sexualSeverity = result.CategoriesAnalysis.FirstOrDefault(a => a.Category == ImageCategory.Sexual)?.Severity ?? 0;
                         var violenceSeverity = result.CategoriesAnalysis.FirstOrDefault(a => a.Category == ImageCategory.Violence)?.Severity ?? 0;
 
-                        // Khởi tạo biến chứa thông báo
-                        string message = "Image successfully moderated.";
-
-                        if (sexualSeverity != 0) message += $" Hình ảnh có tính khiêu dâm mức độ: {sexualSeverity}.";
-                        if (hateSeverity != 0) message += $" Hình ảnh có tính thù địch mức độ: {hateSeverity}.";
-                        if (selfHarmSeverity != 0) message += $" Hình ảnh có tính tự làm hại bản thân mức độ: {selfHarmSeverity}.";
-                        if (violenceSeverity != 0) message += $" Hình ảnh có tính bạo lực mức độ: {violenceSeverity}.";
-
-                        // Kiểm tra nếu hình ảnh an toàn (tất cả mức độ nghiêm trọng = 0)
-                        if (hateSeverity == 0 && selfHarmSeverity == 0 && sexualSeverity == 0 && violenceSeverity == 0)
+                        if (hateSeverity > 0 || selfHarmSeverity > 0 || sexualSeverity > 0 || violenceSeverity > 0)
                         {
+                            ListUnsafe.Add(true);
+                            return new { Message = "Hình ảnh không hợp lệ." };
+                        }
+                        else if (ListUnsafe.Count == 0) 
+                        {
+                            // Khởi tạo biến chứa thông báo
+
                             string CensorProviderName = "Azure Content Safety";
-                            string CensorDescription ="Content Safety";
+                            string CensorDescription = "Content Safety";
                             int CensorStatus = 1;
                             string LinkProviderName = "Cloudinary";
                             int Linkype = 1;
@@ -239,20 +246,17 @@ namespace ProductMicroservice.Repostories
                             // Thêm đối tượng Link vào danh sách
                             linkModel.Add(link);
                             return null; // Nếu hình ảnh an toàn, trả về null
-                        }
-                        else
-                        {
-                            return new
-                            {
-                                Message = message
-                            };
-                        }
+                        }   
+                        else { return "Error"; }
                     }
                 });
 
                 string scan = await ScanFileForVirus(gameFiles);
-
-                if(scan == "OK")
+                if (scan != "OK")
+                {
+                    ListUnsafe.Add(true);
+                }
+                else if (ListUnsafe.Count == 0)
                 {
                     string CensorProviderName = "VirusTotal";
                     string CensorDescription = "Scan Virus";
@@ -284,15 +288,18 @@ namespace ProductMicroservice.Repostories
                     linkModel.Add(link);
                 }
 
+
                 // Chờ tất cả các tác vụ xử lý hoàn tất
                 await Task.WhenAll(tasks);
+                
+                if (ListUnsafe.Count == 0)
+                {                 // Sau khi đã xử lý tất cả hình ảnh, tạo sản phẩm một lần
+                    productEntity = await CreateProduct(Product, linkModel);
 
-
-                // Sau khi đã xử lý tất cả hình ảnh, tạo sản phẩm một lần
-                productEntity = await CreateProduct(Product, linkModel);
-
-                // Trả về kết quả cho client
-                return productEntity;
+                    // Trả về kết quả cho client
+                    return productEntity;
+                }
+                return null;
             }
             catch (Exception ex)
             {
