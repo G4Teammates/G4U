@@ -77,9 +77,34 @@ namespace UserMicroservice.Repositories.Services
 
 
 
-        public Task<ResponseModel> DeleteUser(string id)
+        public async Task<ResponseModel> DeleteUser(string id)
         {
-            throw new NotImplementedException();
+            ResponseModel response = new();
+            try
+            {
+                // Tìm người dùng theo ID
+                var user = await _context.Users.FindAsync(id);
+                if (user == null)
+                {
+                    response.IsSuccess = false;
+                    response.Message = $"User with ID {id} not found.";
+                    return response;
+                }
+
+                // Xóa người dùng
+                _context.Users.Remove(user);
+                await _context.SaveChangesAsync();
+
+                response.IsSuccess = true;
+                response.Message = "User deleted successfully.";
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+            }
+
+            return response;
         }
 
         public async Task<ResponseModel> GetAll()
@@ -95,10 +120,56 @@ namespace UserMicroservice.Repositories.Services
             return new ResponseModel { Result = _mapper.Map<UserModel>(user) };
         }
 
-        public Task<ResponseModel> UpdateUser(UserModel user)
+        public async Task<ResponseModel> UpdateUser(UserModel updatedUserModel)
         {
-            throw new NotImplementedException();
+            var response = new ResponseModel();
+
+            try
+            {
+                // Kiểm tra xem người dùng có tồn tại không dựa trên ID của họ
+                var user = await _context.Users.FindAsync(updatedUserModel.Id);
+                if (user == null)
+                {
+                    response.IsSuccess = false;
+                    response.Message = $"User with ID {updatedUserModel.Id} not found.";
+                    return response;
+                }
+
+                // Kiểm tra xem email và username có tồn tại không
+                response = await _helper.IsUserNotExist( updatedUserModel.Username);
+                if (response.IsSuccess)
+                {
+                    // Cập nhật thông tin từ UserModel vào đối tượng User
+                    user.DisplayName = updatedUserModel.DisplayName ?? user.DisplayName;
+                    user.Username = updatedUserModel.Username ?? user.Username;
+                    user.PhoneNumber = updatedUserModel.PhoneNumber ?? user.PhoneNumber;
+
+                    // Lưu các thay đổi vào cơ sở dữ liệu
+                    _context.Users.Update(user);
+                    await _context.SaveChangesAsync();
+
+                    // Trả về thông báo thành công cùng với thông tin người dùng đã cập nhật
+                    response.IsSuccess = true;
+                    response.Message = "User updated successfully.";
+                    response.Result = _mapper.Map<UserModel>(user);
+                }
+                else
+                {
+                    // Nếu có lỗi, trả về thông báo lỗi
+                    response.IsSuccess = false;
+                    response.Message = response.Message;
+                }
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+            }
+
+            return response;
         }
+
+
 
         /// <summary>
         /// Tìm kiếm danh sách người dùng dựa trên truy vấn chuỗi.
@@ -122,10 +193,10 @@ namespace UserMicroservice.Repositories.Services
                     query = response.Result.ToString();
 
                     ICollection<User> users = await _context.Users.Where(u =>
-                         u.DisplayName!.Contains(query!, StringComparison.OrdinalIgnoreCase) ||
-                         u.NormalizedUsername!.Contains(query!, StringComparison.OrdinalIgnoreCase) ||
-                         u.NormalizedEmail!.Contains(query!, StringComparison.OrdinalIgnoreCase) ||
-                         u.PhoneNumber!.Contains(query!, StringComparison.OrdinalIgnoreCase))
+                         u.DisplayName!.Contains(query!) ||
+                         u.NormalizedUsername!.Contains(query!) ||
+                         u.NormalizedEmail!.Contains(query!) ||
+                         u.PhoneNumber!.Contains(query!))
                          .ToListAsync();
 
                     if (users.Count == 0)
