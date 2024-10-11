@@ -40,7 +40,7 @@ namespace ProductMicroService.Controllers
             try
             {
                 // Chuyển đổi danh sách chuỗi thành danh sách CategoryModel
-                var categoryModels = categories.Select(c => new CategoryModel { CategoryId = c }).ToList();
+                var categoryModels = categories.Select(c => new CategoryModel { CategoryName = c }).ToList();
                 var gameFile = request.gameFile;
                 var product = new CreateProductModel
                 {
