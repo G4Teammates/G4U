@@ -1,20 +1,20 @@
 ﻿
-<div class="main mt-5 " style="max-width: 1150px;">
+<div class="main">
     <div class="row justify-content-center">
-        <div class="col-md-4 p-3">
-            <div class="d-flex align-items-center mb-3">
-                <img src="~/image/history-game-1.jpg" class="rounded me-3" alt="Avatar" style="width:70px; height:70px;" />
+        <div class="col-md-3 p-3">
+            <div class="d-flex align-items-center mb-3 p-2 rounded border border-1">
+                <img src="~/image/history-game-1.jpg" class="rounded me-3" alt="Avatar" style="width:80px; height:80px;" />
                 <div>
                     <h5 class="mb-0">tuandeptrai1011</h5>
                     <p class="mb-0 text-muted">tuandeptrai@gmail.com<br>10/11/2004</p>
                 </div>
             </div>
-
+            @*
             <div class="d-grid mb-4">
-                <button class="btn btn-success fw-bold" type="button">
-                    <i class="fas fa-edit me-2"></i>Edit Avatar
-                </button>
-            </div>
+            <button class="btn btn-success fw-bold" type="button">
+            <i class="fas fa-edit me-2"></i>Edit Avatar
+            </button>
+            </div> *@
 
             <!-- Danh Muc -->
             <div class="nav flex-column">
@@ -41,28 +41,76 @@
             </div>
         </div>
 
-        <div class="col-md-8 p-4">
-            <h3 class="fw-bold text-success"><i class="fas fa-user"></i> USER INFORMATION</h3>
-            <form>
-                <div class="mb-3">
-                    <input type="text" class="form-control" id="displayName" placeholder="Display Name">
+        <div class="col-md-9 p-4">
+            <div>
+                <h3 class="fw-bold text-success"><i class="fas fa-user"></i> USER INFORMATION</h3>
+            </div>
+            <hr />
+            <div class="mt-5">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div>
+                            <div class="text-center">
+                                <img src="~/image/history-game-1.jpg" class="rounded" alt="Avatar" style="width:150px; height:150px;" />
+                                <div class="mt-3">
+                                    <button class="btn btn-success fw-bold" type="button">
+                                        <i class="fas fa-edit me-2"></i>Edit Avatar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <form>
+                            <div class="row mb-3 px-3">
+                                <div class="col-md-3 align-content-center">
+                                    <div class="text-center fw-bold">
+                                        Display Name
+                                    </div>
+                                </div>
+                                <div class="col-md-9">
+                                    <input type="text" class="form-control" id="displayName" value="Pham Minh Tuan">
+                                </div>
+                            </div>
+                            <div class="row mb-3 px-3">
+                                <div class="col-md-3 align-content-center">
+                                    <div class="text-center fw-bold">
+                                        Display Name
+                                    </div>
+                                </div>
+                                <div class="col-md-9">
+                                    <input type="text" class="form-control" id="displayName" value="Pham Minh Tuan">
+                                </div>
+                            </div>
+                            <div class="row mb-3 px-3">
+                                <div class="col-md-3 align-content-center">
+                                    <div class="text-center fw-bold">
+                                        Display Name
+                                    </div>
+                                </div>
+                                <div class="col-md-9">
+                                    <input type="text" class="form-control" id="displayName" value="Pham Minh Tuan">
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <input type="text" class="form-control" id="userName" placeholder="User Name">
+                            </div>
+                            <div class="mb-3">
+                                <input type="email" class="form-control" id="email" placeholder="Email">
+                            </div>
+                            <div class="mb-3">
+                                <input type="text" class="form-control" id="phoneNumber" placeholder="Phone Number">
+                            </div>
+                            <div class="mb-3">
+                                <input type="text" class="form-control text-danger" id="status" placeholder="Offline" readonly>
+                            </div>
+                            <button type="submit" class="btn btn-success fw-bold">
+                                <i class="fas fa-save me-2"></i>Update
+                            </button>
+                        </form>
+                    </div>
                 </div>
-                <div class="mb-3">
-                    <input type="text" class="form-control" id="userName" placeholder="User Name">
-                </div>
-                <div class="mb-3">
-                    <input type="email" class="form-control" id="email" placeholder="Email">
-                </div>
-                <div class="mb-3">
-                    <input type="text" class="form-control" id="phoneNumber" placeholder="Phone Number">
-                </div>
-                <div class="mb-3">
-                    <input type="text" class="form-control text-danger" id="status" placeholder="Offline" readonly>
-                </div>
-                <button type="submit" class="btn btn-success fw-bold">
-                    <i class="fas fa-save me-2"></i>Update
-                </button>
-            </form>
+            </div>
         </div>
     </div>
 </div>
