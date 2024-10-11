@@ -1,4 +1,7 @@
 ﻿using Client.Configure;
+using Client.Repositories.Interfaces;
+using Client.Repositories.Interfaces.User;
+using Client.Repositories.Services;
 using Client.Utility;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
@@ -19,6 +22,9 @@ builder.Services.AddSession(options =>
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddHttpClient();
 StaticTypeApi.APIGateWay = builder.Configuration["ServiceUrls:APIGateWay"];
+builder.Services.AddScoped<IBaseService, BaseService>();
+builder.Services.AddScoped<IUserService, UserService>();
+
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {

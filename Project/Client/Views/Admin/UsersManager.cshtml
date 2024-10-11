@@ -97,13 +97,13 @@
 				<th scope="col">Display Name</th>
 				<th scope="col">Email</th>
 				<th scope="col">Phone Number</th>
-				<th scope="col">Status</th>
+				<th scope="col">Role</th>
 				<th scope="col">CreateAt</th>
 				<th scope="col"></th>
 			</tr>
 		</thead>
 		<tbody>
-			<tr>
+			@* <tr>
 				<td><input type="checkbox" class="user-checkbox"></td>
 				<td><img src="~/Image/avatar.jpeg" alt="Alternate Text" style="width: 80px; height: 80px" /></td>
 				<td>tuanlx123</td>
@@ -123,7 +123,10 @@
 				<td><span class="text-success">024 3747 4700</span></td>
 				<td>-</td>
 				<td>-</td>
-			</tr>
+			</tr> *@
+			@{
+				@await Component.InvokeAsync("UsersIndex")
+			}
 			<!-- Thêm các dòng dữ liệu tương tự -->
 		</tbody>
 	</table>
