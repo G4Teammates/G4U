@@ -1,14 +1,48 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Client.Models.AuthenModel;
+using Client.Repositories.Interfaces.Authentication;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using UserMicroservice.Models;
 
 namespace Client.Controllers
 {
-    public class UserController : Controller
+    public class UserController(IAuthenticationService authenService) : Controller
     {
+        private readonly IAuthenticationService _authenService = authenService;
+        [HttpGet]
         public IActionResult Index()
         {
             return View();
         }
 
+
+
+        [HttpPost]
+        public async Task<IActionResult> Login(LoginRequestModel loginModel)
+        {
+            if (ModelState.IsValid)
+            {
+                var response = await _authenService.LoginAsync(loginModel);
+                var user = JsonConvert.DeserializeObject<LoginResponseModel>(response.Result.ToString()!);
+                if (response.IsSuccess)
+                {
+                    CookieOptions options = new CookieOptions
+                    {
+                        HttpOnly = true, // Đảm bảo cookie chỉ có thể được truy cập thông qua HTTP (an toàn hơn)
+                        Secure = true // Đảm bảo cookie chỉ truyền qua HTTPS
+                    };
+                    HttpContext.Response.Cookies.Append("Login", user.Username, options);
+                    return RedirectToAction("Index", "Home");
+                }
+                return RedirectToAction(nameof(Register), "User");
+            }
+            return View();
+
+        }
+
+
+        [HttpGet]
         public IActionResult Login()
         {
             return View();
@@ -34,7 +68,7 @@ namespace Client.Controllers
         {
             return View();
         }
-        
+
 
         public IActionResult EditProfile()
         {

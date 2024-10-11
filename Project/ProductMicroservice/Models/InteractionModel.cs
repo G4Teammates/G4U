@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using MongoDB.Bson.Serialization.Attributes;
+using System.ComponentModel.DataAnnotations;
 
 namespace ProductMicroservice.Models
 {
@@ -16,6 +17,15 @@ namespace ProductMicroservice.Models
         /// <br/>
         /// Số lần sản phẩm đã được chơi hoặc truy cập.
         /// </summary>
+        /*[Range(0, int.MaxValue, ErrorMessage = "The {0} must be greater or equal than {1}")]
+        public int NumberOfPlays { get; set; } = 0;*/
+
+
+        /// <summary>
+        /// The number of views the product has received.
+        /// <br/>
+        /// Số lượt xem mà sản phẩm đã nhận được.
+        /// </summary>
         [Range(0, int.MaxValue, ErrorMessage = "The {0} must be greater or equal than {1}")]
         public int NumberOfViews { get; set; }
 
@@ -25,7 +35,7 @@ namespace ProductMicroservice.Models
         /// Số lượt thích hoặc phản hồi tích cực mà sản phẩm nhận được.
         /// </summary>
         [Range(0, int.MaxValue, ErrorMessage = "The {0} must be greater or equal than {1}")]
-        public int NumberOfLikes { get; set; }
+        public int NumberOfLikes { get; set; } = 0;
 
     }
 }

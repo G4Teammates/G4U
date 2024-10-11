@@ -6,7 +6,7 @@ namespace UserMicroservice.Repositories.Interfaces
     {
         Task<ResponseModel> LoginAsync(LoginRequestModel loginRequestModel);
         Task<ResponseModel> LoginWithGoggleAsync();
-        Task<ResponseModel> SignUpAsync();
+        Task<ResponseModel> RegisterAsync(RegisterRequestModel registerRequestModel);
         Task<ResponseModel> LogoutAsync();
         Task<ResponseModel> ForgotPasswordAsync();
     }

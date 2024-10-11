@@ -1,7 +1,30 @@
+﻿using Client.Configure;
+using Client.Utility;
+using Microsoft.AspNetCore.Authentication.Cookies;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+builder.Services.AddStartupService();
 builder.Services.AddControllersWithViews();
+builder.Services.AddRazorComponents();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddHttpClient();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30); // Set the session timeout as needed
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+// Đăng ký thư viện
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddHttpClient();
+StaticTypeApi.APIGateWay = builder.Configuration["ServiceUrls:APIGateWay"];
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/login"; // Địa chỉ để người dùng được chuyển hướng khi không được xác thực
+        options.LogoutPath = "/logout"; // Địa chỉ để người dùng được chuyển hướng khi đăng xuất
+    });
 
 var app = builder.Build();
 
@@ -15,9 +38,9 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
+app.UseAntiforgery();
 app.UseRouting();
-
+app.UseSession();
 app.UseAuthorization();
 
 app.MapControllerRoute(

@@ -1,5 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using System.Data;
 using System.IdentityModel.Tokens.Jwt;
@@ -13,58 +15,25 @@ using UserMicroService.Models;
 
 namespace UserMicroservice.Repositories.Services
 {
-    public class HelperService : IHelperService
+    public class HelperService(UserDbContext context) : IHelperService
     {
-        private readonly JwtOptions _jwtOptions;
-        private readonly UserDbContext _context;
-        public HelperService(UserDbContext context, IOptions<JwtOptions> jwtOptions)
+        private readonly UserDbContext _context = context;
+
+        public string GenerateJwtAsync(User user)
         {
-            _context = context;
-            _jwtOptions = jwtOptions.Value;
-        }
-
-        //public string GenerateJwtAsync(User user)
-        //{
-        //    var tokenHandler = new JwtSecurityTokenHandler();
-
-        //    var key = Encoding.UTF8.GetBytes(_jwtOptions.Secret);
-
-        //    var claimList = new List<Claim>
-        //    {
-        //        new Claim( JwtRegisteredClaimNames.Sub, user.Id),
-        //        new Claim( JwtRegisteredClaimNames.Email, user.Email ),
-        //        new Claim( JwtRegisteredClaimNames.UniqueName, user.Username),
-        //        new Claim("role", user.Role.ToString())
-        //    };
-
-
-        //    var tokenDesriptor = new SecurityTokenDescriptor
-        //    {
-        //        Audience = _jwtOptions.Audience,
-        //        Issuer = _jwtOptions.Issuer,
-        //        Subject = new ClaimsIdentity(claimList),
-        //        Expires = DateTime.UtcNow.AddDays(7),
-        //        SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-        //    };
-
-        //    var token = tokenHandler.CreateToken(tokenDesriptor);
-        //    return tokenHandler.WriteToken(token);
-        //}
-        public string GenerateJwtAsync(User account)
-        {
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.Secret));
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtOptions.Secret));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
             var claims = new[]
             {
-                new Claim(ClaimTypes.NameIdentifier, account.Id),
-                new Claim(ClaimTypes.Name, account.NormalizedUsername!),
-                new Claim(ClaimTypes.Email, account.Email),
-                new Claim(ClaimTypes.Role, account.Role.ToString())
+                new Claim(ClaimTypes.NameIdentifier, user.Id),
+                new Claim(ClaimTypes.Name, user.Username),
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Role, user.Role.ToString())
             };
 
             var token = new JwtSecurityToken(
-                issuer: _jwtOptions.Issuer,
-                audience: _jwtOptions.Audience,
+                issuer: JwtOptions.Issuer,
+                audience: JwtOptions.Audience,
                 claims,
                 expires: DateTime.Now.AddMinutes(120),
                 signingCredentials: credentials
@@ -72,7 +41,7 @@ namespace UserMicroservice.Repositories.Services
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        public async Task<ResponseModel> IsUserNotExist(string username, string email)
+        public async Task<ResponseModel> IsUserNotExist(string username, string? email = null)
         {
             var response = new ResponseModel();
             response.Message = "Username and email are not exist in database. Ready to create new";
@@ -85,6 +54,19 @@ namespace UserMicroservice.Repositories.Services
         }
 
         public ResponseModel IsUserNotNull(UserModel user)
+        {
+            var response = new ResponseModel();
+            response.Message = "User was not null";
+
+            if (user == null)
+            {
+                response.IsSuccess = false;
+                response.Message = "User is null";
+            }
+            return response;
+        }
+
+        public ResponseModel IsUserNotNull(User user)
         {
             var response = new ResponseModel();
             response.Message = "User was not null";

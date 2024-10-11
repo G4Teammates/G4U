@@ -27,7 +27,7 @@ namespace OrderMicroService.Controllers
             return Ok(Order);
         }
         [HttpGet]
-        public ActionResult Get1(Guid id)
+        public ActionResult Get1(string id)
         {
             var Orders = _context.Orders.ToList();
             var Order = Orders.Find(u => u.Id == id);
