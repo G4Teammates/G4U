@@ -58,6 +58,7 @@ namespace UserMicroService.Controllers
             }
         }
 
+        [Authorize(Roles="User")]
         [HttpGet("search")]
         public async Task<ActionResult> FindUsers([FromQuery] string? query)
         {
@@ -94,41 +95,6 @@ namespace UserMicroService.Controllers
             }
         }
 
-        [AllowAnonymous]
-        [HttpPost("register")]
-        public async Task<ActionResult> Register([FromBody]RegisterRequestModel registerRequestModel)
-        {
-            try
-            {
-                ResponseModel response = await _authenService.RegisterAsync(registerRequestModel);
-                if (response.IsSuccess)
-                    return Ok(response);
-                return BadRequest(response);
-            }
-            catch (Exception ex)
-            {
-                // Trả về lỗi 500 cho các lỗi chưa dự đoán
-                return StatusCode(500, new { message = "An unexpected error occurred. Detail" + ex.Message });
-            }
-        }
-
-        [AllowAnonymous]
-        [HttpPost("login")]
-        public async Task<ActionResult> Login([FromBody]LoginRequestModel loginRequestModel)
-        {
-            try
-            {
-                ResponseModel response = await _authenService.LoginAsync(loginRequestModel);
-                if (response.IsSuccess)
-                    return Ok(response);
-                return BadRequest(response);
-            }
-            catch (Exception ex)
-            {
-                // Trả về lỗi 500 cho các lỗi chưa dự đoán
-                return StatusCode(500, new { message = "An unexpected error occurred. Detail" + ex.Message });
-            }
-        }
 
         //[Authorize(Roles = "Admin")]
         [HttpDelete("/delete/{id}")]

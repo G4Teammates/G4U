@@ -108,6 +108,10 @@
           "Port": 7107
         }
       ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      },
       "UpstreamPathTemplate": "/User/search",
       "UpstreamHttpMethod": [ "Get" ]
     },
@@ -142,7 +146,7 @@
 
     //register
     {
-      "DownstreamPathTemplate": "/api/User/register",
+      "DownstreamPathTemplate": "/api/Auth/register",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
@@ -150,13 +154,13 @@
           "Port": 7107
         }
       ],
-      "UpstreamPathTemplate": "/User/register",
+      "UpstreamPathTemplate": "/Auth/register",
       "UpstreamHttpMethod": [ "Post" ]
     },
 
     //login
     {
-      "DownstreamPathTemplate": "/api/User/login",
+      "DownstreamPathTemplate": "/api/Auth/login",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
@@ -164,7 +168,7 @@
           "Port": 7107
         }
       ],
-      "UpstreamPathTemplate": "/User/login",
+      "UpstreamPathTemplate": "/Auth/login",
       "UpstreamHttpMethod": [ "Post" ]
     }
   ],
