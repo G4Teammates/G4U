@@ -170,6 +170,20 @@
       ],
       "UpstreamPathTemplate": "/Auth/login",
       "UpstreamHttpMethod": [ "Post" ]
+    },
+
+    //GetAll
+    {
+      "DownstreamPathTemplate": "/api/User",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7107
+        }
+      ],
+      "UpstreamPathTemplate": "/User",
+      "UpstreamHttpMethod": [ "Get" ]
     }
   ],
 

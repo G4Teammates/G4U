@@ -9,7 +9,7 @@ namespace ProductMicroservice.DBContexts.Entities
         /// <br/>
         /// Mã định danh duy nhất của danh mục.
         /// </summary>
-        [BsonElement("categoryId")]
-        public string? CategoryId { get; set; }
+        [BsonElement("categoryName")]
+        public string? CategoryName { get; set; }
     }
 }
