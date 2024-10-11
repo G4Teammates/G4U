@@ -31,39 +31,34 @@ namespace UserMicroservice.Repositories.Services
         /// <param name="isAdmin">Flag to indicate whether it's an admin or user registration</param>
         /// <param name="password">Password input from the user or null if admin</param>
         /// <returns>A response indicating the success or failure of the operation.</returns>
-        public async Task<ResponseModel> AddUserAsync(UserModel userModel, bool isAdmin, string? password = null)
+        public async Task<ResponseModel> AddUserAsync(AddUserModel userInput)
         {
             ResponseModel response = new();
             try
             {
                 // Check if the user model is valid
-                response = _helper.IsUserNotNull(userModel);
+                response = _helper.IsUserNotNull(userInput);
                 if (!response.IsSuccess) return response;
 
                 // Check if username or email already exists
-                response = await _helper.IsUserNotExist(userModel.Username, userModel.Email);
+                response = await _helper.IsUserNotExist(userInput.Username, userInput.Email);
                 if (!response.IsSuccess) return response;
 
                 // Map UserModel to User entity
-                User user = _mapper.Map<User>(userModel);
 
-                if (isAdmin)
-                {
-                    // Generate random password for admin creation (future functionality: send via email)
-                    user.PasswordHash = BCrypt.Net.BCrypt.HashPassword("Abc123!");
-                }
-                else
-                {
-                    // Hash the password provided by the user during registration
-                    user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(password!);
-                }
+                UserModel userMapper = _mapper.Map<UserModel>(userInput);
+
+                User userCreate = _mapper.Map<User>(userMapper);
+
+                // Generate random password for admin creation (future functionality: send via email)
+                userCreate.PasswordHash = BCrypt.Net.BCrypt.HashPassword("Abc123!");
 
                 // Save the user to the database
-                await _context.Users.AddAsync(user);
+                await _context.Users.AddAsync(userCreate);
                 await _context.SaveChangesAsync();
 
                 response.Message = "User created successfully";
-                response.Result = _mapper.Map<UserModel>(user);
+                response.Result = userMapper;
             }
             catch (Exception ex)
             {
@@ -136,7 +131,7 @@ namespace UserMicroservice.Repositories.Services
                 }
 
                 // Kiểm tra xem email và username có tồn tại không
-                response = await _helper.IsUserNotExist( updatedUserModel.Username);
+                response = await _helper.IsUserNotExist(updatedUserModel.Username);
                 if (response.IsSuccess)
                 {
                     // Cập nhật thông tin từ UserModel vào đối tượng User

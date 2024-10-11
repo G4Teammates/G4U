@@ -28,6 +28,7 @@ namespace UserMicroService.Configure
                     //cfg.AllowNullCollections = true;
                     cfg.CreateMap<User, UserModel>().ReverseMap();
                     cfg.CreateMap<UserModel, RegisterRequestModel>().ReverseMap();
+                    cfg.CreateMap<UserModel, AddUserModel>().ReverseMap();
                 //Register mapper here⬆️
             });
         }

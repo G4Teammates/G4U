@@ -42,11 +42,11 @@ namespace UserMicroService.Controllers
 
 
         [HttpPost]
-        public async Task<ActionResult> Add([FromBody] UserModel user)
+        public async Task<ActionResult> Add([FromBody] AddUserModel user)
         {
             try
             {
-                ResponseModel response = await _userService.AddUserAsync(user, true);
+                ResponseModel response = await _userService.AddUserAsync(user);
                 if (response.IsSuccess)
                     return Ok(response);
                 return BadRequest(response);
