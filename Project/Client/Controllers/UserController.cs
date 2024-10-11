@@ -24,15 +24,15 @@ namespace Client.Controllers
             if (ModelState.IsValid)
             {
                 var response = await _authenService.LoginAsync(loginModel);
-                var user = JsonConvert.DeserializeObject<LoginResponseModel>(response.Result.ToString()!);
                 if (response.IsSuccess)
                 {
+                    var user = JsonConvert.DeserializeObject<LoginResponseModel>(response.Result.ToString()!);
                     CookieOptions options = new CookieOptions
                     {
                         HttpOnly = true, // Đảm bảo cookie chỉ có thể được truy cập thông qua HTTP (an toàn hơn)
                         Secure = true // Đảm bảo cookie chỉ truyền qua HTTPS
                     };
-                    HttpContext.Response.Cookies.Append("Login", user.Username, options);
+                    HttpContext.Response.Cookies.Append("Login", user!.Username, options);
                     return RedirectToAction("Index", "Home");
                 }
                 return RedirectToAction(nameof(Register), "User");

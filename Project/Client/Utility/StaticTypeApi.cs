@@ -3,7 +3,7 @@
     public class StaticTypeApi
     {
         public static string APIGateWay { get; set; }
-        public static string? ApiUrl { get; set; } = "https://localhost:7107/";
+        public static string? ApiUrl { get; set; } = "https://localhost:7260";
         public const string RoleAdmin = "ADMIN";
         public const string RoleCustomer = "CUSTOMER";
         public const string TokenCookie = "JWTToken";
