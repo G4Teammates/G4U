@@ -12,7 +12,7 @@
         /// <br/>
         /// Mã định danh duy nhất của danh mục.
         /// </summary>
-        public string? CategoryId { get; set; }
+        public string? CategoryName { get; set; }
     }
 
 }

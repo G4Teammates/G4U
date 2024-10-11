@@ -128,7 +128,7 @@ namespace ProductMicroservice.Repostories
         public IEnumerable<Products> Search(string searchstring)
         {
             var Products = _db.Products.AsQueryable();
-            float gia;
+
 
             if (!string.IsNullOrEmpty(searchstring))
             {
@@ -138,6 +138,7 @@ namespace ProductMicroservice.Repostories
                 {
                     return resultByName;
                 }
+                
             }
 
             // Nếu không có kết quả nào khớp với điều kiện tìm kiếm, trả về danh sách trống
