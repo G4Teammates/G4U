@@ -18,27 +18,7 @@ namespace Client.Controllers
 
 
 
-        [HttpGet]
-        public async Task<IActionResult> UsersIndex()
-        {
-            List<UsersDTO?> list = new();
-            ResponseModel? response = await _userService.GetAllUserAsync();
-
-            if (response != null && response.IsSuccess)
-            {
-
-                list = JsonConvert.DeserializeObject<List<UsersDTO>>(Convert.ToString(response.Result.ToString()));
-
-            }
-            else
-            {
-                TempData["error"] = response?.Message;
-            }
-            return View(list);
-        }
-
-
-        [HttpPost]
+		[HttpPost]
         public async Task<IActionResult> Login(LoginRequestModel loginModel)
         {
             if (ModelState.IsValid)
@@ -60,6 +40,8 @@ namespace Client.Controllers
             return View();
 
         }
+
+        
 
 
         [HttpGet]
@@ -99,5 +81,6 @@ namespace Client.Controllers
         {
             return View();
         }
+
     }
 }
