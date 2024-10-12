@@ -169,6 +169,10 @@
 
 
 	<script>
+
+		
+
+
 		// Lấy URL hiện tại
 		var currentPath = window.location.pathname;
 
@@ -216,6 +220,7 @@
 
 			// Hàm kiểm tra và ẩn/hiện nút delete
 			function toggleDeleteButton() {
+
 				// Kiểm tra nếu có ít nhất một checkbox được chọn (bao gồm checkbox tổng)
 				if ($('.user-checkbox:checked').length > 0 || $('#selectAll').is(':checked')) {
 					$('#checkBoxBar').show(); // Hiển thị nút delete
