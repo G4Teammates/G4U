@@ -41,11 +41,14 @@ namespace UserMicroservice.Repositories.Services
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        public async Task<ResponseModel> IsUserNotExist(string username, string? email = null)
+        public async Task<ResponseModel> IsUserNotExist(string username, string? email = null, string? phoneNumber = null)
         {
             var response = new ResponseModel();
             response.Message = "Username and email are not exist in database. Ready to create new";
-            if (await _context.Users.AnyAsync(x => x.Username == username || x.Email == email))
+            if (await _context.Users.AnyAsync(x => 
+                x.Username == username || 
+                x.Email == email || 
+                x.PhoneNumber == phoneNumber))
             {
                 response.IsSuccess = false;
                 response.Message = "Username or email already exist";

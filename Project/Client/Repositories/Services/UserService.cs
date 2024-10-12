@@ -39,7 +39,7 @@ namespace Client.Repositories.Services
             throw new NotImplementedException();
         }
 
-        public async Task<ResponseModel?> GetAllUserAsync()
+        public async Task<ResponseModel> GetAllUserAsync()
         {
             return await _baseService.SendAsync(new RequestModel()
             {

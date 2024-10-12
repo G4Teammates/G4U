@@ -8,8 +8,8 @@ namespace Client.Repositories.Services.AuthenticationService
 {
     public class AuthenticationService(IBaseService baseService) : IAuthenticationService
     {
-        readonly IBaseService _baseService = baseService;
-        readonly string _authenUrl = APIGateWay + "/auth";
+        private readonly IBaseService _baseService = baseService;
+        private readonly string _authenUrl = APIGateWay + "/auth";
         public Task<ResponseModel> ChangePasswordAsync(string username, string oldPassword, string newPassword)
         {
             throw new NotImplementedException();

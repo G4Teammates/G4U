@@ -22,7 +22,7 @@ namespace UserMicroService.Controllers
         private readonly IUserService _userService = userService;
 
 
-
+        [Authorize(Roles = "User")]
         [HttpGet]
         public async Task<ActionResult> GetAll()
         {
@@ -58,7 +58,6 @@ namespace UserMicroService.Controllers
             }
         }
 
-        [Authorize(Roles="User")]
         [HttpGet("search")]
         public async Task<ActionResult> FindUsers([FromQuery] string? query)
         {
