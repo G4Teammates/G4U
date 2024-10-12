@@ -76,7 +76,7 @@ namespace UserMicroService.Controllers
         }
 
 
-        [Authorize(Roles = "User")]
+        /*[Authorize(Roles = "User")]*/
         [HttpGet("{id}")]
         public async Task<ActionResult> GetUser(string id)
         {
@@ -96,7 +96,7 @@ namespace UserMicroService.Controllers
 
 
         //[Authorize(Roles = "Admin")]
-        [HttpDelete("/delete/{id}")]
+        [HttpDelete("delete/{id}")]
         public async Task<ActionResult> DeleteUser(string id)
         {
             try

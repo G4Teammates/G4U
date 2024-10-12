@@ -1,23 +1,99 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Client.Models;
+using Client.Models.UserDTO;
+using Client.Repositories.Interfaces.User;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace Client.Controllers
 {
-    public class AdminController : Controller
+    public class AdminController (IUserService userService) : Controller
     {
-        public IActionResult Index()
+	
+		public readonly IUserService _userService = userService;
+		public IActionResult Index()
         {
             return View();
         }
 
-        public IActionResult AdminDashboard()
+		public IActionResult AdminDashboard()
         {
-            return View();
+			return View();
         }
 
-        public IActionResult UsersManager()
+		[HttpGet]
+		public async Task<IActionResult> UsersManager()
         {
-            return View();
-        }
+			List<UsersDTO?> list = new();
+			ResponseModel? response = await _userService.GetAllUserAsync();
+
+			if (response != null && response.IsSuccess)
+			{
+
+				list = JsonConvert.DeserializeObject<List<UsersDTO>>(Convert.ToString(response.Result.ToString()));
+
+			}
+			else
+			{
+				TempData["error"] = response?.Message;
+			}
+
+			return View(list);
+		}
+
+
+		[HttpPost]
+		public async Task<IActionResult> UserCreate(UsersDTO user)
+		{
+			if (ModelState.IsValid)
+			{
+				ResponseModel? response = await _userService.CreateUserAsync(user);
+
+				if (response != null && response.IsSuccess)
+				{
+					TempData["success"] = "Product created successfully";
+					return RedirectToAction(nameof(UsersManager));
+				}
+				else
+				{
+					TempData["error"] = response?.Message;
+				}
+
+			}
+			return View(user);
+		}
+
+		public async Task<IActionResult> UsersDelete(string id)
+		{
+			ResponseModel? response = await _userService.GetUserAsync(id);
+
+			if (response != null && response.IsSuccess)
+			{
+				UsersDTO? model = JsonConvert.DeserializeObject<UsersDTO>(Convert.ToString(response.Result));
+				return View(model);
+			}
+			else
+			{
+				TempData["error"] = response?.Message;
+			}
+			return NotFound();
+		}
+
+		[HttpPost]
+		public async Task<IActionResult> UsersDelete(UsersDTO user)
+		{
+			ResponseModel? response = await _userService.DeleteUser(user.Id);
+
+			if (response != null && response.IsSuccess)
+			{
+				TempData["success"] = "User deleted successfully";
+				return RedirectToAction(nameof(UsersManager));
+			}
+			else
+			{
+				TempData["error"] = response?.Message;
+			}
+			return BadRequest();
+		}
 
 		public IActionResult ProductsManager()
 		{

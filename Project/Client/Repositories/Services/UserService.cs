@@ -30,7 +30,7 @@ namespace Client.Repositories.Services
             return await _baseService.SendAsync(new RequestModel()
             {
                 ApiType = StaticTypeApi.ApiType.DELETE,
-                Url = StaticTypeApi.APIGateWay + "/User/" + id
+                Url = StaticTypeApi.APIGateWay + "/User/delete/" + id
             });
         }
 

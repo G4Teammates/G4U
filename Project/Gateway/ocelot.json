@@ -184,6 +184,20 @@
       ],
       "UpstreamPathTemplate": "/User",
       "UpstreamHttpMethod": [ "Get" ]
+    },
+
+    //Delete
+    {
+      "DownstreamPathTemplate": "/api/User/delete/{id}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7107
+        }
+      ],
+      "UpstreamPathTemplate": "/User/delete/{id}",
+      "UpstreamHttpMethod": [ "Delete" ]
     }
   ],
 
