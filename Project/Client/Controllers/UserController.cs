@@ -6,6 +6,8 @@ using Client.Repositories.Interfaces.User;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using UserMicroservice.Models;
 using LoginRequestModel = Client.Models.AuthenModel.LoginRequestModel;
 
@@ -19,8 +21,7 @@ namespace Client.Controllers
 
 
 
-
-		[HttpPost]
+        [HttpPost]
         public async Task<IActionResult> Login(LoginRequestModel loginModel)
         {
             if (ModelState.IsValid)
@@ -82,8 +83,14 @@ namespace Client.Controllers
 
         public IActionResult Information()
         {
+            var token = _tokenProvider.GetToken();
+            var handler = new JwtSecurityTokenHandler();
+            var jsonToken = handler.ReadToken(token) as JwtSecurityToken;
+            var id = jsonToken?.Claims.First(claim => claim.Type == ClaimTypes.NameIdentifier).Value;
+
             return View();
         }
+
 
 
         public IActionResult EditProfile()
