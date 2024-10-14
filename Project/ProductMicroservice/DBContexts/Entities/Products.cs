@@ -154,12 +154,11 @@ namespace ProductMicroservice.DBContexts.Entities
         /// The identifier of the user who owns or created the product.
         /// <br/>
         /// Định danh của người dùng sở hữu hoặc tạo ra sản phẩm.
-
         /// </summary>
-        [BsonElement("userId")]
-        [BsonRepresentation(BsonType.ObjectId)]
+        [BsonElement("username")]
+        /*[BsonRepresentation(BsonType.ObjectId)]*/
 
-        public required string UserId { get; set; }
+        public required string UserName { get; set; }
 
 
     }

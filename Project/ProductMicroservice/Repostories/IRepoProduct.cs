@@ -13,7 +13,8 @@ namespace ProductMicroservice.Repostories
         void DeleteProduct(string id);
         IEnumerable<Products> Sort(string sort);
         IEnumerable<Products> Search(string searchstring);
+		IEnumerable<Products> Filter(decimal? minrange, decimal? maxrange, int? sold , bool? Discount, int? Platform, string Category);
 
-        Task<Products> ModerateImages(List<IFormFile> imageFiles, CreateProductModel Product, IFormFile gameFiles);
+		Task<Products> ModerateImages(List<IFormFile> imageFiles, CreateProductModel Product, IFormFile gameFiles, string username);
     }
 }
