@@ -15,7 +15,7 @@ namespace Client.Repositories.Services
             _baseService = baseService;
         }
 
-        public async Task<ResponseModel> CreateUserAsync(UsersDTO user)
+        public async Task<ResponseModel> CreateUserAsync(CreateUser user)
         {
             return await _baseService.SendAsync(new RequestModel()
             {
@@ -39,7 +39,7 @@ namespace Client.Repositories.Services
             throw new NotImplementedException();
         }
 
-        public async Task<ResponseModel?> GetAllUserAsync()
+        public async Task<ResponseModel> GetAllUserAsync()
         {
             return await _baseService.SendAsync(new RequestModel()
             {
@@ -57,13 +57,13 @@ namespace Client.Repositories.Services
             });
         }
 
-        public async Task<ResponseModel> UpdateUser(string id,UpdateUser user)
+        public async Task<ResponseModel> UpdateUser(UpdateUser user)
         {
             return await _baseService.SendAsync(new RequestModel()
             {
                 ApiType = StaticTypeApi.ApiType.PUT,
                 Data = user,
-                Url = StaticTypeApi.APIGateWay + "/User" + id
+                Url = StaticTypeApi.APIGateWay + "/User/" + user.Id
             });
         }
     }

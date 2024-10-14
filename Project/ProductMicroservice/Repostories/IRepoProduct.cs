@@ -7,14 +7,14 @@ namespace ProductMicroservice.Repostories
     public interface IRepoProduct
     {
         /*Products CreateProduct(CreateProductModel Product);*/
-        Products GetById(string id);
-        Products UpdateProduct(UpdateProductModel Product);
+        Task<Products> GetById(string id);
+        Task<Products> UpdateProduct(List<IFormFile> imageFiles, UpdateProductModel Product, IFormFile gameFiles);
         IEnumerable<Products> Products { get; }
         void DeleteProduct(string id);
         IEnumerable<Products> Sort(string sort);
         IEnumerable<Products> Search(string searchstring);
 		IEnumerable<Products> Filter(decimal? minrange, decimal? maxrange, int? sold , bool? Discount, int? Platform, string Category);
 
-		Task<Products> ModerateImages(List<IFormFile> imageFiles, CreateProductModel Product, IFormFile gameFiles, string username);
+		Task<Products> Moderate(List<IFormFile> imageFiles, CreateProductModel Product, IFormFile gameFiles, string username);
     }
 }

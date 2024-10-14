@@ -1,7 +1,7 @@
 ﻿@model Client.Models.UserDTO.UsersDTO
 
 @{
-    ViewData["Title"] = "UsersDelete";
+    ViewData["Title"] = "UserDelete";
 }
 @{
     Layout = "_LayoutAdmin";
@@ -45,7 +45,7 @@
         <a asp-action="UsersManager" class="btn btn-secondary">Back to List</a>
     </form> *@
 
-    <form asp-action="UsersDelete">
+    <form asp-action="UserDelete">
         <input type="submit" value="Delete" class="btn btn-danger" /> |
         <a asp-action="UsersManager" class="btn btn-secondary">Back to List</a>
     </form>

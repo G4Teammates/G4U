@@ -51,37 +51,176 @@ namespace ProductMicroservice.Repostories
 
 
 
-     
 
-        public Products UpdateProduct(UpdateProductModel Product)
+
+        public async Task<Products> UpdateProduct(List<IFormFile> imageFiles, UpdateProductModel Product, IFormFile gameFiles)
         {
-            var upProduct = GetById(Product.Id);
-            if (upProduct != null)
+            // Kiểm tra xem danh sách file có tồn tại và có ít nhất một file
+            if (imageFiles == null || imageFiles.Count == 0)
             {
-                upProduct.Name = Product.Name;
-                upProduct.Description = Product.Description;
-                upProduct.Price = Product.Price;
-                upProduct.Sold = Product.Sold;
-                upProduct.Interactions.NumberOfViews = Product.Interactions.NumberOfViews;
-                upProduct.Interactions.NumberOfLikes = Product.Interactions.NumberOfLikes;
-                upProduct.Discount = Product.Discount;
-                upProduct.Categories = _mapper.Map<ICollection<Categories>>(Product.Categories);
-                upProduct.Platform = Product.Platform;
-                upProduct.Status = Product.Status;
-                upProduct.CreatedAt = Product.CreatedAt;
-                upProduct.UpdatedAt = DateTime.UtcNow;
-                upProduct.UserName = Product.UserName;
-            };
-            _db.Products.Update(upProduct);
-            _db.SaveChanges();
-            return upProduct;
+                throw new ArgumentException("No files provided.");
+            }
+            try
+            {
+                Products productEntity = null;
+                // Tạo đối tượng ContentSafetyClient với thông tin cấu hình
+                var client = new ContentSafetyClient(new Uri(EndpointContentSafety), new AzureKeyCredential(ApiKeyContentSafety));
+
+                // Danh sách để chứa kết quả kiểm duyệt của từng file
+                var moderationResults = new List<object>();
+
+                // Tạo một danh sách các đối tượng Link
+                var linkModel = new List<LinkModel>();
+
+                // Biến để theo dõi nếu phát hiện có bất kỳ file nào không hợp lệ
+                /*bool hasUnsafeFile = false;*/
+
+                var ListUnsafe = new List<bool>();
+
+                // Sử dụng xử lý song song để kiểm duyệt nhiều file cùng lúc
+                var tasks = imageFiles.Select<IFormFile, Task<object>>(async imageFile =>
+                {
+                    /*if (hasUnsafeFile) return null;*/ // Nếu đã phát hiện file không hợp lệ, dừng toàn bộ quá trình
+
+                    // Đọc dữ liệu hình ảnh từ file upload vào MemoryStream
+                    using (var imageStream = new MemoryStream())
+                    {
+                        await imageFile.CopyToAsync(imageStream); // Sao chép dữ liệu từ file upload vào stream
+                        imageStream.Position = 0; // Đặt vị trí đọc của stream về đầu
+
+                        // Tạo đối tượng ContentSafetyImageData từ dữ liệu hình ảnh
+                        var imageData = new ContentSafetyImageData(BinaryData.FromBytes(imageStream.ToArray()));
+
+                        // Tạo đối tượng yêu cầu kiểm duyệt hình ảnh
+                        var request = new AnalyzeImageOptions(imageData);
+
+                        // Gửi yêu cầu kiểm duyệt hình ảnh lên Azure Content Safety
+                        Response<AnalyzeImageResult> response;
+                        try
+                        {
+                            response = await client.AnalyzeImageAsync(request); // Thực hiện async
+                        }
+                        catch (RequestFailedException ex)
+                        {
+                            /*hasUnsafeFile = true;*/
+                            ListUnsafe.Add(true);
+                            return new { Error = $"Analyze image failed. Status code: {ex.Status}, Error code: {ex.ErrorCode}, Error message: {ex.Message}" };
+                        }
+
+                        // Lấy kết quả kiểm duyệt từ dịch vụ
+                        var result = response.Value;
+                        var hateSeverity = result.CategoriesAnalysis.FirstOrDefault(a => a.Category == ImageCategory.Hate)?.Severity ?? 0;
+                        var selfHarmSeverity = result.CategoriesAnalysis.FirstOrDefault(a => a.Category == ImageCategory.SelfHarm)?.Severity ?? 0;
+                        var sexualSeverity = result.CategoriesAnalysis.FirstOrDefault(a => a.Category == ImageCategory.Sexual)?.Severity ?? 0;
+                        var violenceSeverity = result.CategoriesAnalysis.FirstOrDefault(a => a.Category == ImageCategory.Violence)?.Severity ?? 0;
+
+                        if (hateSeverity > 0 || selfHarmSeverity > 0 || sexualSeverity > 0 || violenceSeverity > 0)
+                        {
+                            ListUnsafe.Add(true);
+                            return new { Message = "Hình ảnh không hợp lệ." };
+                        }
+                        else if (ListUnsafe.Count == 0)
+                        {
+                            // Khởi tạo biến chứa thông báo
+
+                            string CensorProviderName = "Azure Content Safety";
+                            string CensorDescription = "Content Safety";
+                            int CensorStatus = 1;
+                            string LinkProviderName = "Cloudinary";
+                            int Linkype = 1;
+                            int Linkstatus = 0;
+
+                            // Lưu hình ảnh lên Google Drive và Cloudinary
+                            var imageLink = await UploadImageCloudinary(imageFile);
+                            /*var DriveLink = await UploadFileToGoogleDrive(imageFile);*/
+
+
+                            var newCensor = new CensorshipModel()
+                            {
+                                ProviderName = CensorProviderName,
+                                Description = CensorDescription,
+                                Status = (CensorshipStatus)CensorStatus
+                            };
+
+                            // Giả định rằng bạn đang tạo một hoặc nhiều link từ LinkModel
+                            var link = new LinkModel
+                            {                               
+                                ProviderName = LinkProviderName,
+                                Url = imageLink,
+                                Type = (LinkType)Linkype,
+                                Status = (LinkStatus)Linkstatus,
+                                Censorship = newCensor
+                            };
+
+                            // Thêm đối tượng Link vào danh sách
+                            linkModel.Add(link);
+                            return null; // Nếu hình ảnh an toàn, trả về null
+                        }
+                        else { return "Error"; }
+                    }
+                });
+
+                string scan = await ScanFileForVirus(gameFiles);
+                if (scan != "OK")
+                {
+                    ListUnsafe.Add(true);
+                }
+                else if (ListUnsafe.Count == 0)
+                {
+                    string CensorProviderName = "VirusTotal";
+                    string CensorDescription = "Scan Virus";
+                    int CensorStatus = 1;
+                    string LinkProviderName = "Google Drive";
+                    int Linkype = 1;
+                    int Linkstatus = 0;
+
+                    string linkgame = await UploadFileToGoogleDrive(gameFiles);
+
+                    var newCensor = new CensorshipModel()
+                    {
+                        ProviderName = CensorProviderName,
+                        Description = CensorDescription,
+                        Status = (CensorshipStatus)CensorStatus
+                    };
+
+                    // Giả định rằng bạn đang tạo một hoặc nhiều link từ LinkModel
+                    var link = new LinkModel
+                    {
+                        ProviderName = LinkProviderName,
+                        Url = linkgame,
+                        Type = (LinkType)Linkype,
+                        Status = (LinkStatus)Linkstatus,
+                        Censorship = newCensor
+                    };
+
+                    // Thêm đối tượng Link vào danh sách
+                    linkModel.Add(link);
+                }
+
+
+                // Chờ tất cả các tác vụ xử lý hoàn tất
+                await Task.WhenAll(tasks);
+
+                if (ListUnsafe.Count == 0)
+                {                 // Sau khi đã xử lý tất cả hình ảnh, tạo sản phẩm một lần
+                    productEntity = await UpdateProduct(Product, linkModel);
+
+                    // Trả về kết quả cho client
+                    return productEntity;
+                }
+                return null;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Internal server error: {ex.Message}");
+            }
         }
 
         public IEnumerable<Products> Products => _db.Products.ToList();
-        public Products GetById(string id) => _db.Products.Find(id);
-        public void DeleteProduct(string id)
+        public async Task<Products> GetById(string id) => _db.Products.Find(id);
+        public async void DeleteProduct(string id)
         {
-            var Product = GetById(id);
+            var Product = await GetById(id);
             _db.Products.Remove(Product);
             _db.SaveChanges();
         }
@@ -212,7 +351,7 @@ namespace ProductMicroservice.Repostories
 			return query.ToList();
 		}
 
-		public async Task<Products> ModerateImages(List<IFormFile> imageFiles, CreateProductModel Product, IFormFile gameFiles, string username)
+		public async Task<Products> Moderate(List<IFormFile> imageFiles, CreateProductModel Product, IFormFile gameFiles, string username)
         {
             // Kiểm tra xem danh sách file có tồn tại và có ít nhất một file
             if (imageFiles == null || imageFiles.Count == 0)
@@ -589,7 +728,33 @@ namespace ProductMicroservice.Repostories
             Console.WriteLine($"Categories count in productEntity before save: {productEntity.Categories?.Count}");
             return productEntity;
         }
+        private async Task<Products> UpdateProduct(UpdateProductModel Product, List<LinkModel> linkModel)
+        {
+            var upProduct = await GetById(Product.Id);
+            if (upProduct != null)
+            {
+                upProduct.Name = Product.Name;
+                upProduct.Description = Product.Description;
+                upProduct.Price = Product.Price;
+                upProduct.Sold = Product.Sold;
+                upProduct.Interactions.NumberOfViews = Product.Interactions.NumberOfViews;
+                upProduct.Interactions.NumberOfLikes = Product.Interactions.NumberOfLikes;
+                upProduct.Discount = Product.Discount;
+                upProduct.Categories = _mapper.Map<ICollection<Categories>>(Product.Categories);
+                upProduct.Platform = Product.Platform;
+                upProduct.Status = Product.Status;
+                upProduct.CreatedAt = Product.CreatedAt;
+                upProduct.UpdatedAt = DateTime.UtcNow;
+                upProduct.UserName = Product.UserName;
+                upProduct.Links = _mapper.Map<ICollection<Link>>(linkModel);
 
+            };
 
-	}
+            var productEntity = _mapper.Map<Products>(upProduct);
+             _db.Update(productEntity);
+            await _db.SaveChangesAsync();
+            return productEntity;
+        }
+
+    }
 }

@@ -9,7 +9,7 @@ namespace UserMicroservice.Repositories.IRepositories
         Task<ResponseModel> GetAll();
         Task<ResponseModel> GetUser(string id);
         Task<ResponseModel> AddUserAsync(AddUserModel user);
-        Task<ResponseModel> UpdateUser(UserModel user);
+        Task<ResponseModel> UpdateUser(UserUpdate user);
         Task<ResponseModel> DeleteUser(string id);
         Task<ResponseModel>? FindUsers(string? query);
 

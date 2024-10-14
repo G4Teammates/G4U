@@ -6,9 +6,9 @@ namespace Client.Repositories.Interfaces.User
     public interface IUserService
     {
         Task<ResponseModel> GetAllUserAsync();
-        Task<ResponseModel> CreateUserAsync(UsersDTO user);
+        Task<ResponseModel> CreateUserAsync(CreateUser user);
         Task<ResponseModel> GetUserAsync(string id);
-        Task<ResponseModel> UpdateUser(string id, UpdateUser user);
+        Task<ResponseModel> UpdateUser(UpdateUser user);
         Task<ResponseModel> DeleteUser(string id);
         Task<ResponseModel>? FindUsers(string? query);
     }

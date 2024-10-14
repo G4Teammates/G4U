@@ -15,84 +15,88 @@ using UserMicroService.Models;
 
 namespace UserMicroservice.Repositories.Services
 {
-    public class HelperService(UserDbContext context) : IHelperService
-    {
-        private readonly UserDbContext _context = context;
+	public class HelperService(UserDbContext context) : IHelperService
+	{
+		private readonly UserDbContext _context = context;
 
-        public string GenerateJwtAsync(User user)
-        {
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtOptions.Secret));
-            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-            var claims = new[]
-            {
-                new Claim(ClaimTypes.NameIdentifier, user.Id),
-                new Claim(ClaimTypes.Name, user.Username),
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Role, user.Role.ToString())
-            };
+		public string GenerateJwtAsync(User user)
+		{
+			var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtOptions.Secret));
+			var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+			var claims = new[]
+			{
+				new Claim(ClaimTypes.NameIdentifier, user.Id),
+				new Claim(ClaimTypes.Name, user.Username),
+				new Claim(ClaimTypes.Email, user.Email),
+				new Claim(ClaimTypes.Role, user.Role.ToString())
+			};
 
-            var token = new JwtSecurityToken(
-                issuer: JwtOptions.Issuer,
-                audience: JwtOptions.Audience,
-                claims,
-                expires: DateTime.Now.AddMinutes(120),
-                signingCredentials: credentials
-            );
-            return new JwtSecurityTokenHandler().WriteToken(token);
-        }
+			var token = new JwtSecurityToken(
+				issuer: JwtOptions.Issuer,
+				audience: JwtOptions.Audience,
+				claims,
+				expires: DateTime.Now.AddMinutes(120),
+				signingCredentials: credentials
+			);
+			return new JwtSecurityTokenHandler().WriteToken(token);
+		}
 
-        public async Task<ResponseModel> IsUserNotExist(string username, string? email = null)
-        {
-            var response = new ResponseModel();
-            response.Message = "Username and email are not exist in database. Ready to create new";
-            if (await _context.Users.AnyAsync(x => x.Username == username || x.Email == email))
-            {
-                response.IsSuccess = false;
-                response.Message = "Username or email already exist";
-            }
-            return response;
-        }
+		public async Task<ResponseModel> IsUserNotExist(string username, string? email = null, string? phoneNumber = null)
+		{
+			var response = new ResponseModel();
+			response.Message = "Username and email are not exist in database. Ready to create new";
+			if (await _context.Users.AnyAsync(x =>
+				x.Username == username ||
+				x.Email == email ||
+				x.PhoneNumber == phoneNumber &&
+				!phoneNumber.IsNullOrEmpty()))
+			{
+				response.IsSuccess = false;
+				response.Message = "Username or email already exist";
+			}
+			return response;
+		}
 
-        public ResponseModel IsUserNotNull(AddUserModel user)
-        {
-            var response = new ResponseModel();
-            response.Message = "User was not null";
+		public ResponseModel IsUserNotNull(AddUserModel user)
+		{
+			var response = new ResponseModel();
+			response.Message = "User was not null";
 
-            if (user == null)
-            {
-                response.IsSuccess = false;
-                response.Message = "User is null";
-            }
-            return response;
-        }
+			if (user == null)
+			{
+				response.IsSuccess = false;
+				response.Message = "User is null";
+			}
+			return response;
+		}
 
-        public ResponseModel IsUserNotNull(User user)
-        {
-            var response = new ResponseModel();
-            response.Message = "User was not null";
+		public ResponseModel IsUserNotNull(User user)
+		{
+			var response = new ResponseModel();
+			response.Message = "User was not null";
 
-            if (user == null)
-            {
-                response.IsSuccess = false;
-                response.Message = "User is null";
-            }
-            return response;
-        }
+			if (user == null)
+			{
+				response.IsSuccess = false;
+				response.Message = "User is null";
+			}
+			return response;
+		}
 
-        public ResponseModel NomalizeQuery(string? query)
-        {
-            var response = new ResponseModel();
-            if (string.IsNullOrEmpty(query))
-            {
-                response.IsSuccess = false;
-                response.Message = "Query is null or empty";
-            }
-            else
-            {
-                response.Message = "Query is normalized";
-                response.Result = query.ToUpper().Trim();
-            }
-            return response;
-        }
-    }
+		public ResponseModel NomalizeQuery(string? query)
+		{
+			var response = new ResponseModel();
+			if (string.IsNullOrEmpty(query))
+			{
+				response.IsSuccess = false;
+				response.Message = "Query is null or empty";
+			}
+			else
+			{
+				response.Message = "Query is normalized";
+				response.Result = query.ToUpper().Trim();
+			}
+			return response;
+		}
+	}
 }

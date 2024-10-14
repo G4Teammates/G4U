@@ -1,164 +1,143 @@
 ﻿using Client.Models;
-using Client.Models.Product_Model;
-using Client.Models.Product_Model.DTO;
 using Client.Models.UserDTO;
-using Client.Repositories.Interfaces.ProductInterface;
+using Client.Repositories.Interfaces;
 using Client.Repositories.Interfaces.User;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
 namespace Client.Controllers
 {
-    public class AdminController (IUserService userService, IRepoProduct productService) : Controller
+    public class AdminController(IUserService userService, IHelperService helperService) : Controller
     {
-	
-		public readonly IUserService _userService = userService;
-		public readonly IRepoProduct _productService = productService;
-		public IActionResult Index()
+
+        public readonly IUserService _userService = userService;
+        public readonly IHelperService _helperService = helperService;
+        public IActionResult Index()
         {
             return View();
         }
 
-		public IActionResult AdminDashboard()
+        public IActionResult AdminDashboard()
         {
-			return View();
+            return View();
         }
 
-		[HttpGet]
-		public async Task<IActionResult> UsersManager()
+        [HttpGet]
+        public async Task<IActionResult> UsersManager()
         {
-			List<UsersDTO?> list = new();
-			ResponseModel? response = await _userService.GetAllUserAsync();
+            UserViewModel users = new();
+            try
+            {
+                ResponseModel? response = await _userService.GetAllUserAsync();
 
-			if (response != null && response.IsSuccess)
-			{
+                if (response != null && response.IsSuccess)
+                {
 
-				list = JsonConvert.DeserializeObject<List<UsersDTO>>(Convert.ToString(response.Result.ToString()));
+                    users.Users = JsonConvert.DeserializeObject<ICollection<UsersDTO>>(Convert.ToString(response.Result.ToString()!));
 
-			}
-			else
-			{
-				TempData["error"] = response?.Message;
-			}
+                }
+                else
+                {
+                    TempData["error"] = response?.Message;
+                }
 
-			return View(list);
-		}
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = ex.Message;
+            }
 
-
-		[HttpPost]
-		public async Task<IActionResult> UserCreate(UsersDTO user)
-		{
-			if (ModelState.IsValid)
-			{
-				ResponseModel? response = await _userService.CreateUserAsync(user);
-
-				if (response != null && response.IsSuccess)
-				{
-					TempData["success"] = "Product created successfully";
-					return RedirectToAction(nameof(UsersManager));
-				}
-				else
-				{
-					TempData["error"] = response?.Message;
-				}
-
-			}
-			return View(user);
-		}
+            return View(users);
+        }
 
 
-        public async Task<IActionResult> UsersDelete(string id)
-		{
-			ResponseModel? response = await _userService.GetUserAsync(id);
+        [HttpPost]
+        public async Task<IActionResult> UserCreate(CreateUser user)
+        {
+            if (ModelState.IsValid)
+            {
+                if (user.AvatarFile != null && user.AvatarFile.Length > 0)
+                {
+                    using (var stream = user.AvatarFile.OpenReadStream())
+                    {
+                        // Gọi phương thức upload lên Cloudinary
+                        string imageUrl = await _helperService.UploadImageAsync(stream, user.AvatarFile.FileName);
 
-			if (response != null && response.IsSuccess)
-			{
-				UsersDTO? model = JsonConvert.DeserializeObject<UsersDTO>(Convert.ToString(response.Result));
-				return View(model);
-			}
-			else
-			{
-				TempData["error"] = response?.Message;
-			}
-			return NotFound();
-		}
+                        // Lưu URL của avatar vào model
+                        user.Avatar = imageUrl;
+                    }
+                }
 
-		[HttpPost]
+                ResponseModel? response = await _userService.CreateUserAsync(user);
 
-        public async Task<IActionResult> UsersDelete(UsersDTO user)
-		{
-			ResponseModel? response = await _userService.DeleteUser(user.Id);
+                if (response != null && response.IsSuccess)
+                {
+                    TempData["success"] = "User created successfully";
+                    return RedirectToAction(nameof(UsersManager));
+                }
+                else
+                {
+                    TempData["error"] = response?.Message;
+                }
 
-			if (response != null && response.IsSuccess)
-			{
-				TempData["success"] = "User deleted successfully";
-				return RedirectToAction(nameof(UsersManager));
-			}
-			else
-			{
-				TempData["error"] = response?.Message;
-			}
-			return BadRequest();
-		}
-
+            }
+            return RedirectToAction(nameof(UsersManager));
+        }
 
 
-		/////////////////////////////////////////////////////////
-		//                                                     //
-		//                       PRODUCT                       //
-		//                                                     //
-		/////////////////////////////////////////////////////////
-		
-		// GetAll Product
-		public async Task<IActionResult> ProductsManager()
-		{
-            List<ProductModel?> list = new();
-            ResponseModel? response = await _productService.GetAllProductAsync();
+        public async Task<IActionResult> UserDelete(string id)
+        {
+            ResponseModel? response = await _userService.GetUserAsync(id);
 
             if (response != null && response.IsSuccess)
             {
-
-                list = JsonConvert.DeserializeObject<List<ProductModel>>(Convert.ToString(response.Result));
-
+                UsersDTO? model = JsonConvert.DeserializeObject<UsersDTO>(Convert.ToString(response.Result));
+                return View(model);
             }
             else
             {
                 TempData["error"] = response?.Message;
             }
-            return View(list);
+            return NotFound();
         }
-
-
-        // Create Product
-        public async Task<IActionResult> ProductCreate()
+        public async Task<IActionResult> UserUpdate(string id)
         {
-            // Optionally, you can fetch categories or other necessary data here
-            ViewBag.Categories = await _productService.GetCategoriesAsync(); // Fetch categories for the view
-            return View();
-        }
+            ResponseModel? response = await _userService.GetUserAsync(id);
 
+            if (response != null && response.IsSuccess)
+            {
+                UpdateUser? user = JsonConvert.DeserializeObject<UpdateUser>(Convert.ToString(response.Result));
+
+                // Trả về model UsersDTO để sử dụng trong View
+                return View(user);
+            }
+            else
+            {
+                TempData["error"] = response?.Message;
+            }
+            return NotFound();
+        }
         [HttpPost]
-        public async Task<IActionResult> ProductCreate(CreateProductModel createProduct, List<IFormFile> imageFiles, IFormFile gameFile)
+        public async Task<IActionResult> UserUpdate(UpdateUser user)
         {
             if (ModelState.IsValid)
             {
-                // Prepare scan request for the game file
-                var scanRequest = new ScanFileRequest
+                var updateUser = new UpdateUser
                 {
-                    gameFile = gameFile // Pass the game file from the form
+                    Id = user.Id,
+                    Username = user.Username,
+                    PhoneNumber = user.PhoneNumber,
+                    DisplayName = user.DisplayName
+                    // Nếu bạn có thêm thuộc tính, hãy thêm vào đây
                 };
 
-                // Assign image files and scan request to the CreateProductModel
-                createProduct.ImageFiles = imageFiles;
-                createProduct.Request = scanRequest;
-
-                // Call the service to create the product
-                ResponseModel? response = await _productService.CreateProductAsync(createProduct);
+                ResponseModel? response = await _userService.UpdateUser(updateUser);
 
                 if (response != null && response.IsSuccess)
                 {
-                    TempData["success"] = "Product created successfully";
-                    return RedirectToAction(nameof(ProductsManager)); // Redirect to the products list page
+                    TempData["success"] = "User updated successfully";
+                    return RedirectToAction(nameof(UsersManager));
                 }
                 else
                 {
@@ -166,100 +145,30 @@ namespace Client.Controllers
                 }
             }
 
-            // If ModelState is invalid, reload categories and return the view with errors
-            ViewBag.Categories = await _productService.GetCategoriesAsync();
-            return View(createProduct);
+            // Nếu ModelState không hợp lệ, trả về lại model để hiển thị lỗi
+            return View(user);
+
         }
 
 
-
-        //DeleteProduct
-        public async Task<IActionResult> ProductDelete(string id)
+        public IActionResult ProductsManager()
         {
-            ResponseModel? response = await _productService.GetProductByIdAsync(id);	
-
-            if (response != null && response.IsSuccess)
-            {
-                ProductModel? model = JsonConvert.DeserializeObject<ProductModel>(Convert.ToString(response.Result));
-                return View(model);
-            }
-            else
-            {
-                TempData["error"] = response?.Message;
-            }
-            return NotFound();
+            return View();
         }
-
-        [HttpPost]
-        public async Task<IActionResult> ProductDelete(ProductModel deleteproduct)
-        {
-            ResponseModel? response = await _productService.DeleteProductAsync(deleteproduct.Id);
-
-            if (response != null && response.IsSuccess)
-            {
-                TempData["success"] = "Product deleted successfully";
-                return RedirectToAction(nameof(UsersManager));
-            }
-            else
-            {
-                TempData["error"] = response?.Message;
-            }
-            return BadRequest();
-        }
-
-
-        //UpdateProduct
-        public async Task<IActionResult> ProductUpdate(string id)
-        {
-            ResponseModel? response = await _productService.GetProductByIdAsync(id);
-
-            if (response != null && response.IsSuccess)
-            {
-                UpdateProductModel? model = JsonConvert.DeserializeObject<UpdateProductModel>(Convert.ToString(response.Result));
-                return View(model);
-            }
-            else
-            {
-                TempData["error"] = response?.Message;
-            }
-            return NotFound();
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> ProductUpdate(UpdateProductModel updateproduct)
-        {
-            if (ModelState.IsValid)
-            {
-                ResponseModel? response = await _productService.UpdateProductAsync(updateproduct);
-
-                if (response != null && response.IsSuccess)
-                {
-                    TempData["success"] = "Product updated successfully";
-                    return RedirectToAction(nameof(ProductsManager));
-                }
-                else
-                {
-                    TempData["error"] = response?.Message;
-                }
-            }
-            return View(updateproduct);
-        }
-
-
 
         public IActionResult OrdersManager()
         {
             return View();
         }
 
-		public IActionResult CategoriesManager()
-		{
-			return View();
-		}
+        public IActionResult CategoriesManager()
+        {
+            return View();
+        }
 
-		public IActionResult CensorshipManager()
-		{
-			return View();
-		}
-	}
+        public IActionResult CensorshipManager()
+        {
+            return View();
+        }
+    }
 }
