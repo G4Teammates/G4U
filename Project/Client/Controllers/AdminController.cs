@@ -40,28 +40,6 @@ namespace Client.Controllers
 			return View(list);
 		}
 
-
-		[HttpPost]
-		public async Task<IActionResult> UserCreate(UsersDTO user)
-		{
-			if (ModelState.IsValid)
-			{
-				ResponseModel? response = await _userService.CreateUserAsync(user);
-
-				if (response != null && response.IsSuccess)
-				{
-					TempData["success"] = "Product created successfully";
-					return RedirectToAction(nameof(UsersManager));
-				}
-				else
-				{
-					TempData["error"] = response?.Message;
-				}
-
-			}
-			return View(user);
-		}
-
 		public async Task<IActionResult> UsersDelete(string id)
 		{
 			ResponseModel? response = await _userService.GetUserAsync(id);
@@ -95,7 +73,58 @@ namespace Client.Controllers
 			return BadRequest();
 		}
 
-		public IActionResult ProductsManager()
+		public async Task<IActionResult> UserUpdate(string id)
+		{
+            ResponseModel? response = await _userService.GetUserAsync(id);
+
+            if (response != null && response.IsSuccess)
+            {
+                UpdateUser? user = JsonConvert.DeserializeObject<UpdateUser>(Convert.ToString(response.Result));
+
+                // Trả về model UsersDTO để sử dụng trong View
+                return View(user);
+            }
+            else
+            {
+                TempData["error"] = response?.Message;
+            }
+            return NotFound();
+        }
+
+		[HttpPost]
+		public async Task<IActionResult> UserUpdate(UpdateUser user)
+		{
+            if (ModelState.IsValid)
+            {
+                var updateUser = new UpdateUser
+                {
+					Id = user.Id,
+                    Username = user.Username,
+                    PhoneNumber = user.PhoneNumber,
+                    DisplayName = user.DisplayName
+                    // Nếu bạn có thêm thuộc tính, hãy thêm vào đây
+                };
+
+                ResponseModel? response = await _userService.UpdateUser(updateUser);
+
+                if (response != null && response.IsSuccess)
+                {
+                    TempData["success"] = "User updated successfully";
+                    return RedirectToAction(nameof(UsersManager));
+                }
+                else
+                {
+                    TempData["error"] = response?.Message;
+                }
+            }
+
+            // Nếu ModelState không hợp lệ, trả về lại model để hiển thị lỗi
+            return View(user);
+
+        }
+
+
+        public IActionResult ProductsManager()
 		{
 			return View();
 		}

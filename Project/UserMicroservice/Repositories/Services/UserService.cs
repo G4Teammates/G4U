@@ -115,14 +115,14 @@ namespace UserMicroservice.Repositories.Services
             return new ResponseModel { Result = _mapper.Map<UserModel>(user) };
         }
 
-        public async Task<ResponseModel> UpdateUser(UserModel updatedUserModel)
+        public async Task<ResponseModel> UpdateUser(UserUpdate updatedUserModel)
         {
             var response = new ResponseModel();
 
             try
             {
                 // Kiểm tra xem người dùng có tồn tại không dựa trên ID của họ
-                var user = await _context.Users.FindAsync(updatedUserModel.Id);
+                User user = await _context.Users.FindAsync(updatedUserModel.Id);
                 if (user == null)
                 {
                     response.IsSuccess = false;

@@ -148,15 +148,9 @@ namespace UserMicroService.Controllers
         }
 
         // Phương thức cập nhật người dùng
-        [HttpPut("/{id}")]
-        public async Task<ActionResult> UpdateUser(string id, [FromBody] UserModel updatedUserModel)
+        [HttpPut("{id}")]
+        public async Task<ActionResult> UpdateUser([FromBody] UserUpdate updatedUserModel)
         {
-            // Kiểm tra xem ID trong URL có khớp với ID trong đối tượng được cập nhật không
-            if (id != updatedUserModel.Id)
-            {
-                return BadRequest("User ID mismatch.");
-            }
-
             try
             {
                 ResponseModel response = await _userService.UpdateUser(updatedUserModel);
