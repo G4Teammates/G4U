@@ -34,7 +34,8 @@ namespace ProductMicroService.Controllers
                                 [FromForm] int platform,    
                                 [FromForm] int status,
                                 [FromForm] List<IFormFile> imageFiles,
-                                [FromForm] ScanFileRequest request
+                                [FromForm] ScanFileRequest request,
+                                [FromForm] string username
                                 )
         {
             try
@@ -54,7 +55,7 @@ namespace ProductMicroService.Controllers
 
                 };
 
-                var newProduct = await _repoProduct.ModerateImages(imageFiles, product, gameFile);
+                var newProduct = await _repoProduct.ModerateImages(imageFiles, product, gameFile, username);
                 _responseDTO.Result = newProduct;
                 if (newProduct == null) { _responseDTO.Message = "There are some files that do not match"; }
                 return Ok(_responseDTO);
@@ -163,5 +164,38 @@ namespace ProductMicroService.Controllers
                 return StatusCode(500, _responseDTO); // Trả về mã lỗi 500 với thông báo lỗi chi tiết
             }
         }
-    }
+
+        [HttpGet("search={searchString}")]
+        public IActionResult Search([FromRoute] string searchString)
+        {
+            try
+            {
+                var SanPhams = _repoProduct.Search(searchString);
+                _responseDTO.Result = SanPhams;
+                return Ok(_responseDTO);
+            }
+            catch (Exception ex)
+            {
+                _responseDTO.IsSuccess = false;
+                _responseDTO.Message = "An error occurred while creating the Categrori: " + ex.Message;
+                return StatusCode(500, _responseDTO); // Trả về mã lỗi 500 với thông báo lỗi chi tiết
+            }
+        }
+        [HttpGet("filter")]
+		public IActionResult Filter([FromQuery] decimal? minrange, [FromQuery] decimal? maxrange, [FromQuery] int? sold, [FromQuery] bool? Discount, [FromQuery] int? Platform, [FromQuery] string? Category)
+		{
+			try
+			{
+				var SanPhams = _repoProduct.Filter(minrange,maxrange,sold,Discount,Platform,Category);
+				_responseDTO.Result = SanPhams;
+				return Ok(_responseDTO);
+			}
+			catch (Exception ex)
+			{
+				_responseDTO.IsSuccess = false;
+				_responseDTO.Message = "An error occurred while creating the Categrori: " + ex.Message;
+				return StatusCode(500, _responseDTO); // Trả về mã lỗi 500 với thông báo lỗi chi tiết
+			}
+		}
+	}
 }
