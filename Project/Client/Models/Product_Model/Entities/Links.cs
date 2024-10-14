@@ -1,6 +1,6 @@
-﻿using Client.Models.ProductModel.Enum;
+﻿using Client.Models.Product_Model.Enum;
 
-namespace Client.Models.ProductModel.Entities
+namespace Client.Models.Product_Model.Entities
 {
     /// <summary>
     /// Represents a Link entity in the system. Each link is associated with a user and can optionally be tied to a product.<br/>

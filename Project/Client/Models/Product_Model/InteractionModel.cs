@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Client.Models.ProductModel
+namespace Client.Models.Product_Model
 {
     /// <summary>
     /// Represents the interactions or engagements of users with an item, 
@@ -34,6 +34,6 @@ namespace Client.Models.ProductModel
         /// Số lượt thích hoặc phản hồi tích cực mà sản phẩm nhận được.
         /// </summary>
         [Range(0, int.MaxValue, ErrorMessage = "The {0} must be greater or equal than {1}")]
-        public int NumberOfLikes { get; set; } = 0;
+        public int NumberOfLikes { get; set; }
     }
 }

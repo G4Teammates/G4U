@@ -1,7 +1,7 @@
-﻿using Client.Models.ProductModel.Enum;
+﻿using Client.Models.Product_Model.Enum;
 using System.ComponentModel.DataAnnotations;
 
-namespace Client.Models.ProductModel
+namespace Client.Models.Product_Model
 {
     /// <summary>
     /// Represents the censorship information related to the product or content.

@@ -1,7 +1,7 @@
-﻿using Client.Models.ProductModel.Enum;
+﻿using Client.Models.Product_Model.Enum;
 using System.ComponentModel.DataAnnotations;
 
-namespace Client.Models.ProductModel
+namespace Client.Models.Product_Model
 {
     public class ProductModel
     {
@@ -44,14 +44,14 @@ namespace Client.Models.ProductModel
         /// Số sản phẩm đã bán được.
         /// </summary>
         [Range(0, int.MaxValue, ErrorMessage = "The {0} must be greater or equal than {1}")]
-        public int Sold { get; set; } = 0;
+        public int Sold { get; set; }
 
         /// <summary>
         /// The number of views and likes the product has received. Default is 0.
         /// <br/>
         /// Số lượt xem và lượt thích mà sản phẩm nhận được. Mặc định là 0.
         /// </summary>
-        public InteractionModel? Interactions { get; set; } = new InteractionModel { NumberOfLikes = 0, NumberOfViews = 0 };
+        public InteractionModel? Interactions { get; set; }
 
         /// <summary>
         /// The discount applied to the product. Only valid values are between 0 and 100.
@@ -60,7 +60,7 @@ namespace Client.Models.ProductModel
         /// </summary>
         [RegularExpression(@"^\d+(\.\d{1,2})?$", ErrorMessage = "The {0} must have no more than 2 decimal places")]
         [Range(0, 100, ErrorMessage = "The {0} must be greater or equal than {1}")]
-        public float Discount { get; set; } = 0;
+        public float Discount { get; set; }
 
         /// <summary>
         /// The platform where the product is available (e.g., Window, Android, WebGL,...).
@@ -87,21 +87,21 @@ namespace Client.Models.ProductModel
         /// <br/>
         /// Trạng thái của sản phẩm (ví dụ: Inactive, Active, Block, Deleted).
         /// </summary>
-        public ProductStatus Status { get; set; } = ProductStatus.Inactive;
+        public ProductStatus Status { get; set; }
 
         /// <summary>
         /// The date and time when the product was created.
         /// <br/>
         /// Ngày và giờ khi sản phẩm được tạo ra.
         /// </summary>
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime CreatedAt { get; set; }
 
         /// <summary>
         /// The date and time when the product was last updated.
         /// <br/>
         /// Ngày và giờ khi sản phẩm được cập nhật lần cuối.
         /// </summary>
-        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime UpdatedAt { get; set; }
 
         /// <summary>
         /// The identifier of the user who owns or created the product.
@@ -122,7 +122,7 @@ namespace Client.Models.ProductModel
         /// </returns>
         public decimal GetPrice()
         {
-            return Price - (Price * (decimal)Discount / 100);
+            return Price - Price * (decimal)Discount / 100;
         }
     }
 }

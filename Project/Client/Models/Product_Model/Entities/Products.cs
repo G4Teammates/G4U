@@ -1,6 +1,6 @@
-﻿using Client.Models.ProductModel.Enum;
+﻿using Client.Models.Product_Model.Enum;
 
-namespace Client.Models.ProductModel.Entities
+namespace Client.Models.Product_Model.Entities
 {
     /// <summary>
     /// Represents a product in the system.
@@ -14,7 +14,7 @@ namespace Client.Models.ProductModel.Entities
         /// <br/>
         /// Định danh duy nhất cho sản phẩm.
         /// </summary>
-        
+
         public required string Id { get; set; }
 
         /// <summary>

@@ -1,6 +1,6 @@
-﻿using Client.Models.ProductModel.Enum;
+﻿using Client.Models.Product_Model.Enum;
 
-namespace Client.Models.ProductModel.Entities
+namespace Client.Models.Product_Model.Entities
 {
     /// <summary>
     /// Represents the censorship information related to the product or content.

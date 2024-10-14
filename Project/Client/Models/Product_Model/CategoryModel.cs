@@ -1,4 +1,4 @@
-﻿namespace Client.Models.ProductModel
+﻿namespace Client.Models.Product_Model
 {
     /// <summary>
     /// Represents a category to which products can be assigned.
@@ -12,6 +12,6 @@
         /// <br/>
         /// Mã định danh duy nhất của danh mục.
         /// </summary>
-        public string? CategoryId { get; set; }
+        public string? CategoryName { get; set; }
     }
 }

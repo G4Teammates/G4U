@@ -1,4 +1,5 @@
-﻿@{
+﻿@model List<Client.Models.Product_Model.ProductModel>
+@{
     Layout = "_LayoutAdmin";
 }
 
@@ -231,42 +232,90 @@
         <thead class="table-light">
             <tr>
                 <th scope="col"><input type="checkbox" id="selectAll"></th>
-                <th scope="col">Avatar</th>
-                <th scope="col">User Name</th>
-                <th scope="col">Display Name</th>
-                <th scope="col">Email</th>
-                <th scope="col">Phone Number</th>
+                <th scope="col">Id</th>
+                <th scope="col">Product Name</th>
+                <th scope="col">Discription</th>
+                <th scope="col">Price</th>
+                <th scope="col">Sold</th>
+                <th scope="col">Interactions</th>
+                <th scope="col">Discount</th>
+                <th scope="col">Platform</th>
+                <th scope="col">Links</th>
+                <th scope="col">Categories</th>
                 <th scope="col">Status</th>
                 <th scope="col">CreateAt</th>
+                <th scope="col">UpdatedAt</th>
+                <th scope="col">UserId</th>
                 <th scope="col"></th>
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td><input type="checkbox" class="user-checkbox"></td>
-                <td><img src="~/Image/avatar.jpeg" alt="Alternate Text" style="width: 80px; height: 80px" /></td>
-                <td>tuanlx123</td>
-                <td>Tuan Dep Trai</td>
-                <td>tuanpham147369@gmail.com</td>
-                <td><span class="text-success">0933 808 235</span></td>
-                <td>Đã kích hoạt</td>
-                <td>10/05/2024</td>
-                <td><a href="" data-toggle="modal" data-target="#modalProduct"><i class="fa-regular fa-pen-to-square"></i></a></td>
-            </tr>
-            <tr>
-                <td><input type="checkbox" class="user-checkbox"></td>
-                <td>-</td>
-                <td>-</td>
-                <td>Quá ok tụi anh q...</td>
-                <td>-</td>
-                <td><span class="text-success">024 3747 4700</span></td>
-                <td>-</td>
-                <td>-</td>
-                <td><a href="" data-toggle="modal" data-target="#modalProduct"><i class="fa-regular fa-pen-to-square"></i></a></td>
-            </tr>
-            <!-- Thêm các dòng dữ liệu tương tự -->
+            @foreach (var product in Model)
+            {
+                <tr>
+                    <td><input type="checkbox" class="user-checkbox"></td>
+                    <td>@product.Id</td>
+                    <td>@product.Name</td>
+                    <td>@product.Description</td>
+                    <td>@product.Price</td>
+                    <td>@product.Sold</td>
+
+                    <td>
+                        @if (product.Interactions != null)
+                        {
+                            <span>Views: @product.Interactions.NumberOfViews, Likes: @product.Interactions.NumberOfLikes</span>
+                        }
+                        else
+                        {
+                            <span>No Interactions</span>
+                        }
+                    </td>
+
+                    <td>@product.Discount</td>
+                    <td>@product.Platform</td>
+
+                    <td>
+                        @if (product.Links != null && product.Links.Any())
+                        {
+                            <ul>
+                                @foreach (var link in product.Links)
+                                {
+                                    <li>@link.Url</li>
+                                }
+                            </ul>
+                        }
+                        else
+                        {
+                            <span>No Links</span>
+                        }
+                    </td>
+
+                    <td>
+                        @if (product.Categories != null && product.Categories.Any())
+                        {
+                            <ul>
+                                @foreach (var category in product.Categories)
+                                {
+                                    <li>@category.CategoryName</li>
+                                }
+                            </ul>
+                        }
+                        else
+                        {
+                            <span>No Categories</span>
+                        }
+                    </td>
+
+                    <td>@product.Status</td>
+                    <td>@product.CreatedAt.ToString("dd/MM/yyyy")</td>
+                    <td>@product.UpdatedAt.ToString("dd/MM/yyyy")</td>
+                    <td>@product.UserId</td>
+                    <td><span><i class="fa-regular fa-pen-to-square"></i></span></td>
+                </tr>
+            }
         </tbody>
     </table>
+
 
     <!-- Phân trang -->
     <div class="d-flex justify-content-between mt-3">

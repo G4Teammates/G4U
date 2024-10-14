@@ -1,4 +1,4 @@
-﻿namespace Client.Models.ProductModel.Enum
+﻿namespace Client.Models.Product_Model.Enum
 {
     public enum LinkStatus
     {

@@ -1,4 +1,4 @@
-﻿namespace Client.Models.ProductModel.DTO
+﻿namespace Client.Models.Product_Model.DTO
 {
     public class ScanFileRequest
     {

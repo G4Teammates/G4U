@@ -1,4 +1,4 @@
-﻿namespace Client.Models.ProductModel.Entities
+﻿namespace Client.Models.Product_Model.Entities
 {
     public class Categories
     {

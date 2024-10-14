@@ -16,6 +16,7 @@ builder.Services.AddSwaggerGen();
 builder.Configuration.AddAzureKeyVault(new Uri("https://duantotnghiep.vault.azure.net/"),
     new DefaultAzureCredential());
 builder.Services.AddStartupService(builder.Configuration);
+builder.Services.AddHttpClient<IRepoProduct, RepoProduct>();
 builder.Services.AddScoped<IRepoProduct, RepoProduct>();
 var app = builder.Build();
 
