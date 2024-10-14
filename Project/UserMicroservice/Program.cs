@@ -1,24 +1,14 @@
 using Azure.Identity;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Identity.Web;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using MongoDB.Driver;
-using System.Reflection;
-using System.Text;
-using UserMicroservice.DBContexts;
-using UserMicroservice.DBContexts.Entities;
 using UserMicroService.Configure;
 
 var builder = WebApplication.CreateBuilder(args);
 
 //Get connect string
+//builder.Configuration.AddAzureKeyVault(new Uri("https://duantotnghiep.vault.azure.net/"),
+//    new DefaultAzureCredential());
 builder.Configuration.AddAzureKeyVault(new Uri("https://duantotnghiep.vault.azure.net/"),
     new DefaultAzureCredential());
-
 builder.Services.AddStartupService(builder.Configuration);
 
 builder.Services.AddControllers();

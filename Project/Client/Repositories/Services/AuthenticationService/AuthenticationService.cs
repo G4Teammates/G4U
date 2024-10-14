@@ -3,12 +3,13 @@ using static Client.Utility.StaticTypeApi;
 using Client.Models.AuthenModel;
 using Client.Repositories.Interfaces;
 using IAuthenticationService = Client.Repositories.Interfaces.Authentication.IAuthenticationService;
+using Client.Utility;
 namespace Client.Repositories.Services.AuthenticationService
 {
     public class AuthenticationService(IBaseService baseService) : IAuthenticationService
     {
-        readonly IBaseService _baseService = baseService;
-        readonly string _authenUrl = ApiUrl;
+        private readonly IBaseService _baseService = baseService;
+        private readonly string _authenUrl = APIGateWay + "/auth";
         public Task<ResponseModel> ChangePasswordAsync(string username, string oldPassword, string newPassword)
         {
             throw new NotImplementedException();
@@ -25,7 +26,7 @@ namespace Client.Repositories.Services.AuthenticationService
             {
                 ApiType = ApiType.POST,
                 Data = loginModel,
-                Url = _authenUrl + "login"
+                Url = _authenUrl + "/login"
             });
         }
 

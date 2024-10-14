@@ -1,4 +1,4 @@
-﻿namespace UserMicroservice.Models
+﻿namespace Gateway.Models
 {
     public class JwtOptions
     {

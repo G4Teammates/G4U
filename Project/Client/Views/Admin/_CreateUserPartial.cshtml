@@ -1,0 +1,70 @@
+﻿@using Client.Models.UserDTO
+@model CreateUser
+
+<form class="row" asp-action="UserCreate" enctype="multipart/form-data">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="row">
+        <div class="col">
+            <div class="mb-2">
+                <label asp-for="@Model.Username" class="form-label">Username</label>
+                <input asp-for="@Model.Username" type="text" placeholder="Username" class="form-control">
+                <span asp-validation-for="@Model.Username" class="text-danger"></span>
+            </div>
+            <div class="mb-2">
+                <label asp-for="@Model.Email" class="form-label">Email</label>
+                <input asp-for="Email" type="email" placeholder="Email" class="form-control">
+                <span asp-validation-for="@Model.Email" class="text-danger"></span>
+            </div>
+            <div class="mb-2">
+                <label asp-for="@Model.Role" class="form-label">Role</label>
+                <select asp-for="@Model.Role" class="form-select" aria-label="Role">
+                    <option value="0" selected>User</option>
+                    <option value="1">Admin</option>
+                </select>
+                <span asp-validation-for="@Model.Role" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col">
+            <div class="text-center">
+                <div>
+                    <img id="avatarPreview" src="https://static.vecteezy.com/system/resources/previews/020/911/747/non_2x/user-profile-icon-profile-avatar-user-icon-male-icon-face-icon-profile-icon-free-png.png" alt="Avatar Preview" style="width:200px; height:200px;" />
+                </div>
+                <input type="file" id="avatarInput" asp-for="@Model.AvatarFile" class="form-control mt-2" style="display: none;" accept="image/*" />
+                <a id="changeAvatarBtn" class="btn btn-outline-dark text-center mt-2">Change Avatar</a>
+            </div>
+        </div>
+    </div>
+    <div class="form-group mt-3 text-center">
+        <input type="submit" value="Create" asp-controller="Admin" asp-action="UserCreate" class="btn btn-danger w-50" />
+    </div>
+    <div class="form-group mt-3 text-center">
+        <input type="submit" value="Cancel" data-bs-dismiss="modal" class="btn btn-primary w-50" />
+    </div>
+</form>
+
+<script>
+    // Mở hộp thoại chọn file khi nhấp vào nút "Change Avatar"
+    document.getElementById('changeAvatarBtn').addEventListener('click', function () {
+        document.getElementById('avatarInput').click();
+    });
+
+    // Xử lý sự kiện khi file ảnh được chọn
+    document.getElementById('avatarInput').addEventListener('change', function (event) {
+        const input = event.target;
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                // Hiển thị ảnh vừa chọn lên thẻ img
+                document.getElementById('avatarPreview').src = e.target.result;
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    });
+</script>
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

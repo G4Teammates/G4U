@@ -1,4 +1,7 @@
 ﻿using Client.Configure;
+using Client.Repositories.Interfaces;
+using Client.Repositories.Interfaces.User;
+using Client.Repositories.Services;
 using Client.Utility;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
@@ -9,10 +12,19 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddRazorComponents();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddHttpClient();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30); // Set the session timeout as needed
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
 // Đăng ký thư viện
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddHttpClient();
 StaticTypeApi.APIGateWay = builder.Configuration["ServiceUrls:APIGateWay"];
+builder.Services.AddScoped<IBaseService, BaseService>();
+builder.Services.AddScoped<IUserService, UserService>();
+
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
@@ -34,7 +46,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseAntiforgery();
 app.UseRouting();
-
+app.UseSession();
 app.UseAuthorization();
 
 app.MapControllerRoute(

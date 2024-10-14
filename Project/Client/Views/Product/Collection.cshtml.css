@@ -1,0 +1,33 @@
+﻿.collection-card {
+    background-color: #2a2e38;
+    border-radius: 10px;
+    height: 150px;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+    .collection-card:hover {
+        background-color: #3b404b;
+    }
+
+.manage-downloads {
+    text-align: center;
+    padding: 20px;
+    color: #9da1ad;
+    cursor: pointer;
+    margin-top: auto;
+}
+
+    .manage-downloads:hover {
+        color: #fff;
+    }
+
+.container-content {
+    flex-grow: 1;
+}
