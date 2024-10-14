@@ -29,7 +29,7 @@ namespace Client.Controllers
                 {
                     var user = JsonConvert.DeserializeObject<LoginResponseModel>(response.Result.ToString()!);
                     _tokenProvider.SetToken(user!.Token);
-
+                    HttpContext.Response.Cookies.Append("Login", user.Username);
 					return RedirectToAction("Index", "Home");
                 }
                 return RedirectToAction(nameof(Register), "User");
@@ -38,7 +38,6 @@ namespace Client.Controllers
 
         }
 
-        
 
 
         [HttpGet]
@@ -55,6 +54,23 @@ namespace Client.Controllers
 
         public IActionResult Register()
         {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Register(RegisterModel register)
+        {
+            if (ModelState.IsValid)
+            {
+                var response = await _authenService.RegisterAsync(register);
+                if (response.IsSuccess)
+                {
+                    var user = JsonConvert.DeserializeObject<RegisterModel>(response.Result.ToString()!);
+                    //_tokenProvider.SetToken(user!.Token);
+
+                    return RedirectToAction("Index", "Home");
+                }
+            }
             return View();
         }
 

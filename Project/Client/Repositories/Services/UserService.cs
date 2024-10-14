@@ -15,7 +15,7 @@ namespace Client.Repositories.Services
             _baseService = baseService;
         }
 
-        public async Task<ResponseModel> CreateUserAsync(UsersDTO user)
+        public async Task<ResponseModel> CreateUserAsync(CreateUser user)
         {
             return await _baseService.SendAsync(new RequestModel()
             {
