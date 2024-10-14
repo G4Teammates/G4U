@@ -164,61 +164,73 @@ namespace Client.Controllers
         // GetAll Product
         public async Task<IActionResult> ProductsManager()
         {
-            List<ProductModel?> list = new();
+            ProductViewModel list = new()
+            {
+                Products = new List<ProductModel>() // Khởi tạo danh sách Products
+            };
+            try
+            {
+
+                ResponseModel? response = await _productService.GetAllProductAsync();
+
+                if (response != null && response.IsSuccess)
+                {
+
+                    list.Products = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response.Result.ToString()!));
+
+                }
+                else
+                {
+                    TempData["error"] = response?.Message;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = ex.Message;
+            }
+
+            return View(list);
+            /*List<ProductViewModel?> list = new();
             ResponseModel? response = await _productService.GetAllProductAsync();
 
             if (response != null && response.IsSuccess)
             {
 
-                list = JsonConvert.DeserializeObject<List<ProductModel>>(Convert.ToString(response.Result));
+                list = JsonConvert.DeserializeObject<List<ProductViewModel>>(Convert.ToString(response.Result));
 
             }
             else
             {
                 TempData["error"] = response?.Message;
             }
-            return View(list);
+            return View(list);*/
         }
 
         //Create Product
         public async Task<IActionResult> ProductCreate()
         {
-            // Optionally, you can fetch categories or other necessary data here
-            ViewBag.Categories = await _productService.GetCategoriesAsync(); // Fetch categories for the view
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> ProductCreate(CreateProductModel createProduct, List<IFormFile> imageFiles, IFormFile gameFile)
+        public async Task<IActionResult> ProductCreate(CreateProductModel createProduct)
         {
             if (ModelState.IsValid)
             {
-                // Prepare scan request for the game file
-                var scanRequest = new ScanFileRequest
-                {
-                    gameFile = gameFile // Pass the game file from the form
-                };
-
-                // Assign image files and scan request to the CreateProductModel
-                createProduct.ImageFiles = imageFiles;
-                createProduct.Request = scanRequest;
-
-                // Call the service to create the product
                 ResponseModel? response = await _productService.CreateProductAsync(createProduct);
 
                 if (response != null && response.IsSuccess)
                 {
                     TempData["success"] = "Product created successfully";
-                    return RedirectToAction(nameof(ProductsManager)); // Redirect to the products list page
+                    return RedirectToAction(nameof(ProductsManager));
                 }
                 else
                 {
                     TempData["error"] = response?.Message;
                 }
-            }
 
-            // If ModelState is invalid, reload categories and return the view with errors
-            ViewBag.Categories = await _productService.GetCategoriesAsync();
+            }
             return View(createProduct);
         }
 

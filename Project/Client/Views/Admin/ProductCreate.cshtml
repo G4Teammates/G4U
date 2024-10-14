@@ -4,7 +4,7 @@
 @{
     ViewData["Title"] = "Create Product";
 }
-<form asp-action="ProductCreate" asp-controller="Product" method="post" enctype="multipart/form-data" class="row">
+<form asp-action="ProductCreate" asp-controller="Product" method="post" class="row">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <div class="row">
         <div class="col">
@@ -54,6 +54,11 @@
                 <span asp-validation-for="Price" class="text-danger"></span>
             </div>
             <div class="mb-2">
+                <label class="form-label fw-bold fs-5">Discount</label>
+                <input asp-for="Discount" class="form-control" />
+                <span asp-validation-for="Discount" class="text-danger"></span>
+            </div>
+            <div class="mb-2">
                 <label class="form-label fw-bold fs-5">Uploads</label>
                 <!-- Div để hiển thị thông tin file sau khi upload -->
                 <div class="border border-2 mb-2">
@@ -75,19 +80,33 @@
                     </div>
                     <div class="mb-2">
                         <label class="form-label fw-bold fs-6">Category</label>
-                        <select asp-for="Categories" class="form-select">
+                       @*  <select asp-for="Categories" class="form-select">
                             <option value="default">Please choose an option</option>
                             @foreach (var category in ViewBag.Categories)
                             {
                                 <option value="@category.Id">@category.Name</option>
                             }
                         </select>
+                        <span asp-validation-for="Categories" class="text-danger"></span> *@
+                        <input asp-for="Categories" class="form-control" />
                         <span asp-validation-for="Categories" class="text-danger"></span>
                     </div>
                     <div class="mb-2">
                         <label class="form-label fw-bold fs-6">Status</label>
                         <select asp-for="Status" class="form-select">
-                            <option value="default">Please choose an option</option>
+                            <option value="default">Option 1</option>
+                            <option value="default">Option 2</option>
+                            <option value="default">Option 3</option>
+                            @* Add your status options here *@
+                        </select>
+                        <span asp-validation-for="Status" class="text-danger"></span>
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label fw-bold fs-6">Platform</label>
+                        <select asp-for="Platform" class="form-select">
+                            <option value="default">Option 1</option>
+                            <option value="default">Option 2</option>
+                            <option value="default">Option 3</option>
                             @* Add your status options here *@
                         </select>
                         <span asp-validation-for="Status" class="text-danger"></span>

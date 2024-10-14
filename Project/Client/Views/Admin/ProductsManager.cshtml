@@ -1,8 +1,9 @@
-﻿
+﻿@using Client.Models.Product_Model
+
 @{
     Layout = "_LayoutAdmin";
 }
-@model List<Client.Models.Product_Model.ProductModel>
+@model ProductViewModel
 <div class="pt-3 pb-4">
     <span class="titleManager bg-success py-3 px-5 rounded-4 fw-bold text-white">Products Manager</span>
 </div>
@@ -251,7 +252,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var product in Model)
+            @foreach (var product in Model.Products)
             {
                 <tr>
                     <td><input type="checkbox" class="user-checkbox"></td>
@@ -368,7 +369,7 @@
 
 
 
-@* <div class="modal fade" id="modalProduct" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="modalProduct" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="container-fluid p-5">
@@ -376,7 +377,7 @@
             </div>
         </div>
     </div>
-</div> *@
+</div>
 
 
 
