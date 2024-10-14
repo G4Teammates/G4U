@@ -1,15 +1,18 @@
 ﻿using Client.Models;
+using Client.Models.Product_Model;
 using Client.Models.UserDTO;
+using Client.Repositories.Interfaces.ProductInterface;
 using Client.Repositories.Interfaces.User;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
 namespace Client.Controllers
 {
-    public class AdminController (IUserService userService) : Controller
+    public class AdminController (IUserService userService, IRepoProduct productService) : Controller
     {
 	
 		public readonly IUserService _userService = userService;
+		public readonly IRepoProduct _productService = productService;
 		public IActionResult Index()
         {
             return View();
@@ -95,10 +98,21 @@ namespace Client.Controllers
 			return BadRequest();
 		}
 
-		public IActionResult ProductsManager()
+		public async Task<IActionResult> ProductsManager()
 		{
-			return View();
-		}
+            ResponseModel? response = await _productService.GetAllProductAsync();
+
+            if (response != null && response.IsSuccess)
+            {
+                ProductModel? model = JsonConvert.DeserializeObject<ProductModel>(Convert.ToString(response.Result));
+                return View(model);
+            }
+            else
+            {
+                TempData["error"] = response?.Message;
+            }
+            return NotFound();
+        }
 
         public IActionResult OrdersManager()
         {
