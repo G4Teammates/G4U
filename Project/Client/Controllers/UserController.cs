@@ -1,5 +1,8 @@
-﻿using Client.Models.AuthenModel;
+﻿using Client.Models;
+using Client.Models.AuthenModel;
+using Client.Models.UserDTO;
 using Client.Repositories.Interfaces.Authentication;
+using Client.Repositories.Interfaces.User;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -7,32 +10,29 @@ using UserMicroservice.Models;
 
 namespace Client.Controllers
 {
-    public class UserController(IAuthenticationService authenService) : Controller
+    public class UserController(IAuthenticationService authenService, IUserService userService) : Controller
     {
         private readonly IAuthenticationService _authenService = authenService;
-        [HttpGet]
-        public IActionResult Index()
-        {
-            return View();
-        }
+        public readonly IUserService _userService = userService;
 
 
 
-        [HttpPost]
+
+		[HttpPost]
         public async Task<IActionResult> Login(LoginRequestModel loginModel)
         {
             if (ModelState.IsValid)
             {
                 var response = await _authenService.LoginAsync(loginModel);
-                var user = JsonConvert.DeserializeObject<LoginResponseModel>(response.Result.ToString()!);
                 if (response.IsSuccess)
                 {
+                    var user = JsonConvert.DeserializeObject<LoginResponseModel>(response.Result.ToString()!);
                     CookieOptions options = new CookieOptions
                     {
                         HttpOnly = true, // Đảm bảo cookie chỉ có thể được truy cập thông qua HTTP (an toàn hơn)
                         Secure = true // Đảm bảo cookie chỉ truyền qua HTTPS
                     };
-                    HttpContext.Response.Cookies.Append("Login", user.Username, options);
+                    HttpContext.Response.Cookies.Append("Login", user!.Username, options);
                     return RedirectToAction("Index", "Home");
                 }
                 return RedirectToAction(nameof(Register), "User");
@@ -40,6 +40,8 @@ namespace Client.Controllers
             return View();
 
         }
+
+        
 
 
         [HttpGet]
@@ -79,5 +81,6 @@ namespace Client.Controllers
         {
             return View();
         }
+
     }
 }

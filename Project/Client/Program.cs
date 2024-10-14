@@ -1,8 +1,7 @@
 ﻿using Client.Configure;
 using Client.Repositories.Interfaces;
-using Client.Repositories.Interfaces.ProductInterface;
+using Client.Repositories.Interfaces.User;
 using Client.Repositories.Services;
-using Client.Repositories.Services.ProductService;
 using Client.Utility;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
@@ -23,14 +22,16 @@ builder.Services.AddSession(options =>
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddHttpClient();
 StaticTypeApi.APIGateWay = builder.Configuration["ServiceUrls:APIGateWay"];
+builder.Services.AddScoped<IBaseService, BaseService>();
+builder.Services.AddScoped<IUserService, UserService>();
+
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(options =>   
+    .AddCookie(options =>
     {
         options.LoginPath = "/login"; // Địa chỉ để người dùng được chuyển hướng khi không được xác thực
         options.LogoutPath = "/logout"; // Địa chỉ để người dùng được chuyển hướng khi đăng xuất
     });
-builder.Services.AddScoped<IRepoProduct, RepoProduct>();
-builder.Services.AddScoped<IBaseService, BaseService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

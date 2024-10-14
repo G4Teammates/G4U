@@ -138,7 +138,17 @@ namespace UserMicroservice.Repositories.Services
                 }
                 UserModel userModel = _mapper.Map<UserModel>(registerRequestModel);
                 userModel.Id = ObjectId.GenerateNewId().ToString();
-                response.Result = await _userService.AddUserAsync(userModel,false,registerRequestModel.Password);
+                User userCreate = _mapper.Map<User>(userModel);
+                userCreate.PasswordHash = BCrypt.Net.BCrypt.HashPassword(registerRequestModel.Password);
+                await _context.AddAsync(userCreate);
+                await _context.SaveChangesAsync();
+                
+                
+                //Gửi mail kích hoạt tài khoản
+
+
+
+                response.Result = userModel;
 
             }
             catch (Exception ex)

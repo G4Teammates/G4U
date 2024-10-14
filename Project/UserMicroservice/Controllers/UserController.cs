@@ -42,11 +42,11 @@ namespace UserMicroService.Controllers
 
 
         [HttpPost]
-        public async Task<ActionResult> Add([FromBody] UserModel user)
+        public async Task<ActionResult> Add([FromBody] AddUserModel user)
         {
             try
             {
-                ResponseModel response = await _userService.AddUserAsync(user, true);
+                ResponseModel response = await _userService.AddUserAsync(user);
                 if (response.IsSuccess)
                     return Ok(response);
                 return BadRequest(response);
@@ -76,7 +76,7 @@ namespace UserMicroService.Controllers
         }
 
 
-        [Authorize(Roles = "User")]
+        /*[Authorize(Roles = "User")]*/
         [HttpGet("{id}")]
         public async Task<ActionResult> GetUser(string id)
         {
@@ -131,7 +131,7 @@ namespace UserMicroService.Controllers
         }
 
         //[Authorize(Roles = "Admin")]
-        [HttpDelete("/delete/{id}")]
+        [HttpDelete("delete/{id}")]
         public async Task<ActionResult> DeleteUser(string id)
         {
             try

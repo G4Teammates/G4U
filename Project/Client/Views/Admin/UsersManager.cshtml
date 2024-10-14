@@ -1,7 +1,7 @@
 ﻿@{
 	Layout = "_LayoutAdmin";
 }
-
+@model List<Client.Models.UserDTO.UsersDTO>
 <div class="pt-3 pb-4">
 	<span class="titleManager bg-success py-3 px-5 rounded-4 fw-bold text-white">Users Manager</span>
 </div>
@@ -83,7 +83,7 @@
 	<div id="checkBoxBar" style="display:none">
 		<div class="text-end m-2">
 			@* <button class="btn btn-success mx-2 w-100">Public All</button> *@
-			<a class="text-danger mx-2" href="" data-toggle="modal" data-target="#deleteProductModal">
+			<a class="text-danger mx-2" data-toggle="modal" data-target="#deleteProductModal" >
 				<i class="fas fa-trash"></i>
 			</a>
 		</div>
@@ -91,42 +91,80 @@
 	<table class="table table-bordered table-hover align-middle">
 		<thead class="table-light">
 			<tr>
-				<th scope="col"><input type="checkbox" id="selectAll"></th>
+				<th scope="col"><input type="checkbox" id="selectAll"></th> 
 				<th scope="col">Avatar</th>
 				<th scope="col">User Name</th>
 				<th scope="col">Display Name</th>
 				<th scope="col">Email</th>
 				<th scope="col">Phone Number</th>
-				<th scope="col">Status</th>
+				<th scope="col">Role</th>
 				<th scope="col">CreateAt</th>
+				<th scope="col"></th>
 				<th scope="col"></th>
 			</tr>
 		</thead>
 		<tbody>
-			<tr>
-				<td><input type="checkbox" class="user-checkbox"></td>
-				<td><img src="~/Image/avatar.jpeg" alt="Alternate Text" style="width: 80px; height: 80px" /></td>
-				<td>tuanlx123</td>
-				<td>Tuan Dep Trai</td>
-				<td>tuanpham147369@gmail.com</td>
-				<td><span class="text-success">0933 808 235</span></td>
-				<td>Đã kích hoạt</td>
-				<td>10/05/2024</td>
-				<td><span><i class="fa-regular fa-pen-to-square"></i></span></td>
-			</tr>
-			<tr>
-				<td><input type="checkbox" class="user-checkbox"></td>
-				<td>-</td>
-				<td>-</td>
-				<td>Quá ok tụi anh q...</td>
-				<td>-</td>
-				<td><span class="text-success">024 3747 4700</span></td>
-				<td>-</td>
-				<td>-</td>
-			</tr>
+			@if (Model != null && Model.Any())
+			{
+				foreach (var user in Model)
+				{
+					<tr>
+						<td><input type="checkbox" class="user-checkbox" value="@user.Id" /></td>
+						<td>
+							@if (!string.IsNullOrEmpty(user.Avatar))
+							{
+								<img src="@user.Avatar" alt="Avatar" style="width: 80px; height: 80px;" />
+							}
+							else
+							{
+								<img src="~/Image/avatar.jpeg" alt="Avatar" style="width: 80px; height: 80px;" />
+							}
+						</td>
+						<td>@user.Username</td>
+						<td>@(string.IsNullOrEmpty(user.DisplayName) ? "-" : user.DisplayName)</td>
+						<td>@user.Email</td>
+						<td>
+							<span class="text-success">@user.PhoneNumber</span>
+						</td>
+
+						<td>
+							@if (user.Role == Client.Models.Enum.User.UserRole.Admin)
+							{
+								<span class="text-primary">Admin</span>
+							}
+							else
+							{
+								<span>Người dùng</span>
+							}
+						</td>
+						<td>@DateTime.Now.ToString("dd/MM/yyyy")</td> <!-- Hiển thị ngày tham gia -->
+						<td>
+							<span><i class="fa-regular fa-pen-to-square"></i></span>
+						</td>
+						<td>
+							@* <form asp-action="UsersDelete" >
+								<input type="submit" value="Delete" class="btn btn-danger" /> 
+							</form> *@
+							<a asp-action="UsersDelete" asp-route-Id="@user.Id" class="text-danger mx-2"> <i class="fas fa-trash"></i></a>
+							@* <a asp-action="UsersDelete" asp-route-Id="@user.Id"> <i class="fas fa-trash"></i></a> *@
+						</td>
+					</tr>
+				}
+			}
+			else
+			{
+				<tr>
+					<td colspan="9" class="text-center">Không có người dùng nào để hiển thị.</td>
+				</tr>
+			}
+			@* @{
+				@await Component.InvokeAsync("UsersIndex")
+			} *@
+			@* @Html.Partial("~/Views/User/UsersIndex.cshtml") *@
 			<!-- Thêm các dòng dữ liệu tương tự -->
 		</tbody>
 	</table>
+
 
 	<!-- Phân trang -->
 	<div class="d-flex justify-content-between mt-3">
@@ -348,7 +386,11 @@
 		</div>
 	</div> *@
 
+
 @* Modal *@
+
+
+@* Đây là add *@
 <div class="modal fade" id="modalUser" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 	<div class="modal-dialog modal-xl">
 		<div class="modal-content">

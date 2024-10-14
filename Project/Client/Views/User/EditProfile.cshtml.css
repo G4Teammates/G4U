@@ -1,0 +1,27 @@
+﻿.border {
+    border-color: #1e7e34; /* Màu xanh lá đậm cho khung ảnh và thông tin */
+}
+
+.btn-success {
+    background-color: #1e7e34; /* Màu xanh lá đậm cho nút */
+    border-color: #1e7e34;
+}
+
+    .btn-success:hover {
+        background-color: #155d27; /* Màu xanh lá đậm hơn khi hover */
+        border-color: #145a24;
+    }
+
+.text-success {
+    color: #1e7e34; /* Màu xanh lá đậm cho văn bản */
+}
+
+.text-center {
+    text-align: center; /* Căn giữa nội dung văn bản */
+}
+
+.profile-img img {
+    width: 150px; /* Chiều rộng hình ảnh */
+    height: 150px; /* Chiều cao hình ảnh */
+    object-fit: cover; /* Đảm bảo hình ảnh không bị méo */
+}

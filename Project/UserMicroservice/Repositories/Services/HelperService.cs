@@ -53,7 +53,7 @@ namespace UserMicroservice.Repositories.Services
             return response;
         }
 
-        public ResponseModel IsUserNotNull(UserModel user)
+        public ResponseModel IsUserNotNull(AddUserModel user)
         {
             var response = new ResponseModel();
             response.Message = "User was not null";
