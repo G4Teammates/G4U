@@ -57,13 +57,13 @@ namespace Client.Repositories.Services
             });
         }
 
-        public async Task<ResponseModel> UpdateUser(string id,UpdateUser user)
+        public async Task<ResponseModel> UpdateUser(UpdateUser user)
         {
             return await _baseService.SendAsync(new RequestModel()
             {
                 ApiType = StaticTypeApi.ApiType.PUT,
                 Data = user,
-                Url = StaticTypeApi.APIGateWay + "/User" + id
+                Url = StaticTypeApi.APIGateWay + "/User/" + user.Id
             });
         }
     }

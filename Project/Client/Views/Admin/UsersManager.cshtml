@@ -139,8 +139,9 @@
 							}
 						</td>
 						<td>@DateTime.Now.ToString("dd/MM/yyyy")</td> <!-- Hiển thị ngày tham gia -->
+						@*Đây là nút Update*@
 						<td>
-							<span><i class="fa-regular fa-pen-to-square"></i></span>
+							<a asp-action="UserUpdate" asp-route-Id="@user.Id" class="text-danger mx-2"><span><i class="fa-regular fa-pen-to-square"></i></span></a>					
 						</td>
 						<td>
 							@* <form asp-action="UsersDelete" >

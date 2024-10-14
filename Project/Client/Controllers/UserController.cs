@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using UserMicroservice.Models;
+using LoginRequestModel = Client.Models.AuthenModel.LoginRequestModel;
 
 namespace Client.Controllers
 {
