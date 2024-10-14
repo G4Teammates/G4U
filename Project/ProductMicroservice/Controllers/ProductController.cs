@@ -55,7 +55,7 @@ namespace ProductMicroService.Controllers
 
                 };
 
-                var newProduct = await _repoProduct.ModerateImages(imageFiles, product, gameFile, username);
+                var newProduct = await _repoProduct.Moderate(imageFiles, product, gameFile, username);
                 _responseDTO.Result = newProduct;
                 if (newProduct == null) { _responseDTO.Message = "There are some files that do not match"; }
                 return Ok(_responseDTO);
@@ -132,19 +132,53 @@ namespace ProductMicroService.Controllers
         }
 
         [HttpPut]
-        public IActionResult UpdateProduct([FromBody] UpdateProductModel Product)
+        public async Task<IActionResult> UpdateProduct( [FromForm] string id,
+                                                        [FromForm] string name,
+                                                        [FromForm] string description,
+                                                        [FromForm] decimal price,
+                                                        [FromForm] int sold,
+                                                        [FromForm] int numOfVIew,
+                                                        [FromForm] int numOfLike,
+                                                        [FromForm] float discount,
+                                                        [FromForm] List<string> categories,
+                                                        [FromForm] int platform,
+                                                        [FromForm] int status,
+                                                        [FromForm] DateTime createAt,
+                                                        [FromForm] List<IFormFile> imageFiles,
+                                                        [FromForm] ScanFileRequest request,
+                                                        [FromForm] string username)
         {
             try
             {
-                var upProduct = _repoProduct.UpdateProduct(Product);
-                _responseDTO.Result = upProduct;
+                // Chuyển đổi danh sách chuỗi thành danh sách CategoryModel
+                var categoryModels = categories.Select(c => new CategoryModel { CategoryName = c }).ToList();
+                var gameFile = request.gameFile;
+                var product = new UpdateProductModel
+                {
+                    Id = id,
+                    Name = name,
+                    Description = description,
+                    Price = price,
+                    Sold = sold,
+                    Interactions= new InteractionModel { NumberOfLikes=numOfLike, NumberOfViews=numOfVIew},
+                    Discount = discount,
+                    Categories = categoryModels,
+                    Platform = (PlatformType)platform,
+                    Status = (ProductStatus)status,
+                    CreatedAt = createAt,
+                    UserName = username
+                };
+
+                var newProduct = await _repoProduct.UpdateProduct(imageFiles, product, gameFile);
+                _responseDTO.Result = newProduct;
+                if (newProduct == null) { _responseDTO.Message = "There are some files that do not match"; }
                 return Ok(_responseDTO);
             }
             catch (Exception ex)
             {
                 _responseDTO.IsSuccess = false;
-                _responseDTO.Message = "An error occurred while creating the Products: " + ex.Message;
-                return StatusCode(500, _responseDTO); // Trả về mã lỗi 500 với thông báo lỗi chi tiết
+                _responseDTO.Message = "An error occurred while creating the Product: " + ex.Message;
+                return StatusCode(500, _responseDTO);
             }
         }
 
