@@ -82,11 +82,6 @@ namespace Client.Repositories.Services
                 };
                 return dto;
             }
-        }
-
-        //public Task<ResponseModel> SendAsync(RequestModel requestDTO, bool withBearer = true)
-        //{
-        //    throw new NotImplementedException();
-        //}
+         }
     }
 }

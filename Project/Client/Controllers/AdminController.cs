@@ -1,80 +1,108 @@
 ﻿using Client.Models;
 using Client.Models.UserDTO;
+using Client.Repositories.Interfaces;
 using Client.Repositories.Interfaces.User;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
 namespace Client.Controllers
 {
-    public class AdminController (IUserService userService) : Controller
+    public class AdminController(IUserService userService, IHelperService helperService) : Controller
     {
-	
-		public readonly IUserService _userService = userService;
-		public IActionResult Index()
+
+        public readonly IUserService _userService = userService;
+        public readonly IHelperService _helperService = helperService;
+        public IActionResult Index()
         {
             return View();
         }
 
-		public IActionResult AdminDashboard()
+        public IActionResult AdminDashboard()
         {
-			return View();
+            return View();
         }
 
-		[HttpGet]
-		public async Task<IActionResult> UsersManager()
+        [HttpGet]
+        public async Task<IActionResult> UsersManager()
         {
-			List<UsersDTO?> list = new();
-			ResponseModel? response = await _userService.GetAllUserAsync();
+            UserViewModel users = new();
+            try
+            {
+                ResponseModel? response = await _userService.GetAllUserAsync();
 
-			if (response != null && response.IsSuccess)
-			{
+                if (response != null && response.IsSuccess)
+                {
 
-				list = JsonConvert.DeserializeObject<List<UsersDTO>>(Convert.ToString(response.Result.ToString()));
+                    users.Users = JsonConvert.DeserializeObject<ICollection<UsersDTO>>(Convert.ToString(response.Result.ToString()!));
 
-			}
-			else
-			{
-				TempData["error"] = response?.Message;
-			}
+                }
+                else
+                {
+                    TempData["error"] = response?.Message;
+                }
 
-			return View(list);
-		}
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = ex.Message;
+            }
 
-		public async Task<IActionResult> UsersDelete(string id)
-		{
-			ResponseModel? response = await _userService.GetUserAsync(id);
+            return View(users);
+        }
 
-			if (response != null && response.IsSuccess)
-			{
-				UsersDTO? model = JsonConvert.DeserializeObject<UsersDTO>(Convert.ToString(response.Result));
-				return View(model);
-			}
-			else
-			{
-				TempData["error"] = response?.Message;
-			}
-			return NotFound();
-		}
 
-		[HttpPost]
-		public async Task<IActionResult> UsersDelete(UsersDTO user)
-		{
-			ResponseModel? response = await _userService.DeleteUser(user.Id);
+        [HttpPost]
+        public async Task<IActionResult> UserCreate(CreateUser user)
+        {
+            if (ModelState.IsValid)
+            {
+                if (user.AvatarFile != null && user.AvatarFile.Length > 0)
+                {
+                    using (var stream = user.AvatarFile.OpenReadStream())
+                    {
+                        // Gọi phương thức upload lên Cloudinary
+                        string imageUrl = await _helperService.UploadImageAsync(stream, user.AvatarFile.FileName);
 
-			if (response != null && response.IsSuccess)
-			{
-				TempData["success"] = "User deleted successfully";
-				return RedirectToAction(nameof(UsersManager));
-			}
-			else
-			{
-				TempData["error"] = response?.Message;
-			}
-			return BadRequest();
-		}
+                        // Lưu URL của avatar vào model
+                        user.Avatar = imageUrl;
+                    }
+                }
 
-		public async Task<IActionResult> UserUpdate(string id)
-		{
+                ResponseModel? response = await _userService.CreateUserAsync(user);
+
+                if (response != null && response.IsSuccess)
+                {
+                    TempData["success"] = "User created successfully";
+                    return RedirectToAction(nameof(UsersManager));
+                }
+                else
+                {
+                    TempData["error"] = response?.Message;
+                }
+
+            }
+            return RedirectToAction(nameof(UsersManager));
+        }
+
+
+        public async Task<IActionResult> UserDelete(string id)
+        {
+            ResponseModel? response = await _userService.GetUserAsync(id);
+
+            if (response != null && response.IsSuccess)
+            {
+                UsersDTO? model = JsonConvert.DeserializeObject<UsersDTO>(Convert.ToString(response.Result));
+                return View(model);
+            }
+            else
+            {
+                TempData["error"] = response?.Message;
+            }
+            return NotFound();
+        }
+        public async Task<IActionResult> UserUpdate(string id)
+        {
             ResponseModel? response = await _userService.GetUserAsync(id);
 
             if (response != null && response.IsSuccess)
@@ -90,15 +118,14 @@ namespace Client.Controllers
             }
             return NotFound();
         }
-
-		[HttpPost]
-		public async Task<IActionResult> UserUpdate(UpdateUser user)
-		{
+        [HttpPost]
+        public async Task<IActionResult> UserUpdate(UpdateUser user)
+        {
             if (ModelState.IsValid)
             {
                 var updateUser = new UpdateUser
                 {
-					Id = user.Id,
+                    Id = user.Id,
                     Username = user.Username,
                     PhoneNumber = user.PhoneNumber,
                     DisplayName = user.DisplayName
@@ -125,23 +152,23 @@ namespace Client.Controllers
 
 
         public IActionResult ProductsManager()
-		{
-			return View();
-		}
+        {
+            return View();
+        }
 
         public IActionResult OrdersManager()
         {
             return View();
         }
 
-		public IActionResult CategoriesManager()
-		{
-			return View();
-		}
+        public IActionResult CategoriesManager()
+        {
+            return View();
+        }
 
-		public IActionResult CensorshipManager()
-		{
-			return View();
-		}
-	}
+        public IActionResult CensorshipManager()
+        {
+            return View();
+        }
+    }
 }

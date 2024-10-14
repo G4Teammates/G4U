@@ -1,37 +1,38 @@
 ﻿@{
     Layout = "_LayoutNull";
 }
-
+@using Client.Models.AuthenModel
+@model RegisterModel
 <div class="login-container">
     <div class="login-box">
         <div class="login-logo">
             <a asp-controller="Home" asp-action="Index"><img src="~/image/logo.png" alt="Logo" /></a>
         </div>
         <h2 class="login-title">Register</h2>
-        <form>
+        <form asp-action="Register">
             <div class="login-input input-group">
                 <span class="input-group-text">
                     <i class="bi bi-person"></i>
                 </span>
-                <input type="text" class="form-control" placeholder="Username" required>
+                <input type="text" asp-for="@Model.Username" class="form-control" placeholder="Username" required>
             </div>
             <div class="login-input input-group">
                 <span class="input-group-text">
                     <i class="bi bi-envelope"></i>
                 </span>
-                <input type="text" class="form-control" placeholder="Email" required>
+                <input type="text" asp-for="@Model.Email" class="form-control" placeholder="Email" required>
             </div>
             <div class="login-input input-group">
                 <span class="input-group-text">
                     <i class="bi bi-lock"></i>
                 </span>
-                <input type="password" class="form-control" placeholder="Password" required>
+                <input type="password" asp-for="@Model.Password" class="form-control" placeholder="Password" required>
             </div>
             <div class="login-input input-group">
                 <span class="input-group-text">
                     <i class="bi bi-shield-lock"></i>
                 </span>
-                <input type="password" class="form-control" placeholder="Confirm Password" required>
+                <input type="password" asp-for="@Model.ConfirmPassword" class="form-control" placeholder="Confirm Password" required>
             </div>
             <div class="d-flex justify-content-between mb-3">
                 <div class="form-check">
@@ -41,7 +42,7 @@
                     </label>
                 </div>
             </div>
-            <button type="submit" class="login-btn fw-bold">Register</button>
+            <button type="submit" asp-action="Register" class="login-btn fw-bold">Register</button>
         </form>
 
         <div class="white-background mt-2">

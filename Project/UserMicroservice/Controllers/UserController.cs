@@ -22,7 +22,7 @@ namespace UserMicroService.Controllers
         private readonly IUserService _userService = userService;
 
 
-
+        [Authorize(Roles = "User")]
         [HttpGet]
         public async Task<ActionResult> GetAll()
         {
@@ -94,41 +94,6 @@ namespace UserMicroService.Controllers
             }
         }
 
-        [AllowAnonymous]
-        [HttpPost("register")]
-        public async Task<ActionResult> Register([FromBody]RegisterRequestModel registerRequestModel)
-        {
-            try
-            {
-                ResponseModel response = await _authenService.RegisterAsync(registerRequestModel);
-                if (response.IsSuccess)
-                    return Ok(response);
-                return BadRequest(response);
-            }
-            catch (Exception ex)
-            {
-                // Trả về lỗi 500 cho các lỗi chưa dự đoán
-                return StatusCode(500, new { message = "An unexpected error occurred. Detail" + ex.Message });
-            }
-        }
-
-        [AllowAnonymous]
-        [HttpPost("login")]
-        public async Task<ActionResult> Login([FromBody]LoginRequestModel loginRequestModel)
-        {
-            try
-            {
-                ResponseModel response = await _authenService.LoginAsync(loginRequestModel);
-                if (response.IsSuccess)
-                    return Ok(response);
-                return BadRequest(response);
-            }
-            catch (Exception ex)
-            {
-                // Trả về lỗi 500 cho các lỗi chưa dự đoán
-                return StatusCode(500, new { message = "An unexpected error occurred. Detail" + ex.Message });
-            }
-        }
 
         //[Authorize(Roles = "Admin")]
         [HttpDelete("delete/{id}")]

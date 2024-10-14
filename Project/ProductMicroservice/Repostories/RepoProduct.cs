@@ -21,6 +21,7 @@ using RestSharp;
 using Newtonsoft.Json;
 using System.Security.Cryptography;
 using Microsoft.Azure.CognitiveServices.ContentModerator.Models;
+using System.Linq; // Đảm bảo rằng không quên import namespace này
 
 namespace ProductMicroservice.Repostories
 {
@@ -69,7 +70,7 @@ namespace ProductMicroservice.Repostories
                 upProduct.Status = Product.Status;
                 upProduct.CreatedAt = Product.CreatedAt;
                 upProduct.UpdatedAt = DateTime.UtcNow;
-                upProduct.UserId = Product.UserId;
+                upProduct.UserName = Product.UserName;
             };
             _db.Products.Update(upProduct);
             _db.SaveChanges();
@@ -133,19 +134,85 @@ namespace ProductMicroservice.Repostories
             if (!string.IsNullOrEmpty(searchstring))
             {
                 // Tìm kiếm theo tên sản phẩm
-                var resultByName = _db.Products.Where(x => x.Name.Contains(searchstring));
+                var resultByName = Products.Where(x => x.Name.Contains(searchstring));
                 if (resultByName.Any())
                 {
                     return resultByName;
                 }
-                
-            }
+
+                // Tìm kiếm theo tên category
+                var resultByCateName = Products.Where(x => x.Categories.Any(c => c.CategoryName.Contains(searchstring)));
+                if (resultByCateName.Any())
+                {
+                    return resultByCateName;
+                }
+
+				// tim kiem theo username
+				var resultByUser = Products.Where(x => x.UserName.Contains(searchstring));
+				if (resultByCateName.Any())
+				{
+					return resultByCateName;
+				}
+			}
 
             // Nếu không có kết quả nào khớp với điều kiện tìm kiếm, trả về danh sách trống
             return new List<Products>();
         }
+		public IEnumerable<Products> Filter(decimal? minrange, decimal? maxrange, int? sold, bool? Discount, int? Platform, string? Category)
+		{
+			// Bắt đầu với tất cả các sản phẩm
+			var query = _db.Products.AsQueryable();
 
-        public async Task<Products> ModerateImages(List<IFormFile> imageFiles, CreateProductModel Product, IFormFile gameFiles)
+			// Lọc theo khoảng giá
+			if (minrange.HasValue && maxrange.HasValue)
+			{
+				query = query.Where(p => p.Price >= minrange.Value && p.Price <= maxrange.Value);
+			}
+			else if (minrange.HasValue)
+			{
+				query = query.Where(p => p.Price >= minrange.Value);
+			}
+			else if (maxrange.HasValue)
+			{
+				query = query.Where(p => p.Price <= maxrange.Value);
+			}
+
+			// Lọc theo số lượng đã bán
+			if (sold.HasValue)
+			{
+				query = query.Where(p => p.Sold >= sold.Value);
+			}
+
+			// Lọc theo giảm giá
+			if (Discount.HasValue)
+			{
+				if (Discount.Value)
+				{
+					query = query.Where(p => p.Discount > 0); // Lọc các sản phẩm có giảm giá
+				}
+				else
+				{
+					query = query.Where(p => p.Discount == 0); // Lọc các sản phẩm không giảm giá
+				}
+			}
+
+			// Lọc theo nền tảng
+			if (Platform.HasValue)
+			{
+				query = query.Where(p => (int)p.Platform == Platform.Value); // so sánh với enum PlatformType
+			}
+
+			// Lọc theo category
+			if (!string.IsNullOrEmpty(Category))
+			{
+				query = query.Where(p => p.Categories.Any(c => c.CategoryName.Contains(Category)));
+			}
+
+			// Trả về danh sách sản phẩm sau khi áp dụng tất cả các bộ lọc
+			return query.ToList();
+		}
+
+		public async Task<Products> ModerateImages(List<IFormFile> imageFiles, CreateProductModel Product, IFormFile gameFiles, string username)
         {
             // Kiểm tra xem danh sách file có tồn tại và có ít nhất một file
             if (imageFiles == null || imageFiles.Count == 0)
@@ -295,7 +362,7 @@ namespace ProductMicroservice.Repostories
                 
                 if (ListUnsafe.Count == 0)
                 {                 // Sau khi đã xử lý tất cả hình ảnh, tạo sản phẩm một lần
-                    productEntity = await CreateProduct(Product, linkModel);
+                    productEntity = await CreateProduct(Product, linkModel, username);
 
                     // Trả về kết quả cho client
                     return productEntity;
@@ -498,7 +565,7 @@ namespace ProductMicroservice.Repostories
                 return uploadedFile.WebViewLink; // Trả về liên kết xem tệp
             }
         }
-        private async Task<Products> CreateProduct(CreateProductModel Product, List<LinkModel> linkModel)
+        private async Task<Products> CreateProduct(CreateProductModel Product, List<LinkModel> linkModel ,string username)
         {
 
             var newProduct = new ProductModel()
@@ -512,9 +579,9 @@ namespace ProductMicroservice.Repostories
                 Platform = Product.Platform,
                 Status = Product.Status,
                 Links = linkModel,
-                UserId = "507f1f77bcf86cd799439011"
+                UserName = username
 
-            };
+			};
             var productEntity = _mapper.Map<Products>(newProduct);
             await _db.AddAsync(productEntity);
             await _db.SaveChangesAsync();
@@ -522,5 +589,7 @@ namespace ProductMicroservice.Repostories
             Console.WriteLine($"Categories count in productEntity before save: {productEntity.Categories?.Count}");
             return productEntity;
         }
-    }
+
+
+	}
 }

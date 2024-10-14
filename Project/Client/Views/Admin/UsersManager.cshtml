@@ -1,7 +1,8 @@
-﻿@{
+﻿@using Client.Models.UserDTO
+@{
 	Layout = "_LayoutAdmin";
 }
-@model List<Client.Models.UserDTO.UsersDTO>
+@model UserViewModel
 <div class="pt-3 pb-4">
 	<span class="titleManager bg-success py-3 px-5 rounded-4 fw-bold text-white">Users Manager</span>
 </div>
@@ -47,9 +48,9 @@
 <div class="container mt-4">
 	<!-- Thanh tìm kiếm và nút Thêm -->
 	<div class="d-flex justify-content-between mb-3">
-		<div class="col-md-4">
+		<form asp-action="" class="col-md-4">
 			<input class="form-control" type="text" placeholder="Search by..." />
-		</div>
+		</form>
 		<div class="w-100">
 			<div class="text-end">
 				<span class="dropdown">
@@ -104,9 +105,9 @@
 			</tr>
 		</thead>
 		<tbody>
-			@if (Model != null && Model.Any())
+			@if (Model.Users != null)
 			{
-				foreach (var user in Model)
+				foreach (var user in Model.Users)
 				{
 					<tr>
 						<td><input type="checkbox" class="user-checkbox" value="@user.Id" /></td>
@@ -134,7 +135,7 @@
 							}
 							else
 							{
-								<span>Người dùng</span>
+								<span>User</span>
 							}
 						</td>
 						<td>@DateTime.Now.ToString("dd/MM/yyyy")</td> <!-- Hiển thị ngày tham gia -->
@@ -146,7 +147,7 @@
 							@* <form asp-action="UsersDelete" >
 								<input type="submit" value="Delete" class="btn btn-danger" /> 
 							</form> *@
-							<a asp-action="UsersDelete" asp-route-Id="@user.Id" class="text-danger mx-2"> <i class="fas fa-trash"></i></a>
+							<a asp-action="UserDelete" asp-route-Id="@user.Id" class="text-danger mx-2"> <i class="fas fa-trash"></i></a>
 							@* <a asp-action="UsersDelete" asp-route-Id="@user.Id"> <i class="fas fa-trash"></i></a> *@
 						</td>
 					</tr>
@@ -396,42 +397,8 @@
 	<div class="modal-dialog modal-xl">
 		<div class="modal-content">
 			<div class="container-fluid p-5">
-				<form class="row" asp-action="Create">
-					<div asp-validation-summary="ModelOnly" class="text-danger"></div>
-					<div class="row">
-						<div class="col">
-							<div class="mb-2">
-								<label class="form-label">Email address</label>
-								<input type="email" class="form-control">
-								<span class="text-danger"></span>
-							</div>
-							<div class="mb-2">
-								<label class="form-label">Email address</label>
-								<input type="email" class="form-control">
-								<span class="text-danger"></span>
-							</div>
-							<div class="mb-2">
-								<label class="form-label">Email address</label>
-								<input type="email" class="form-control">
-								<span class="text-danger"></span>
-							</div>
-						</div>
-						<div class="col">
-							<div class="text-center">
-								<div>
-									<img src="~/image/avatar.jpeg" alt="Alternate Text" style="width:200px; height200px;" />
-								</div>
-								<a class="btn btn-outline-dark text-center mt-2">Change Avatar</a>
-							</div>
-						</div>
-					</div>
-					<div class="form-group mt-3 text-center">
-						<input type="submit" value="Create" asp-action="CreateOrder" class="btn btn-danger w-50" />
-					</div>
-					<div class="form-group mt-3 text-center">
-						<input type="submit" value="Save" asp-action="SaveEdit" class="btn btn-primary w-50" />
-					</div>
-				</form>
+				@await Html.PartialAsync("_CreateUserPartial", Model.CreateUser)
+				
 			</div>
 		</div>
 	</div>

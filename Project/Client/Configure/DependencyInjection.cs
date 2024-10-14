@@ -18,6 +18,7 @@ namespace Client.Configure
             services.AddScoped<IAuthenticationService, AuthenticationService>();
             services.AddScoped<IBaseService, BaseService>();
             services.AddScoped<ITokenProvider, TokenProvider>();
+            services.AddScoped<IHelperService, HelperService>();
             //Register DI here ⬆️
 
             return services;

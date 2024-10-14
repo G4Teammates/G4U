@@ -27,7 +27,7 @@ namespace OrderMicroservice.DBContexts.Entities
 
         public required string PublisherId { get; set; }
 
-  
+        /*public */
 
         /// <summary>
         /// The quantity of the product ordered.
