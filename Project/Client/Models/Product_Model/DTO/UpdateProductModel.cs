@@ -33,18 +33,18 @@ namespace Client.Models.Product_Model.DTO
 
         public ICollection<CategoryModel>? Categories { get; set; }
 
-        public PlatformType Platform { get; set; } = PlatformType.Unknown;
+        public PlatformType Platform { get; set; }
 
 
-        public ProductStatus Status { get; set; } = ProductStatus.Inactive;
+        public ProductStatus Status { get; set; }
 
 
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime CreatedAt { get; set; }
 
 
-        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime UpdatedAt { get; set; }
 
-        public required string UserId { get; set; }
+        public required string UserName { get; set; }
 
         public decimal GetPrice()
         {

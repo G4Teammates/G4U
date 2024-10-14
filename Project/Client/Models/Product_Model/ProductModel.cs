@@ -108,7 +108,7 @@ namespace Client.Models.Product_Model
         /// <br/>
         /// Định danh của người dùng sở hữu hoặc tạo ra sản phẩm.
         /// </summary>
-        public required string UserId { get; set; }
+        public required string UserName { get; set; }
 
         /// <summary>
         /// Calculates the price of the product after applying the discount.

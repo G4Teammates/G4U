@@ -20,48 +20,50 @@ namespace Client.Repositories.Services.ProductService
         {
             _baseService = baseService;
         }
-        public async Task<ResponseModel?> CreateProductAsync(
-                                                                string name,
-                                                                string description,
-                                                                decimal price,
-                                                                float discount,
-                                                                List<string> categories,
-                                                                int platform,
-                                                                int status,
-                                                                List<IFormFile> imageFiles,
-                                                                ScanFileRequest request)
+        public async Task<ResponseModel?> CreateProductAsync(CreateProductModel createProduct)
         {
             // Chuẩn bị dữ liệu multipart form
             using var content = new MultipartFormDataContent();
 
             // Thêm tên, mô tả, giá cả và các thông tin khác vào multipart form
-            content.Add(new StringContent(name), "name");
-            content.Add(new StringContent(description), "description");
-            content.Add(new StringContent(price.ToString()), "price");
-            content.Add(new StringContent(discount.ToString()), "discount");
-            content.Add(new StringContent(platform.ToString()), "platform");
-            content.Add(new StringContent(status.ToString()), "status");
+            content.Add(new StringContent(createProduct.Name), "name");
+
+            if (!string.IsNullOrEmpty(createProduct.Description))
+            {
+                content.Add(new StringContent(createProduct.Description), "description");
+            }
+
+            content.Add(new StringContent(createProduct.Price.ToString()), "price");
+            content.Add(new StringContent(createProduct.Discount.ToString()), "discount");
+            content.Add(new StringContent(createProduct.Platform.ToString()), "platform");
+            content.Add(new StringContent(createProduct.Status.ToString()), "status");
 
             // Thêm danh sách danh mục sản phẩm vào
-            foreach (var category in categories)
+            if (createProduct.Categories != null)
             {
-                content.Add(new StringContent(category), "categories");
+                foreach (var category in createProduct.Categories)
+                {
+                    content.Add(new StringContent(category.CategoryName), "categories");
+                }
             }
 
             // Thêm các tệp ảnh vào multipart form
-            foreach (var file in imageFiles)
+            if (createProduct.ImageFiles != null)
             {
-                var stream = file.OpenReadStream();
-                var fileContent = new StreamContent(stream);
-                content.Add(fileContent, "imageFiles", file.FileName);
+                foreach (var file in createProduct.ImageFiles)
+                {
+                    var stream = file.OpenReadStream();
+                    var fileContent = new StreamContent(stream);
+                    content.Add(fileContent, "imageFiles", file.FileName);
+                }
             }
 
-            // Thêm file game từ request vào
-            if (request?.gameFile != null)
+            // Thêm file game từ request vào nếu có
+            if (createProduct.Request?.gameFile != null)
             {
-                var gameFileStream = request.gameFile.OpenReadStream();
+                var gameFileStream = createProduct.Request.gameFile.OpenReadStream();
                 var gameFileContent = new StreamContent(gameFileStream);
-                content.Add(gameFileContent, "request.gameFile", request.gameFile.FileName);
+                content.Add(gameFileContent, "request.gameFile", createProduct.Request.gameFile.FileName);
             }
 
             // Gọi API với dữ liệu đã chuẩn bị
@@ -74,12 +76,13 @@ namespace Client.Repositories.Services.ProductService
         }
 
 
-        public async Task<ResponseModel?> DeleteProductAsync(int id)
+
+        public async Task<ResponseModel?> DeleteProductAsync(string id)
         {
             return await _baseService.SendAsync(new RequestModel()
             {
                 ApiType = StaticTypeApi.ApiType.DELETE,
-                Url = StaticTypeApi.APIGateWay + "/Product" + id
+                Url = StaticTypeApi.APIGateWay + "/Product/" + id
             });
         }
 
@@ -92,24 +95,35 @@ namespace Client.Repositories.Services.ProductService
             });
         }
 
-        public async Task<ResponseModel?> GetProductByIdAsync(int Id)
+        public async Task<ResponseModel?> GetCategoriesAsync()
+        {
+            return await _baseService.SendAsync(new RequestModel()
+            {
+                ApiType = StaticTypeApi.ApiType.GET,  // Sử dụng phương thức GET để lấy dữ liệu
+                Url = StaticTypeApi.APIGateWay + "/Categories" // Đường dẫn API lấy danh mục sản phẩm
+            });
+        }
+
+        public async Task<ResponseModel?> GetProductByIdAsync(string Id)
         {
             return await _baseService.SendAsync(new RequestModel()
             {
                 ApiType = StaticTypeApi.ApiType.GET,
-                Url = StaticTypeApi.APIGateWay + "/Product" + Id
+                Url = StaticTypeApi.APIGateWay + "/Product/" + Id
             });
         }
 
 
-        public async Task<ResponseModel?> UpdateProductAsync(UpdateProductModel productDTO)
+        public async Task<ResponseModel?> UpdateProductAsync(UpdateProductModel product)
         {
             return await _baseService.SendAsync(new RequestModel()
             {
                 ApiType = StaticTypeApi.ApiType.PUT,
-                Data = productDTO,
-                Url = StaticTypeApi.APIGateWay + "/Product"
-            });
+                Data = product,
+                Url = StaticTypeApi.APIGateWay + "/Product/"
+            }); ;
         }
+
+
     }
 }
