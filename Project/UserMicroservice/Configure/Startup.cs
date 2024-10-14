@@ -31,7 +31,10 @@ namespace UserMicroService.Configure
         public static IServiceCollection AddStartupService(this IServiceCollection services, IConfiguration config)
         {
             #region Register Authentication
-            services.Configure<JwtOptions>(config.GetSection("ApiSettings:JwtOptions"));
+            JwtOptions.Secret = config["9"]!;
+            JwtOptions.Issuer = config["10"]!;
+            JwtOptions.Audience = config["11"]!;
+
             services.AddAuthentication(options =>
             {
                 options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -47,9 +50,9 @@ namespace UserMicroService.Configure
                     ValidateAudience = true,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
-                    ValidIssuer = config["ApiSettings:JwtOptions:Issuer"],
-                    ValidAudience = config["ApiSettings:JwtOptions:Audience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["ApiSettings:JwtOptions:Secret"]!)),
+                    ValidIssuer = JwtOptions.Issuer,
+                    ValidAudience = JwtOptions.Audience,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtOptions.Secret)),
                     ClockSkew = TimeSpan.Zero,
                     RoleClaimType = ClaimTypes.Role
                 };
@@ -91,7 +94,7 @@ namespace UserMicroService.Configure
 
             #region noSQL
             //Connect MongoDb by connection string
-            var client = new MongoClient(config["1"]!+ "?connect=replicaSet");
+            var client = new MongoClient(config["1"]! + "?connect=replicaSet");
             //Create or get if database exists
             //client.DropDatabase("UserDb");
             var database = client.GetDatabase("UserDb");

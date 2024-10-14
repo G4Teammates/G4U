@@ -6,8 +6,8 @@ namespace UserMicroservice.Repositories.Interfaces
 {
     public interface IHelperService
     {
-        public Task<ResponseModel> IsUserNotExist(string username, string email);
-        public ResponseModel IsUserNotNull(UserModel user);
+        public Task<ResponseModel> IsUserNotExist(string username, string? email = null, string? phone = null);
+        public ResponseModel IsUserNotNull(AddUserModel user);
         public ResponseModel NomalizeQuery(string? query);
         public string GenerateJwtAsync(User user);
     }

@@ -15,6 +15,8 @@ namespace Client.Controllers
 
         public IActionResult Index()
         {
+            var login = HttpContext.Request.Cookies["Login"];
+            ViewData["Login"] = login;
             return View();
         }
 

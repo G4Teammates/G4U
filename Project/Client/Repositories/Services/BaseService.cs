@@ -31,7 +31,7 @@ namespace Client.Repositories.Services
                     //message.Headers.Add("Authorization", $"Bearer {token}");
                 }
 
-                message.RequestUri = new Uri(requestDTO.Url);
+                message.RequestUri = new Uri(requestDTO.Url!);
                 if (requestDTO.Data != null)
                 {
                     message.Content = new StringContent(JsonConvert.SerializeObject(requestDTO.Data), Encoding.UTF8, "application/json");
@@ -82,11 +82,6 @@ namespace Client.Repositories.Services
                 };
                 return dto;
             }
-        }
-
-        //public Task<ResponseModel> SendAsync(RequestModel requestDTO, bool withBearer = true)
-        //{
-        //    throw new NotImplementedException();
-        //}
+         }
     }
 }
