@@ -5,9 +5,10 @@ using UserMicroService.Configure;
 var builder = WebApplication.CreateBuilder(args);
 
 //Get connect string
+//builder.Configuration.AddAzureKeyVault(new Uri("https://duantotnghiep.vault.azure.net/"),
+//    new DefaultAzureCredential());
 builder.Configuration.AddAzureKeyVault(new Uri("https://duantotnghiep.vault.azure.net/"),
     new DefaultAzureCredential());
-
 builder.Services.AddStartupService(builder.Configuration);
 
 builder.Services.AddControllers();

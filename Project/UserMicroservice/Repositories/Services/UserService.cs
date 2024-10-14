@@ -14,6 +14,7 @@ using UserMicroservice.Repositories.Interfaces;
 using UserMicroservice.Repositories.IRepositories;
 using UserMicroService.DBContexts.Enum;
 using UserMicroService.Models;
+using static Google.Apis.Requests.BatchRequest;
 
 namespace UserMicroservice.Repositories.Services
 {
@@ -104,15 +105,52 @@ namespace UserMicroservice.Repositories.Services
 
         public async Task<ResponseModel> GetAll()
         {
-            var users = await _context.Users.ToListAsync();
-            return new ResponseModel { Result = _mapper.Map<ICollection<UserModel>>(users) };
+            ResponseModel response = new();
+            try
+            {
+                var users = await _context.Users.ToListAsync();
+                if (users != null)
+                {
+                    response.Message = $"Found {users.Count} users";
+                    response.Result = _mapper.Map<ICollection<UserModel>>(users);
+                }
+                else
+                {
+                    response.Message = "Not found any user";
+                }
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+            }
+
+            return response;
         }
 
         public async Task<ResponseModel> GetUser(string id)
         {
+            ResponseModel response = new();
+            try
+            {
+                var user = await _context.Users.FindAsync(id);
+                if(user != null)
+                {
+                    response.Message = $"Found success user: {id} ";
+                    response.Result = _mapper.Map<UserModel>(user);
+                }
+                else
+                {
+                    response.Message = $"Not found user: {id}";
+                }
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+            }
 
-            var user = await _context.Users.FindAsync(id);
-            return new ResponseModel { Result = _mapper.Map<UserModel>(user) };
+            return response;
         }
 
         public async Task<ResponseModel> UpdateUser(UserModel updatedUserModel)
@@ -131,7 +169,7 @@ namespace UserMicroservice.Repositories.Services
                 }
 
                 // Kiểm tra xem email và username có tồn tại không
-                response = await _helper.IsUserNotExist(updatedUserModel.Username);
+                response = await _helper.IsUserNotExist(updatedUserModel.Username, phone: updatedUserModel.PhoneNumber);
                 if (response.IsSuccess)
                 {
                     // Cập nhật thông tin từ UserModel vào đối tượng User

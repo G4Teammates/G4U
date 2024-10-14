@@ -15,7 +15,7 @@ namespace Client.Repositories.Services
             _baseService = baseService;
         }
 
-        public async Task<ResponseModel> CreateUserAsync(UsersDTO user)
+        public async Task<ResponseModel> CreateUserAsync(CreateUser user)
         {
             return await _baseService.SendAsync(new RequestModel()
             {
@@ -39,7 +39,7 @@ namespace Client.Repositories.Services
             throw new NotImplementedException();
         }
 
-        public async Task<ResponseModel?> GetAllUserAsync()
+        public async Task<ResponseModel> GetAllUserAsync()
         {
             return await _baseService.SendAsync(new RequestModel()
             {
