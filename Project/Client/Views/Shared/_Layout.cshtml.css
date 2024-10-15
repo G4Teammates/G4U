@@ -153,3 +153,15 @@ button.accept-policy {
 /*.navbar-nav .nav-item {
     margin: 0 10px;
 }*/
+
+
+.dropdown-menu {
+    right: 0; /* Align to the right of the parent container */
+    left: auto; /* Override any left alignment */
+    position: absolute;
+    z-index: 1050; /* Ensure it's on top of other content */
+    min-width: 200px; /* Đặt giới hạn chiều rộng cho dropdown item */
+    white-space: nowrap; /* Không xuống dòng */
+    overflow: hidden; /* Ẩn phần text tràn ra */
+    text-overflow: ellipsis; /* Thêm dấu ba chấm nếu text quá dài */
+}
