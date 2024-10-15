@@ -2,7 +2,7 @@
 {
     <p>Welcome, @ViewData["Login"]</p>
 }
-<div class="Image_Gallery">
+@* <div class="Image_Gallery">
     <div class="box">
         <span style="--i:1"><img src="~/image/history-game-1.jpg" /></span>
         <span style="--i:2"><img src="~/image/history-game-1.jpg" /></span>
@@ -13,19 +13,19 @@
         <span style="--i:7"><img src="~/image/history-game-1.jpg" /></span>
         <span style="--i:8"><img src="~/image/history-game-1.jpg" /></span>
     </div>
-</div>
+</div> *@
 
 
-<div id="carouselExampleInterval" class="carousel slide mt-4" data-bs-ride="carousel" style="width: 94%; min-height:300px; border-radius:5px; margin: 0 3%;">
+<div id="carouselExampleInterval" class="carousel slide mt-4 w-100 h-100" data-bs-ride="carousel" style="border-radius:5px; margin: 0 3%;">
     <div class="carousel-inner">
-        <div class="carousel-item active" data-bs-interval="3000" style="width: 100%; height:350px;border-radius:5px;">
-            <img src="./Image/game.jpg" class="d-block w-100" alt="..." style="width: 100%; height:350px;border-radius:5px;">
+        <div class="carousel-item active" data-bs-interval="3000" style="border-radius:5px;">
+            <img src="./Image/game.jpg" class="d-block w-100" alt="..." style="border-radius:5px;">
         </div>
-        <div class="carousel-item" data-bs-interval="3000" style="width: 100%; height:350px;border-radius:5px;">
-            <img src="./Image/game.jpg" class="d-block w-100" alt="..." style="width: 100%; height:350px;border-radius:5px;">
+        <div class="carousel-item" data-bs-interval="3000" style="border-radius:5px;">
+            <img src="./Image/game.jpg" class="d-block w-100" alt="..." style="border-radius:5px;">
         </div>
-        <div class="carousel-item" data-bs-interval="3000" style="width: 100%; height:350px;border-radius:5px;">
-            <img src="./Image/game.jpg  " class="d-block w-100" alt="..." style="width: 100%; height:350px;border-radius:5px;">
+        <div class="carousel-item" data-bs-interval="3000" style="border-radius:5px;">
+            <img src="./Image/game.jpg  " class="d-block w-100" alt="..." style="border-radius:5px;">
         </div>
     </div>
     <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleInterval" data-bs-slide="prev">
