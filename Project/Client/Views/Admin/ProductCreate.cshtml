@@ -1,0 +1,130 @@
+﻿@using Client.Models.Product_Model.DTO
+
+@model CreateProductModel
+@{
+    ViewData["Title"] = "Create Product";
+}
+<form asp-action="ProductCreate" asp-controller="Product" method="post" class="row">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="row">
+        <div class="col">
+            <div class="mb-2">
+                <label class="form-label fw-bold fs-5">Title</label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="mb-2">
+                <label class="form-label fw-bold fs-5">Price</label>
+                <div class="row">
+                    <div class="col-md-5">
+                        <ul class="flex-column" id="pricingTabs" role="tablist">
+                            <li role="presentation">
+                                <button class="nav-link active w-100 border border-1 border-secondary" id="free-tab" data-bs-toggle="tab" data-bs-target="#free" type="button" role="tab" aria-controls="free" aria-selected="true">$0 or donate</button>
+                            </li>
+                            <li role="presentation">
+                                <button class="nav-link w-100 border border-1 border-secondary" id="paid-tab" data-bs-toggle="tab" data-bs-target="#paid" type="button" role="tab" aria-controls="paid" aria-selected="false">Paid</button>
+                            </li>
+                            <li role="presentation">
+                                <button class="nav-link w-100 border border-1 border-secondary" id="nopayment-tab" data-bs-toggle="tab" data-bs-target="#nopayment" type="button" role="tab" aria-controls="nopayment" aria-selected="false">No payments</button>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-md-7">
+                        <div class="tab-content" id="pricingTabsContent">
+                            <!-- $0 or donate tab -->
+                            <div class="tab-pane fade show active" id="free" role="tabpanel" aria-labelledby="free-tab">
+                                <p>Someone downloading your project will be asked for a donation before getting access. They can skip to download for free.</p>
+                                <label for="suggestedDonation" class="form-label">Suggested donation — Default donation amount</label>
+                                <input type="text" class="form-control" id="suggestedDonation" value="$2.00">
+                            </div>
+
+                            <!-- Paid tab -->
+                            <div class="tab-pane fade" id="paid" role="tabpanel" aria-labelledby="paid-tab">
+                                <label for="minPrice" class="form-label">Minimum price — Minimum price to pay to get download access</label>
+                                <input asp-for="Price" class="form-control" id="minPrice" value="$1.00">
+                            </div>
+
+                            <!-- No payments tab -->
+                            <div class="tab-pane fade" id="nopayment" role="tabpanel" aria-labelledby="nopayment-tab">
+                                <p>The project's files will be freely available and no donations can be made.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <span asp-validation-for="Price" class="text-danger"></span>
+            </div>
+            <div class="mb-2">
+                <label class="form-label fw-bold fs-5">Discount</label>
+                <input asp-for="Discount" class="form-control" />
+                <span asp-validation-for="Discount" class="text-danger"></span>
+            </div>
+            <div class="mb-2">
+                <label class="form-label fw-bold fs-5">Uploads</label>
+                <!-- Div để hiển thị thông tin file sau khi upload -->
+                <div class="border border-2 mb-2">
+                    <p id="fileInfo"></p>
+                </div>
+                <div>
+                    <input type="file" name="gameFile" id="fileInput" class="d-none" accept=".rar, .zip" onchange="displayFileInfo()" />
+                    <button type="button" class="btn btn-danger" onclick="document.getElementById('fileInput').click()">Upload</button>
+                </div>
+                <span class="m-2">File size limit: 1 GB</span>
+            </div>
+            <div class="mb-2">
+                <label class="form-label fw-bold fs-5">Details</label>
+                <div class="m-2">
+                    <div class="mb-2">
+                        <label class="form-label fw-bold fs-6">Description</label>
+                        <textarea asp-for="Description" class="form-control" id="descriptionEditor"></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label fw-bold fs-6">Category</label>
+                       @*  <select asp-for="Categories" class="form-select">
+                            <option value="default">Please choose an option</option>
+                            @foreach (var category in ViewBag.Categories)
+                            {
+                                <option value="@category.Id">@category.Name</option>
+                            }
+                        </select>
+                        <span asp-validation-for="Categories" class="text-danger"></span> *@
+                        <input asp-for="Categories" class="form-control" />
+                        <span asp-validation-for="Categories" class="text-danger"></span>
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label fw-bold fs-6">Status</label>
+                        <select asp-for="Status" class="form-select">
+                            <option value="default">Option 1</option>
+                            <option value="default">Option 2</option>
+                            <option value="default">Option 3</option>
+                            @* Add your status options here *@
+                        </select>
+                        <span asp-validation-for="Status" class="text-danger"></span>
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label fw-bold fs-6">Platform</label>
+                        <select asp-for="Platform" class="form-select">
+                            <option value="default">Option 1</option>
+                            <option value="default">Option 2</option>
+                            <option value="default">Option 3</option>
+                            @* Add your status options here *@
+                        </select>
+                        <span asp-validation-for="Status" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="text-center">
+                <div>
+                    <img src="~/image/avatar.jpeg" alt="Cover Image" style="width:200px; height:200px;" />
+                </div>
+                <input type="file" name="coverImage" class="d-none" id="coverImageInput" accept="image/*" />
+                <button type="button" class="btn btn-outline-dark mt-2 w-100" onclick="document.getElementById('coverImageInput').click()">Upload Cover Image</button>
+            </div>
+        </div>
+    </div>
+    <div class="form-group mt-3 text-center">
+        <input type="submit" value="Create" class="btn btn-danger w-50" />
+    </div>
+</form>

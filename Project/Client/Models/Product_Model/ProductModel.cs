@@ -1,16 +1,8 @@
-﻿using ProductMicroservice.DBContexts.Enum;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using Client.Models.Product_Model.Enum;
 using System.ComponentModel.DataAnnotations;
-using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
 
-namespace ProductMicroservice.Models
+namespace Client.Models.Product_Model
 {
-    /// <summary>
-    /// Represents a product in the system.
-    /// <br/>
-    /// Đại diện cho một sản phẩm trong hệ thống.
-    /// </summary>
     public class ProductModel
     {
         /// <summary>
@@ -18,16 +10,16 @@ namespace ProductMicroservice.Models
         /// <br/>
         /// Định danh duy nhất cho sản phẩm.
         /// </summary>
-        public string Id { get; set; } = ObjectId.GenerateNewId().ToString();
+        public string Id { get; set; }
 
         /// <summary>
         /// The name of the product.
         /// <br/>
         /// Tên của sản phẩm.
         /// </summary>
-            [Required(ErrorMessage = "Name is required")]
-            [StringLength(256, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 2)]
-            public required string Name { get; set; }
+        [Required(ErrorMessage = "Name is required")]
+        [StringLength(256, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 2)]
+        public required string Name { get; set; }
 
         /// <summary>
         /// A description of the product.
@@ -52,14 +44,14 @@ namespace ProductMicroservice.Models
         /// Số sản phẩm đã bán được.
         /// </summary>
         [Range(0, int.MaxValue, ErrorMessage = "The {0} must be greater or equal than {1}")]
-        public int Sold { get; set; } = 0;
+        public int Sold { get; set; }
 
         /// <summary>
         /// The number of views and likes the product has received. Default is 0.
         /// <br/>
         /// Số lượt xem và lượt thích mà sản phẩm nhận được. Mặc định là 0.
         /// </summary>
-        public InteractionModel? Interactions { get; set; } = new InteractionModel { NumberOfLikes = 0, NumberOfViews = 0 };
+        public InteractionModel? Interactions { get; set; }
 
         /// <summary>
         /// The discount applied to the product. Only valid values are between 0 and 100.
@@ -68,14 +60,14 @@ namespace ProductMicroservice.Models
         /// </summary>
         [RegularExpression(@"^\d+(\.\d{1,2})?$", ErrorMessage = "The {0} must have no more than 2 decimal places")]
         [Range(0, 100, ErrorMessage = "The {0} must be greater or equal than {1}")]
-        public float Discount { get; set; } = 0;
+        public float Discount { get; set; }
 
         /// <summary>
         /// The platform where the product is available (e.g., Window, Android, WebGL,...).
         /// <br/>
         /// Nền tảng nơi sản phẩm có sẵn (ví dụ: Window, Android, WebGL,...).
         /// </summary>
-        public PlatformType Platform { get; set; } = PlatformType.Unknown;
+        public PlatformType Platform { get; set; }
 
         /// <summary>
         /// Represents a Link entity in the system. Each link is associated with a user and can optionally be tied to a product.<br/>
@@ -95,21 +87,21 @@ namespace ProductMicroservice.Models
         /// <br/>
         /// Trạng thái của sản phẩm (ví dụ: Inactive, Active, Block, Deleted).
         /// </summary>
-        public ProductStatus Status { get; set; } = ProductStatus.Inactive;
+        public ProductStatus Status { get; set; }
 
         /// <summary>
         /// The date and time when the product was created.
         /// <br/>
         /// Ngày và giờ khi sản phẩm được tạo ra.
         /// </summary>
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime CreatedAt { get; set; }
 
         /// <summary>
         /// The date and time when the product was last updated.
         /// <br/>
         /// Ngày và giờ khi sản phẩm được cập nhật lần cuối.
         /// </summary>
-        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime UpdatedAt { get; set; }
 
         /// <summary>
         /// The identifier of the user who owns or created the product.
@@ -130,8 +122,7 @@ namespace ProductMicroservice.Models
         /// </returns>
         public decimal GetPrice()
         {
-            return Price - (Price * (decimal)Discount / 100);
+            return Price - Price * (decimal)Discount / 100;
         }
     }
-
 }

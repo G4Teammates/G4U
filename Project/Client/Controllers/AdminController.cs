@@ -1,8 +1,10 @@
 ﻿using Client.Models;
+
 using Client.Models.ProductDTO;
 using Client.Models.UserDTO;
 using Client.Repositories.Interfaces;
 using Client.Repositories.Interfaces.Product;
+
 using Client.Repositories.Interfaces.User;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -10,12 +12,16 @@ using Newtonsoft.Json;
 
 namespace Client.Controllers
 {
+
     public class AdminController(IUserService userService, IHelperService helperService, IRepoProduct repoProduct) : Controller
+
     {
 
         public readonly IUserService _userService = userService;
         public readonly IHelperService _helperService = helperService;
+
         public readonly IRepoProduct _productService = repoProduct;
+
         public IActionResult Index()
         {
             return View();
@@ -131,7 +137,10 @@ namespace Client.Controllers
                     Id = user.Id,
                     Username = user.Username,
                     PhoneNumber = user.PhoneNumber,
-                    DisplayName = user.DisplayName
+                    DisplayName = user.DisplayName,
+                    Email = user.Email,
+                    Role = user.Role,
+                    Avatar = user.Avatar
                     // Nếu bạn có thêm thuộc tính, hãy thêm vào đây
                 };
 
@@ -154,7 +163,9 @@ namespace Client.Controllers
         }
 
 
+
         public async Task<IActionResult> ProductsManager()
+
         {
             List<ProductModel?> list = new();
             ResponseModel? response = await _productService.GetAllProductAsync();
@@ -192,6 +203,63 @@ namespace Client.Controllers
             }
             return NotFound();
         }
+
+        [HttpPost]
+        public async Task<IActionResult> ProductCreate(CreateProductModel createProduct)
+        {
+            if (ModelState.IsValid)
+            {
+                ResponseModel? response = await _productService.CreateProductAsync(createProduct);
+
+                if (response != null && response.IsSuccess)
+                {
+                    TempData["success"] = "Product created successfully";
+                    return RedirectToAction(nameof(ProductsManager));
+                }
+                else
+                {
+                    TempData["error"] = response?.Message;
+                }
+
+            }
+            return View(createProduct);
+        }
+
+
+        //Delete Product
+        public async Task<IActionResult> ProductDelete(string id)
+        {
+            ResponseModel? response = await _productService.GetProductByIdAsync(id);
+
+            if (response != null && response.IsSuccess)
+            {
+                ProductModel? model = JsonConvert.DeserializeObject<ProductModel>(Convert.ToString(response.Result));
+                return View(model);
+            }
+            else
+            {
+                TempData["error"] = response?.Message;
+            }
+            return NotFound();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ProductDelete(ProductModel product)
+        {
+            ResponseModel? response = await _productService.DeleteProductAsync(product.Id);
+
+            if (response != null && response.IsSuccess)
+            {
+                TempData["success"] = "Coupon deleted successfully";
+                return RedirectToAction(nameof(ProductsManager));
+            }
+            else
+            {
+                TempData["error"] = response?.Message;
+            }
+            return View(product);
+        }
+
 
         public IActionResult OrdersManager()
         {

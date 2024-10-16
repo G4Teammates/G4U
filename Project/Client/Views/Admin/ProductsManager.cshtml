@@ -1,8 +1,12 @@
-﻿@{
+﻿@using Client.Models.Product_Model
+
+@{
     Layout = "_LayoutAdmin";
 }
+
 @using Client.Models.ProductDTO
 @model IEnumerable<ProductModel>
+
 
 
 <div class="pt-3 pb-4">
@@ -235,8 +239,10 @@
             <tr>
                 <th scope="col"><input type="checkbox" id="selectAll"></th>
                 <th scope="col">Id</th>
+
                 <th scope="col">Name</th>
                 <th scope="col">Description</th>
+
                 <th scope="col">Price</th>
                 <th scope="col">Sold</th>
                 <th scope="col">Interactions</th>
@@ -245,13 +251,16 @@
                 <th scope="col">Links</th>
                 <th scope="col">Categories</th>
                 <th scope="col">Status</th>
+
                 <th scope="col">CreatedAt</th>
                 <th scope="col">UpdatedAt</th>
                 <th scope="col">UserName</th>
+
                 <th scope="col"></th>
             </tr>
         </thead>
         <tbody>
+
             @foreach (var product in Model) // Giả sử 'Products' là danh sách các sản phẩm
             {
                 <tr>
@@ -269,6 +278,7 @@
                     <td>@product.Platform</td>
                     <td>
                         @if (product.Links != null)
+
                         {
                             <ul>
                                 @foreach (var link in product.Links)
@@ -277,9 +287,11 @@
                                 }
                             </ul>
                         }
+
                     </td>
                     <td>
                         @if (product.Categories != null)
+
                         {
                             <ul>
                                 @foreach (var category in product.Categories)
@@ -288,17 +300,22 @@
                                 }
                             </ul>
                         }
+
                     </td>
+
                     <td>@product.Status</td>
                     <td>@product.CreatedAt.ToString("dd/MM/yyyy")</td>
                     <td>@product.UpdatedAt.ToString("dd/MM/yyyy")</td>
                     <td>@product.UserName</td>
+
                     <td><a asp-action="ProductUpdate" asp-route-Id="@product.Id"><i class="fa-regular fa-pen-to-square"></i></a></td>
                 </tr>
             }
             <!-- Thêm các dòng dữ liệu tương tự -->
+
         </tbody>
     </table>
+
 
     <!-- Phân trang -->
     <div class="d-flex justify-content-between mt-3">
@@ -341,131 +358,16 @@
 
 
 
-@* Modal *@
 <div class="modal fade" id="modalProduct" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="container-fluid p-5">
-                <form class="row">
-                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                    <div class="row">
-                        <div class="col">
-                            <div class="mb-2">
-                                <label class="form-label fw-bold fs-5">Title</label>
-                                <input type="text" class="form-control">
-                                <span class="text-danger"></span>
-                            </div>
-                            <div class="mb-2">
-                                <label class="form-label fw-bold fs-5">Price</label>
-                                <div class="row">
-                                    <div class="col-md-5">
-                                        <ul class="flex-column" id="pricingTabs" role="tablist">
-                                            <li role="presentation">
-                                                <button class="nav-link active w-100 border border-1 border-secondary" id="free-tab" data-bs-toggle="tab" data-bs-target="#free" type="button" role="tab" aria-controls="free" aria-selected="true">$0 or donate</button>
-                                            </li>
-                                            <li role="presentation">
-                                                <button class="nav-link w-100 border border-1 border-secondary" id="paid-tab" data-bs-toggle="tab" data-bs-target="#paid" type="button" role="tab" aria-controls="paid" aria-selected="false">Paid</button>
-                                            </li>
-                                            <li role="presentation">
-                                                <button class="nav-link w-100 border border-1 border-secondary" id="nopayment-tab" data-bs-toggle="tab" data-bs-target="#nopayment" type="button" role="tab" aria-controls="nopayment" aria-selected="false">No payments</button>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                    <div class="col-md-7">
-                                        <div class="tab-content" id="pricingTabsContent">
-                                            <!-- $0 or donate tab -->
-                                            <div class="tab-pane fade show active" id="free" role="tabpanel" aria-labelledby="free-tab">
-                                                <p>Someone downloading your project will be asked for a donation before getting access. They can skip to download for free.</p>
-                                                <label for="suggestedDonation" class="form-label">Suggested donation — Default donation amount</label>
-                                                <input type="text" class="form-control" id="suggestedDonation" value="$2.00">
-                                            </div>
-
-                                            <!-- Paid tab -->
-                                            <div class="tab-pane fade" id="paid" role="tabpanel" aria-labelledby="paid-tab">
-                                                <label for="minPrice" class="form-label">Minimum price — Minimum price to pay to get download access</label>
-                                                <input type="text" class="form-control" id="minPrice" value="$1.00">
-                                            </div>
-
-                                            <!-- No payments tab -->
-                                            <div class="tab-pane fade" id="nopayment" role="tabpanel" aria-labelledby="nopayment-tab">
-                                                <p>The project's files will be freely available and no donations can be made.</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <span class="text-danger"></span>
-                            </div>
-                            <div class="mb-2">
-                                <label class="form-label fw-bold fs-5">Uploads</label>
-                                <!-- Div để hiển thị thông tin file sau khi upload -->
-                                <div class="border border-2 mb-2">
-                                    <p id="fileInfo">
-
-                                    </p>
-                                </div>
-                                <div>
-                                    <input type="file" id="fileInput" class="d-none" accept=".rar, .zip" onchange="displayFileInfo()" />
-                                    <button type="button" class="btn btn-danger" onclick="document.getElementById('fileInput').click()">Upload</button>
-                                </div>
-                                <span class="m-2">File size limit: 1 GB</span>
-                            </div>
-                            <div class="mb-2">
-                                <label class="form-label fw-bold fs-5">Details</label>
-                                <div class="m-2">
-                                    <div class="mb-2">
-                                        <label class="form-label fw-bold fs-6">Description</label>
-                                        <div>
-                                            <textarea id="descriptionEditor"></textarea>
-                                        </div>
-                                        <span class="text-danger"></span>
-                                    </div>
-                                    <div class="mb-2">
-                                        <label class="form-label fw-bold fs-6">Category</label>
-                                        <div>
-                                            <select id="dropdown" class="form-select">
-                                                <option value="default">Please choose an option</option>
-                                                <option value="option1">Option 1</option>
-                                                <option value="option2">Option 2</option>
-                                                <option value="option3">Option 3</option>
-                                            </select>
-                                        </div>
-                                        <span class="text-danger"></span>
-                                    </div>
-                                    <div class="mb-2">
-                                        <label class="form-label fw-bold fs-6">Status</label>
-                                        <div>
-                                            <select id="dropdown" class="form-select">
-                                                <option value="default">Please choose an option</option>
-                                                <option value="option1">Option 1</option>
-                                                <option value="option2">Option 2</option>
-                                                <option value="option3">Option 3</option>
-                                            </select>
-                                        </div>
-                                        <span class="text-danger"></span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-4">
-                            <div class="text-center">
-                                <div>
-                                    <img src="~/image/avatar.jpeg" alt="Alternate Text" style="width:200px; height200px;" />
-                                </div>
-                                <a class="btn btn-outline-dark align-content-center mt-2 w-100">Upload Cover Image</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group mt-3 text-center">
-                        <input type="submit" value="Create" asp-action="CreateOrder" class="btn btn-danger w-50" />
-                    </div>
-                    <div class="form-group mt-3 text-center">
-                        <input type="submit" value="Save" asp-action="SaveEdit" class="btn btn-primary w-50" />
-                    </div>
-                </form>
+                @await Html.PartialAsync("ProductCreate", Model.CreateProductModel)
             </div>
         </div>
     </div>
 </div>
+
 
 
 

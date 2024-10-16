@@ -46,3 +46,122 @@ button.accept-policy {
   white-space: nowrap;
   line-height: 60px;
 }
+
+
+.custom-language-dropdown {
+    position: relative;
+    display: inline-block;
+    font-family: Arial, sans-serif;
+}
+
+.language-dropdown-toggle {
+    background-color: white;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    border-radius: 5px;
+}
+
+    .language-dropdown-toggle img {
+        margin-right: 10px;
+    }
+
+.language-dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #00A97F;
+    min-width: 200px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+    .language-dropdown-content .language-option {
+        color: white;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+    }
+
+        .language-dropdown-content .language-option img {
+            margin-right: 10px;
+        }
+
+        .language-dropdown-content .language-option:hover {
+            background-color: #555;
+        }
+
+.custom-language-dropdown:hover .language-dropdown-content {
+    display: block;
+}
+
+.custom-language-dropdown:hover .language-dropdown-toggle {
+    background-color: #555;
+}
+
+/* Điều chỉnh chiều cao của navbar để đồng đều */
+/*.navbaradmin {
+    height: 60px;
+}*/
+
+    /* Căn giữa các phần tử trong navbar */
+    /*.navbaradmin .navbar-nav .nav-link {
+        display: flex;
+        align-items: center;
+    }*/
+
+/* Căn chỉnh hình ảnh và nội dung trong ngôn ngữ */
+/*.custom-language-dropdown .language-dropdown-toggle {
+    display: flex;
+    align-items: center;
+    padding: 5px 10px;
+    background-color: #333;
+    color: white;
+    border-radius: 5px;
+    border: none;
+}
+
+.custom-language-dropdown .language-option {
+    display: flex;
+    align-items: center;
+    padding: 5px 10px;
+    cursor: pointer;
+}*/
+
+/* Điều chỉnh tìm kiếm */
+/*.form-control {
+    width: 250px;*/ /* Điều chỉnh chiều rộng của ô tìm kiếm */
+/*}*/
+
+/* Điều chỉnh nút Products, Dashboard */
+/*.navbar-nav .nav-item .nav-link {
+    padding: 10px 20px;
+    border-radius: 5px;
+    background-color: transparent;
+    border: 1px solid #00A97F;
+    color: #333;
+    font-weight: bold;
+}*/
+
+/* Khoảng cách giữa các phần tử */
+/*.navbar-nav .nav-item {
+    margin: 0 10px;
+}*/
+
+
+.dropdown-menu {
+    right: 0; /* Align to the right of the parent container */
+    left: auto; /* Override any left alignment */
+    position: absolute;
+    z-index: 1050; /* Ensure it's on top of other content */
+    min-width: 200px; /* Đặt giới hạn chiều rộng cho dropdown item */
+    white-space: nowrap; /* Không xuống dòng */
+    overflow: hidden; /* Ẩn phần text tràn ra */
+    text-overflow: ellipsis; /* Thêm dấu ba chấm nếu text quá dài */
+}
