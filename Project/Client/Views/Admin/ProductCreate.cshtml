@@ -15,6 +15,9 @@
             </div>
             <div class="mb-2">
                 <label class="form-label fw-bold fs-5">Price</label>
+                <input asp-for="Price" class="form-control" />
+                <span asp-validation-for="Price" class="text-danger"></span>
+                @* <label class="form-label fw-bold fs-5">Price</label>
                 <div class="row">
                     <div class="col-md-5">
                         <ul class="flex-column" id="pricingTabs" role="tablist">
@@ -50,7 +53,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> *@
                 <span asp-validation-for="Price" class="text-danger"></span>
             </div>
             <div class="mb-2">
@@ -94,9 +97,10 @@
                     <div class="mb-2">
                         <label class="form-label fw-bold fs-6">Status</label>
                         <select asp-for="Status" class="form-select">
-                            <option value="default">Option 1</option>
-                            <option value="default">Option 2</option>
-                            <option value="default">Option 3</option>
+                            <option value="0">Inactive</option>
+                            <option value="1">Active</option>
+                            <option value="2">Block</option>
+                            <option value="3">Deleted</option>
                             @* Add your status options here *@
                         </select>
                         <span asp-validation-for="Status" class="text-danger"></span>
@@ -104,12 +108,19 @@
                     <div class="mb-2">
                         <label class="form-label fw-bold fs-6">Platform</label>
                         <select asp-for="Platform" class="form-select">
-                            <option value="default">Option 1</option>
-                            <option value="default">Option 2</option>
-                            <option value="default">Option 3</option>
+                            <option value="0">Unknown</option>
+                            <option value="1">Downloadable</option>
+                            <option value="2">HTML</option>
+                            <option value="3">WebGL</option>
+                            <option value="4">Window</option>
+                            <option value="5">Android</option>
+                            <option value="6">iOS</option>
+                            <option value="7">MacOS</option>
+                            <option value="8">Linux</option>
+                            <option value="9">Other</option>
                             @* Add your status options here *@
                         </select>
-                        <span asp-validation-for="Status" class="text-danger"></span>
+                        <span asp-validation-for="Platform" class="text-danger"></span>
                     </div>
                 </div>
             </div>
