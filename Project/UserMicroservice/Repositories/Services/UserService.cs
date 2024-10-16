@@ -170,12 +170,15 @@ namespace UserMicroservice.Repositories.Services
 
                 // Kiểm tra xem email và username có tồn tại không
                 response = await _helper.IsUserNotExist(updatedUserModel.Username, phone: updatedUserModel.PhoneNumber);
-                if (response.IsSuccess)
+                if (!response.IsSuccess)
                 {
                     // Cập nhật thông tin từ UserModel vào đối tượng User
                     user.DisplayName = updatedUserModel.DisplayName ?? user.DisplayName;
                     user.Username = updatedUserModel.Username ?? user.Username;
                     user.PhoneNumber = updatedUserModel.PhoneNumber ?? user.PhoneNumber;
+                    user.Email = updatedUserModel.Email ?? user.Email;
+                    user.Avatar = updatedUserModel.Avatar ?? user.Avatar;
+                    user.Role = updatedUserModel.Role ?? user.Role;
 
                     // Lưu các thay đổi vào cơ sở dữ liệu
                     _context.Users.Update(user);

@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+﻿    using AutoMapper;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
@@ -22,7 +22,7 @@ namespace UserMicroService.Controllers
         private readonly IUserService _userService = userService;
 
 
-        [Authorize(Roles = "User")]
+        //[Authorize(Roles = "User")]
         [HttpGet]
         public async Task<ActionResult> GetAll()
         {
@@ -113,7 +113,7 @@ namespace UserMicroService.Controllers
         }
 
         // Phương thức cập nhật người dùng
-        [HttpPut("{id}")]
+        [HttpPut]
         public async Task<ActionResult> UpdateUser([FromBody] UserUpdate updatedUserModel)
         {
             try
