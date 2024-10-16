@@ -1,11 +1,11 @@
-﻿@using Client.Models.Product_Model
+﻿
 
 @{
     Layout = "_LayoutAdmin";
 }
 
 @using Client.Models.ProductDTO
-@model IEnumerable<ProductModel>
+
 
 
 
@@ -307,10 +307,9 @@
                     <td>@product.CreatedAt.ToString("dd/MM/yyyy")</td>
                     <td>@product.UpdatedAt.ToString("dd/MM/yyyy")</td>
                     <td>@product.UserName</td>
-<<<<<<< Updated upstream
 
                     <td><a asp-action="ProductUpdate" asp-route-Id="@product.Id"><i class="fa-regular fa-pen-to-square"></i></a></td>
-=======
+
                     <td>
                         <a asp-action="ProductUpdate" asp-route-id="@product.Id" class="text-danger mx-2">
                             <i class="fa-regular fa-pen-to-square"></i>
@@ -373,7 +372,7 @@
 
 
 
-<div class="modal fade" id="modalProduct" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+@* <div class="modal fade" id="modalProduct" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="container-fluid p-5">
@@ -381,7 +380,7 @@
             </div>
         </div>
     </div>
-</div>
+</div> *@
 
 
 

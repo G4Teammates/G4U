@@ -1,20 +1,13 @@
 ﻿using Client.Models;
-<<<<<<< Updated upstream
-
 using Client.Models.ProductDTO;
-=======
-using Client.Models.Product_Model;
-using Client.Models.Product_Model.DTO;
-using Client.Models.Product_Model.Entities;
->>>>>>> Stashed changes
 using Client.Models.UserDTO;
 using Client.Repositories.Interfaces;
 using Client.Repositories.Interfaces.Product;
-
 using Client.Repositories.Interfaces.User;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using ProductModel = Client.Models.ProductDTO.ProductModel;
 
 
 namespace Client.Controllers
@@ -192,7 +185,7 @@ namespace Client.Controllers
         public async Task<IActionResult> ProductUpdate(string id)
         {
             ResponseModel? response = await _productService.GetProductByIdAsync(id);
-                
+
             if (response != null && response.IsSuccess)
             {
                 // Deserialize vào lớp trung gian với kiểu ProductModel
@@ -211,12 +204,12 @@ namespace Client.Controllers
             return NotFound();
         }
 
-        [HttpPost]
+        /*[HttpPost]
         public async Task<IActionResult> ProductCreate(CreateProductModel createProduct)
         {
             if (ModelState.IsValid)
             {
-                ResponseModel? response = await _productService.CreateProductAsync(createProduct);
+                ResponseModel? response = await _productService.Crea(createProduct);
 
                 if (response != null && response.IsSuccess)
                 {
@@ -330,7 +323,7 @@ namespace Client.Controllers
                 TempData["error"] = response?.Message;
             }
             return View(product);
-        }
+        }*/
 
 
         public IActionResult OrdersManager()
