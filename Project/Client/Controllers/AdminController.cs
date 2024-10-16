@@ -1,6 +1,8 @@
 ﻿using Client.Models;
+using Client.Models.ProductDTO;
 using Client.Models.UserDTO;
 using Client.Repositories.Interfaces;
+using Client.Repositories.Interfaces.Product;
 using Client.Repositories.Interfaces.User;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -8,11 +10,12 @@ using Newtonsoft.Json;
 
 namespace Client.Controllers
 {
-    public class AdminController(IUserService userService, IHelperService helperService) : Controller
+    public class AdminController(IUserService userService, IHelperService helperService, IRepoProduct repoProduct) : Controller
     {
 
         public readonly IUserService _userService = userService;
         public readonly IHelperService _helperService = helperService;
+        public readonly IRepoProduct _productService = repoProduct;
         public IActionResult Index()
         {
             return View();
@@ -119,9 +122,43 @@ namespace Client.Controllers
             return BadRequest();
         }
 
-        public IActionResult ProductsManager()
+        public async Task<IActionResult> ProductsManager()
         {
-            return View();
+            List<ProductModel?> list = new();
+            ResponseModel? response = await _productService.GetAllProductAsync();
+
+            if (response != null && response.IsSuccess)
+            {
+
+                list = JsonConvert.DeserializeObject<List<ProductModel>>(Convert.ToString(response.Result));
+
+            }
+            else
+            {
+                TempData["error"] = response?.Message;
+            }
+            return View(list);
+        }
+        public async Task<IActionResult> ProductUpdate(string id)
+        {
+            ResponseModel? response = await _productService.GetProductByIdAsync(id);
+                
+            if (response != null && response.IsSuccess)
+            {
+                // Deserialize vào lớp trung gian với kiểu ProductModel
+                ResponseResultModel<ProductModel>? data =
+                    JsonConvert.DeserializeObject<ResponseResultModel<ProductModel>>(Convert.ToString(response.Result));
+
+                // Lấy dữ liệu từ trường "result" và gán vào model
+                ProductModel? model = data?.result;
+
+                return View(model);
+            }
+            else
+            {
+                TempData["error"] = response?.Message;
+            }
+            return NotFound();
         }
 
         public IActionResult OrdersManager()

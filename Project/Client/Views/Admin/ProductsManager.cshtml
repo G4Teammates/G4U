@@ -1,6 +1,9 @@
 ﻿@{
     Layout = "_LayoutAdmin";
 }
+@using Client.Models.ProductDTO
+@model IEnumerable<ProductModel>
+
 
 <div class="pt-3 pb-4">
     <span class="titleManager bg-success py-3 px-5 rounded-4 fw-bold text-white">Products Manager</span>
@@ -231,39 +234,68 @@
         <thead class="table-light">
             <tr>
                 <th scope="col"><input type="checkbox" id="selectAll"></th>
-                <th scope="col">Avatar</th>
-                <th scope="col">User Name</th>
-                <th scope="col">Display Name</th>
-                <th scope="col">Email</th>
-                <th scope="col">Phone Number</th>
+                <th scope="col">Id</th>
+                <th scope="col">Name</th>
+                <th scope="col">Description</th>
+                <th scope="col">Price</th>
+                <th scope="col">Sold</th>
+                <th scope="col">Interactions</th>
+                <th scope="col">Discount</th>
+                <th scope="col">Platform</th>
+                <th scope="col">Links</th>
+                <th scope="col">Categories</th>
                 <th scope="col">Status</th>
-                <th scope="col">CreateAt</th>
+                <th scope="col">CreatedAt</th>
+                <th scope="col">UpdatedAt</th>
+                <th scope="col">UserName</th>
                 <th scope="col"></th>
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td><input type="checkbox" class="user-checkbox"></td>
-                <td><img src="~/Image/avatar.jpeg" alt="Alternate Text" style="width: 80px; height: 80px" /></td>
-                <td>tuanlx123</td>
-                <td>Tuan Dep Trai</td>
-                <td>tuanpham147369@gmail.com</td>
-                <td><span class="text-success">0933 808 235</span></td>
-                <td>Đã kích hoạt</td>
-                <td>10/05/2024</td>
-                <td><a href="" data-toggle="modal" data-target="#modalProduct"><i class="fa-regular fa-pen-to-square"></i></a></td>
-            </tr>
-            <tr>
-                <td><input type="checkbox" class="user-checkbox"></td>
-                <td>-</td>
-                <td>-</td>
-                <td>Quá ok tụi anh q...</td>
-                <td>-</td>
-                <td><span class="text-success">024 3747 4700</span></td>
-                <td>-</td>
-                <td>-</td>
-                <td><a href="" data-toggle="modal" data-target="#modalProduct"><i class="fa-regular fa-pen-to-square"></i></a></td>
-            </tr>
+            @foreach (var product in Model) // Giả sử 'Products' là danh sách các sản phẩm
+            {
+                <tr>
+                    <td><input type="checkbox" class="product-checkbox"></td>
+                    <td>@product.Id</td>
+                    <td>@product.Name</td>
+                    <td>@product.Description</td>
+                    <td>@product.Price.ToString("C")</td>
+                    <td>@product.Sold</td>
+                    <td>
+                        <div>Likes: @product.Interactions?.NumberOfLikes ?? 0</div>
+                        <div>Views: @product.Interactions?.NumberOfViews ?? 0</div>
+                    </td>
+                    <td>@product.Discount %</td>
+                    <td>@product.Platform</td>
+                    <td>
+                        @if (product.Links != null)
+                        {
+                            <ul>
+                                @foreach (var link in product.Links)
+                                {
+                                    <li>@link.Url</li>
+                                }
+                            </ul>
+                        }
+                    </td>
+                    <td>
+                        @if (product.Categories != null)
+                        {
+                            <ul>
+                                @foreach (var category in product.Categories)
+                                {
+                                    <li>@category.CategoryName</li>
+                                }
+                            </ul>
+                        }
+                    </td>
+                    <td>@product.Status</td>
+                    <td>@product.CreatedAt.ToString("dd/MM/yyyy")</td>
+                    <td>@product.UpdatedAt.ToString("dd/MM/yyyy")</td>
+                    <td>@product.UserName</td>
+                    <td><a asp-action="ProductUpdate" asp-route-Id="@product.Id"><i class="fa-regular fa-pen-to-square"></i></a></td>
+                </tr>
+            }
             <!-- Thêm các dòng dữ liệu tương tự -->
         </tbody>
     </table>

@@ -1,0 +1,68 @@
+﻿@model Client.Models.ProductDTO.ProductModel
+@{
+    ViewData["Title"] = "ProductUpdate";
+}
+@{
+    Layout = "_LayoutAdmin";
+}
+<h1>ProductUpdate</h1>
+
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3>@Model.Name</h3>
+                </div>
+                <div class="card-body">
+                    <p><strong>ID:</strong> @Model.Id</p>
+                    <p><strong>Description:</strong> @Model.Description</p>
+                    <p><strong>Price:</strong> @Model.Price.ToString("C")</p>
+                    <p><strong>Sold:</strong> @Model.Sold</p>
+                    <p><strong>Discount:</strong> @Model.Discount %</p>
+                    <p><strong>Platform:</strong> @Model.Platform</p>
+                    <p><strong>Status:</strong> @Model.Status</p>
+                    <p><strong>Created At:</strong> @Model.CreatedAt.ToString("dd/MM/yyyy")</p>
+                    <p><strong>Updated At:</strong> @Model.UpdatedAt.ToString("dd/MM/yyyy")</p>
+                    <p><strong>Owner:</strong> @Model.UserName</p>
+
+                    <h5>Interactions</h5>
+                    <p><strong>Likes:</strong> @Model.Interactions?.NumberOfLikes ?? 0</p>
+                    <p><strong>Views:</strong> @Model.Interactions?.NumberOfViews ?? 0</p>
+
+                    <h5>Categories</h5>
+                    <ul>
+                        @if (Model.Categories != null)
+                        {
+                            @foreach (var category in Model.Categories)
+                            {
+                                <li>@category.CategoryName</li>
+                            }
+                        }
+                        else
+                        {
+                            <li>No categories</li>
+                        }
+                    </ul>
+
+                    <h5>Links</h5>
+                    <ul>
+                        @if (Model.Links != null)
+                        {
+                            @foreach (var link in Model.Links)
+                            {
+                                <li><a href="@link.Url" target="_blank">@link.Url</a></li>
+                            }
+                        }
+                        else
+                        {
+                            <li>No links available</li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

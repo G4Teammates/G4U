@@ -17,6 +17,12 @@ builder.Configuration.AddAzureKeyVault(new Uri("https://duantotnghiep.vault.azur
     new DefaultAzureCredential());
 builder.Services.AddStartupService(builder.Configuration);
 builder.Services.AddScoped<IRepoProduct, RepoProduct>();
+
+
+// Register the BackgroundService
+builder.Services.AddHostedService<Background>();
+builder.Services.AddSingleton<IMessage, Message>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
