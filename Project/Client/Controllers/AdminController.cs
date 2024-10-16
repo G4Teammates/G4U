@@ -154,6 +154,35 @@ namespace Client.Controllers
         }
 
 
+        [HttpGet]
+        public async Task<IActionResult> SearchUsers(string? query)
+        {
+            UserViewModel users = new();
+
+            try
+            {
+                // Gọi phương thức FindUsers trong UserService
+                ResponseModel? response = await _userService.FindUsers(query);
+
+                if (response != null && response.IsSuccess)
+                {
+                    users.Users = JsonConvert.DeserializeObject<ICollection<UsersDTO>>(Convert.ToString(response.Result.ToString()!));
+                }
+                else
+                {
+                    TempData["error"] = response?.Message;
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = ex.Message;
+            }
+
+            return View("UsersManager", users);  // Trả về view UsersManager với kết quả tìm kiếm
+        }
+
+
+
         public IActionResult ProductsManager()
         {
             return View();

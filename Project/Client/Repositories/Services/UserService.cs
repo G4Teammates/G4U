@@ -36,12 +36,17 @@ namespace Client.Repositories.Services
             });
         }
 
-        public Task<ResponseModel>? FindUsers(string? query)
-        {
-            throw new NotImplementedException();
-        }
+		public async Task<ResponseModel> FindUsers(string? query)
+		{
+			return await _baseService.SendAsync(new RequestModel()
+			{
+				ApiType = StaticTypeApi.ApiType.GET,
+				Url = StaticTypeApi.APIGateWay + $"/User/search?query={query}"
+			});
+		}
 
-        public async Task<ResponseModel> GetAllUserAsync()
+
+		public async Task<ResponseModel> GetAllUserAsync()
         {
             return await _baseService.SendAsync(new RequestModel()
             {

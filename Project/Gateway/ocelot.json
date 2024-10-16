@@ -108,10 +108,10 @@
           "Port": 7107
         }
       ],
-      "AuthenticationOptions": {
-        "AuthenticationProviderKey": "Bearer",
-        "AllowedScopes": []
-      },
+      //"AuthenticationOptions": {
+      //  "AuthenticationProviderKey": "Bearer",
+      //  "AllowedScopes": []
+      //},
       "UpstreamPathTemplate": "/User/search",
       "UpstreamHttpMethod": [ "Get" ]
     },
