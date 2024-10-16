@@ -132,7 +132,10 @@ namespace Client.Controllers
                     Id = user.Id,
                     Username = user.Username,
                     PhoneNumber = user.PhoneNumber,
-                    DisplayName = user.DisplayName
+                    DisplayName = user.DisplayName,
+                    Email = user.Email,
+                    Role = user.Role,
+                    Avatar = user.Avatar
                     // Nếu bạn có thêm thuộc tính, hãy thêm vào đây
                 };
 
