@@ -1,7 +1,7 @@
-﻿@using Client.Models.Product_Model.DTO
+﻿@* @using Client.Models.ProductDTO
 
-@model CreateProductModel
-@{
+@model CreateProductModel *@
+@* @{
     ViewData["Title"] = "Create Product";
 }
 <form asp-action="ProductCreate" asp-controller="Product" method="post" class="row">
@@ -16,7 +16,7 @@
             <div class="mb-2">
                 <label class="form-label fw-bold fs-5">Price</label>
                 <input asp-for="Price" class="form-control" />
-                <span asp-validation-for="Price" class="text-danger"></span>
+                <span asp-validation-for="Price" class="text-danger"></span> *@
                 @* <label class="form-label fw-bold fs-5">Price</label>
                 <div class="row">
                     <div class="col-md-5">
@@ -54,7 +54,7 @@
                         </div>
                     </div>
                 </div> *@
-                <span asp-validation-for="Price" class="text-danger"></span>
+               @*  <span asp-validation-for="Price" class="text-danger"></span>
             </div>
             <div class="mb-2">
                 <label class="form-label fw-bold fs-5">Discount</label>
@@ -82,7 +82,7 @@
                         <span asp-validation-for="Description" class="text-danger"></span>
                     </div>
                     <div class="mb-2">
-                        <label class="form-label fw-bold fs-6">Category</label>
+                        <label class="form-label fw-bold fs-6">Category</label> *@
                        @*  <select asp-for="Categories" class="form-select">
                             <option value="default">Please choose an option</option>
                             @foreach (var category in ViewBag.Categories)
@@ -91,7 +91,7 @@
                             }
                         </select>
                         <span asp-validation-for="Categories" class="text-danger"></span> *@
-                        <input asp-for="Categories" class="form-control" />
+                        @* <input asp-for="Categories" class="form-control" />
                         <span asp-validation-for="Categories" class="text-danger"></span>
                     </div>
                     <div class="mb-2">
@@ -101,7 +101,7 @@
                             <option value="1">Active</option>
                             <option value="2">Block</option>
                             <option value="3">Deleted</option>
-                            @* Add your status options here *@
+                            
                         </select>
                         <span asp-validation-for="Status" class="text-danger"></span>
                     </div>
@@ -118,7 +118,7 @@
                             <option value="7">MacOS</option>
                             <option value="8">Linux</option>
                             <option value="9">Other</option>
-                            @* Add your status options here *@
+                            
                         </select>
                         <span asp-validation-for="Platform" class="text-danger"></span>
                     </div>
@@ -138,4 +138,4 @@
     <div class="form-group mt-3 text-center">
         <input type="submit" value="Create" class="btn btn-danger w-50" />
     </div>
-</form>
+</form> *@
