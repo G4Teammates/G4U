@@ -1,5 +1,5 @@
-﻿
 using static Client.Models.Enum.UserEnum.User;
+
 
 namespace Client.Models.UserDTO
 {

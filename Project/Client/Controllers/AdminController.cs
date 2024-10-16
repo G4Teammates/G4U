@@ -1,4 +1,5 @@
 ﻿using Client.Models;
+
 using Client.Models.ProductDTO;
 using Client.Models.UserDTO;
 using Client.Repositories.Interfaces;
@@ -294,19 +295,25 @@ namespace Client.Controllers
         //Delete Product
         public async Task<IActionResult> ProductDelete(string id)
         {
-            ResponseModel? response = await _productService.GetProductByIdAsync(id);
+			ResponseModel? response = await _productService.GetProductByIdAsync(id);
 
-            if (response != null && response.IsSuccess)
-            {
-                ProductModel? model = JsonConvert.DeserializeObject<ProductModel>(Convert.ToString(response.Result));
-                return View(model);
-            }
-            else
-            {
-                TempData["error"] = response?.Message;
-            }
-            return NotFound();
-        }
+			if (response != null && response.IsSuccess)
+			{
+				// Deserialize vào lớp trung gian với kiểu ProductModel
+				ResponseResultModel<ProductModel>? data =
+					JsonConvert.DeserializeObject<ResponseResultModel<ProductModel>>(Convert.ToString(response.Result));
+
+				// Lấy dữ liệu từ trường "result" và gán vào model
+				ProductModel? model = data?.result;
+
+				return View(model);
+			}
+			else
+			{
+				TempData["error"] = response?.Message;
+			}
+			return NotFound();
+		}
 
         [HttpPost]
         public async Task<IActionResult> ProductDelete(ProductModel product)
