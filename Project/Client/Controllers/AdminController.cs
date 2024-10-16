@@ -1,28 +1,18 @@
 ﻿using Client.Models;
-
-using Client.Models.ProductDTO;
 using Client.Models.UserDTO;
 using Client.Repositories.Interfaces;
-using Client.Repositories.Interfaces.Product;
 using Client.Repositories.Interfaces.User;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using ProductModel = Client.Models.ProductDTO.ProductModel;
-
 
 namespace Client.Controllers
 {
-
-    public class AdminController(IUserService userService, IHelperService helperService, IRepoProduct repoProduct) : Controller
-
+    public class AdminController(IUserService userService, IHelperService helperService) : Controller
     {
 
         public readonly IUserService _userService = userService;
         public readonly IHelperService _helperService = helperService;
-
-        public readonly IRepoProduct _productService = repoProduct;
-
         public IActionResult Index()
         {
             return View();
@@ -164,174 +154,39 @@ namespace Client.Controllers
         }
 
 
-
-        public async Task<IActionResult> ProductsManager()
-
+        [HttpGet]
+        public async Task<IActionResult> SearchUsers(string? query)
         {
-            List<ProductModel?> list = new();
-            ResponseModel? response = await _productService.GetAllProductAsync();
+            UserViewModel users = new();
 
-            if (response != null && response.IsSuccess)
+            try
             {
-
-                list = JsonConvert.DeserializeObject<List<ProductModel>>(Convert.ToString(response.Result));
-
-            }
-            else
-            {
-                TempData["error"] = response?.Message;
-            }
-            return View(list);
-        }
-        public async Task<IActionResult> ProductUpdate(string id)
-        {
-            ResponseModel? response = await _productService.GetProductByIdAsync(id);
-
-            if (response != null && response.IsSuccess)
-            {
-                // Deserialize vào lớp trung gian với kiểu ProductModel
-                ResponseResultModel<ProductModel>? data =
-                    JsonConvert.DeserializeObject<ResponseResultModel<ProductModel>>(Convert.ToString(response.Result));
-
-                // Lấy dữ liệu từ trường "result" và gán vào model
-                ProductModel? model = data?.result;
-
-                return View(model);
-            }
-            else
-            {
-                TempData["error"] = response?.Message;
-            }
-            return NotFound();
-        }
-
-        /*[HttpPost]
-        public async Task<IActionResult> ProductCreate(CreateProductModel createProduct)
-        {
-            if (ModelState.IsValid)
-            {
-                ResponseModel? response = await _productService.Crea(createProduct);
+                // Gọi phương thức FindUsers trong UserService
+                ResponseModel? response = await _userService.FindUsers(query);
 
                 if (response != null && response.IsSuccess)
                 {
-                    TempData["success"] = "Product created successfully";
-                    return RedirectToAction(nameof(ProductsManager));
-                }
-                else
-                {
-                    TempData["error"] = response?.Message;
-                } 
-
-            }
-            return View(createProduct);
-        }
-
-        // Update Product ProductUpdate
-
-        public async Task<IActionResult> ProductUpdate(string id)
-        {
-            ResponseModel? response = await _productService.GetProductByIdAsync(id);
-
-            if (response != null && response.IsSuccess)
-            {
-                Products product = JsonConvert.DeserializeObject<Products>(Convert.ToString(response.Result));
-
-                ProductViewModel findPro = new ProductViewModel()
-                {
-                    Product = product
-                };
-
-                // Trả về model UsersDTO để sử dụng trong View
-                return View(findPro);
-            }
-            else
-            {
-                TempData["error"] = response?.Message;
-            }
-            return NotFound();
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> UpdateProduct(UpdateProductModel updateProductModel)
-        {
-            if (ModelState.IsValid)
-            {
-                var updateProduct = new UpdateProductModel
-                {
-                    Id = updateProductModel.Id,
-                    Name = updateProductModel.Name,
-                    Description = updateProductModel.Description,
-                    Price = updateProductModel.Price,
-                    Sold = updateProductModel.Sold,
-                    Interactions = updateProductModel.Interactions,
-                    Discount = updateProductModel.Discount,
-                    Categories = updateProductModel.Categories,
-                    Platform = updateProductModel.Platform,
-                    Status = updateProductModel.Status,
-                    CreatedAt = updateProductModel.CreatedAt,
-                    UpdatedAt = updateProductModel.UpdatedAt,
-                    UserName = updateProductModel.UserName,
-                    // Nếu bạn có thêm thuộc tính, hãy thêm vào đây
-                };
-
-                ResponseModel? response = await _productService.UpdateProductAsync(updateProduct);
-
-                if (response != null && response.IsSuccess)
-                {
-                    TempData["success"] = "Product updated successfully";
-                    return RedirectToAction(nameof(ProductsManager));
+                    users.Users = JsonConvert.DeserializeObject<ICollection<UsersDTO>>(Convert.ToString(response.Result.ToString()!));
                 }
                 else
                 {
                     TempData["error"] = response?.Message;
                 }
             }
+            catch (Exception ex)
+            {
+                TempData["error"] = ex.Message;
+            }
 
-            // Nếu ModelState không hợp lệ, trả về lại model để hiển thị lỗi
-            return View(updateProductModel);
+            return View("UsersManager", users);  // Trả về view UsersManager với kết quả tìm kiếm
         }
 
 
-        //Delete Product
-        public async Task<IActionResult> ProductDelete(string id)
+
+        public IActionResult ProductsManager()
         {
-			ResponseModel? response = await _productService.GetProductByIdAsync(id);
-
-			if (response != null && response.IsSuccess)
-			{
-				// Deserialize vào lớp trung gian với kiểu ProductModel
-				ResponseResultModel<ProductModel>? data =
-					JsonConvert.DeserializeObject<ResponseResultModel<ProductModel>>(Convert.ToString(response.Result));
-
-				// Lấy dữ liệu từ trường "result" và gán vào model
-				ProductModel? model = data?.result;
-
-				return View(model);
-			}
-			else
-			{
-				TempData["error"] = response?.Message;
-			}
-			return NotFound();
-		}
-
-        [HttpPost]
-        public async Task<IActionResult> ProductDelete(ProductModel product)
-        {
-            ResponseModel? response = await _productService.DeleteProductAsync(product.Id);
-
-            if (response != null && response.IsSuccess)
-            {
-                TempData["success"] = "Coupon deleted successfully";
-                return RedirectToAction(nameof(ProductsManager));
-            }
-            else
-            {
-                TempData["error"] = response?.Message;
-            }
-            return View(product);
-        }*/
-
+            return View();
+        }
 
         public IActionResult OrdersManager()
         {

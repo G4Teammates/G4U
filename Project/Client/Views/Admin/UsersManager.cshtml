@@ -48,8 +48,11 @@
 <div class="container mt-4">
 	<!-- Thanh tìm kiếm và nút Thêm -->
 	<div class="d-flex justify-content-between mb-3">
-		<form asp-action="" class="col-md-4">
-			<input class="form-control" type="text" placeholder="Search by..." />
+		<form asp-action="SearchUsers" method="get">
+			<div class="input-group mb-3">
+				<input type="text" class="form-control" name="query" placeholder="Search users..." value="" />
+				@* <button class="btn btn-outline-success" type="submit">Search</button> *@
+			</div>
 		</form>
 		<div class="w-100">
 			<div class="text-end">

@@ -67,6 +67,7 @@ namespace Client.Repositories.Services
                         return new() { IsSuccess = false, Message = "Unauthorized" };
                     case HttpStatusCode.InternalServerError:
                         return new() { IsSuccess = false, Message = "Internal Sever Error" };
+
                     default:
                         var apiContent = await apiResponse.Content.ReadAsStringAsync();
                         var apiResponseModel = JsonConvert.DeserializeObject<ResponseModel>(apiContent);
