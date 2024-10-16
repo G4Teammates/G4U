@@ -9,7 +9,7 @@ namespace Client.Models.Product_Model.DTO
 
         [Required(ErrorMessage = "Name is required")]
         [StringLength(256, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 2)]
-        public required string Name { get; set; } = string.Empty;
+        public required string Name { get; set; } 
 
         [MaxLength(10000, ErrorMessage = "The {0} must be at max {1} characters long.")]
         public string? Description { get; set; }
@@ -47,8 +47,8 @@ namespace Client.Models.Product_Model.DTO
 
         /*public required string UserId { get; set; }*/
 
-        public List<IFormFile> ImageFiles { get; set; } = new List<IFormFile>();
-        public ScanFileRequest Request { get; set; } = new ScanFileRequest();
+        public List<IFormFile> ImageFiles { get; set; } 
+        public ScanFileRequest Request { get; set; }
         public decimal GetPrice()
         {
             return Price - Price * (decimal)Discount / 100;

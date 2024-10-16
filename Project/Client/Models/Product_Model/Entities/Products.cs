@@ -1,4 +1,5 @@
 ﻿using Client.Models.Product_Model.Enum;
+using Newtonsoft.Json;
 
 namespace Client.Models.Product_Model.Entities
 {
@@ -14,7 +15,7 @@ namespace Client.Models.Product_Model.Entities
         /// <br/>
         /// Định danh duy nhất cho sản phẩm.
         /// </summary>
-
+        [JsonProperty("id")]
         public required string Id { get; set; }
 
         /// <summary>
@@ -22,7 +23,7 @@ namespace Client.Models.Product_Model.Entities
         /// <br/>
         /// Tên của sản phẩm.
         /// </summary>
-
+        [JsonProperty("name")]
         public required string Name { get; set; }
 
         /// <summary>
@@ -30,6 +31,7 @@ namespace Client.Models.Product_Model.Entities
         /// <br/>
         /// Mô tả về sản phẩm.
         /// </summary>
+        [JsonProperty("description")]
         public string? Description { get; set; }
 
         /// <summary>
@@ -37,6 +39,7 @@ namespace Client.Models.Product_Model.Entities
         /// <br/>
         /// Giá gốc của sản phẩm trước khi áp dụng bất kỳ giảm giá nào.
         /// </summary>
+        [JsonProperty("price")]
         public decimal Price { get; set; }
 
         /// <summary>
@@ -44,6 +47,7 @@ namespace Client.Models.Product_Model.Entities
         /// <br/>
         /// Số sản phẩm đã bán được.
         /// </summary>
+        [JsonProperty("sold")]
         public int Sold { get; set; }
 
         /// <summary>
@@ -51,6 +55,7 @@ namespace Client.Models.Product_Model.Entities
         /// <br/>
         /// Số lượt xem <see cref="Interactions.NumberOfViews"/>  và lượt thích <see cref="Interactions.NumberOfLikes"/> mà sản phẩm nhận được. Mặc định là 0.
         /// </summary>
+        [JsonProperty("interactions")]
         public Interactions? Interactions { get; set; }
 
         /// <summary>
@@ -58,6 +63,7 @@ namespace Client.Models.Product_Model.Entities
         /// <br/>
         /// Giảm giá áp dụng cho sản phẩm. Chỉ có giá trị hợp lệ nằm giữa 0 và 100.
         /// </summary>
+        [JsonProperty("discount")]
         public float Discount { get; set; }
 
 
@@ -66,13 +72,15 @@ namespace Client.Models.Product_Model.Entities
         /// <br/>
         /// Nền tảng nơi sản phẩm có sẵn (ví dụ: Window, Android, WebGL,...).
         /// </summary>
+        [JsonProperty("platform")]
         public PlatformType Platform { get; set; }
 
         /// <summary>
         /// A collection of related links associated with the product or content.
         /// <br/>
         /// Tập hợp các liên kết liên quan đến sản phẩm hoặc nội dung.
-        /// </summary>
+        /// </summary>  
+        [JsonProperty("links")]
         public ICollection<Links>? Links { get; set; }
 
 
@@ -81,6 +89,7 @@ namespace Client.Models.Product_Model.Entities
         /// <br/>
         /// Danh sách các danh mục mà sản phẩm thuộc về.
         /// </summary>
+        [JsonProperty("categories")]
         public ICollection<Categories>? Categories { get; set; }
 
 
@@ -88,7 +97,8 @@ namespace Client.Models.Product_Model.Entities
         /// The status of the product (e.g., Inactive, Active, Block, Deleted). 
         /// <br/>
         /// Trạng thái của sản phẩm (ví dụ: Inactive, Active, Block, Deleted).
-        /// </summary>
+        /// </summary>  
+        [JsonProperty("status")]
         public ProductStatus Status { get; set; }
 
 
@@ -98,6 +108,7 @@ namespace Client.Models.Product_Model.Entities
         /// <br/>
         /// Ngày và giờ khi sản phẩm được tạo ra.
         /// </summary>
+        [JsonProperty("createdAt")]
         public DateTime CreatedAt { get; set; }
 
         /// <summary>
@@ -105,6 +116,7 @@ namespace Client.Models.Product_Model.Entities
         /// <br/>
         /// Ngày và giờ khi sản phẩm được cập nhật lần cuối.
         /// </summary>
+        [JsonProperty("updatedAt")]
         public DateTime UpdatedAt { get; set; }
 
         /// <summary>
@@ -113,7 +125,8 @@ namespace Client.Models.Product_Model.Entities
         /// Định danh của người dùng sở hữu hoặc tạo ra sản phẩm.
 
         /// </summary>
+        [JsonProperty("userName")]
 
-        public required string UserId { get; set; }
+        public required string UserName { get; set; }
     }
 }

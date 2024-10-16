@@ -307,8 +307,23 @@
                     <td>@product.CreatedAt.ToString("dd/MM/yyyy")</td>
                     <td>@product.UpdatedAt.ToString("dd/MM/yyyy")</td>
                     <td>@product.UserName</td>
+<<<<<<< Updated upstream
 
                     <td><a asp-action="ProductUpdate" asp-route-Id="@product.Id"><i class="fa-regular fa-pen-to-square"></i></a></td>
+=======
+                    <td>
+                        <a asp-action="ProductUpdate" asp-route-id="@product.Id" class="text-danger mx-2">
+                            <i class="fa-regular fa-pen-to-square"></i>
+                        </a>
+                    </td>
+                    <td>
+                        @* <form asp-action="UsersDelete" >
+                    <input type="submit" value="Delete" class="btn btn-danger" />
+                    </form> *@
+                        <a asp-action="ProductDelete" asp-route-Id="@product.Id" class="text-danger mx-2"> <i class="fas fa-trash"></i></a>
+                        @* <a asp-action="UsersDelete" asp-route-Id="@user.Id"> <i class="fas fa-trash"></i></a> *@
+                    </td>
+>>>>>>> Stashed changes
                 </tr>
             }
             <!-- Thêm các dòng dữ liệu tương tự -->

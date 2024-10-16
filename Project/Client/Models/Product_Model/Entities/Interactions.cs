@@ -1,4 +1,6 @@
-﻿namespace Client.Models.Product_Model.Entities
+﻿using Newtonsoft.Json;
+
+namespace Client.Models.Product_Model.Entities
 {
     public class Interactions
     {
@@ -7,6 +9,7 @@
         /// <br/>
         /// Số lượt xem mà sản phẩm đã nhận được.
         /// </summary>
+        [JsonProperty("numberOfViews")]
         public int NumberOfViews { get; set; }
 
         /// <summary>
@@ -14,6 +17,7 @@
         /// <br/>
         /// Số lượt thích mà sản phẩm đã nhận được.
         /// </summary>
+        [JsonProperty("numberOfLikes")]
         public int NumberOfLikes { get; set; }
     }
 }

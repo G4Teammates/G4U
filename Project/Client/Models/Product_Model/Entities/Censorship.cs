@@ -1,4 +1,5 @@
 ﻿using Client.Models.Product_Model.Enum;
+using Newtonsoft.Json;
 
 namespace Client.Models.Product_Model.Entities
 {
@@ -14,6 +15,7 @@ namespace Client.Models.Product_Model.Entities
         /// <br/>
         /// Tên của nhà cung cấp chịu trách nhiệm kiểm duyệt hoặc phân loại.
         /// </summary>
+        [JsonProperty("providerName")]
         public required string ProviderName { get; set; }
 
         /// <summary>
@@ -21,6 +23,7 @@ namespace Client.Models.Product_Model.Entities
         /// <br/>
         /// Mô tả tùy chọn về quyết định kiểm duyệt hoặc phân loại.
         /// </summary>
+        [JsonProperty("description")]
         public string? Description { get; set; }
 
         /// <summary>
@@ -28,6 +31,7 @@ namespace Client.Models.Product_Model.Entities
         /// <br/>
         /// Trạng thái hoặc kết quả của phân loại kiểm duyệt.
         /// </summary>
+        [JsonProperty("status")]
         public CensorshipStatus Status { get; set; }
     }
 }

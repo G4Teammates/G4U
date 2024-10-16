@@ -91,7 +91,7 @@ namespace Client.Repositories.Services.ProductService
             return await _baseService.SendAsync(new RequestModel()
             {
                 ApiType = StaticTypeApi.ApiType.GET,
-                Url = StaticTypeApi.APIGateWay + "/Product" 
+                Url = StaticTypeApi.APIGateWay + "/Product"
             });
         }
 
@@ -116,12 +116,13 @@ namespace Client.Repositories.Services.ProductService
 
         public async Task<ResponseModel?> UpdateProductAsync(UpdateProductModel product)
         {
+            // Tạo một yêu cầu để gửi đến API
             return await _baseService.SendAsync(new RequestModel()
             {
                 ApiType = StaticTypeApi.ApiType.PUT,
                 Data = product,
-                Url = StaticTypeApi.APIGateWay + "/Product/"
-            }); ;
+                Url = StaticTypeApi.APIGateWay + "/Product"
+            });
         }
 
 

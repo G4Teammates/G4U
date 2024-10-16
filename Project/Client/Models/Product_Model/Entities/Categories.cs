@@ -1,4 +1,6 @@
-﻿namespace Client.Models.Product_Model.Entities
+﻿using Newtonsoft.Json;
+
+namespace Client.Models.Product_Model.Entities
 {
     public class Categories
     {
@@ -7,6 +9,7 @@
         /// <br/>
         /// Mã định danh duy nhất của danh mục.
         /// </summary>
-        public string? CategoryId { get; set; }
+          [JsonProperty("categoryName")]
+        public string? CategoryName { get; set; }
     }
 }

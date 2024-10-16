@@ -10,7 +10,7 @@ namespace Client.Repositories.Interfaces.ProductInterface
         Task<ResponseModel?> GetProductByIdAsync(string Id);
         Task<ResponseModel?> GetAllProductAsync();
         Task<ResponseModel?> CreateProductAsync(CreateProductModel createProduct);
-        Task<ResponseModel?> UpdateProductAsync(UpdateProductModel updateProduct);
+        Task<ResponseModel?> UpdateProductAsync(UpdateProductModel product);
         Task<ResponseModel?> DeleteProductAsync(string id);
         Task<ResponseModel?> GetCategoriesAsync();
 
