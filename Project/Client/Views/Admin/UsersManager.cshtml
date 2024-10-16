@@ -1,4 +1,4 @@
-﻿@using Client.Models.UserDTO
+﻿@    using Client.Models.UserDTO
 @{
 	Layout = "_LayoutAdmin";
 }
@@ -129,7 +129,7 @@
 						</td>
 
 						<td>
-							@if (user.Role == Client.Models.Enum.User.UserRole.Admin)
+							@if (user.Role == Client.Models.Enum.UserEnum.User.UserRole.Admin)
 							{
 								<span class="text-primary">Admin</span>
 							}

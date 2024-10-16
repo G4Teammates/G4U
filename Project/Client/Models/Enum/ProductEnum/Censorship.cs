@@ -1,4 +1,4 @@
-﻿namespace Client.Models.Enum
+﻿namespace Client.Models.Enum.ProductEnum
 {
     public enum CensorshipStatus
     {

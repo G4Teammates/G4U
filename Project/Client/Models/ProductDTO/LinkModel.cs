@@ -1,4 +1,4 @@
-﻿using Client.Models.Enum;
+﻿using Client.Models.Enum.ProductEnum;
 using MongoDB.Bson;
 using System.ComponentModel.DataAnnotations;
 

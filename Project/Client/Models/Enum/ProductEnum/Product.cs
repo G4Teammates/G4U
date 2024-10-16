@@ -1,4 +1,4 @@
-﻿namespace Client.Models.Enum
+﻿namespace Client.Models.Enum.ProductEnum
 {
     /// <summary>
     /// Represents the status of a product in the system.
