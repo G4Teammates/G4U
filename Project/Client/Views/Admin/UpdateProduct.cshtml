@@ -1,0 +1,103 @@
+﻿@using Client.Models.ProductDTO
+@model UpdateProductModel
+@{
+    ViewData["Title"] = "Update Product";
+}
+
+<h2>Update Product</h2>
+
+<form asp-action="UpdateProduct" method="post" enctype="multipart/form-data">
+    <div class="form-group">
+        <label for="id">Product ID</label>
+        <input type="text" class="form-control" id="id" name="id" value="@Model.Id" readonly />
+    </div>
+
+    <div class="form-group">
+        <label for="name">Product Name</label>
+        <input type="text" class="form-control" id="name" name="name" value="@Model.Name" required />
+    </div>
+
+    <div class="form-group">
+        <label for="description">Description</label>
+        <textarea class="form-control" id="description" name="description" rows="4" required>@Model.Description</textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="price">Price</label>
+        <input type="number" class="form-control" id="price" name="price" value="@Model.Price" required />
+    </div>
+
+    <div class="form-group">
+        <label for="sold">Sold</label>
+        <input type="number" class="form-control" id="sold" name="sold" value="@Model.Sold" required />
+    </div>
+
+    <div class="form-group">
+        <label for="numOfView">Number of Views</label>
+        <input type="number" class="form-control" id="numOfView" name="numOfView" value="@Model.Interactions.NumberOfViews" required />
+    </div>
+
+    <div class="form-group">
+        <label for="numOfLike">Number of Likes</label>
+        <input type="number" class="form-control" id="numOfLike" name="numOfLike" value="@Model.Interactions.NumberOfLikes" required />
+    </div>
+
+    <div class="form-group">
+        <label for="discount">Discount (%)</label>
+        <input type="number" class="form-control" id="discount" name="discount" value="@Model.Discount" step="0.01" required />
+    </div>
+
+    <div class="form-group">
+        <label for="categories">Categories</label>
+        <select multiple class="form-control" id="categories" name="categories">
+            @foreach (var category in Model.Categories)
+            {
+                <option value="@category.CategoryName" selected>@category.CategoryName</option>
+            }
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="platform">Platform</label>
+        <select class="form-control" id="platform" name="platform">
+            @foreach (Client.Models.Enum.ProductEnum.PlatformType platform in Enum.GetValues(typeof(Client.Models.Enum.ProductEnum.PlatformType)))
+            {
+                <option value="@((int)platform)">@platform</option>
+            }
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="status">Status</label>
+        <select class="form-control" id="status" name="status">
+            @foreach (Client.Models.Enum.ProductEnum.ProductStatus status in Enum.GetValues(typeof(Client.Models.Enum.ProductEnum.ProductStatus)))
+            {
+                <option value="@((int)status)">@status</option>
+            }
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="createAt">Created At</label>
+        <input type="datetime-local" class="form-control" id="createAt" name="createAt" value="@Model.CreatedAt.ToString("yyyy-MM-ddTHH:mm:ss")" required />
+    </div>
+
+    <div class="form-group">
+        <label for="imageFiles">Upload Images</label>
+        <input type="file" class="form-control" id="imageFiles" name="imageFiles" multiple />
+    </div>
+
+    <div class="form-group">
+        <label for="gameFile">Upload Game File</label>
+        <input type="file" class="form-control" id="gameFile" name="request.gameFile" />
+    </div>
+
+    <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" class="form-control" id="username" name="username" value="@Model.UserName" readonly />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Update Product</button>
+</form>
+
+
