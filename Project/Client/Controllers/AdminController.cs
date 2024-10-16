@@ -1,9 +1,10 @@
 ﻿using Client.Models;
-using Client.Models.Product_Model;
-using Client.Models.Product_Model.DTO;
+
+using Client.Models.ProductDTO;
 using Client.Models.UserDTO;
 using Client.Repositories.Interfaces;
-using Client.Repositories.Interfaces.ProductInterface;
+using Client.Repositories.Interfaces.Product;
+
 using Client.Repositories.Interfaces.User;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -11,12 +12,16 @@ using Newtonsoft.Json;
 
 namespace Client.Controllers
 {
-    public class AdminController(IUserService userService, IHelperService helperService, IRepoProduct productService) : Controller
+
+    public class AdminController(IUserService userService, IHelperService helperService, IRepoProduct repoProduct) : Controller
+
     {
 
         public readonly IUserService _userService = userService;
         public readonly IHelperService _helperService = helperService;
-        public readonly IRepoProduct _productService = productService;
+
+        public readonly IRepoProduct _productService = repoProduct;
+
         public IActionResult Index()
         {
             return View();
@@ -158,62 +163,45 @@ namespace Client.Controllers
         }
 
 
-        /////////////////////////////////////////////////////
-        //                                                 //
-        //                     PRODUCT                     //
-        //                                                 //
-        /////////////////////////////////////////////////////
-        
-        // GetAll Product
+
         public async Task<IActionResult> ProductsManager()
+
         {
-            ProductViewModel list = new()
-            {
-                Products = new List<ProductModel>() // Khởi tạo danh sách Products
-            };
-            try
-            {
-
-                ResponseModel? response = await _productService.GetAllProductAsync();
-
-                if (response != null && response.IsSuccess)
-                {
-
-                    list.Products = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response.Result.ToString()!));
-
-                }
-                else
-                {
-                    TempData["error"] = response?.Message;
-                }
-
-            }
-            catch (Exception ex)
-            {
-                TempData["error"] = ex.Message;
-            }
-
-            return View(list);
-            /*List<ProductViewModel?> list = new();
+            List<ProductModel?> list = new();
             ResponseModel? response = await _productService.GetAllProductAsync();
 
             if (response != null && response.IsSuccess)
             {
 
-                list = JsonConvert.DeserializeObject<List<ProductViewModel>>(Convert.ToString(response.Result));
+                list = JsonConvert.DeserializeObject<List<ProductModel>>(Convert.ToString(response.Result));
 
             }
             else
             {
                 TempData["error"] = response?.Message;
             }
-            return View(list);*/
+            return View(list);
         }
-
-        //Create Product
-        public async Task<IActionResult> ProductCreate()
+        public async Task<IActionResult> ProductUpdate(string id)
         {
-            return View();
+            ResponseModel? response = await _productService.GetProductByIdAsync(id);
+                
+            if (response != null && response.IsSuccess)
+            {
+                // Deserialize vào lớp trung gian với kiểu ProductModel
+                ResponseResultModel<ProductModel>? data =
+                    JsonConvert.DeserializeObject<ResponseResultModel<ProductModel>>(Convert.ToString(response.Result));
+
+                // Lấy dữ liệu từ trường "result" và gán vào model
+                ProductModel? model = data?.result;
+
+                return View(model);
+            }
+            else
+            {
+                TempData["error"] = response?.Message;
+            }
+            return NotFound();
         }
 
         [HttpPost]
