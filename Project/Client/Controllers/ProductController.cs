@@ -9,8 +9,6 @@ namespace Client.Controllers
         
         public async Task<IActionResult> ProductIndex()
         {
-            
-            
             return View();
         }
         public IActionResult Product()
