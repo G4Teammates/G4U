@@ -208,7 +208,7 @@ namespace Client.Controllers
         /*[HttpPost]
         public async Task<IActionResult> ProductCreate(CreateProductModel createProduct)
         {
-            /*if (ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 ResponseModel? response = await _productService.Crea(createProduct);
 
@@ -222,7 +222,7 @@ namespace Client.Controllers
                     TempData["error"] = response?.Message;
                 } 
 
-            }*/
+            }
             return View(createProduct);
         }
 
@@ -318,7 +318,7 @@ namespace Client.Controllers
         [HttpPost]
         public async Task<IActionResult> ProductDelete(ProductModel product)
         {
-           /* ResponseModel? response = await _productService.DeleteProductAsync(product.Id);
+            ResponseModel? response = await _productService.DeleteProductAsync(product.Id);
 
             if (response != null && response.IsSuccess)
             {
@@ -328,7 +328,7 @@ namespace Client.Controllers
             else
             {
                 TempData["error"] = response?.Message;
-            }*/
+            }
             return View(product);
         }*/
 
