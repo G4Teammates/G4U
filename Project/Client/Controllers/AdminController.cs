@@ -1,6 +1,5 @@
 ﻿using Client.Models;
 using Client.Models.ProductDTO;
-using Client.Models.ProductDTO;
 using Client.Models.UserDTO;
 using Client.Repositories.Interfaces;
 using Client.Repositories.Interfaces.Product;
@@ -206,45 +205,31 @@ namespace Client.Controllers
             return NotFound();
         }
 
-        [HttpPut]
-        [Route("UpdateProduct")]
-        public async Task<IActionResult> UpdateProduct([FromForm] string id,
-                                                   [FromForm] string name,
-                                                   [FromForm] string description,
-                                                   [FromForm] decimal price,
-                                                   [FromForm] int sold,
-                                                   [FromForm] int numOfView,
-                                                   [FromForm] int numOfLike,
-                                                   [FromForm] float discount,
-                                                   [FromForm] List<string> categories,
-                                                   [FromForm] int platform,
-                                                   [FromForm] int status,
-                                                   [FromForm] DateTime createAt,
-                                                   [FromForm] List<IFormFile> imageFiles,
-                                                   [FromForm] ScanFileRequest request,
-                                                   [FromForm] string username)
+        [HttpPost]
+        public async Task<IActionResult> UpdateProduct([FromForm] UpdateProductModel product,
+                                               [FromForm] List<IFormFile> imageFiles,
+                                               [FromForm] ScanFileRequest request)
         {
-            try
+            if (product == null || string.IsNullOrEmpty(product.Id))
             {
-                // Gọi service UpdateProduct từ phía Client
-                var response = await _productService.UpdateProductAsync(
-                    id, name, description, price, sold, numOfView, numOfLike, discount,
-                    categories, platform, status, createAt, imageFiles, request, username);
+                return BadRequest("Product data is required.");
+            }
 
-                if (response.IsSuccess)
-                {
-                    return Ok(response); // Trả về kết quả thành công
-                }
-                else
-                {
-                    return BadRequest(response.Message); // Trả về lỗi từ service
-                }
-            }
-            catch (Exception ex)
+            // Gọi service để cập nhật sản phẩm
+            var response = await _productService.UpdateProductAsync(product, imageFiles, request);
+
+            // Kiểm tra xem có thành công không
+            if (!response.IsSuccess)
             {
-                return StatusCode(500, $"An error occurred: {ex.Message}");
+                // Trả về mã trạng thái 500 và thông điệp lỗi
+                return StatusCode(500, response.Message);
             }
+
+            // Nếu thành công, trả về kết quả
+            return Ok(response);
         }
+
+
 
         /*[HttpPost]
         public async Task<IActionResult> ProductCreate(CreateProductModel createProduct)
