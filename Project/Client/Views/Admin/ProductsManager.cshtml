@@ -310,7 +310,7 @@
                    
 
                     <td>
-                        <a asp-action="ProductUpdate" asp-route-id="@product.Id" class="text-danger mx-2">
+                        <a asp-action="UpdateProduct" asp-route-id="@product.Id" class="text-danger mx-2">
                             <i class="fa-regular fa-pen-to-square"></i>
                         </a>
                     </td>
@@ -375,7 +375,7 @@
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="container-fluid p-5">
-                @* @await Html.PartialAsync("ProductCreate", Model.CreateProductModel) *@
+                 @await Html.PartialAsync("ProductCreate", Model.CreateProductModel) 
             </div>
         </div>
     </div>
