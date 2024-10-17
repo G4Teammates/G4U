@@ -11,6 +11,6 @@ namespace Client.Repositories.Interfaces.Product
             UpdateProductModel product,
             List<IFormFile> imageFiles,
             ScanFileRequest request);
-
+        Task<ResponseModel> DeleteProductAsysnc(string Id);
     }
 }
