@@ -1,10 +1,10 @@
 ﻿using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
-using static Client.Models.Enum.User;
+using static Client.Models.Enum.UserEnum.User;
 
 namespace Client.Models.UserDTO
 {
-	public class CreateUser
+    public class CreateUser
 	{
 		[Required(ErrorMessage = "The {0} field is required.")]
 		[StringLength(32, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]

@@ -1,5 +1,6 @@
 ﻿using Client.Models;
 using Client.Models.UserDTO;
+using System.Threading.Tasks;
 
 namespace Client.Repositories.Interfaces.User
 {

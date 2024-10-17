@@ -25,9 +25,9 @@ namespace ProductMicroservice.Models
         /// <br/>
         /// Tên của sản phẩm.
         /// </summary>
-        [Required(ErrorMessage = "Name is required")]
-        [StringLength(256, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 2)]
-        public required string Name { get; set; }
+            [Required(ErrorMessage = "Name is required")]
+            [StringLength(256, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 2)]
+            public required string Name { get; set; }
 
         /// <summary>
         /// A description of the product.

@@ -1,7 +1,11 @@
 ﻿using Client.Configure;
 using Client.Repositories.Interfaces;
+
+using Client.Repositories.Interfaces.Product;
 using Client.Repositories.Interfaces.User;
 using Client.Repositories.Services;
+using Client.Repositories.Services.Product;
+
 using Client.Utility;
 using Microsoft.AspNetCore.Authentication.Cookies;
 

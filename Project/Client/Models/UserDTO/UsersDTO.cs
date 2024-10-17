@@ -1,8 +1,8 @@
-﻿using static Client.Models.Enum.User;
+﻿using static Client.Models.Enum.UserEnum.User;
 
 namespace Client.Models.UserDTO
 {
-	public class UsersDTO
+    public class UsersDTO
 	{
 		public required string Id { get; set; }
 		public required string Username { get; set; }

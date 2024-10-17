@@ -48,8 +48,11 @@
 <div class="container mt-4">
 	<!-- Thanh tìm kiếm và nút Thêm -->
 	<div class="d-flex justify-content-between mb-3">
-		<form asp-action="" class="col-md-4">
-			<input class="form-control" type="text" placeholder="Search by..." />
+		<form asp-action="SearchUsers" method="get">
+			<div class="input-group mb-3">
+				<input type="text" class="form-control" name="query" placeholder="Search users..." value="" />
+				@* <button class="btn btn-outline-success" type="submit">Search</button> *@
+			</div>
 		</form>
 		<div class="w-100">
 			<div class="text-end">
@@ -129,7 +132,7 @@
 						</td>
 
 						<td>
-							@if (user.Role == Client.Models.Enum.User.UserRole.Admin)
+							@if (user.Role == Client.Models.Enum.UserEnum.User.UserRole.Admin)
 							{
 								<span class="text-primary">Admin</span>
 							}
@@ -143,6 +146,7 @@
 						<td>
 							<a asp-action="UserUpdate" asp-route-Id="@user.Id" class="text-danger mx-2"><span><i class="fa-regular fa-pen-to-square"></i></span></a>					
 						</td>
+						<td><button class="btn btn-success" data-toggle="modal" data-target="#modalUsers" asp-action="UserUpdate" asp-route-Id="@user.Id">+ Update</button></td>
 						<td>
 							@* <form asp-action="UsersDelete" >
 								<input type="submit" value="Delete" class="btn btn-danger" /> 
@@ -403,6 +407,21 @@
 		</div>
 	</div>
 </div>
+
+@* Đây là add *@
+<div class="modal fade" id="modalUsers" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-xl">
+		<div class="modal-content">
+			<div class="container-fluid p-5">
+				@await Html.PartialAsync("UserUpdate", Model.UpdateUser)
+
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
 
 @* 	<div class="container-fluid p-5">
 		<form class="row" asp-action="Create">

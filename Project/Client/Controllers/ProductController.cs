@@ -1,14 +1,16 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using Ocelot.Responses;
 
 namespace Client.Controllers
 {
     public class ProductController : Controller
     {
-        public IActionResult Index()
+        
+        public async Task<IActionResult> ProductIndex()
         {
             return View();
         }
-
         public IActionResult Product()
         {
             return View();

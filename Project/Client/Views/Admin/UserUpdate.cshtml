@@ -1,46 +1,72 @@
 ﻿@model Client.Models.UserDTO.UpdateUser
 @{
     ViewData["Title"] = "Update User";
-}
-@{
     Layout = "_LayoutAdmin";
 }
-<h1>Update User</h1>
+<h1 class="mb-4 text-center">Update User</h1>
 
-<div>
-    <h4>Update User Information</h4>
-    <hr />
-    <form asp-action="UserUpdate" method="post">
-        <div class="form-group row">
-            <label class="col-sm-2 col-form-label" for="Username">
-                @Html.DisplayNameFor(model => model.Username)
-            </label>
-            <div class="col-sm-10">
-                <input type="text" id="Username" name="Username" class="form-control" asp-for="@Model.Username" />
-            </div>
+<div class="container" style="max-width: 600px;">
+    <!-- Giới hạn chiều rộng -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Update User Information</h6>
         </div>
+        <div class="card-body">
+            <form asp-action="UserUpdate" method="post">
+                <!-- Hidden field for User ID -->
+                <input type="hidden" asp-for="@Model.Id" />
 
-        <div class="form-group row">
-            <label class="col-sm-2 col-form-label" for="PhoneNumber">
-                @Html.DisplayNameFor(model => model.PhoneNumber)
-            </label>
-            <div class="col-sm-10">
-                <input type="text" id="PhoneNumber" name="PhoneNumber" class="form-control" value="@Model.PhoneNumber" />
-            </div>
-        </div>
+                <!-- Username (Hidden) -->
+                <div class="form-group mb-3" style="display: none;">
+                    <label asp-for="@Model.Username" class="font-weight-bold">Username</label>
+                    <input type="text" asp-for="@Model.Username" class="form-control form-control-sm" /> <!-- Thay đổi kích thước -->
+                    <span asp-validation-for="Username" class="text-danger"></span>
+                </div>
 
-        <div class="form-group row">
-            <label class="col-sm-2 col-form-label" for="DisplayName">
-                @Html.DisplayNameFor(model => model.DisplayName)
-            </label>
-            <div class="col-sm-10">
-                <input type="text" id="DisplayName" name="DisplayName" class="form-control" value="@Model.DisplayName" />
-            </div>
-        </div>
+                <!-- Phone Number -->
+                <div class="form-group mb-3">
+                    <label asp-for="@Model.PhoneNumber" class="font-weight-bold">Phone Number</label>
+                    <input type="text" asp-for="@Model.PhoneNumber" class="form-control form-control-sm" />
+                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                </div>
 
-        <div class="form-group">
-            <input type="submit" value="Update" class="btn btn-primary" /> |
-            <a asp-action="UsersManager" class="btn btn-secondary">Back to List</a>
+                <!-- Display Name -->
+                <div class="form-group mb-3">
+                    <label asp-for="@Model.DisplayName" class="font-weight-bold">Display Name</label>
+                    <input type="text" asp-for="@Model.DisplayName" class="form-control form-control-sm" />
+                    <span asp-validation-for="DisplayName" class="text-danger"></span>
+                </div>
+
+                <!-- Email -->
+                <div class="form-group mb-3">
+                    <label asp-for="@Model.Email" class="font-weight-bold">Email</label>
+                    <input type="email" asp-for="@Model.Email" class="form-control form-control-sm" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+
+                <!-- Role -->
+                <div class="form-group mb-3">
+                    <label asp-for="@Model.Role" class="font-weight-bold">Role</label>
+                    <select asp-for="@Model.Role" class="form-control form-control-sm">
+                        <option value="User">User</option>
+                        <option value="Admin">Admin</option>
+                    </select>
+                    <span asp-validation-for="Role" class="text-danger"></span>
+                </div>
+
+                <!-- Avatar URL -->
+                <div class="form-group mb-3">
+                    <label asp-for="@Model.Avatar" class="font-weight-bold">Avatar URL</label>
+                    <input type="text" asp-for="@Model.Avatar" class="form-control form-control-sm" />
+                    <span asp-validation-for="Avatar" class="text-danger"></span>
+                </div>
+
+                <!-- Submit and Back buttons -->
+                <div class="form-group text-center mt-4">
+                    <input type="submit" value="Update" class="btn btn-primary btn-sm mr-2" /> <!-- Thay đổi kích thước -->
+                    <a asp-action="UsersManager" class="btn btn-secondary btn-sm">Back to List</a> <!-- Thay đổi kích thước -->
+                </div>
+            </form>
         </div>
-    </form>
+    </div>
 </div>
