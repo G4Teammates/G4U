@@ -1,12 +1,15 @@
-﻿@using Client.Models.ProductDTO
-@model ProductModel
+﻿@model Client.Models.ProductDTO.ProductModel
 @{
     ViewData["Title"] = "Update Product";
 }
-
+@{
+    Layout = "_LayoutAdmin";
+}
 <h2>Update Product</h2>
 
 <form asp-action="UpdateProduct" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="_method" value="PUT" /> <!-- Giả lập PUT method -->
+
     <div class="form-group">
         <label for="id">Product ID</label>
         <input type="text" class="form-control" id="id" name="id" value="@Model.Id" readonly />
@@ -52,29 +55,31 @@
         <select multiple class="form-control" id="categories" name="categories">
             @foreach (var category in Model.Categories)
             {
-                <option value="@category.CategoryName" selected>@category.CategoryName</option>
+                <option value="@category.CategoryName" selected="selected">@category.CategoryName</option>
             }
         </select>
     </div>
 
     <div class="form-group">
         <label for="platform">Platform</label>
-        <select class="form-control" id="platform" name="platform">
-            @foreach (Client.Models.Enum.ProductEnum.PlatformType platform in Enum.GetValues(typeof(Client.Models.Enum.ProductEnum.PlatformType)))
-            {
-                <option value="@((int)platform)">@platform</option>
-            }
-        </select>
+        @foreach (Client.Models.Enum.ProductEnum.PlatformType platform in Enum.GetValues(typeof(Client.Models.Enum.ProductEnum.PlatformType)))
+        {
+            <div class="form-check">
+                <input type="radio" class="form-check-input" id="platform_@(platform.ToString())" name="platform" value="@(platform)" @(platform == Model.Platform ? "checked" : "") />
+                <label class="form-check-label" for="platform_@(platform.ToString())">@platform</label>
+            </div>
+        }
     </div>
 
     <div class="form-group">
         <label for="status">Status</label>
-        <select class="form-control" id="status" name="status">
-            @foreach (Client.Models.Enum.ProductEnum.ProductStatus status in Enum.GetValues(typeof(Client.Models.Enum.ProductEnum.ProductStatus)))
-            {
-                <option value="@((int)status)">@status</option>
-            }
-        </select>
+        @foreach (Client.Models.Enum.ProductEnum.ProductStatus status in Enum.GetValues(typeof(Client.Models.Enum.ProductEnum.ProductStatus)))
+        {
+            <div class="form-check">
+                <input type="radio" class="form-check-input" id="status_@(status.ToString())" name="status" value="@(status)" @(status == Model.Status ? "checked" : "") />
+                <label class="form-check-label" for="status_@(status.ToString())">@status</label>
+            </div>
+        }
     </div>
 
     <div class="form-group">
@@ -98,6 +103,5 @@
     </div>
 
     <button type="submit" class="btn btn-primary">Update Product</button>
+    <a asp-action="ProductsManager" class="btn btn-secondary">Back To List</a>
 </form>
-
-
