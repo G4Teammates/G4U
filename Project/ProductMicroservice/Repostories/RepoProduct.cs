@@ -518,7 +518,7 @@ namespace ProductMicroservice.Repostories
             }
         }
 
-        public async Task<List<Products>> GetProductsByCategoryIdAsync(string categoryName)
+        public async Task<List<Products>> GetProductsByCategoryNameAsync(string categoryName)
         {
             return await _db.Products
                 .Where(x => x.Categories.Any(c => c.CategoryName.Contains(categoryName)))

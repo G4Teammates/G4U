@@ -1,5 +1,6 @@
 ﻿using CategoryMicroservice.DBContexts.Entities;
 using CategoryMicroservice.Models;
+using CategoryMicroservice.Models.DTO;
 
 namespace CategoryMicroservice.Repositories.Interfaces
 {
