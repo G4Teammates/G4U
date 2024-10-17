@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CategoryMicroservice.DBContexts.Entities;
+using CategoryMicroservice.Models;
 
 namespace CategoryMicroservice.Configure
 {
@@ -15,7 +16,7 @@ namespace CategoryMicroservice.Configure
             {
                 //Register mapper here⬇️
 
-                //cfg.CreateMap<Category, CategoryModel>().ReverseMap();
+                cfg.CreateMap<Category, CategoryModel>().ReverseMap();
 
 
                 //Register mapper here⬆️

@@ -1,8 +1,8 @@
-﻿namespace CategoryMicroservice.Models
+﻿namespace CategoryMicroservice.Models.DTO
 {
     public class ResponseModel
     {
-        public Object Result { get; set; } = string.Empty;
+        public object Result { get; set; } = string.Empty;
         public bool IsSuccess { get; set; } = true;
         public string Message { get; set; } = string.Empty;
     }
