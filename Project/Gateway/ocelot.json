@@ -108,10 +108,10 @@
           "Port": 7107
         }
       ],
-      "AuthenticationOptions": {
-        "AuthenticationProviderKey": "Bearer",
-        "AllowedScopes": []
-      },
+      //"AuthenticationOptions": {
+      //  "AuthenticationProviderKey": "Bearer",
+      //  "AllowedScopes": []
+      //},
       "UpstreamPathTemplate": "/User/search",
       "UpstreamHttpMethod": [ "Get" ]
     },
@@ -169,6 +169,20 @@
         }
       ],
       "UpstreamPathTemplate": "/Auth/login",
+      "UpstreamHttpMethod": [ "Post" ]
+    },
+
+    //login google
+    {
+      "DownstreamPathTemplate": "/api/Auth/login-google",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7107
+        }
+      ],
+      "UpstreamPathTemplate": "/Auth/login-google",
       "UpstreamHttpMethod": [ "Post" ]
     },
 

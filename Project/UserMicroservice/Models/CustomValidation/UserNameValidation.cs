@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using UserMicroservice.DBContexts.Entities;
 
-namespace UserMicroService.Models.CustomeValidation
+namespace UserMicroservice.Models.CustomValidation
 {
     public class UserNameValidation : ValidationAttribute
     {

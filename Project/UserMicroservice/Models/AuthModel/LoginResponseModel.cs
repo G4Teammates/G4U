@@ -1,7 +1,6 @@
 ﻿using UserMicroService.DBContexts.Enum;
-using UserMicroService.Models;
 
-namespace UserMicroservice.Models
+namespace UserMicroservice.Models.AuthModel
 {
     public class LoginResponseModel
     {

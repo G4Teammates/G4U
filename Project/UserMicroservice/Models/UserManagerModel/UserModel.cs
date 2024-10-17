@@ -3,10 +3,9 @@ using MongoDB.Bson.Serialization.IdGenerators;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using UserMicroservice.DBContexts.Entities;
-using UserMicroservice.Models;
 using UserMicroService.DBContexts.Enum;
 
-namespace UserMicroService.Models
+namespace UserMicroservice.Models.UserManagerModel
 {
     public class UserModel
     {

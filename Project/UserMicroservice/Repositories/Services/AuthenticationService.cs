@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Azure;
 using BCrypt.Net;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -7,9 +8,10 @@ using MongoDB.Bson;
 using UserMicroservice.DBContexts;
 using UserMicroservice.DBContexts.Entities;
 using UserMicroservice.Models;
+using UserMicroservice.Models.AuthModel;
+using UserMicroservice.Models.UserManagerModel;
 using UserMicroservice.Repositories.Interfaces;
-using UserMicroservice.Repositories.IRepositories;
-using UserMicroService.Models;
+using UserMicroService.DBContexts.Enum;
 
 namespace UserMicroservice.Repositories.Services
 {
@@ -41,7 +43,7 @@ namespace UserMicroservice.Repositories.Services
 
         public async Task<ResponseModel> LoginAsync(LoginRequestModel loginRequestModel)
         {
-            loginRequestModel.UsernameOrEmail=loginRequestModel.UsernameOrEmail.ToUpper();
+            loginRequestModel.UsernameOrEmail = loginRequestModel.UsernameOrEmail.ToUpper();
             var response = new ResponseModel();
 
             if (loginRequestModel == null)
@@ -76,11 +78,12 @@ namespace UserMicroservice.Repositories.Services
                     {
                         IsSuccess = false,
                         Message = "Username or password is incorrect"
-                    }; 
+                    };
                 }
 
                 // Tạo JWT Token
-                string token = _helper.GenerateJwtAsync(user);
+                UserModel userModel = _mapper.Map<UserModel>(user);
+                string token = _helper.GenerateJwtAsync(userModel);
 
                 // Chuẩn bị response thành công
                 response.Result = new LoginResponseModel
@@ -105,14 +108,59 @@ namespace UserMicroservice.Repositories.Services
         }
 
 
-        public Task<ResponseModel> LoginWithGoggleAsync()
-        {
-            throw new NotImplementedException();
-        }
+       
 
-        public Task<ResponseModel> LogoutAsync()
+        public async Task<ResponseModel> LoginGoogleAsync(LoginGoogleRequestModel loginGoogleRequestModel)
         {
-            throw new NotImplementedException();
+            var response = new ResponseModel();
+
+            if (loginGoogleRequestModel == null)
+            {
+                return new ResponseModel
+                {
+                    IsSuccess = false,
+                    Message = "RegisterRequestModel is null"
+                };
+            }
+
+            try
+            {
+                var user = await _context.Users.SingleOrDefaultAsync(x => x.Email == loginGoogleRequestModel.Email);
+                if (user == null)
+                {
+                    UserModel userCreateModel = new UserModel
+                    {
+                        Id = ObjectId.GenerateNewId().ToString(),
+                        Email = loginGoogleRequestModel.Email!,
+                        Username = loginGoogleRequestModel.Email!,
+                        Role = UserRole.User,
+                        Avatar = loginGoogleRequestModel.Picture!,
+                        DisplayName = loginGoogleRequestModel.DisplayName
+                    };
+                    User userCreate = _mapper.Map<User>(userCreateModel);
+                    await _context.AddAsync(userCreate);
+                    await _context.SaveChangesAsync();
+                }
+
+                UserModel userModel = _mapper.Map<UserModel>(user);
+                string token = _helper.GenerateJwtAsync(userModel);
+                response.Result = new LoginResponseModel
+                {
+                    Token = token,
+                    Username = user!.Username,
+                    Id = user.Id,
+                    Email = user.Email,
+                    Role = user.Role.ToString()
+                };
+
+
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+            }
+            return response;
         }
 
         public async Task<ResponseModel> RegisterAsync(RegisterRequestModel registerRequestModel)
@@ -142,8 +190,8 @@ namespace UserMicroservice.Repositories.Services
                 userCreate.PasswordHash = BCrypt.Net.BCrypt.HashPassword(registerRequestModel.Password);
                 await _context.AddAsync(userCreate);
                 await _context.SaveChangesAsync();
-                
-                
+
+
                 //Gửi mail kích hoạt tài khoản
 
 

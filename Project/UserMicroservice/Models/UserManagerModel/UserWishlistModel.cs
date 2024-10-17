@@ -1,6 +1,6 @@
 ﻿using MongoDB.Bson;
 
-namespace UserMicroservice.Models
+namespace UserMicroservice.Models.UserManagerModel
 {
     /// <summary>
     /// Represents an item in the user's wishlist.

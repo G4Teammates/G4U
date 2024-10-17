@@ -10,16 +10,16 @@ using System.Text;
 using UserMicroservice.DBContexts;
 using UserMicroservice.DBContexts.Entities;
 using UserMicroservice.Models;
+using UserMicroservice.Models.UserManagerModel;
 using UserMicroservice.Repositories.Interfaces;
-using UserMicroService.Models;
 
 namespace UserMicroservice.Repositories.Services
 {
-	public class HelperService(UserDbContext context) : IHelperService
+    public class HelperService(UserDbContext context) : IHelperService
 	{
 		private readonly UserDbContext _context = context;
 
-		public string GenerateJwtAsync(User user)
+		public string GenerateJwtAsync(UserModel user)
 		{
 			var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtOptions.Secret));
 			var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
@@ -35,16 +35,16 @@ namespace UserMicroservice.Repositories.Services
 				issuer: JwtOptions.Issuer,
 				audience: JwtOptions.Audience,
 				claims,
-				expires: DateTime.Now.AddMinutes(120),
+				expires: DateTime.Now.AddDays(1),
 				signingCredentials: credentials
 			);
-			return new JwtSecurityTokenHandler().WriteToken(token);
+            return new JwtSecurityTokenHandler().WriteToken(token);
 		}
 
 		public async Task<ResponseModel> IsUserNotExist(string username, string? email = null, string? phoneNumber = null)
 		{
 			var response = new ResponseModel();
-			response.Message = "Username and email are not exist in database. Ready to create new";
+			response.Message = "Username and email are not exist in database.";
 			if (await _context.Users.AnyAsync(x =>
 				x.Username == username ||
 				x.Email == email ||
@@ -52,7 +52,7 @@ namespace UserMicroservice.Repositories.Services
 				!phoneNumber.IsNullOrEmpty()))
 			{
 				response.IsSuccess = false;
-				response.Message = "Username or email already exist";
+				response.Message = "Username or email already exist in database.";
 			}
 			return response;
 		}

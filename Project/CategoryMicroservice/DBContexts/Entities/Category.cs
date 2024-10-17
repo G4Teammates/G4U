@@ -68,13 +68,6 @@ namespace CategoryMicroservice.DBContexts.Entities
         [BsonElement("status")]
         public CategoryStatus Status { get; set; }
 
-        /// <summary>
-        /// A collection of category details associated with this category, represented by GUIDs.
-        /// <br/>
-        /// Một tập hợp các chi tiết danh mục liên kết với danh mục này, được đại diện bởi các GUID.
-        /// </summary>
-        [BsonElement("categoryDetails")]
-        public virtual List<string>? CategoryDetails { get; set; }
     }
 
     #endregion

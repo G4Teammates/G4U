@@ -30,6 +30,16 @@ namespace Client.Repositories.Services.AuthenticationService
             });
         }
 
+        public async Task<ResponseModel> LoginGoogleAsync(LoginGoogleRequestModel loginModel)
+        {
+            return await _baseService.SendAsync(new RequestModel
+            {
+                ApiType = ApiType.POST,
+                Data = loginModel,
+                Url = _authenUrl + "/login-google"
+            });
+        }
+
         public Task<ResponseModel> LogoutAsync()
         {
             throw new NotImplementedException();

@@ -1,6 +1,4 @@
-﻿
-
-namespace UserMicroservice.Models
+﻿namespace Client.Models.AuthenModel
 {
     public class LoginResponseModel
     {
