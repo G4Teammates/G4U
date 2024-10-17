@@ -18,6 +18,16 @@ namespace Client.Repositories.Services.Product
             _baseService = baseService;
             _httpClient = httpClient;
         }
+
+        public async Task<ResponseModel> DeleteProductAsysnc(string Id)
+        {
+            return await _baseService.SendAsync(new RequestModel()
+            {
+                ApiType = StaticTypeApi.ApiType.DELETE,
+                Url = StaticTypeApi.APIGateWay + "/Product/" + Id
+            });
+        }
+
         public async Task<ResponseModel?> GetAllProductAsync()
         {
             return await _baseService.SendAsync(new RequestModel()
@@ -38,8 +48,7 @@ namespace Client.Repositories.Services.Product
 
         public async Task<ResponseModel> UpdateProductAsync(UpdateProductModel product, List<IFormFile> imageFiles, ScanFileRequest request)
         {
-            // Tạo request model cho sản phẩm
-            var requestModel = new RequestModel
+            return await _baseService.SendAsync(new RequestModel
             {
                 ApiType = StaticTypeApi.ApiType.PUT,
                 Data = new
@@ -61,10 +70,8 @@ namespace Client.Repositories.Services.Product
                     ImageFiles = imageFiles // Add the image files
                 },
                 Url = StaticTypeApi.APIGateWay + "/Product"
-            };
+            });
 
-            // Gọi hàm SendAsync để gửi yêu cầu
-            return await _baseService.SendAsync(requestModel);
         }
 
     }
