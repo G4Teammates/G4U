@@ -1,4 +1,7 @@
-﻿namespace Client.Models.UserDTO
+﻿
+using static Client.Models.Enum.UserEnum.User;
+
+namespace Client.Models.UserDTO
 {
     public class UpdateUser
     {

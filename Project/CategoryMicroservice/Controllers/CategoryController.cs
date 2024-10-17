@@ -26,7 +26,7 @@ namespace CategoryMicroService.Controllers
             return Ok(Category);
         }
         [HttpGet]
-        public ActionResult Get1(Guid id)
+        public ActionResult Get1(string id)
         {
             var Categorys = _context.Categories.ToList();
             var Category = Categorys.Find(u => u.Id == id);

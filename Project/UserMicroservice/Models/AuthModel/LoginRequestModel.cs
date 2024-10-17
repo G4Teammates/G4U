@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace UserMicroservice.Models
+namespace UserMicroservice.Models.AuthModel
 {
     public class LoginRequestModel
     {

@@ -73,7 +73,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 await app.UseOcelot();
 app.UseAuthorization();
-
+app.UseAuthentication();
 app.MapControllers();
 
 app.Run();

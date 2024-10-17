@@ -1,4 +1,6 @@
 ﻿using Client.Models;
+using Client.Models.Product_Model.DTO;
+using Client.Models.ProductDTO;
 using Client.Models.UserDTO;
 using Client.Repositories.Interfaces;
 using Client.Repositories.Interfaces.User;

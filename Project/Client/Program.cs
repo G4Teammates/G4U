@@ -24,6 +24,17 @@ builder.Services.AddHttpClient();
 StaticTypeApi.APIGateWay = builder.Configuration["ServiceUrls:APIGateWay"];
 builder.Services.AddScoped<IBaseService, BaseService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IRepoProduct, RepoProduct>();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAllOrigins",
+        builder =>
+        {
+            builder.AllowAnyOrigin()
+                   .AllowAnyMethod()
+                   .AllowAnyHeader();
+        });
+});
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
@@ -48,7 +59,7 @@ app.UseAntiforgery();
 app.UseRouting();
 app.UseSession();
 app.UseAuthorization();
-
+app.UseCors("AllowAllOrigins");
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
