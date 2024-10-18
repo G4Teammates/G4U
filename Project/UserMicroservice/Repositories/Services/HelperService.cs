@@ -21,7 +21,7 @@ namespace UserMicroservice.Repositories.Services
 
 		public string GenerateJwtAsync(UserModel user)
 		{
-			var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtOptions.Secret));
+			var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtOptionModel.Secret));
 			var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 			var claims = new[]
 			{
@@ -32,8 +32,8 @@ namespace UserMicroservice.Repositories.Services
 			};
 
 			var token = new JwtSecurityToken(
-				issuer: JwtOptions.Issuer,
-				audience: JwtOptions.Audience,
+				issuer: JwtOptionModel.Issuer,
+				audience: JwtOptionModel.Audience,
 				claims,
 				expires: DateTime.Now.AddDays(1),
 				signingCredentials: credentials

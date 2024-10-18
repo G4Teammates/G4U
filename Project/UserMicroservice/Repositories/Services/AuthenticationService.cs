@@ -11,7 +11,8 @@ using UserMicroservice.Models;
 using UserMicroservice.Models.AuthModel;
 using UserMicroservice.Models.UserManagerModel;
 using UserMicroservice.Repositories.Interfaces;
-using UserMicroService.DBContexts.Enum;
+using UserMicroservice.DBContexts.Enum;
+using System.Security.Claims;
 
 namespace UserMicroservice.Repositories.Services
 {
@@ -38,8 +39,34 @@ namespace UserMicroservice.Repositories.Services
             throw new NotImplementedException();
         }
 
+        public ResponseModel GetUserInfoByClaim(IEnumerable<Claim> claims)
+        {
+            ResponseModel response = new();
+            try
+            {
+                var loginGoogleRequestModel = new LoginGoogleRequestModel
+                {
+                    Email = claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value,
+                    Username = claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value,
+                    DisplayName = claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value,
+                    EmailConfirmation = claims.ToString() == "true" ? EmailStatus.Confirmed : EmailStatus.Unconfirmed,
+                    Picture = claims.FirstOrDefault(c => c.Type == "urn:google:picture")?.Value
+                };
+                response.Message = "Get user info by claim successful";
+                response.Result = loginGoogleRequestModel;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+            }
+            return response;
+        }
 
-
+        public Task<ResponseModel> GoogleCallback(LoginGoogleRequestModel loginGoogleRequestModel)
+        {
+            throw new NotImplementedException();
+        }
 
         public async Task<ResponseModel> LoginAsync(LoginRequestModel loginRequestModel)
         {
@@ -125,7 +152,7 @@ namespace UserMicroservice.Repositories.Services
 
             try
             {
-                var user = await _context.Users.SingleOrDefaultAsync(x => x.Email == loginGoogleRequestModel.Email);
+                var user = await _context.Users.FirstOrDefaultAsync(x => x.Email == loginGoogleRequestModel.Email);
                 if (user == null)
                 {
                     UserModel userCreateModel = new UserModel
@@ -137,8 +164,8 @@ namespace UserMicroservice.Repositories.Services
                         Avatar = loginGoogleRequestModel.Picture!,
                         DisplayName = loginGoogleRequestModel.DisplayName
                     };
-                    User userCreate = _mapper.Map<User>(userCreateModel);
-                    await _context.AddAsync(userCreate);
+                    user = _mapper.Map<User>(userCreateModel);
+                    await _context.AddAsync(user);
                     await _context.SaveChangesAsync();
                 }
 
@@ -152,7 +179,7 @@ namespace UserMicroservice.Repositories.Services
                     Email = user.Email,
                     Role = user.Role.ToString()
                 };
-
+                response.Message = "Login successful";
 
             }
             catch (Exception ex)

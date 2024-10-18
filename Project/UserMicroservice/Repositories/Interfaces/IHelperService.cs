@@ -1,5 +1,7 @@
-﻿using UserMicroservice.DBContexts.Entities;
+﻿using System.Security.Claims;
+using UserMicroservice.DBContexts.Entities;
 using UserMicroservice.Models;
+using UserMicroservice.Models.AuthModel;
 using UserMicroservice.Models.UserManagerModel;
 
 namespace UserMicroservice.Repositories.Interfaces

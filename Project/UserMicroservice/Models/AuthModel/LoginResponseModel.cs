@@ -1,4 +1,4 @@
-﻿using UserMicroService.DBContexts.Enum;
+﻿using UserMicroservice.DBContexts.Enum;
 
 namespace UserMicroservice.Models.AuthModel
 {

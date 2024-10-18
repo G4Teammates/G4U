@@ -1,4 +1,5 @@
-﻿using UserMicroservice.Models;
+﻿using System.Security.Claims;
+using UserMicroservice.Models;
 using UserMicroservice.Models.AuthModel;
 
 namespace UserMicroservice.Repositories.Interfaces
@@ -7,6 +8,8 @@ namespace UserMicroservice.Repositories.Interfaces
     {
         Task<ResponseModel> LoginAsync(LoginRequestModel loginRequestModel);
         Task<ResponseModel> LoginGoogleAsync(LoginGoogleRequestModel loginGoogleRequestModel);
+        ResponseModel GetUserInfoByClaim(IEnumerable<Claim> claimsPrincipal);
+        Task<ResponseModel> GoogleCallback(LoginGoogleRequestModel loginGoogleRequestModel);
         Task<ResponseModel> RegisterAsync(RegisterRequestModel registerRequestModel);
         Task<ResponseModel> ForgotPasswordAsync();
     }

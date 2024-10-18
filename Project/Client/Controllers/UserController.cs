@@ -49,48 +49,48 @@ namespace Client.Controllers
 
         }
 
-        [Route("google-response")]
-        public async Task<ActionResult> GoogleResponse()
-        {
-            var google_csrf_name = "g_csrf_token";
-            try
-            {
+        //[Route("google-response")]
+        //public async Task<ActionResult> GoogleResponse()
+        //{
+        //    var google_csrf_name = "g_csrf_token";
+        //    try
+        //    {
 
-                var cookie = Request.Cookies[google_csrf_name];
+        //        var cookie = Request.Cookies[google_csrf_name];
 
-                if (cookie == null)
-                {
-                    return StatusCode((int)HttpStatusCode.BadRequest);
-                }
-                var requestbody = Request.Form[google_csrf_name];
-                if (requestbody != cookie)
-                {
-                    return StatusCode((int)HttpStatusCode.BadRequest);
-                }
-                var idtoken = Request.Form["credential"];
-                GoogleJsonWebSignature.Payload payload = await GoogleJsonWebSignature.ValidateAsync(idtoken).ConfigureAwait(false);
-                LoginGoogleRequestModel loginGoogleRequestModel = new LoginGoogleRequestModel
-                {
-                    Email = payload.Email,
-                    Username = payload.Email,
-                    DisplayName = payload.Name,
-                    EmailConfirmation = (User.EmailStatus)(payload.EmailVerified ? 1 : 0),
-                    Picture = payload.Picture
-                };
-                var response = await _authenService.LoginGoogleAsync(loginGoogleRequestModel);
-                if (response.IsSuccess)
-                {
-                    HttpContext.Response.Cookies.Append("Login", loginGoogleRequestModel.DisplayName);
-                    return RedirectToAction("Index", "Home");
-                }
-                return RedirectToAction(nameof(Register), "User");
-            }
-            catch (Exception ex)
-            {
-                TempData["Error"] = ex.Message;
-            }
-            return RedirectToAction("Index");
-        }
+        //        if (cookie == null)
+        //        {
+        //            return StatusCode((int)HttpStatusCode.BadRequest);
+        //        }
+        //        var requestbody = Request.Form[google_csrf_name];
+        //        if (requestbody != cookie)
+        //        {
+        //            return StatusCode((int)HttpStatusCode.BadRequest);
+        //        }
+        //        var idtoken = Request.Form["credential"];
+        //        GoogleJsonWebSignature.Payload payload = await GoogleJsonWebSignature.ValidateAsync(idtoken).ConfigureAwait(false);
+        //        LoginGoogleRequestModel loginGoogleRequestModel = new LoginGoogleRequestModel
+        //        {
+        //            Email = payload.Email,
+        //            Username = payload.Email,
+        //            DisplayName = payload.Name,
+        //            EmailConfirmation = (User.EmailStatus)(payload.EmailVerified ? 1 : 0),
+        //            Picture = payload.Picture
+        //        };
+        //        var response = await _authenService.LoginGoogleAsync(loginGoogleRequestModel);
+        //        if (response.IsSuccess)
+        //        {
+        //            HttpContext.Response.Cookies.Append("Login", loginGoogleRequestModel.DisplayName);
+        //            return RedirectToAction("Index", "Home");
+        //        }
+        //        return RedirectToAction(nameof(Register), "User");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        TempData["Error"] = ex.Message;
+        //    }
+        //    return RedirectToAction("Index");
+        //}
 
         [HttpPost]
         public IActionResult Logout()
@@ -131,16 +131,6 @@ namespace Client.Controllers
         {
             return View();
         }
-
-        //public IActionResult Information()
-        //{
-        //    var token = _tokenProvider.GetToken();
-        //    var handler = new JwtSecurityTokenHandler();
-        //    var jsonToken = handler.ReadToken(token) as JwtSecurityToken;
-        //    var id = jsonToken?.Claims.First(claim => claim.Type == ClaimTypes.NameIdentifier).Value;
-
-        //    return View();
-        //}
 
         [HttpGet]
         public async Task<IActionResult> Information()

@@ -1,6 +1,7 @@
 ﻿using Client.Repositories.Interfaces;
 using CloudinaryDotNet.Actions;
 using CloudinaryDotNet;
+using Client.Models;
 
 namespace Client.Repositories.Services
 {
@@ -8,9 +9,9 @@ namespace Client.Repositories.Services
 	{
 		private readonly Cloudinary _cloudinary = new Cloudinary(
 			new Account(
-			cloud: "dlhkn3owt",
-			apiKey: "847543842481479",
-			apiSecret: "A423SkMxBPtdjhgBVSrEdBghpBc"));
+			cloud: ConfigKeyModel.CloudinaryName,
+			apiKey: ConfigKeyModel.CloudinaryKey,
+			apiSecret: ConfigKeyModel.CloudinarySecret));
 
 
 		public async Task<string> UploadImageAsync(Stream imageStream, string fileName)
