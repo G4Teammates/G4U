@@ -241,23 +241,23 @@ namespace Client.Controllers
         // DeleteProduct
         public async Task<IActionResult> DeleteProduct(string id)
         {
-            // Lấy thông tin chi tiết sản phẩm dựa trên id
             ResponseModel? response = await _productService.GetProductByIdAsync(id);
 
             if (response != null && response.IsSuccess)
             {
-                // Chuyển đổi dữ liệu JSON của sản phẩm thành ProductModel
-                ProductModel? model = JsonConvert.DeserializeObject<ProductModel>(Convert.ToString(response.Result));
+                // Deserialize vào lớp trung gian với kiểu ProductModel
+                ResponseResultModel<ProductModel>? data =
+                    JsonConvert.DeserializeObject<ResponseResultModel<ProductModel>>(Convert.ToString(response.Result));
 
-                if (model != null)
-                {
-                    // Truyền model vào view DeleteProduct
-                    return View(model);
-                }
+                // Lấy dữ liệu từ trường "result" và gán vào model
+                ProductModel? model = data?.result;
+
+                return View(model);
             }
-
-            // Hiển thị lỗi nếu không lấy được thông tin sản phẩm
-            TempData["error"] = response?.Message;
+            else
+            {
+                TempData["error"] = response?.Message;
+            }
             return NotFound();
         }
         [HttpPost]
