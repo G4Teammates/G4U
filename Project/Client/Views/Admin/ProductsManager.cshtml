@@ -217,7 +217,7 @@
     <!-- Thanh tìm kiếm và nút Thêm -->
     <div class="d-flex justify-content-between mb-3">
         <div class="col-md-4">
-            <input class="form-control" type="text" placeholder="Search by..." />
+            <input class="form-control" type="text" placeholder="Search by..." id="searchInput" onkeyup="searchProducts()" />
         </div>
         <div>
             <button class="btn btn-success" data-toggle="modal" data-target="#modalProduct">+ Add</button>
@@ -309,12 +309,17 @@
                         </a>
                     </td>
                     <td>
+                        <a asp-action="DeleteProduct" asp-route-id="@product.Id" class="text-danger mx-2">
+                            <i class="fas fa-trash"></i>
+                        </a>
+                    </td>
+                    @* <td>
 
                         <a asp-action="DeleteProduct" asp-route-id="@product.Id" class="text-danger mx-2">
                             <i class="fas fa-trash"></i>
                         </a>
 
-                    </td>
+                    </td> *@
 
                 </tr>
             }

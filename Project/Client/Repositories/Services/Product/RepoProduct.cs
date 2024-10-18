@@ -74,5 +74,56 @@ namespace Client.Repositories.Services.Product
 
         }
 
+        /*public async Task<ResponseModel> SearchProductAsync(string searchString)
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync($"api/products/search={searchString}");
+                if (response.IsSuccessStatusCode)
+                {
+                    // Đọc phản hồi và chuyển đổi sang ResponseModel
+                    var content = await response.Content.ReadFromJsonAsync<ResponseModel>();
+
+                    // Kiểm tra nếu thành công, thì lấy dữ liệu trong ResponseResultModel
+                    if (content.IsSuccess)
+                    {
+                        var resultData = await response.Content.ReadFromJsonAsync<ResponseResultModel<List<ProductModel>>>();
+                        content.Result = resultData.result; // Gán danh sách sản phẩm vào Result
+                    }
+
+                    return content;
+                }
+
+                return new ResponseModel
+                {
+                    IsSuccess = false,
+                    Message = "Error retrieving search results"
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ResponseModel
+                {
+                    IsSuccess = false,
+                    Message = $"An error occurred: {ex.Message}"
+                };
+            }
+        }
+
+        public async Task<ResponseModel> SortAsync(string sort)
+        {
+            var response = await _httpClient.GetAsync($"/Product/sort={sort}");
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<ResponseModel>();
+        }
+
+        public async Task<ResponseModel> FilterAsync(decimal? minrange, decimal? maxrange, int? sold, bool? discount, int? platform, string? category)
+        {
+            var query = $"?minrange={minrange}&maxrange={maxrange}&sold={sold}&discount={discount}&platform={platform}&category={category}";
+            var response = await _httpClient.GetAsync($"/Product/filter{query}");
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<ResponseModel>();
+        }*/
+
     }
 }

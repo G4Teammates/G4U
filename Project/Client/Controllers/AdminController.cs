@@ -163,8 +163,14 @@ namespace Client.Controllers
 
         }
 
+        /////////////////////////////////////////////////////
+        //                                                 //
+        //                     PRODUCT                     //
+        //                                                 //
+        /////////////////////////////////////////////////////
 
 
+        // GetAll Product
         public async Task<IActionResult> ProductsManager()
 
         {
@@ -183,6 +189,8 @@ namespace Client.Controllers
             }
             return View(list);
         }
+
+        // UpdateProduct
         public async Task<IActionResult> UpdateProduct(string id)
         {
             ResponseModel? response = await _productService.GetProductByIdAsync(id);
@@ -229,6 +237,8 @@ namespace Client.Controllers
             return Ok(response);
         }
 
+
+        // DeleteProduct
         public async Task<IActionResult> DeleteProduct(string id)
         {
             // Lấy thông tin chi tiết sản phẩm dựa trên id
@@ -267,6 +277,52 @@ namespace Client.Controllers
             }
             return View(product);
         }
+
+        /*public async Task<IActionResult> Sort(string sort)
+        {
+            var response = await _productService.SortAsync(sort);
+            if (response.IsSuccess)
+            {
+                return View("ProductList", response.Result);
+            }
+            ViewBag.ErrorMessage = response.Message;
+            return View("Error");
+        }*/
+
+       /* public async Task<IActionResult> Filter(decimal? minrange, decimal? maxrange, int? sold, bool? discount, int? platform, string? category)
+        {
+            var response = await _productService.FilterAsync(minrange, maxrange, sold, discount, platform, category);
+            if (response.IsSuccess)
+            {
+                return View("ProductList", response.Result);
+            }
+            ViewBag.ErrorMessage = response.Message;
+            return View("Error");
+        }  */ 
+        // SearchProduct
+        /*public async Task<IActionResult> Search(string keyword)
+		{
+			var products = await _productService.SearchProductAsync(keyword);
+			return View("ProductsManager", products); // Hiển thị sản phẩm tìm được trong view ProductsManager
+		}*/
+        /*[HttpGet("SearchProducts")]
+		public async Task<IActionResult> SearchProducts(string searchString)
+		{
+			if (string.IsNullOrWhiteSpace(searchString))
+			{
+				return View(new List<ProductModel>()); // Trả về view với danh sách rỗng nếu không có từ khóa tìm kiếm
+			}
+
+			var response = await _productService.SearchProductAsync(searchString);
+
+			if (response.IsSuccess && response.Result is List<ProductModel> productList)
+			{
+				return View(productList); // Trả về view với kết quả tìm kiếm
+			}
+
+			TempData["ErrorMessage"] = response.Message; // Hiển thị thông báo lỗi
+			return View(new List<ProductModel>());
+		}*/
 
         /*[HttpPost]
         public async Task<IActionResult> ProductCreate(CreateProductModel createProduct)
