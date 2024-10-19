@@ -10,6 +10,7 @@ using System.Text;
 using UserMicroservice.DBContexts;
 using UserMicroservice.DBContexts.Entities;
 using UserMicroservice.Models;
+using UserMicroservice.Models.AuthModel;
 using UserMicroservice.Models.UserManagerModel;
 using UserMicroservice.Repositories.Interfaces;
 
@@ -27,7 +28,9 @@ namespace UserMicroservice.Repositories.Services
 			{
 				new Claim(ClaimTypes.NameIdentifier, user.Id),
 				new Claim(ClaimTypes.Name, user.Username),
+				new Claim(ClaimTypes.GivenName, user.DisplayName),
 				new Claim(ClaimTypes.Email, user.Email),
+				new Claim("Avatar", user.Avatar),
 				new Claim(ClaimTypes.Role, user.Role.ToString())
 			};
 
@@ -82,7 +85,7 @@ namespace UserMicroservice.Repositories.Services
 			}
 			return response;
 		}
-
+		
 		public ResponseModel NomalizeQuery(string? query)
 		{
 			var response = new ResponseModel();

@@ -47,11 +47,10 @@
                     @*    <i class="fab fa-google me-2"></i> google *@
                     <div id="g_id_onload"
                          data-client_id="931532368031-fve5bfiu4t6uvu5laj3gq9fbj7okl43e.apps.googleusercontent.com"
-                         data-context="signin"
-                         data-ux_mode="popup"
                          data-login_uri="/google-response"
                          data-auto_prompt="false">
                     </div>
+
 
                     <div class="g_id_signin"
                          data-type="standard"
@@ -70,3 +69,25 @@
         </div>
     </div>
 </div>
+
+@{
+    string isLoginSuccess = "false";
+    if (ViewData["IsLogin"] != null)
+    {
+        isLoginSuccess = ViewData["IsLogin"].ToString();
+    }
+}
+<script>
+    // Cấu hình Google One Tap
+    window.onload = function () {
+        // Kiểm tra trạng thái đăng nhập từ biến Razor
+        var isLoginSuccess = @Html.Raw(isLoginSuccess.ToString().ToLower());
+
+        // Nếu trạng thái chưa đăng nhập thành công, hiển thị Google One Tap
+        if (isLoginSuccess === false) { // Sử dụng so sánh === để so sánh giá trị
+            google.accounts.id.prompt();  // Hiển thị Google One Tap nếu người dùng chưa đăng nhập
+        } else {
+            google.accounts.id.cancel();  // Tắt Google One Tap nếu đã đăng nhập
+        }
+    };
+</script>

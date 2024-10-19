@@ -176,11 +176,13 @@ namespace UserMicroservice.Repositories.Services
                     Token = token,
                     Username = user!.Username,
                     Id = user.Id,
+                    DisplayName = user.DisplayName,
+                    Avatar = user.Avatar,
                     Email = user.Email,
                     Role = user.Role.ToString()
                 };
                 response.Message = "Login successful";
-
+                
             }
             catch (Exception ex)
             {

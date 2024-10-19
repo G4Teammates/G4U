@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Security.Claims;
+using UserMicroservice.DBContexts.Entities;
 using LoginRequestModel = Client.Models.AuthenModel.LoginRequestModel;
 using ResponseModel = Client.Models.ResponseModel;
 
@@ -27,6 +28,8 @@ namespace Client.Controllers
         [HttpGet]
         public IActionResult Login()
         {
+            var isLogin = HttpContext.Request.Cookies["IsLogin"];
+            ViewData["IsLogin"] = isLogin;
             return View();
         }
 
@@ -40,7 +43,7 @@ namespace Client.Controllers
                 {
                     var user = JsonConvert.DeserializeObject<LoginResponseModel>(response.Result.ToString()!);
                     _tokenProvider.SetToken(user!.Token);
-                    HttpContext.Response.Cookies.Append("Login", user.Username);
+                    HttpContext.Response.Cookies.Append("IsLogin", response.IsSuccess.ToString());
                     return RedirectToAction("Index", "Home");
                 }
                 return RedirectToAction(nameof(Register), "User");
@@ -49,48 +52,49 @@ namespace Client.Controllers
 
         }
 
-        //[Route("google-response")]
-        //public async Task<ActionResult> GoogleResponse()
-        //{
-        //    var google_csrf_name = "g_csrf_token";
-        //    try
-        //    {
+        [Route("google-response")]
+        public async Task<ActionResult> GoogleResponse()
+        {
+            var google_csrf_name = "g_csrf_token";
+            try
+            { 
+                var cookie = Request.Cookies[google_csrf_name];
 
-        //        var cookie = Request.Cookies[google_csrf_name];
-
-        //        if (cookie == null)
-        //        {
-        //            return StatusCode((int)HttpStatusCode.BadRequest);
-        //        }
-        //        var requestbody = Request.Form[google_csrf_name];
-        //        if (requestbody != cookie)
-        //        {
-        //            return StatusCode((int)HttpStatusCode.BadRequest);
-        //        }
-        //        var idtoken = Request.Form["credential"];
-        //        GoogleJsonWebSignature.Payload payload = await GoogleJsonWebSignature.ValidateAsync(idtoken).ConfigureAwait(false);
-        //        LoginGoogleRequestModel loginGoogleRequestModel = new LoginGoogleRequestModel
-        //        {
-        //            Email = payload.Email,
-        //            Username = payload.Email,
-        //            DisplayName = payload.Name,
-        //            EmailConfirmation = (User.EmailStatus)(payload.EmailVerified ? 1 : 0),
-        //            Picture = payload.Picture
-        //        };
-        //        var response = await _authenService.LoginGoogleAsync(loginGoogleRequestModel);
-        //        if (response.IsSuccess)
-        //        {
-        //            HttpContext.Response.Cookies.Append("Login", loginGoogleRequestModel.DisplayName);
-        //            return RedirectToAction("Index", "Home");
-        //        }
-        //        return RedirectToAction(nameof(Register), "User");
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        TempData["Error"] = ex.Message;
-        //    }
-        //    return RedirectToAction("Index");
-        //}
+                if (cookie == null)
+                {
+                    return StatusCode((int)HttpStatusCode.BadRequest);
+                }
+                var requestbody = Request.Form[google_csrf_name];
+                if (requestbody != cookie)
+                {
+                    return StatusCode((int)HttpStatusCode.BadRequest);
+                }
+                var idtoken = Request.Form["credential"];
+                GoogleJsonWebSignature.Payload payload = await GoogleJsonWebSignature.ValidateAsync(idtoken).ConfigureAwait(false);
+                LoginGoogleRequestModel loginGoogleRequestModel = new LoginGoogleRequestModel
+                {
+                    Email = payload.Email,
+                    Username = payload.Email,
+                    DisplayName = payload.Name,
+                    EmailConfirmation = (Models.Enum.UserEnum.User.EmailStatus)(payload.EmailVerified ? 1 : 0),
+                    Picture = payload.Picture
+                };
+                var response = await _authenService.LoginGoogleAsync(loginGoogleRequestModel);
+                if (response.IsSuccess)
+                {
+                    var user = JsonConvert.DeserializeObject<LoginResponseModel>(response.Result.ToString()!);
+                    _tokenProvider.SetToken(user.Token);
+                    HttpContext.Response.Cookies.Append("IsLogin", response.IsSuccess.ToString());
+                    return RedirectToAction("Index", "Home");
+                }
+                return RedirectToAction(nameof(Register), "User");
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = ex.Message;
+            }
+            return RedirectToAction("Index");
+        }
 
         [HttpPost]
         public IActionResult Logout()

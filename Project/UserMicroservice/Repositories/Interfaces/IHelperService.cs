@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using UserMicroservice.DBContexts.Entities;
 using UserMicroservice.Models;
 using UserMicroservice.Models.AuthModel;
