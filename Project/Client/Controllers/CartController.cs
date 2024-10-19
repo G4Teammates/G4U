@@ -13,5 +13,15 @@ namespace Client.Controllers
         {
             return View();
         }
+
+        public IActionResult PaymentSuccess()
+        {
+            return View();
+        }
+
+        public IActionResult PaymentFailure()
+        {
+            return View();
+        }
     }
 }
