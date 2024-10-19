@@ -26,11 +26,8 @@
 
 </head>
 <body style="background-color: rgba(255, 255, 255, 0.9);">
-    <div class="container-fluid">
+    <div class="">
         <header>
-
-
-
             <!-- Navbar -->
             <nav class="navbaradmin navbar navbar-expand-lg navbar-light bg-white">
                 <div class="container-fluid">
@@ -143,7 +140,7 @@
             </nav>
         </header>
 
-        <div class="container mb-5" style="min-height:1000px;">
+        <div class="container mb-5">
             <main role="main">
                 @RenderBody()
             </main>
@@ -265,12 +262,12 @@
 }
 
 @{
-    var avatarUrl = Model.User.Avatar;
+    // var avatarUrl = Model.User.Avatar;
 }
-<script>
+@* <script>
     // Lấy thẻ img bằng ID
     var avatarImage = document.getElementById("avatar");
 
     // Gán đường dẫn ảnh mới từ Razor vào JavaScript
     avatarImage.src = "@avatarUrl";  // Razor sẽ xuất giá trị của avatar vào đây
-</script>
+</script> *@
