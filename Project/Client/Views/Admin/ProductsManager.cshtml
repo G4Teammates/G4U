@@ -1,9 +1,13 @@
-﻿@using Client.Models.Product_Model
+﻿
 
 @{
     Layout = "_LayoutAdmin";
 }
-@model ProductViewModel
+@using Client.Models.ProductDTO
+@model List<ProductModel>
+
+
+
 <div class="pt-3 pb-4">
     <span class="titleManager bg-success py-3 px-5 rounded-4 fw-bold text-white">Products Manager</span>
 </div>
@@ -213,7 +217,7 @@
     <!-- Thanh tìm kiếm và nút Thêm -->
     <div class="d-flex justify-content-between mb-3">
         <div class="col-md-4">
-            <input class="form-control" type="text" placeholder="Search by..." />
+            <input class="form-control" type="text" placeholder="Search by..." id="searchInput" onkeyup="searchProducts()" />
         </div>
         <div>
             <button class="btn btn-success" data-toggle="modal" data-target="#modalProduct">+ Add</button>
@@ -234,8 +238,8 @@
             <tr>
                 <th scope="col"><input type="checkbox" id="selectAll"></th>
                 <th scope="col">Id</th>
-                <th scope="col">Product Name</th>
-                <th scope="col">Discription</th>
+                <th scope="col">Name</th>
+                <th scope="col">Description</th>
                 <th scope="col">Price</th>
                 <th scope="col">Sold</th>
                 <th scope="col">Interactions</th>
@@ -244,40 +248,31 @@
                 <th scope="col">Links</th>
                 <th scope="col">Categories</th>
                 <th scope="col">Status</th>
-                <th scope="col">CreateAt</th>
+                <th scope="col">CreatedAt</th>
                 <th scope="col">UpdatedAt</th>
-                <th scope="col">UserId</th>
-                <th scope="col"></th>
+                <th scope="col">UserName</th>
                 <th scope="col"></th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var product in Model.Products)
+            @foreach (var product in Model) // Giả sử 'Products' là danh sách các sản phẩm
             {
                 <tr>
-                    <td><input type="checkbox" class="user-checkbox"></td>
+                    <td><input type="checkbox" class="product-checkbox"></td>
                     <td>@product.Id</td>
                     <td>@product.Name</td>
                     <td>@product.Description</td>
-                    <td>@product.Price</td>
+                    <td>@product.Price.ToString("C")</td>
                     <td>@product.Sold</td>
-
                     <td>
-                        @if (product.Interactions != null)
-                        {
-                            <span>Views: @product.Interactions.NumberOfViews, Likes: @product.Interactions.NumberOfLikes</span>
-                        }
-                        else
-                        {
-                            <span>No Interactions</span>
-                        }
+                        <div>Likes: @product.Interactions?.NumberOfLikes ?? 0</div>
+                        <div>Views: @product.Interactions?.NumberOfViews ?? 0</div>
                     </td>
-
-                    <td>@product.Discount</td>
+                    <td>@product.Discount %</td>
                     <td>@product.Platform</td>
-
                     <td>
-                        @if (product.Links != null && product.Links.Any())
+                        @if (product.Links != null)
+
                         {
                             <ul>
                                 @foreach (var link in product.Links)
@@ -286,14 +281,11 @@
                                 }
                             </ul>
                         }
-                        else
-                        {
-                            <span>No Links</span>
-                        }
-                    </td>
 
+                    </td>
                     <td>
-                        @if (product.Categories != null && product.Categories.Any())
+                        @if (product.Categories != null)
+
                         {
                             <ul>
                                 @foreach (var category in product.Categories)
@@ -302,28 +294,37 @@
                                 }
                             </ul>
                         }
-                        else
-                        {
-                            <span>No Categories</span>
-                        }
+
                     </td>
 
                     <td>@product.Status</td>
                     <td>@product.CreatedAt.ToString("dd/MM/yyyy")</td>
                     <td>@product.UpdatedAt.ToString("dd/MM/yyyy")</td>
                     <td>@product.UserName</td>
+
+
                     <td>
-                        <a asp-action="ProductUpdate" asp-route-Id="@product.Id" class="text-danger mx-2"> <i class="fa-regular fa-pen-to-square"></i></a>
+                        <a asp-action="UpdateProduct" asp-route-id="@product.Id" class="text-danger mx-2">
+                            <i class="fa-regular fa-pen-to-square"></i>
+                        </a>
                     </td>
                     <td>
-                        @* <form asp-action="UsersDelete" >
-                    <input type="submit" value="Delete" class="btn btn-danger" />
-                    </form> *@
-                        <a asp-action="ProductDelete" asp-route-Id="@product.Id" class="text-danger mx-2"> <i class="fas fa-trash"></i></a>
-                        @* <a asp-action="UsersDelete" asp-route-Id="@user.Id"> <i class="fas fa-trash"></i></a> *@
+                        <a asp-action="DeleteProduct" asp-route-id="@product.Id" class="text-danger mx-2">
+                            <i class="fas fa-trash"></i>
+                        </a>
                     </td>
+                    @* <td>
+
+                        <a asp-action="DeleteProduct" asp-route-id="@product.Id" class="text-danger mx-2">
+                            <i class="fas fa-trash"></i>
+                        </a>
+
+                    </td> *@
+
                 </tr>
             }
+            <!-- Thêm các dòng dữ liệu tương tự -->
+
         </tbody>
     </table>
 
@@ -369,7 +370,7 @@
 
 
 
-<div class="modal fade" id="modalProduct" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+@* <div class="modal fade" id="modalProduct" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="container-fluid p-5">
@@ -377,7 +378,7 @@
             </div>
         </div>
     </div>
-</div>
+</div> *@
 
 
 

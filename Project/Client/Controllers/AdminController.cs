@@ -1,22 +1,28 @@
 ﻿using Client.Models;
-using Client.Models.Product_Model;
-using Client.Models.Product_Model.DTO;
+using Client.Models.ProductDTO;
 using Client.Models.UserDTO;
 using Client.Repositories.Interfaces;
-using Client.Repositories.Interfaces.ProductInterface;
+using Client.Repositories.Interfaces.Product;
 using Client.Repositories.Interfaces.User;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
+using ProductModel = Client.Models.ProductDTO.ProductModel;
+
+
 namespace Client.Controllers
 {
-    public class AdminController(IUserService userService, IHelperService helperService, IRepoProduct productService) : Controller
+
+    public class AdminController(IUserService userService, IHelperService helperService, IRepoProduct repoProduct) : Controller
+
     {
 
         public readonly IUserService _userService = userService;
         public readonly IHelperService _helperService = helperService;
-        public readonly IRepoProduct _productService = productService;
+
+        public readonly IRepoProduct _productService = repoProduct;
+
         public IActionResult Index()
         {
             return View();
@@ -132,7 +138,10 @@ namespace Client.Controllers
                     Id = user.Id,
                     Username = user.Username,
                     PhoneNumber = user.PhoneNumber,
-                    DisplayName = user.DisplayName
+                    DisplayName = user.DisplayName,
+                    Email = user.Email,
+                    Role = user.Role,
+                    Avatar = user.Avatar
                     // Nếu bạn có thêm thuộc tính, hãy thêm vào đây
                 };
 
@@ -154,71 +163,173 @@ namespace Client.Controllers
 
         }
 
-
         /////////////////////////////////////////////////////
         //                                                 //
         //                     PRODUCT                     //
         //                                                 //
         /////////////////////////////////////////////////////
-        
+
+
         // GetAll Product
         public async Task<IActionResult> ProductsManager()
+
         {
-            ProductViewModel list = new()
-            {
-                Products = new List<ProductModel>() // Khởi tạo danh sách Products
-            };
-            try
-            {
-
-                ResponseModel? response = await _productService.GetAllProductAsync();
-
-                if (response != null && response.IsSuccess)
-                {
-
-                    list.Products = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response.Result.ToString()!));
-
-                }
-                else
-                {
-                    TempData["error"] = response?.Message;
-                }
-
-            }
-            catch (Exception ex)
-            {
-                TempData["error"] = ex.Message;
-            }
-
-            return View(list);
-            /*List<ProductViewModel?> list = new();
+            List<ProductModel?> list = new();
             ResponseModel? response = await _productService.GetAllProductAsync();
 
             if (response != null && response.IsSuccess)
             {
 
-                list = JsonConvert.DeserializeObject<List<ProductViewModel>>(Convert.ToString(response.Result));
+                list = JsonConvert.DeserializeObject<List<ProductModel>>(Convert.ToString(response.Result));
 
             }
             else
             {
                 TempData["error"] = response?.Message;
             }
-            return View(list);*/
+            return View(list);
         }
 
-        //Create Product
-        public async Task<IActionResult> ProductCreate()
+        // UpdateProduct
+        public async Task<IActionResult> UpdateProduct(string id)
         {
-            return View();
+            ResponseModel? response = await _productService.GetProductByIdAsync(id);
+
+            if (response != null && response.IsSuccess)
+            {
+                // Deserialize vào lớp trung gian với kiểu ProductModel
+                ResponseResultModel<ProductModel>? data =
+                    JsonConvert.DeserializeObject<ResponseResultModel<ProductModel>>(Convert.ToString(response.Result));
+
+                // Lấy dữ liệu từ trường "result" và gán vào model
+                ProductModel? model = data?.result;
+
+                return View(model);
+            }
+            else
+            {
+                TempData["error"] = response?.Message;
+            }
+            return NotFound();
         }
 
         [HttpPost]
+        public async Task<IActionResult> UpdateProduct([FromForm] UpdateProductModel product,
+                                               [FromForm] List<IFormFile> imageFiles,
+                                               [FromForm] ScanFileRequest request)
+        {
+            if (product == null || string.IsNullOrEmpty(product.Id))
+            {
+                return BadRequest("Product data is required.");
+            }
+
+            // Gọi service để cập nhật sản phẩm
+            var response = await _productService.UpdateProductAsync(product, imageFiles, request);
+
+            // Kiểm tra xem có thành công không
+            if (!response.IsSuccess)
+            {
+                // Trả về mã trạng thái 500 và thông điệp lỗi
+                return StatusCode(500, response.Message);
+            }
+
+            // Nếu thành công, trả về kết quả
+            return Ok(response);
+        }
+
+
+        // DeleteProduct
+        public async Task<IActionResult> DeleteProduct(string id)
+        {
+            ResponseModel? response = await _productService.GetProductByIdAsync(id);
+
+            if (response != null && response.IsSuccess)
+            {
+                // Deserialize vào lớp trung gian với kiểu ProductModel
+                ResponseResultModel<ProductModel>? data =
+                    JsonConvert.DeserializeObject<ResponseResultModel<ProductModel>>(Convert.ToString(response.Result));
+
+                // Lấy dữ liệu từ trường "result" và gán vào model
+                ProductModel? model = data?.result;
+
+                return View(model);
+            }
+            else
+            {
+                TempData["error"] = response?.Message;
+            }
+            return NotFound();
+        }
+        [HttpPost]
+        public async Task<IActionResult> DeleteProduct(ProductModel product)
+        {
+            // Thực hiện xóa sản phẩm
+            ResponseModel? response = await _productService.DeleteProductAsysnc(product.Id);
+
+            if (response != null && response.IsSuccess)
+            {
+                TempData["success"] = "Product deleted successfully.";
+                return RedirectToAction(nameof(ProductsManager));
+            }
+            else
+            {
+                TempData["error"] = response?.Message;
+            }
+            return View(product);
+        }
+
+        /*public async Task<IActionResult> Sort(string sort)
+        {
+            var response = await _productService.SortAsync(sort);
+            if (response.IsSuccess)
+            {
+                return View("ProductList", response.Result);
+            }
+            ViewBag.ErrorMessage = response.Message;
+            return View("Error");
+        }*/
+
+       /* public async Task<IActionResult> Filter(decimal? minrange, decimal? maxrange, int? sold, bool? discount, int? platform, string? category)
+        {
+            var response = await _productService.FilterAsync(minrange, maxrange, sold, discount, platform, category);
+            if (response.IsSuccess)
+            {
+                return View("ProductList", response.Result);
+            }
+            ViewBag.ErrorMessage = response.Message;
+            return View("Error");
+        }  */ 
+        // SearchProduct
+        /*public async Task<IActionResult> Search(string keyword)
+		{
+			var products = await _productService.SearchProductAsync(keyword);
+			return View("ProductsManager", products); // Hiển thị sản phẩm tìm được trong view ProductsManager
+		}*/
+        /*[HttpGet("SearchProducts")]
+		public async Task<IActionResult> SearchProducts(string searchString)
+		{
+			if (string.IsNullOrWhiteSpace(searchString))
+			{
+				return View(new List<ProductModel>()); // Trả về view với danh sách rỗng nếu không có từ khóa tìm kiếm
+			}
+
+			var response = await _productService.SearchProductAsync(searchString);
+
+			if (response.IsSuccess && response.Result is List<ProductModel> productList)
+			{
+				return View(productList); // Trả về view với kết quả tìm kiếm
+			}
+
+			TempData["ErrorMessage"] = response.Message; // Hiển thị thông báo lỗi
+			return View(new List<ProductModel>());
+		}*/
+
+        /*[HttpPost]
         public async Task<IActionResult> ProductCreate(CreateProductModel createProduct)
         {
             if (ModelState.IsValid)
             {
-                ResponseModel? response = await _productService.CreateProductAsync(createProduct);
+                ResponseModel? response = await _productService.Crea(createProduct);
 
                 if (response != null && response.IsSuccess)
                 {
@@ -228,11 +339,17 @@ namespace Client.Controllers
                 else
                 {
                     TempData["error"] = response?.Message;
-                }
+                } 
 
             }
             return View(createProduct);
         }
+
+        // Update Product ProductUpdate
+
+       
+
+        
 
 
         //Delete Product
@@ -267,7 +384,7 @@ namespace Client.Controllers
                 TempData["error"] = response?.Message;
             }
             return View(product);
-        }
+        }*/
 
 
         public IActionResult OrdersManager()

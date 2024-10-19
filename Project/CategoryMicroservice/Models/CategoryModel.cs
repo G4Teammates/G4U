@@ -1,4 +1,5 @@
 ﻿using CategoryMicroservice.DBContexts.Enum;
+using MongoDB.Bson;
 using System.ComponentModel.DataAnnotations;
 
 namespace CategoryMicroservice.Models
@@ -10,7 +11,7 @@ namespace CategoryMicroservice.Models
         /// <br/>
         /// Định danh duy nhất cho danh mục.
         /// </summary>
-        public required string Id { get; set; }
+        public string Id { get; set; } = ObjectId.GenerateNewId().ToString();
 
         /// <summary>
         /// The Name of the category.
@@ -44,12 +45,5 @@ namespace CategoryMicroservice.Models
         /// Trạng thái danh mục.
         /// </summary>
         public CategoryStatus Status { get; set; }
-
-        /// <summary>
-        /// A collection of category details associated with this category, represented by GUIDs.
-        /// <br/>
-        /// Một tập hợp các chi tiết danh mục liên kết với danh mục này, được đại diện bởi các GUID.
-        /// </summary>
-        public virtual List<string>? CategoryDetails { get; set; }
     }
 }

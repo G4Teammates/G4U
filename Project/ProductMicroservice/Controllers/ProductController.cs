@@ -126,7 +126,7 @@ namespace ProductMicroService.Controllers
             catch (Exception ex)
             {
                 _responseDTO.IsSuccess = false;
-                _responseDTO.Message = "An error occurred while getting the Products: " + ex.Message;
+                _responseDTO.Message = "An error occurred while deleting the Products: " + ex.Message;
                 return StatusCode(500, _responseDTO); // Trả về mã lỗi 500 với thông báo lỗi chi tiết
             }
         }
@@ -177,7 +177,7 @@ namespace ProductMicroService.Controllers
             catch (Exception ex)
             {
                 _responseDTO.IsSuccess = false;
-                _responseDTO.Message = "An error occurred while creating the Product: " + ex.Message;
+                _responseDTO.Message = "An error occurred while updating the Product: " + ex.Message;
                 return StatusCode(500, _responseDTO);
             }
         }
@@ -194,7 +194,7 @@ namespace ProductMicroService.Controllers
             catch (Exception ex)
             {
                 _responseDTO.IsSuccess = false;
-                _responseDTO.Message = "An error occurred while creating the Categrori: " + ex.Message;
+                _responseDTO.Message = "An error occurred while sorting the Product: " + ex.Message;
                 return StatusCode(500, _responseDTO); // Trả về mã lỗi 500 với thông báo lỗi chi tiết
             }
         }
@@ -211,7 +211,7 @@ namespace ProductMicroService.Controllers
             catch (Exception ex)
             {
                 _responseDTO.IsSuccess = false;
-                _responseDTO.Message = "An error occurred while creating the Categrori: " + ex.Message;
+                _responseDTO.Message = "An error occurred while searching Products: " + ex.Message;
                 return StatusCode(500, _responseDTO); // Trả về mã lỗi 500 với thông báo lỗi chi tiết
             }
         }
@@ -227,7 +227,7 @@ namespace ProductMicroService.Controllers
 			catch (Exception ex)
 			{
 				_responseDTO.IsSuccess = false;
-				_responseDTO.Message = "An error occurred while creating the Categrori: " + ex.Message;
+				_responseDTO.Message = "An error occurred while filtering the Product: " + ex.Message;
 				return StatusCode(500, _responseDTO); // Trả về mã lỗi 500 với thông báo lỗi chi tiết
 			}
 		}

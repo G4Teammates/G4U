@@ -1,142 +1,176 @@
-﻿@model Client.Models.Product_Model.DTO.UpdateProductModel
+@model Client.Models.ProductDTO.ProductModel
+
+
+
 @{
-    ViewData["Title"] = "Update Product";
+    ViewData["Title"] = "ProductUpdate";
+
 }
 @{
     Layout = "_LayoutAdmin";
 }
-<h1>Update User</h1>
 
-<div>
-    <h4>Update Product Information</h4>
-    <hr />
-    <form asp-action="ProductUpdate" method="post">
-        <div class="form-group row">
-            <label class="col-sm-2 col-form-label" for="Name">
-                @Html.DisplayNameFor(model => model.Name)
-            </label>
-            <div class="col-sm-10">
-                <input type="text" id="Name" name="Name" class="form-control" asp-for="@Model.Name" />
+<h1>ProductUpdate</h1>
+
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3>@Model.Name</h3>
+                </div>
+                <div class="card-body">
+                    <p><strong>ID:</strong> @Model.Id</p>
+                    <p><strong>Description:</strong> @Model.Description</p>
+                    <p><strong>Price:</strong> @Model.Price.ToString("C")</p>
+                    <p><strong>Sold:</strong> @Model.Sold</p>
+                    <p><strong>Discount:</strong> @Model.Discount %</p>
+                    <p><strong>Platform:</strong> @Model.Platform</p>
+                    <p><strong>Status:</strong> @Model.Status</p>
+                    <p><strong>Created At:</strong> @Model.CreatedAt.ToString("dd/MM/yyyy")</p>
+                    <p><strong>Updated At:</strong> @Model.UpdatedAt.ToString("dd/MM/yyyy")</p>
+                    <p><strong>Owner:</strong> @Model.UserName</p>
+
+                    <h5>Interactions</h5>
+                    <p><strong>Likes:</strong> @Model.Interactions?.NumberOfLikes ?? 0</p>
+                    <p><strong>Views:</strong> @Model.Interactions?.NumberOfViews ?? 0</p>
+
+                    <h5>Categories</h5>
+                    <ul>
+                        @if (Model.Categories != null)
+                        {
+                            @foreach (var category in Model.Categories)
+                            {
+                                <li>@category.CategoryName</li>
+                            }
+                        }
+                        else
+                        {
+                            <li>No categories</li>
+                        }
+                    </ul>
+
+                    <h5>Links</h5>
+                    <ul>
+                        @if (Model.Links != null)
+                        {
+                            @foreach (var link in Model.Links)
+                            {
+                                <li><a href="@link.Url" target="_blank">@link.Url</a></li>
+                            }
+                        }
+                        else
+                        {
+                            <li>No links available</li>
+                        }
+                    </ul>
+                </div>
             </div>
         </div>
+    </div>
 
-        <div class="form-group row">
-            <label class="col-sm-2 col-form-label" for="Description">
-                @Html.DisplayNameFor(model => model.Description)
-            </label>
-            <div class="col-sm-10">
-                <input type="text" id="Description" name="Description" class="form-control" value="@Model.Description" />
-            </div>
-        </div>
 
-        <div class="form-group row">
-            <label class="col-sm-2 col-form-label" for="Price">
-                @Html.DisplayNameFor(model => model.Price)
-            </label>
-            <div class="col-sm-10">
-                <input type="text" id="Price" name="Price" class="form-control" value="@Model.Price" />
-            </div>
-        </div>
+@*
+﻿@using Client.Models.Product_Model
+@using Client.Models.Product_Model.DTO
+@using Client.Models.Product_Model.Enum
+@model ProductViewModel
+@{
+    Layout = "_LayoutAdmin";
+}
+@{
+    ViewData["Title"] = "Update Product";
+}
 
-        <div class="form-group row">
-            <label class="col-sm-2 col-form-label" for="Sold">
-                @Html.DisplayNameFor(model => model.Sold)
-            </label>
-            <div class="col-sm-10">
-                <input type="text" id="Sold" name="Sold" class="form-control" value="@Model.Sold" />
-            </div>
-        </div>
+<h2>Update Product</h2>
 
-        <div class="form-group row">
-            <label class="col-sm-2 col-form-label" for="Interactions">
-                @Html.DisplayNameFor(model => model.Interactions.NumberOfViews)
-            </label>
-            <div class="col-sm-10">
-                <input type="text" asp-for="@Model.Interactions.NumberOfViews" class="form-control" />
-            </div>
-        </div>
-        <div class="form-group row">
-            <label class="col-sm-2 col-form-label" for="Interactions">
-                @Html.DisplayNameFor(model => model.Interactions.NumberOfLikes)
-            </label>
-            <div class="col-sm-10">
-                <input type="text" class="form-control" asp-for="@Model.Interactions.NumberOfLikes" />
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-            </div>
-        </div>
+<form asp-action="UpdateProduct" method="post" enctype="multipart/form-data">
+    <input type="hidden" asp-for="@Model.Product.Id" />
 
-        <div class="form-group row">
-            <label class="col-sm-2 col-form-label" for="Discount">
-                @Html.DisplayNameFor(model => model.Discount)
-            </label>
-            <div class="col-sm-10">
-                <input type="text" id="Discount" name="Discount" class="form-control" value="@Model.Discount" />
-            </div>
-        </div>
+    <div class="form-group">
+        <label asp-for="@Model.Product.Name" class="control-label"></label>
+        <input asp-for="@Model.Product.Name" class="form-control" />
+        <span asp-validation-for="@Model.Product.Name" class="text-danger"></span>
+    </div>
 
-        <div class="form-group row">
-            <label class="col-sm-2 col-form-label" for="Categories">
-                @Html.DisplayNameFor(model => model.Categories)
-            </label>
-            <div class="col-sm-10">
-                @if (Model.Categories != null)
-                {
-                    @foreach (var category in Model.Categories)
-                    {
-                        <li>@category.CategoryName</li>
-                    }
-                }
-            </div>
-        </div>
+    <div class="form-group">
+        <label asp-for="@Model.Product.Description" class="control-label"></label>
+        <textarea asp-for="@Model.Product.Description" class="form-control"></textarea>
+        <span asp-validation-for="@Model.Product.Description" class="text-danger"></span>
+    </div>
 
-        <div class="form-group row">
-            <label class="col-sm-2 col-form-label" for="Platform">
-                @Html.DisplayNameFor(model => model.Platform)
-            </label>
-            <div class="col-sm-10">
-                <input type="text" id="Platform" name="Platform" class="form-control" value="@Model.Platform" />
-            </div>
-        </div>
+    <div class="form-group">
+        <label asp-for="@Model.Product.Price" class="control-label"></label>
+        <input asp-for="@Model.Product.Price" class="form-control" />
+        <span asp-validation-for="@Model.Product.Price" class="text-danger"></span>
+    </div>
 
-        <div class="form-group row">
-            <label class="col-sm-2 col-form-label" for="Status">
-                @Html.DisplayNameFor(model => model.Status)
-            </label>
-            <div class="col-sm-10">
-                <input type="text" id="Status" name="Status" class="form-control" value="@Model.Status" />
-            </div>
-        </div>
+    <div class="form-group">
+        <label asp-for="@Model.Product.Sold" class="control-label"></label>
+        <input asp-for="@Model.Product.Sold" class="form-control" />
+        <span asp-validation-for="@Model.Product.Sold" class="text-danger"></span>
+    </div>
 
-        <div class="form-group row">
-            <label class="col-sm-2 col-form-label" for="CreatedAt">
-                @Html.DisplayNameFor(model => model.CreatedAt)
-            </label>
-            <div class="col-sm-10">
-                <input type="text" id="CreatedAt" name="CreatedAt" class="form-control" value="@Model.CreatedAt" />
-            </div>
-        </div>
+    <div class="form-group">
+        <label asp-for="@Model.Product.Discount" class="control-label"></label>
+        <input asp-for="@Model.Product.Discount" class="form-control" />
+        <span asp-validation-for="@Model.Product.Discount" class="text-danger"></span>
+    </div>
 
-        <div class="form-group row">
-            <label class="col-sm-2 col-form-label" for="UpdatedAt">
-                @Html.DisplayNameFor(model => model.UpdatedAt)
-            </label>
-            <div class="col-sm-10">
-                <input type="text" id="UpdatedAt" name="UpdatedAt" class="form-control" value="@Model.UpdatedAt" />
-            </div>
-        </div>
+    <div class="form-group">
+        <label asp-for="@Model.Product.Platform" class="control-label"></label>
+        <select asp-for="@Model.Product.Platform" class="form-control">
+            <option value="@PlatformType.Unknown">Unknown</option>
+            <option value="@PlatformType.Downloadable">Downloadable</option>
+            <option value="@PlatformType.HTML">HTML</option>
+            <option value="@PlatformType.WebGL">WebGL</option>
+            <option value="@PlatformType.Window">Window</option>
+            <option value="@PlatformType.Android">Android</option>
+            <option value="@PlatformType.iOS">iOS</option>
+            <option value="@PlatformType.MacOS">MacOS</option>
+            <option value="@PlatformType.Linux">Linux</option>
+            <option value="@PlatformType.Other">Other</option>
+        </select>
+        <span asp-validation-for="@Model.Product.Platform" class="text-danger"></span>
+    </div>
 
-        <div class="form-group row">
-            <label class="col-sm-2 col-form-label" for="UserName">
-                @Html.DisplayNameFor(model => model.UserName)
-            </label>
-            <div class="col-sm-10">
-                <input type="text" id="UserName" name="UserName" class="form-control" value="@Model.UserName" />
-            </div>
-        </div>
+    <div class="form-group">
+        <label asp-for="@Model.Product.Status" class="control-label"></label>
+        <select asp-for="@Model.Product.Status" class="form-control">
+            <option value="@ProductStatus.Active">Active</option>
+            <option value="@ProductStatus.Inactive">Inactive</option>
+            <option value="@ProductStatus.Block">Block</option>
+            <option value="@ProductStatus.Deleted">Deleted</option>
+        </select>
+        <span asp-validation-for="@Model.Product.Status" class="text-danger"></span>
+    </div>
 
-        <div class="form-group">
-            <input type="submit" value="Update" class="btn btn-primary" /> |
-            <a asp-action="ProductsManager" class="btn btn-secondary">Back to List</a>
-        </div>
-    </form>
-</div>
+    <div class="form-group">
+        <label asp-for="@Model.Product.Categories" class="control-label"></label>
+        <input asp-for="@Model.Product.Categories" class="form-control" placeholder="Enter categories separated by commas" />
+        <span asp-validation-for="@Model.Product.Categories" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label for="imageFiles">Upload Images</label>
+        <input type="file" name="imageFiles" multiple class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Update Product</button>
+        <a asp-action="ProductsManager" class="btn btn-secondary">Cancel</a>
+    </div>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+
+ *@
+

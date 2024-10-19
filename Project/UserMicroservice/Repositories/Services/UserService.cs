@@ -10,10 +10,9 @@ using MongoDB.EntityFrameworkCore.Storage.ValueConversion;
 using UserMicroservice.DBContexts;
 using UserMicroservice.DBContexts.Entities;
 using UserMicroservice.Models;
+using UserMicroservice.Models.UserManagerModel;
 using UserMicroservice.Repositories.Interfaces;
-using UserMicroservice.Repositories.IRepositories;
-using UserMicroService.DBContexts.Enum;
-using UserMicroService.Models;
+using UserMicroservice.DBContexts.Enum;
 using static Google.Apis.Requests.BatchRequest;
 
 namespace UserMicroservice.Repositories.Services
@@ -170,12 +169,15 @@ namespace UserMicroservice.Repositories.Services
 
                 // Kiểm tra xem email và username có tồn tại không
                 response = await _helper.IsUserNotExist(updatedUserModel.Username, phone: updatedUserModel.PhoneNumber);
-                if (response.IsSuccess)
+                if (!response.IsSuccess)
                 {
                     // Cập nhật thông tin từ UserModel vào đối tượng User
                     user.DisplayName = updatedUserModel.DisplayName ?? user.DisplayName;
                     user.Username = updatedUserModel.Username ?? user.Username;
                     user.PhoneNumber = updatedUserModel.PhoneNumber ?? user.PhoneNumber;
+                    user.Email = updatedUserModel.Email ?? user.Email;
+                    user.Avatar = updatedUserModel.Avatar ?? user.Avatar;
+                    user.Role = updatedUserModel.Role ?? user.Role;
 
                     // Lưu các thay đổi vào cơ sở dữ liệu
                     _context.Users.Update(user);

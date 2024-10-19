@@ -22,11 +22,13 @@ using Newtonsoft.Json;
 using System.Security.Cryptography;
 using Microsoft.Azure.CognitiveServices.ContentModerator.Models;
 using System.Linq; // Đảm bảo rằng không quên import namespace này
+using Microsoft.EntityFrameworkCore;
 
 namespace ProductMicroservice.Repostories
 {
     public class RepoProduct : IRepoProduct
     {
+        #region declaration and initialization
         private readonly ProductDbContext _db ;
         private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
@@ -39,6 +41,7 @@ namespace ProductMicroservice.Repostories
         private string VirusTotalApiKey => _configuration["4"];
         private string VirusTotalScanUrl = "https://www.virustotal.com/api/v3/files";
         private string VirusTotalReportUrl = "https://www.virustotal.com/api/v3/files/{id}";
+        
 
         public RepoProduct(IConfiguration configuration, ProductDbContext db, IMapper mapper)
         {
@@ -48,6 +51,7 @@ namespace ProductMicroservice.Repostories
             var account = new Account(cloudNameCloudinary, apiKeyCloudinary, apiSecretCloudinary);
             _cloudinary = new Cloudinary(account);
         }
+        #endregion
 
 
 
@@ -514,6 +518,15 @@ namespace ProductMicroservice.Repostories
             }
         }
 
+        public async Task<List<Products>> GetProductsByCategoryNameAsync(string categoryName)
+        {
+            return await _db.Products
+                .Where(x => x.Categories.Any(c => c.CategoryName.Contains(categoryName)))
+                .ToListAsync();
+        }
+
+
+        #region method
         private async Task<string> ScanFileForVirus(IFormFile file)
         {
             if (file == null || file.Length == 0)
@@ -755,6 +768,7 @@ namespace ProductMicroservice.Repostories
             await _db.SaveChangesAsync();
             return productEntity;
         }
+        #endregion
 
     }
 }

@@ -3,6 +3,8 @@ using Client.Models.UserDTO;
 using Client.Repositories.Interfaces;
 using Client.Repositories.Interfaces.User;
 using Client.Utility;
+using System.Net.Http;
+using System.Text;
 
 
 namespace Client.Repositories.Services
@@ -34,12 +36,17 @@ namespace Client.Repositories.Services
             });
         }
 
-        public Task<ResponseModel>? FindUsers(string? query)
-        {
-            throw new NotImplementedException();
-        }
+		public async Task<ResponseModel> FindUsers(string? query)
+		{
+			return await _baseService.SendAsync(new RequestModel()
+			{
+				ApiType = StaticTypeApi.ApiType.GET,
+				Url = StaticTypeApi.APIGateWay + $"/User/search?query={query}"
+			});
+		}
 
-        public async Task<ResponseModel> GetAllUserAsync()
+
+		public async Task<ResponseModel> GetAllUserAsync()
         {
             return await _baseService.SendAsync(new RequestModel()
             {
@@ -63,7 +70,7 @@ namespace Client.Repositories.Services
             {
                 ApiType = StaticTypeApi.ApiType.PUT,
                 Data = user,
-                Url = StaticTypeApi.APIGateWay + "/User/" + user.Id
+                Url = StaticTypeApi.APIGateWay + "/User"
             });
         }
     }

@@ -1,6 +1,9 @@
-﻿using UserMicroservice.DBContexts.Entities;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using UserMicroservice.DBContexts.Entities;
 using UserMicroservice.Models;
-using UserMicroService.Models;
+using UserMicroservice.Models.AuthModel;
+using UserMicroservice.Models.UserManagerModel;
 
 namespace UserMicroservice.Repositories.Interfaces
 {
@@ -9,6 +12,6 @@ namespace UserMicroservice.Repositories.Interfaces
         public Task<ResponseModel> IsUserNotExist(string username, string? email = null, string? phone = null);
         public ResponseModel IsUserNotNull(AddUserModel user);
         public ResponseModel NomalizeQuery(string? query);
-        public string GenerateJwtAsync(User user);
+        public string GenerateJwtAsync(UserModel user);
     }
 }

@@ -1,7 +1,7 @@
-﻿@if (ViewData["Login"] != null)
-{
-    <p>Welcome, @ViewData["Login"]</p>
-}
+﻿@using Client.Models.UserProductDTO
+@model UserProductViewModel
+
+
 @* <div class="Image_Gallery">
     <div class="box">
         <span style="--i:1"><img src="~/image/game.jpg" /></span>
@@ -13,8 +13,13 @@
         <span style="--i:7"><img src="~/image/game.jpg" /></span>
         <span style="--i:8"><<img src="~/image/game.jpg" /></span>
     </div>
-</div> *@
-
+</div>
+ *@
+<div id="g_id_onload"
+     data-client_id="931532368031-fve5bfiu4t6uvu5laj3gq9fbj7okl43e.apps.googleusercontent.com"
+     data-login_uri='/google-response'
+     data-auto_prompt= 'false'>
+</div>
 
 <div id="carouselExampleInterval" class="carousel slide mt-4 w-100 h-100" data-bs-ride="carousel" style="border-radius:5px; margin: 0 3%;">
     <div class="carousel-inner">
@@ -59,7 +64,7 @@
                         </div>
                     </div>
                     @* Chứa thông tin chi tiết *@
-                    
+
                 </div>
                 <div class="card_gamemonth item">
                     <div class="img_gamemonth">
@@ -103,7 +108,7 @@
                         <div class="btn_card">
                             <button>Read more...</button>
                         </div>
-                        
+
                     </div>
                 </div>
                 <div class="card_gamemonth item">
@@ -409,7 +414,7 @@
         </h2>
         <div class="row mt-3">
             <div class="col-4 col-sm-4 col-md-4">
-                <img src="~/image/game.jpg" class="img-fluid"/>
+                <img src="~/image/game.jpg" class="img-fluid" />
             </div>
             <div class="col-8 col-sm-8 col-md-8">
                 Game ne
@@ -423,31 +428,31 @@
                 Game ne
             </div>
         </div>
-         <div class="row mt-3">
+        <div class="row mt-3">
             <div class="col-4 col-sm-4 col-md-4">
-                <img src="~/image/game.jpg" class="img-fluid"/>
+                <img src="~/image/game.jpg" class="img-fluid" />
             </div>
             <div class="col-8 col-sm-8 col-md-8">
                 Game ne
             </div>
         </div>
-         <div class="row mt-3">
+        <div class="row mt-3">
             <div class="col-4 col-sm-4 col-md-4">
-                <img src="~/image/game.jpg" class="img-fluid"/>
+                <img src="~/image/game.jpg" class="img-fluid" />
             </div>
             <div class="col-8 col-sm-8 col-md-8">
                 Game ne
             </div>
         </div>
-         <div class="row mt-3">
+        <div class="row mt-3">
             <div class="col-4 col-sm-4 col-md-4">
-                <img src="~/image/game.jpg" class="img-fluid"/>
+                <img src="~/image/game.jpg" class="img-fluid" />
             </div>
             <div class="col-8 col-sm-8 col-md-8">
                 Game ne
             </div>
         </div>
-        
+
     </div>
     <div class="col-12 col-sm-12 col-md-4" style="border-right:1px solid black;border-left:1px solid black;">
         <h2>
@@ -551,3 +556,32 @@
 
 
 
+
+@{
+    string isLoginSuccess = "false";
+    if (ViewData["IsLogin"] != null)
+    {
+        isLoginSuccess = ViewData["IsLogin"].ToString();
+    }
+}
+<script>
+    // Cấu hình Google One Tap
+    window.onload = function () {
+        // google.accounts.id.initialize({
+        //     client_id: '931532368031-fve5bfiu4t6uvu5laj3gq9fbj7okl43e.apps.googleusercontent.com',
+        //     context: 'signin',
+        //     login_uri: "/google-response",
+        //     auto_prompt: false
+        // });
+
+        // Kiểm tra trạng thái đăng nhập từ biến Razor
+        var isLoginSuccess = @Html.Raw(isLoginSuccess.ToString().ToLower());
+
+        // Nếu trạng thái chưa đăng nhập thành công, hiển thị Google One Tap
+        if (isLoginSuccess === false) { // Sử dụng so sánh === để so sánh giá trị
+            google.accounts.id.prompt();  // Hiển thị Google One Tap nếu người dùng chưa đăng nhập
+        } else {
+            google.accounts.id.cancel();  // Tắt Google One Tap nếu đã đăng nhập
+        }
+    };
+</script>

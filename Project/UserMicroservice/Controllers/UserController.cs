@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+﻿    using AutoMapper;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
@@ -6,12 +6,11 @@ using MongoDB.Driver;
 using UserMicroservice.DBContexts;
 using UserMicroservice.DBContexts.Entities;
 using UserMicroservice.Models;
-using UserMicroservice.Repositories.IRepositories;
-using UserMicroService.Models;
 using UserMicroservice.Repositories.Interfaces;
 using IAuthenService = UserMicroservice.Repositories.Interfaces.IAuthenticationService;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using UserMicroservice.Models.UserManagerModel;
 namespace UserMicroService.Controllers
 {
     [ApiController]
@@ -22,7 +21,7 @@ namespace UserMicroService.Controllers
         private readonly IUserService _userService = userService;
 
 
-        [Authorize(Roles = "User")]
+        //[Authorize(Roles = "User")]
         [HttpGet]
         public async Task<ActionResult> GetAll()
         {
@@ -113,7 +112,7 @@ namespace UserMicroService.Controllers
         }
 
         // Phương thức cập nhật người dùng
-        [HttpPut("{id}")]
+        [HttpPut]
         public async Task<ActionResult> UpdateUser([FromBody] UserUpdate updatedUserModel)
         {
             try

@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using UserMicroservice.Repositories.Interfaces;
-using UserMicroservice.Repositories.IRepositories;
 using UserMicroservice.Repositories.Services;
 
 namespace UserMicroService.Configure

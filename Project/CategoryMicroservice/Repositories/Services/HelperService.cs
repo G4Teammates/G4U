@@ -1,5 +1,6 @@
 ﻿using CategoryMicroservice.DBContexts;
 using CategoryMicroservice.Models;
+using CategoryMicroservice.Models.DTO;
 using CategoryMicroservice.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 

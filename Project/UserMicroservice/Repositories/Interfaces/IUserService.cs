@@ -1,8 +1,8 @@
 ﻿using MongoDB.Bson;
 using UserMicroservice.DBContexts.Entities;
 using UserMicroservice.Models;
-using UserMicroService.Models;
-namespace UserMicroservice.Repositories.IRepositories
+using UserMicroservice.Models.UserManagerModel;
+namespace UserMicroservice.Repositories.Interfaces
 {
     public interface IUserService
     {

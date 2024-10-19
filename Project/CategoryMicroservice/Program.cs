@@ -1,6 +1,10 @@
 using Azure.Identity;
 using CategoryMicroservice.Configure;
 using CategoryMicroservice.DBContexts;
+using CategoryMicroservice.Models.DTO;
+using CategoryMicroservice.Repositories;
+using CategoryMicroservice.Repositories.Interfaces;
+using CategoryMicroservice.Repositories.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,6 +19,15 @@ builder.Services.AddSwaggerGen();
 builder.Configuration.AddAzureKeyVault(new Uri("https://duantotnghiep.vault.azure.net/"),
     new DefaultAzureCredential());
 builder.Services.AddStartupService(builder.Configuration);
+
+
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+
+// Register the BackgroundService
+builder.Services.AddHostedService<Background>();
+builder.Services.AddSingleton<IMessage, Message>();
+builder.Services.AddScoped<CategoryDeleteResponse>();
+
 
 var app = builder.Build();
 

@@ -66,7 +66,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors("AllowAllOrigins");
-
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
