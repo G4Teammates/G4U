@@ -7,14 +7,9 @@ namespace Client.Repositories.Interfaces.Product
     {
         Task<ResponseModel?> GetProductByIdAsync(string Id);
         Task<ResponseModel?> GetAllProductAsync();
-        Task<ResponseModel> UpdateProductAsync(
-            UpdateProductModel product,
-            List<IFormFile> imageFiles,
-            ScanFileRequest request);
+        Task<ResponseModel> UpdateProductAsync(List<IFormFile> imageFiles,UpdateProductModel product,ScanFileRequest request);
         Task<ResponseModel> DeleteProductAsysnc(string Id);
-        /*Task<ResponseModel> SearchProductAsync(string searchString);
-        Task<ResponseModel> SortAsync(string sort);
-        Task<ResponseModel> FilterAsync(decimal? minrange, decimal? maxrange, int? sold, bool? discount, int? platform, string? category);*/
+        
     }
 }
 

@@ -198,11 +198,11 @@ namespace Client.Controllers
             if (response != null && response.IsSuccess)
             {
                 // Deserialize vào lớp trung gian với kiểu ProductModel
-                ResponseResultModel<ProductModel>? data =
-                    JsonConvert.DeserializeObject<ResponseResultModel<ProductModel>>(Convert.ToString(response.Result));
+                ResponseResultModel<UpdateProductModel>? data =
+                    JsonConvert.DeserializeObject<ResponseResultModel<UpdateProductModel>>(Convert.ToString(response.Result));
 
                 // Lấy dữ liệu từ trường "result" và gán vào model
-                ProductModel? model = data?.result;
+                UpdateProductModel? model = data?.result;
 
                 return View(model);
             }
@@ -214,28 +214,48 @@ namespace Client.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> UpdateProduct([FromForm] UpdateProductModel product,
-                                               [FromForm] List<IFormFile> imageFiles,
-                                               [FromForm] ScanFileRequest request)
+        public async Task<IActionResult> UpdateProduct(List<IFormFile> imageFiles, UpdateProductModel product, ScanFileRequest request)
         {
-            if (product == null || string.IsNullOrEmpty(product.Id))
+            // Chuyển đổi danh sách các danh mục từ product.Categories thành List<CategoryModel>
+            var categories = product.Categories?.Select(c => new CategoryModel { CategoryName = c.CategoryName }).ToList();
+
+            if (ModelState.IsValid)
             {
-                return BadRequest("Product data is required.");
+                // Cập nhật mô hình UpdateProductModel với các giá trị từ product
+                var updateProduct = new UpdateProductModel
+                {
+                    Id = product.Id,
+                    Name = product.Name,
+                    Description = product.Description,
+                    Price = product.Price,
+                    Sold = product.Sold,
+                    Discount = product.Discount,
+                    Categories = categories,
+                    Platform = product.Platform, // Giá trị enum PlatformType
+                    Status = product.Status, // Giá trị enum ProductStatus
+                    CreatedAt = product.CreatedAt,
+                    UpdatedAt = DateTime.UtcNow,
+                    UserName = product.UserName
+                };
+
+                // Gửi yêu cầu cập nhật sản phẩm thông qua service
+                var response = await _productService.UpdateProductAsync(imageFiles, updateProduct, request);
+
+                if (response != null && response.IsSuccess)
+                {
+                    TempData["success"] = "Product updated successfully";
+                    return RedirectToAction(nameof(ProductsManager));
+                }
+                else
+                {
+                    TempData["error"] = response?.Message;
+                }
             }
 
-            // Gọi service để cập nhật sản phẩm
-            var response = await _productService.UpdateProductAsync(product, imageFiles, request);
-
-            // Kiểm tra xem có thành công không
-            if (!response.IsSuccess)
-            {
-                // Trả về mã trạng thái 500 và thông điệp lỗi
-                return StatusCode(500, response.Message);
-            }
-
-            // Nếu thành công, trả về kết quả
-            return Ok(response);
+            // Nếu ModelState không hợp lệ, trả về lại model để hiển thị lỗi
+            return View(product);
         }
+
 
 
         // DeleteProduct

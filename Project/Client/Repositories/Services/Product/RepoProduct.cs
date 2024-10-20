@@ -46,7 +46,7 @@ namespace Client.Repositories.Services.Product
             });
         }
 
-        public async Task<ResponseModel> UpdateProductAsync(UpdateProductModel product, List<IFormFile> imageFiles, ScanFileRequest request)
+        public async Task<ResponseModel> UpdateProductAsync(List<IFormFile> imageFiles,UpdateProductModel product,  ScanFileRequest request)
         {
             return await _baseService.SendAsync(new RequestModel
             {
