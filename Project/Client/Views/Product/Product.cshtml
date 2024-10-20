@@ -2,102 +2,78 @@
     <h1 class="text-center" style="font-family: 'Roboto', 'Segoe UI', sans-serif;">Orther Product</h1>
     <div class="row mt-3">
         <div class="col-md-2">
-            <form class="mt-3" style="font-family: 'Lexend', sans-serif;">
-                @*  <div class="search text-center ">
-                <input class="search-product" placeholder="Search game">
-                <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                </div> *@
-                <div class="accordion" id="accordionExample" style="background-color: #E0F2F1; border:none;">
-                    <div class="accordion-item" style="background-color: #E0F2F1; border:none;">
-                        <h2 class="accordion-header" id="headingOne" style="background-color: #E0F2F1; border:none;">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne" style="background-color: #E0F2F1; border:none;">
-                                Genres
-                            </button>
-                        </h2>
-                        <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample" style="background-color: #E0F2F1; border:none;">
-                            <div class="accordion-body" style="background-color: #E0F2F1; border:none;">
-                                <span class="navelement">Action</span>
-                                <span class="navelement">Another Action</span>
-                                <span class="navelement">Something else here</span>
-                            </div>
-                        </div>
+            <div class="m-3">
+                <h4 class="mt-3">Filters</h4>
+                <hr>
+                <!-- -------------------------------------------------------------------------------------------------------------------------------------------------- -->
+                <!-- Price Filter -->
+                <div class="mb-4">
+                    <h5>Price</h5>
+                    <input type="range" class="form-range" min="0" max="500" id="priceRange">
+                    <p>Price: <span id="priceValue">$0 - $500</span></p>
+                </div>
+
+                <!-- Category Filter -->
+                <div class="mb-4">
+                    <h5>Category</h5>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="Action" id="actionCheck">
+                        <label class="form-check-label" for="actionCheck">Action</label>
                     </div>
-                    <div class="accordion-item" style="background-color: #E0F2F1; border:none;">
-                        <h2 class="accordion-header" id="headingTwo" style="background-color: #E0F2F1; border:none;">
-                            <button class="accordion-button collapsed" style="background-color: #E0F2F1; border:none;" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                Categories
-                            </button>
-                        </h2>
-                        <div id="collapseTwo" style="background-color: #E0F2F1; border:none;" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
-                            <div class="accordion-body">
-                                <span class="navelement">Action</span>
-                                <span class="navelement">Another Action</span>
-                                <span class="navelement">Something else here</span>
-                            </div>
-                        </div>
-                    </div><div class="accordion-item" style="background-color: #E0F2F1; border:none;">
-                        <h2 class="accordion-header" id="headingThree" style="background-color: #E0F2F1; border:none;">
-                            <button class="accordion-button collapsed" style="background-color: #E0F2F1; border:none;" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                                Price Range
-                            </button>
-                        </h2>
-                        <div id="collapseThree" class="accordion-collapse collapse" style="background-color: #E0F2F1; border:none;" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
-                            <div class="accordion-body">
-                                <span class="navelement">Action</span>
-                                <span class="navelement">Another Action</span>
-                                <span class="navelement">Something else here</span>
-                            </div>
-                        </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="Adventure" id="adventureCheck">
+                        <label class="form-check-label" for="adventureCheck">Adventure</label>
                     </div>
-                    <div class="accordion-item" style="background-color: #E0F2F1; border:none;">
-                        <h2 class="accordion-header" id="headingFour" style="background-color: #E0F2F1; border:none;">
-                            <button class="accordion-button collapsed" style="background-color: #E0F2F1; border:none;" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
-                                Platform
-                            </button>
-                        </h2>
-                        <div id="collapseFour" class="accordion-collapse collapse" style="background-color: #E0F2F1; border:none;" aria-labelledby="headingFour" data-bs-parent="#accordionExample">
-                            <div class="accordion-body">
-                                <span class="navelement">Action</span>
-                                <span class="navelement">Another Action</span>
-                                <span class="navelement">Something else here</span>
-                            </div>
-                        </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="RPG" id="rpgCheck">
+                        <label class="form-check-label" for="rpgCheck">RPG</label>
                     </div>
-                    <div class="accordion-item" style="background-color: #E0F2F1; border:none;">
-                        <h2 class="accordion-header" id="headingFive" style="background-color: #E0F2F1; border:none;">
-                            <button class="accordion-button collapsed" style="background-color: #E0F2F1; border:none;" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
-                                Release Date
-                            </button>
-                        </h2>
-                        <div id="collapseFive" class="accordion-collapse collapse" style="background-color: #E0F2F1; border:none;" aria-labelledby="headingFive" data-bs-parent="#accordionExample">
-                            <div class="accordion-body">
-                                <span class="navelement">Action</span>
-                                <span class="navelement">Another Action</span>
-                                <span class="navelement">Something else here</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="accordion-item" style="background-color: #E0F2F1; border:none;">
-                        <h2 class="accordion-header" id="headingSix" style="background-color: #E0F2F1; border:none;">
-                            <button class="accordion-button collapsed" style="background-color: #E0F2F1; border:none;" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSix" aria-expanded="false" aria-controls="collapseSix">
-                                Ratings
-                            </button>
-                        </h2>
-                        <div id="collapseSix" class="accordion-collapse collapse" style="background-color: #E0F2F1; border:none;" aria-labelledby="headingSix" data-bs-parent="#accordionExample">
-                            <div class="accordion-body">
-                                <span class="navelement">Action</span>
-                                <span class="navelement">Another Action</span>
-                                <span class="navelement">Something else here</span>
-                            </div>
-                        </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="Simulation" id="simulationCheck">
+                        <label class="form-check-label" for="simulationCheck">Simulation</label>
                     </div>
                 </div>
 
+                <!-- Platform Filter -->
+                <div class="mb-4">
+                    <h5>Platform</h5>
+                    <select class="form-select">
+                        <option value="">Select Platform</option>
+                        <option value="PC">PC</option>
+                        <option value="PlayStation">PlayStation</option>
+                        <option value="Xbox">Xbox</option>
+                        <option value="Nintendo">Nintendo</option>
+                    </select>
+                </div>
 
-            </form>
+                <!-- Release Date Filter -->
+                <div class="mb-4">
+                    <h5>Release Date</h5>
+                    <input type="date" class="form-control">
+                </div>
+
+                <!-- Status Filter -->
+                <div class="mb-4">
+                    <h5>Status</h5>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="status" id="statusReleased" value="Released">
+                        <label class="form-check-label" for="statusReleased">Released</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="status" id="statusUpcoming" value="Upcoming">
+                        <label class="form-check-label" for="statusUpcoming">Upcoming</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="status" id="statusInDevelopment" value="In Development">
+                        <label class="form-check-label" for="statusInDevelopment">In Development</label>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary w-100">Apply Filters</button>
+            </div>
         </div>
         <div class="col-md-10">
-            <div class="ortherproduct">
+            @* <div class="ortherproduct">
                 <div class="radio-inputs">
                     <label class="radio">
                         <input type="radio" name="radio" checked="" />
@@ -122,70 +98,68 @@
                         <span class="name" style="font-family: 'Roboto', 'Segoe UI', sans-serif;">More</span>
                     </label>
                 </div>
-            </div>
+            </div> *@
 
 
-            <div class="gamemonth mt-2 me-1">
-                <div class="d-flex justify-content-center flex-wrap mt-3">
-                    <div class=" card cardgamemonth m-2" style="width: 13rem; height:230px;">
+            <div class="mt-2 me-1">
+                <div class="d-flex flex-wrap mt-3">
+                    <div class="card cardgamemonth m-1" style="width: 12rem; height:230px;">
                         <img src="~/image/game.jpg" class="card-img-top" alt="..." />
                         <div class="card-body">
                             <h5 style="font-size:15px;">Trick Tactics - Card Adventure Game</h5>
                             <p class="text-end">109.000 <sup>đ</sup></p>
                         </div>
                     </div>
-                    <div class=" card cardgamemonth m-2" style="width: 13rem; height:230px;">
+                    <div class=" card cardgamemonth m-1" style="width: 12rem; height:230px;">
                         <img src="~/image/game.jpg" class="card-img-top" alt="..." />
                         <div class="card-body">
                             <h5 style="font-size:15px;">Trick Tactics - Card Adventure Game</h5>
                             <p class="text-end">109.000 <sup>đ</sup></p>
                         </div>
                     </div>
-                    <div class=" card cardgamemonth m-2" style="width: 13rem; height:230px;">
+                    <div class=" card cardgamemonth m-1" style="width: 12rem; height:230px;">
                         <img src="~/image/game.jpg" class="card-img-top" alt="..." />
                         <div class="card-body">
                             <h5 style="font-size:15px;">Trick Tactics - Card Adventure Game</h5>
                             <p class="text-end">109.000 <sup>đ</sup></p>
                         </div>
                     </div>
-                    <div class=" card cardgamemonth m-2" style="width: 13rem; height:230px;">
+                    <div class=" card cardgamemonth m-1" style="width: 12rem; height:230px;">
                         <img src="~/image/game.jpg" class="card-img-top" alt="..." />
                         <div class="card-body">
                             <h5 style="font-size:15px;">Trick Tactics - Card Adventure Game</h5>
                             <p class="text-end">109.000 <sup>đ</sup></p>
                         </div>
                     </div>
-                    <div class=" card cardgamemonth m-2" style="width: 13rem; height:230px;">
+                    <div class=" card cardgamemonth m-1" style="width: 12rem; height:230px;">
                         <img src="~/image/game.jpg" class="card-img-top" alt="..." />
                         <div class="card-body">
                             <h5 style="font-size:15px;">Trick Tactics - Card Adventure Game</h5>
                             <p class="text-end">109.000 <sup>đ</sup></p>
                         </div>
                     </div>
-                    <div class=" card cardgamemonth m-2" style="width: 13rem; height:230px;">
+                    <div class=" card cardgamemonth m-1" style="width: 12rem; height:230px;">
                         <img src="~/image/game.jpg" class="card-img-top" alt="..." />
                         <div class="card-body">
                             <h5 style="font-size:15px;">Trick Tactics - Card Adventure Game</h5>
                             <p class="text-end">109.000 <sup>đ</sup></p>
                         </div>
                     </div>
-                    <div class=" card cardgamemonth m-2" style="width: 13rem; height:230px;">
+                    <div class=" card cardgamemonth m-1" style="width: 12rem; height:230px;">
                         <img src="~/image/game.jpg" class="card-img-top" alt="..." />
                         <div class="card-body">
                             <h5 style="font-size:15px;">Trick Tactics - Card Adventure Game</h5>
                             <p class="text-end">109.000 <sup>đ</sup></p>
                         </div>
                     </div>
-                    <div class=" card cardgamemonth m-2" style="width: 13rem; height:230px;">
+                    <div class=" card cardgamemonth m-1" style="width: 12rem; height:230px;">
                         <img src="~/image/game.jpg" class="card-img-top" alt="..." />
                         <div class="card-body">
                             <h5 style="font-size:15px;">Trick Tactics - Card Adventure Game</h5>
                             <p class="text-end">109.000 <sup>đ</sup></p>
                         </div>
                     </div>
-
                 </div>
-
             </div>
         </div>
     </div>

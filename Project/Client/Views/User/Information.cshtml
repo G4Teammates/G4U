@@ -1,13 +1,13 @@
-﻿@model Client.Models.UserDTO.UpdateUser
+﻿@* @model Client.Models.UserDTO.UpdateUser *@
 
 <div class="main">
     <div class="row justify-content-center">
         <div class="col-md-3 p-3">
             <div class="d-flex align-items-center mb-3 p-2 rounded border border-1">
-                <img src="@Model.Avatar" class="rounded me-3" alt="Avatar" style="width:80px; height:80px;" />
+                <img src="" class="rounded me-3" alt="Avatar" style="width:80px; height:80px;" />
                 <div>
-                    <h5 class="mb-0">@Model.DisplayName</h5>
-                    <p class="mb-0 text-muted">@Model.Email<br>@Model.PhoneNumber</p>
+                    <h5 class="mb-0"></h5>
+                    <p class="mb-0 text-muted"><br></p>
                 </div>
             </div>
 
@@ -58,7 +58,7 @@
                     <div class="col-md-8">
                         <!-- Bắt đầu form -->
                         <form asp-action="Information" method="post">
-                            <input type="hidden" name="Id" value="@Model.Id" />
+                            <input type="hidden" name="Id" value="" />
                             <div class="row mb-3 px-3">
                                 <div class="col-md-3 align-content-center">
                                     <div class="text-center fw-bold">
@@ -66,7 +66,7 @@
                                     </div>
                                 </div>
                                 <div class="col-md-9">
-                                    <input type="text" class="form-control" id="displayName" name="DisplayName" value="@Model.DisplayName">
+                                    <input type="text" class="form-control" id="displayName" name="DisplayName" value="">
                                 </div>
                             </div>
                             <div class="row mb-3 px-3">
@@ -76,7 +76,7 @@
                                     </div>
                                 </div>
                                 <div class="col-md-9">
-                                    <input type="email" class="form-control" id="email" name="Email" value="@Model.Email">
+                                    <input type="email" class="form-control" id="email" name="Email" value="">
                                 </div>
                             </div>
                             <div class="row mb-3 px-3">
@@ -86,18 +86,18 @@
                                     </div>
                                 </div>
                                 <div class="col-md-9">
-                                    <input type="text" class="form-control" id="phoneNumber" name="PhoneNumber" value="@Model.PhoneNumber">
+                                    <input type="text" class="form-control" id="phoneNumber" name="PhoneNumber" value="">
                                 </div>
                             </div>
                             <div class="row mb-3 px-3">
                                 <div class="col-md-3 align-content-center">
                                     <div class="text-center fw-bold">
-                                        <label asp-for="@Model.Role" class="font-weight-bold">Role</label>
+                                        <label  class="font-weight-bold">Role</label>
                                     </div>
                                 </div>
                                 <div class="col-md-9">
                                     
-                                    <select asp-for="@Model.Role" class="form-control form-control-sm">
+                                    <select  class="form-control form-control-sm">
                                         <option value="User">User</option>
                                         <option value="Admin">Admin</option>
                                     </select>
@@ -110,11 +110,14 @@
                                     </div>
                                 </div>
                                 <div class="col-md-9">
-                                    <input type="text" class="form-control" id="avatar" name="Avatar" value="@Model.Avatar">
+                                    <input type="text" class="form-control" id="avatar" name="Avatar" value="">
                                 </div>
                             </div>
                             <button type="submit" class="btn btn-success fw-bold">
                                 <i class="fas fa-save me-2"></i>Update
+                            </button>
+                            <button type="submit" class="btn btn-success fw-bold">
+                                <i class="fas fa-save me-2"></i>Edit
                             </button>
                         </form>
                         <!-- Kết thúc form -->
