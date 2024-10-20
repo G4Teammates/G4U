@@ -12,6 +12,10 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using UserMicroservice.Models;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Authentication;
 
 namespace UserMicroService.Configure
 {
@@ -31,14 +35,31 @@ namespace UserMicroService.Configure
         public static IServiceCollection AddStartupService(this IServiceCollection services, IConfiguration config)
         {
             #region Register Authentication
-            JwtOptions.Secret = config["9"]!;
-            JwtOptions.Issuer = config["10"]!;
-            JwtOptions.Audience = config["11"]!;
+            JwtOptionModel.Secret = config["9"]!;
+            JwtOptionModel.Issuer = config["10"]!;
+            JwtOptionModel.Audience = config["11"]!;
+
+            GoogleOptionModel.ClientId = config["12"]!;
+            GoogleOptionModel.ClientSecret = config["13"]!;
 
             services.AddAuthentication(options =>
             {
-                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+            })
+            .AddCookie("Cookies", options =>
+            {
+                options.LoginPath = "/User/Login"; // Đường dẫn tới trang đăng nhập
+            })
+            .AddGoogle(googleOptions =>
+            {
+                googleOptions.ClientId = GoogleOptionModel.ClientId;
+                googleOptions.ClientSecret = GoogleOptionModel.ClientSecret;
+                googleOptions.SaveTokens = true;
+                // Yêu cầu thêm các thông tin từ Google
+                //googleOptions.Scope.Add("profile");
+                googleOptions.ClaimActions.MapJsonKey("urn:google:picture", "picture");
+                googleOptions.ClaimActions.MapJsonKey("urn:google:email_verified", "email_verified");
             })
             .AddJwtBearer(options =>
             {
@@ -50,14 +71,13 @@ namespace UserMicroService.Configure
                     ValidateAudience = true,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
-                    ValidIssuer = JwtOptions.Issuer,
-                    ValidAudience = JwtOptions.Audience,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtOptions.Secret)),
+                    ValidIssuer = JwtOptionModel.Issuer,
+                    ValidAudience = JwtOptionModel.Audience,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtOptionModel.Secret)),
                     ClockSkew = TimeSpan.Zero,
                     RoleClaimType = ClaimTypes.Role
                 };
             });
-
 
             //services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(option => {
             //    option.TokenValidationParameters = new TokenValidationParameters

@@ -10,6 +10,7 @@ using System.Text;
 using UserMicroservice.DBContexts;
 using UserMicroservice.DBContexts.Entities;
 using UserMicroservice.Models;
+using UserMicroservice.Models.AuthModel;
 using UserMicroservice.Models.UserManagerModel;
 using UserMicroservice.Repositories.Interfaces;
 
@@ -21,19 +22,21 @@ namespace UserMicroservice.Repositories.Services
 
 		public string GenerateJwtAsync(UserModel user)
 		{
-			var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtOptions.Secret));
+			var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtOptionModel.Secret));
 			var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 			var claims = new[]
 			{
 				new Claim(ClaimTypes.NameIdentifier, user.Id),
 				new Claim(ClaimTypes.Name, user.Username),
+				new Claim(ClaimTypes.GivenName, user.DisplayName),
 				new Claim(ClaimTypes.Email, user.Email),
+				new Claim("Avatar", user.Avatar),
 				new Claim(ClaimTypes.Role, user.Role.ToString())
 			};
 
 			var token = new JwtSecurityToken(
-				issuer: JwtOptions.Issuer,
-				audience: JwtOptions.Audience,
+				issuer: JwtOptionModel.Issuer,
+				audience: JwtOptionModel.Audience,
 				claims,
 				expires: DateTime.Now.AddDays(1),
 				signingCredentials: credentials
@@ -82,7 +85,7 @@ namespace UserMicroservice.Repositories.Services
 			}
 			return response;
 		}
-
+		
 		public ResponseModel NomalizeQuery(string? query)
 		{
 			var response = new ResponseModel();
