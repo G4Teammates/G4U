@@ -254,9 +254,8 @@ namespace Client.Controllers
                 return StatusCode(500, $"An error occurred: {ex.Message}");
             }
         }
-
         [HttpPost]
-        public async Task<IActionResult> CreateProduct([FromForm] CreateProductModel model, [FromForm] List<IFormFile> imageFiles, [FromForm] IFormFile gameFile, string username)
+        public async Task<IActionResult> CreateProduct(CreateProductModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -267,8 +266,24 @@ namespace Client.Controllers
 
             try
             {
-                // Pass the image files and game file to the service along with the product model and username
-                var response = await _productService.CreateProductAsync(imageFiles, model, gameFile, User.Identity?.Name ?? "default_username");
+                // Tạo đối tượng ScanFileRequest
+                var request = new ScanFileRequest
+                {
+                    gameFile = model.gameFile
+                };
+
+                // Gọi API CreateProductAsync
+                var response = await _productService.CreateProductAsync(
+                    model.Name,
+                    model.Description,
+                    model.Price,
+                    model.Discount,
+                    model.Categories,
+                    model.Platform,
+                    model.Status,
+                    model.imageFiles,
+                    request,
+                    model.Username);
 
                 if (response != null && response.IsSuccess)
                 {
@@ -287,6 +302,7 @@ namespace Client.Controllers
                 return View(model);
             }
         }
+
 
 
 
