@@ -1,5 +1,6 @@
 ﻿using Client.Models.Enum.ProductEnum;
 using MongoDB.Bson;
+using ProductMicroservice.Models;
 using System.ComponentModel.DataAnnotations;
 
 namespace Client.Models.ProductDTO
