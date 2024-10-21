@@ -11,10 +11,11 @@ using System.Net.Http.Headers;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Client.Repositories.Interfaces;
+using IRepoProduct = Client.Repositories.Interfaces.Product.IRepoProduct;
 
 namespace Client.Repositories.Services.Product
 {
-    public class RepoProduct : Interfaces.Product.IRepoProduct // Chỉ định không gian tên đầy đủ
+    public class RepoProduct : IRepoProduct // Chỉ định không gian tên đầy đủ
     {
         public readonly IBaseService _baseService;
         private readonly HttpClient _httpClient;
@@ -25,55 +26,70 @@ namespace Client.Repositories.Services.Product
             _httpClient = httpClient;
         }
 
-        public async Task<ResponseModel> CreateProductAsync(List<IFormFile> imageFiles, CreateProductModel Product, IFormFile gameFiles, string username)
+        public async Task<ResponseModel> CreateProductAsync(
+            string name,
+            string description,
+            decimal price,
+            float discount,
+            List<string> categories,
+            int platform,
+            int status,
+            List<IFormFile> imageFiles,
+            ScanFileRequest request,
+            string username)
         {
             // Tạo MultipartFormDataContent để gửi dữ liệu
             var formData = new MultipartFormDataContent();
 
-            // Thêm các thông tin sản phẩm vào formData
-            formData.Add(new StringContent(Product.Name), "name");
-            formData.Add(new StringContent(Product.Description ?? string.Empty), "description");
-            formData.Add(new StringContent(Product.Price.ToString()), "price");
-            formData.Add(new StringContent(Product.Discount.ToString()), "discount");
-            formData.Add(new StringContent(((int)Product.Platform).ToString()), "platform");
-            formData.Add(new StringContent(((int)Product.Status).ToString()), "status");
+            formData.Add(new StringContent(name), "name");
+            formData.Add(new StringContent(description ?? string.Empty), "description");
+            formData.Add(new StringContent(price.ToString()), "price");
+            formData.Add(new StringContent(discount.ToString()), "discount");
+            formData.Add(new StringContent(platform.ToString()), "platform");
+            formData.Add(new StringContent(status.ToString()), "status");
             formData.Add(new StringContent(username), "username");
 
             // Thêm các danh mục vào formData
-            if (Product.Categories != null)
+            foreach (var category in categories)
             {
-                foreach (var category in Product.Categories)
-                {
-                    formData.Add(new StringContent(category.CategoryName.ToString()), "categories"); // Giả sử mỗi danh mục có thuộc tính Id
-                }
+                formData.Add(new StringContent(category), "categories");
             }
 
-            // Thêm tệp hình ảnh vào formData
+            // Thêm các tệp hình ảnh vào formData
             foreach (var file in imageFiles)
             {
                 var fileContent = new StreamContent(file.OpenReadStream());
-                fileContent.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
-                formData.Add(fileContent, "imageFiles", file.FileName);
+                fileContent.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data")
+                {
+                    Name = "imageFiles",
+                    FileName = file.FileName
+                };
+                formData.Add(fileContent);
             }
 
             // Thêm tệp game vào formData
-            if (gameFiles != null)
+            if (request?.gameFile != null)
             {
-                var gameFileContent = new StreamContent(gameFiles.OpenReadStream());
-                gameFileContent.Headers.ContentType = new MediaTypeHeaderValue(gameFiles.ContentType);
-                formData.Add(gameFileContent, "gameFiles", gameFiles.FileName);
+                var gameFileContent = new StreamContent(request.gameFile.OpenReadStream());
+                gameFileContent.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data")
+                {
+                    Name = "gameFile",
+                    FileName = request.gameFile.FileName
+                };
+                formData.Add(gameFileContent);
             }
 
             // Gửi yêu cầu POST thông qua base service
             var response = await _baseService.SendAsync(new RequestModel()
             {
                 ApiType = StaticTypeApi.ApiType.POST,
-                Url = StaticTypeApi.APIGateWay + "/Product",
-                Data = formData
+                Data = formData,
+                Url = StaticTypeApi.APIGateWay + "/Product"
             });
 
             return response;
         }
+
 
 
         //public async Task<ResponseModel> CreateProductAsync(

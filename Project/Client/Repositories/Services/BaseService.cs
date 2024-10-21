@@ -37,9 +37,16 @@ namespace Client.Repositories.Services
                 }
 
                 message.RequestUri = new Uri(requestDTO.Url!);
-                if (requestDTO.Data != null)
+
+                // Kiểm tra xem dữ liệu có phải là MultipartFormDataContent
+                if (requestDTO.Data is MultipartFormDataContent formData)
                 {
-                    message.Content = new StringContent(JsonConvert.SerializeObject(requestDTO.Data), Encoding.UTF8, "application/json");
+                    message.Content = formData; // Sử dụng MultipartFormDataContent trực tiếp
+                }
+                else if (requestDTO.Data != null)
+                {
+                    // Nếu không phải là multipart, có thể log hoặc xử lý một cách phù hợp
+                    return new ResponseModel() { IsSuccess = false, Message = "Dữ liệu không hợp lệ." };
                 }
 
                 // Xác định phương thức API
@@ -89,5 +96,6 @@ namespace Client.Repositories.Services
                 };
             }
         }
+
     }
 }

@@ -26,7 +26,16 @@ namespace Client.Repositories.Interfaces.Product
                                                ScanFileRequest request,
                                                string username);
 
-        Task<ResponseModel> CreateProductAsync(List<IFormFile> imageFiles, CreateProductModel Product, IFormFile gameFiles, string username);
+        Task<ResponseModel> CreateProductAsync(string name,
+            string description,
+            decimal price,
+            float discount,
+            List<string> categories,
+            int platform,
+            int status,
+            List<IFormFile> imageFiles,
+            ScanFileRequest request,
+            string username);
 
     }
 }
