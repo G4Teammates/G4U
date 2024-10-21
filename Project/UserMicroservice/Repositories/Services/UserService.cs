@@ -10,10 +10,9 @@ using MongoDB.EntityFrameworkCore.Storage.ValueConversion;
 using UserMicroservice.DBContexts;
 using UserMicroservice.DBContexts.Entities;
 using UserMicroservice.Models;
+using UserMicroservice.Models.UserManagerModel;
 using UserMicroservice.Repositories.Interfaces;
-using UserMicroservice.Repositories.IRepositories;
-using UserMicroService.DBContexts.Enum;
-using UserMicroService.Models;
+using UserMicroservice.DBContexts.Enum;
 using static Google.Apis.Requests.BatchRequest;
 
 namespace UserMicroservice.Repositories.Services

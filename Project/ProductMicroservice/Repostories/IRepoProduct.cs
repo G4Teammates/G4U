@@ -16,6 +16,6 @@ namespace ProductMicroservice.Repostories
 		IEnumerable<Products> Filter(decimal? minrange, decimal? maxrange, int? sold , bool? Discount, int? Platform, string Category);
 
 		Task<Products> Moderate(List<IFormFile> imageFiles, CreateProductModel Product, IFormFile gameFiles, string username);
-        Task<List<Products>> GetProductsByCategoryIdAsync(string categoryName);
+        Task<List<Products>> GetProductsByCategoryNameAsync(string categoryName);
     }
 }

@@ -1,16 +1,32 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+using UserMicroservice.DBContexts.Entities;
 using UserMicroservice.Models;
+using UserMicroservice.Models.AuthModel;
 using UserMicroservice.Repositories.Interfaces;
-
+using IAuthenticationService = UserMicroservice.Repositories.Interfaces.IAuthenticationService;
+using System.Net;
+using Google.Apis.Auth;
+using Google.Apis.Auth.OAuth2.Requests;
+using Google.Apis.Auth.OAuth2.Responses;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Text;
+using Newtonsoft.Json;
+using UserMicroservice.DBContexts.Enum;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.Identity.Client;
 namespace UserMicroservice.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class AuthController(IAuthenticationService authService) : ControllerBase
+    public class AuthController(IAuthenticationService authService, IHelperService helperService) : ControllerBase
     {
         private readonly IAuthenticationService _authService = authService;
-
+        private readonly IHelperService _helperService = helperService;
         [AllowAnonymous]
         [HttpPost("login")]
         public async Task<ActionResult> Login([FromBody] LoginRequestModel loginRequestModel)
@@ -46,5 +62,121 @@ namespace UserMicroservice.Controllers
                 return StatusCode(500, new { message = "An unexpected error occurred. Detail" + ex.Message });
             }
         }
+
+        [AllowAnonymous]
+        [HttpPost("login-google")]
+        public async Task<ActionResult> LoginGoogle([FromBody] LoginGoogleRequestModel loginGoogleRequestModel)
+        {
+            try
+            {
+                ResponseModel response = await _authService.LoginGoogleAsync(loginGoogleRequestModel);
+                if (response.IsSuccess)
+                    return Ok(response);
+                return BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                // Trả về lỗi 500 cho các lỗi chưa dự đoán
+                return StatusCode(500, new { message = "An unexpected error occurred. Detail" + ex.Message });
+            }
+        }
+
+
+        /// Bắt đầu quá trình đăng nhập bằng Google.
+        /// </summary>
+        /// <returns>Chuyển hướng đến trang đăng nhập của Google.</returns>
+        [HttpGet("signin-google")]
+        public IActionResult ExternalLoginGoogle()
+        {
+            var properties = new AuthenticationProperties { RedirectUri = Url.Action("ExternalLoginCallback") };
+            return Challenge(properties, GoogleDefaults.AuthenticationScheme);
+        }
+
+        /// <summary>
+        /// Xử lý callback sau khi đăng nhập bằng Google.
+        /// </summary>
+        /// <returns>Chuyển hướng về frontend với token JWT (nếu thành công đăng nhập thành công).</returns>
+        [HttpGet("external-login-callback")]
+        public async Task<IActionResult> ExternalLoginCallback()
+        {
+            ResponseModel response = new();
+            try
+            {
+
+                // Xác thực người dùng
+                var authenticateResult = await HttpContext.AuthenticateAsync(GoogleDefaults.AuthenticationScheme);
+                if (!authenticateResult.Succeeded)
+                {
+                    response.IsSuccess = false;
+                    response.Message = "Google authentication failed.";
+                    return BadRequest(response);
+                }
+                ResponseModel userInfo = _authService.GetUserInfoByClaim(authenticateResult.Principal.Claims);
+                if (!userInfo.IsSuccess)
+                {
+                    return BadRequest(response);
+                }
+                var user = await _authService.LoginGoogleAsync((LoginGoogleRequestModel)userInfo.Result);
+                if (!user.IsSuccess)
+                {
+                    return BadRequest(response);
+                }
+                response.Result = user;
+                response.Message = "Login successful";
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An unexpected error occurred. Detail" + ex.Message });
+            }
+            // Trả về thông tin người dùng
+            return Ok(response);
+        }
+
+
+
+
+
+        //[Route("google-response")]
+        //public async Task<ActionResult> GoogleResponse()
+        //{
+        //    var google_csrf_name = "g_csrf_token";
+        //    try
+        //    {
+
+        //        var cookie = Request.Cookies[google_csrf_name];
+
+        //        if (cookie == null)
+        //        {
+        //            return StatusCode((int)HttpStatusCode.BadRequest);
+        //        }
+        //        var requestbody = Request.Form[google_csrf_name];
+        //        if (requestbody != cookie)
+        //        {
+        //            return StatusCode((int)HttpStatusCode.BadRequest);
+        //        }
+        //        var idtoken = Request.Form["credential"];
+        //        GoogleJsonWebSignature.Payload payload = await GoogleJsonWebSignature.ValidateAsync(idtoken).ConfigureAwait(false);
+        //        LoginGoogleRequestModel loginGoogleRequestModel = new LoginGoogleRequestModel
+        //        {
+        //            Email = payload.Email,
+        //            Username = payload.Email,
+        //            DisplayName = payload.Name,
+        //            EmailConfirmation = (EmailStatus)(payload.EmailVerified ? 1 : 0),
+        //            Picture = payload.Picture
+        //        };
+        //        var response = await _authService.LoginGoogleAsync(loginGoogleRequestModel);
+        //        if (response.IsSuccess)
+        //        {
+        //            HttpContext.Response.Cookies.Append("Login", loginGoogleRequestModel.DisplayName);
+        //            return RedirectToAction("Index", "Home");
+        //        }
+        //        return response;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        TempData["Error"] = ex.Message;
+        //    }
+        //    return RedirectToAction("Index");
+        //}
     }
 }

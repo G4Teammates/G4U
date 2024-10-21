@@ -1,17 +1,10 @@
 ﻿using CategoryMicroservice.DBContexts.Enum;
-using MongoDB.Bson;
 using System.ComponentModel.DataAnnotations;
 
-namespace CategoryMicroservice.Models
+namespace CategoryMicroservice.Models.DTO
 {
-    public class CategoryModel
+    public class CreateCategoryModel
     {
-        /// <summary>
-        /// Unique identifier for the category.
-        /// <br/>
-        /// Định danh duy nhất cho danh mục.
-        /// </summary>
-        public string Id { get; set; } = ObjectId.GenerateNewId().ToString();
 
         /// <summary>
         /// The Name of the category.
@@ -45,5 +38,6 @@ namespace CategoryMicroservice.Models
         /// Trạng thái danh mục.
         /// </summary>
         public CategoryStatus Status { get; set; }
+
     }
 }

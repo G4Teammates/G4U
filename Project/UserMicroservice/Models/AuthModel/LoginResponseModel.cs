@@ -1,4 +1,6 @@
-﻿namespace Client.Models.AuthenModel
+﻿using UserMicroservice.DBContexts.Enum;
+
+namespace UserMicroservice.Models.AuthModel
 {
     public class LoginResponseModel
     {

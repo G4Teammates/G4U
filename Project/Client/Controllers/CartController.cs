@@ -9,7 +9,9 @@ namespace Client.Controllers
             return View();
         }
 
-        public IActionResult Cart()
+
+
+        public IActionResult PaymentFailure()
         {
             return View();
         }

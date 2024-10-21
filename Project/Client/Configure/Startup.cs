@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-
+using Client.Models;
 using System.Security.Claims;
 
 namespace Client.Configure
@@ -17,8 +17,13 @@ namespace Client.Configure
         /// <param name="services"></param>
         /// <param name="config"></param>
         /// <returns>service in IServiceCollection</returns>
-        public static IServiceCollection AddStartupService(this IServiceCollection services)
+        public static IServiceCollection AddStartupService(this IServiceCollection services, IConfiguration config)
         {
+            #region Initialize Cloudinary
+            ConfigKeyModel.CloudinaryKey = config["14"]!;
+            ConfigKeyModel.CloudinarySecret = config["15"]!;
+            #endregion
+
             #region Register Mapper
             IMapper mapper = Mapper.RegisterMaps().CreateMapper();
             services.AddSingleton(mapper);

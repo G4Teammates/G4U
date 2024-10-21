@@ -49,7 +49,13 @@ namespace ProductMicroservice.Repostories
                 {
                     var boby = eventArgs.Body.ToArray();
                     var message = Encoding.UTF8.GetString(boby);
-                    if (message != null)
+                    // Giải quyết vấn đề chuỗi bị "escape"
+                    if (message.StartsWith("\"") && message.EndsWith("\""))
+                    {
+                        // Nếu chuỗi bắt đầu và kết thúc bằng dấu ngoặc kép, hãy giải tuần tự hóa nó
+                        message = JsonSerializer.Deserialize<string>(message);
+                    }
+                    if (!string.IsNullOrEmpty(message))
                     {
                         Console.WriteLine("Product received message: " + message); // Log raw message
 
@@ -156,7 +162,7 @@ namespace ProductMicroservice.Repostories
         private async Task<bool> CanDeleteCategoryAsync(IRepoProduct repo, string categoryName)
         {
             // Use the GetProductsByCategoryIdAsync method to get products associated with the category
-            List<Products> products = await repo.GetProductsByCategoryIdAsync(categoryName);
+            List<Products> products = await repo.GetProductsByCategoryNameAsync(categoryName);
 
             // Return false if there are products associated with the category
             return !products.Any();

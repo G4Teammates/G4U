@@ -9,8 +9,17 @@ namespace Client.Controllers
             return View();
         }
 
-
         public IActionResult History()
+        {
+            return View();
+        }
+
+        public IActionResult Cart()
+        {
+            return View();
+        }
+
+        public IActionResult PaymentSuccess()
         {
             return View();
         }

@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using UserMicroService.DBContexts.Enum;
+using UserMicroservice.DBContexts.Enum;
 
-namespace UserMicroservice.Models
+namespace UserMicroservice.Models.UserManagerModel
 {
     public class UserUpdate
     {
@@ -30,7 +30,7 @@ namespace UserMicroservice.Models
         public string NormalizedUsername => Username.ToUpper();
 
 
-       
+
         [StringLength(15, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 7)]
         [Phone(ErrorMessage = "The {0} field is not a valid phone number.")]
         public string? PhoneNumber { get; set; }

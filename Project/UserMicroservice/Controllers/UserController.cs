@@ -6,12 +6,11 @@ using MongoDB.Driver;
 using UserMicroservice.DBContexts;
 using UserMicroservice.DBContexts.Entities;
 using UserMicroservice.Models;
-using UserMicroservice.Repositories.IRepositories;
-using UserMicroService.Models;
 using UserMicroservice.Repositories.Interfaces;
 using IAuthenService = UserMicroservice.Repositories.Interfaces.IAuthenticationService;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using UserMicroservice.Models.UserManagerModel;
 namespace UserMicroService.Controllers
 {
     [ApiController]
