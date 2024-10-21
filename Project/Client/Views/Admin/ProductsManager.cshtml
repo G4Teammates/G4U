@@ -1,10 +1,10 @@
-﻿
+﻿@using Client.Models.ProductDTO
 
 @{
     Layout = "_LayoutAdmin";
 }
-@using Client.Models.ProductDTO
-@* @model ProductModel *@
+
+@model ProductViewModel
 
 
 
@@ -259,7 +259,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var product in Model) // Giả sử 'Products' là danh sách các sản phẩm
+            @foreach (var product in Model.Product) // Giả sử 'Products' là danh sách các sản phẩm
             {
                 <tr>
                     <td><input type="checkbox" class="product-checkbox"></td>
@@ -309,7 +309,7 @@
                    
 
                     <td>
-                        <a asp-action="UpdateProduct" asp-route-id="@product.Id" class="text-danger mx-2">
+                        <a asp-action="ProductUpdate" asp-route-id="@product.Id" class="text-danger mx-2">
                             <i class="fa-regular fa-pen-to-square"></i>
                         </a>
                     </td>
@@ -370,15 +370,16 @@
 
 
 
-@* <div class="modal fade" id="modalProduct" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="modalProduct" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="container-fluid p-5">
-                @await Html.PartialAsync("ProductCreate", Model.CreateProductModel)
+                @await Html.PartialAsync("CreateProduct", Model.CreateProductModel)
             </div>
         </div>
     </div>
-</div> *@
+</div>
+
 
 
 

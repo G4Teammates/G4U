@@ -1,4 +1,5 @@
-﻿using Client.Configure;
+﻿using Azure.Identity;
+using Client.Configure;
 using Client.Repositories.Interfaces;
 
 using Client.Repositories.Interfaces.Product;
@@ -10,12 +11,15 @@ using Client.Utility;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Configuration.AddAzureKeyVault(new Uri("https://duantotnghiep.vault.azure.net/"),
+    new DefaultAzureCredential());
 
-builder.Services.AddStartupService();
+builder.Services.AddStartupService(builder.Configuration);
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorComponents();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddHttpClient();
+builder.Services.AddHttpClient<IRepoProduct, RepoProduct>();
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(30); // Set the session timeout as needed

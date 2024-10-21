@@ -3,125 +3,8 @@
 }
 @using Client.Models.AuthenModel
 @model LoginRequestModel
-@* <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-<style>
-    body, html {
-        height: 100%;
-        font-family: 'Poppins', sans-serif;
-        margin: 0;
-        padding: 0;
-    }
 
-    .login-container {
-        height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        position: relative;
-        overflow: hidden;
-        background-image: url('/image/bg01.jpg');
-        background-size: cover;
-        background-position: center;
-    }
 
-        .login-container::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(255, 255, 255, 0.5);
-            z-index: 0;
-        }
-
-    .login-box {
-        position: relative;
-        background-color: rgba(255, 255, 255, 0.82);
-        padding: 40px;
-        border-radius: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        width: 100%;
-        max-width: 400px;
-        color: white;
-        z-index: 2;
-    }
-
-    .login-logo {
-        text-align: center;
-        margin-bottom: 20px;
-    }
-
-        .login-logo img {
-            max-width: 150px; /* Thay đổi kích thước logo ở đây */
-        }
-
-    .login-title {
-        text-align: center;
-        font-size: 24px;
-        font-weight: bold;
-        color: grey;
-        margin-bottom: 30px;
-    }
-
-    .login-input {
-        margin-bottom: 20px;
-        position: relative;
-    }
-
-        .login-input input {
-            height: 45px;
-            background-color: #f3f3f3;
-            border: none;
-        }
-
-            .login-input input::placeholder {
-                color: #666;
-            }
-
-    .input-group-text {
-        background-color: #f3f3f3;
-        border: none;
-        color: #666;
-    }
-
-    .login-btn {
-        background-color: #00d55e;
-        border: none;
-        width: 100%;
-        padding: 10px;
-        color: whitesmoke;
-        font-size: 18px;
-        border-radius: 5px;
-    }
-
-        .login-btn:hover {
-            background-color: forestgreen;
-        }
-
-    .text-center a {
-        color: grey;
-        text-decoration: none;
-    }
-
-        .text-center a:hover {
-            color: #00d55e;
-        }
-
-    .form-check-label {
-        color: #f3f3f3;
-    }
-
-    .login-divider {
-        margin-top: 20px;
-    }
-
-    .white-background {
-        padding-bottom: 10px;
-    }
-</style> *@
 <div class="login-container">
     <div class="login-box">
         <div class="login-logo">
@@ -164,11 +47,10 @@
                     @*    <i class="fab fa-google me-2"></i> google *@
                     <div id="g_id_onload"
                          data-client_id="931532368031-fve5bfiu4t6uvu5laj3gq9fbj7okl43e.apps.googleusercontent.com"
-                         data-context="signin"
-                         data-ux_mode="popup"
                          data-login_uri="/google-response"
                          data-auto_prompt="false">
                     </div>
+
 
                     <div class="g_id_signin"
                          data-type="standard"
@@ -180,8 +62,6 @@
                     </div>
                 </button>
 
-
-
             </div>
         </div>
         <div class="text-center mt-4">
@@ -189,3 +69,25 @@
         </div>
     </div>
 </div>
+
+@{
+    string isLoginSuccess = "false";
+    if (ViewData["IsLogin"] != null)
+    {
+        isLoginSuccess = ViewData["IsLogin"].ToString();
+    }
+}
+<script>
+    // Cấu hình Google One Tap
+    window.onload = function () {
+        // Kiểm tra trạng thái đăng nhập từ biến Razor
+        var isLoginSuccess = @Html.Raw(isLoginSuccess.ToString().ToLower());
+
+        // Nếu trạng thái chưa đăng nhập thành công, hiển thị Google One Tap
+        if (isLoginSuccess === false) { // Sử dụng so sánh === để so sánh giá trị
+            google.accounts.id.prompt();  // Hiển thị Google One Tap nếu người dùng chưa đăng nhập
+        } else {
+            google.accounts.id.cancel();  // Tắt Google One Tap nếu đã đăng nhập
+        }
+    };
+</script>

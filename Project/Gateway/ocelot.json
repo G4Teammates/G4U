@@ -90,6 +90,7 @@
       "UpstreamPathTemplate": "/Product/sort={sort}",
       "UpstreamHttpMethod": [ "Get" ]
     },
+   
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -172,7 +173,7 @@
       "UpstreamHttpMethod": [ "Post" ]
     },
 
-    //login google
+    //signin-google
     {
       "DownstreamPathTemplate": "/api/Auth/login-google",
       "DownstreamScheme": "https",
@@ -184,6 +185,33 @@
       ],
       "UpstreamPathTemplate": "/Auth/login-google",
       "UpstreamHttpMethod": [ "Post" ]
+    },
+     //signin-google
+    {
+      "DownstreamPathTemplate": "/api/Auth/signin-google",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7107
+        }
+      ],
+      "UpstreamPathTemplate": "/Auth/signin-google",
+      "UpstreamHttpMethod": [ "Get" ]
+    },
+
+    //external-login-callback
+    {
+      "DownstreamPathTemplate": "/api/Auth/external-login-callback",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7107
+        }
+      ],
+      "UpstreamPathTemplate": "/Auth/external-login-callback",
+      "UpstreamHttpMethod": [ "Get" ]
     },
 
     //GetAll

@@ -12,7 +12,7 @@ using UserMicroservice.DBContexts.Entities;
 using UserMicroservice.Models;
 using UserMicroservice.Models.UserManagerModel;
 using UserMicroservice.Repositories.Interfaces;
-using UserMicroService.DBContexts.Enum;
+using UserMicroservice.DBContexts.Enum;
 using static Google.Apis.Requests.BatchRequest;
 
 namespace UserMicroservice.Repositories.Services

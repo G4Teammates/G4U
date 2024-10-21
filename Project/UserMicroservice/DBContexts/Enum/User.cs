@@ -1,4 +1,4 @@
-﻿namespace UserMicroService.DBContexts.Enum
+﻿namespace UserMicroservice.DBContexts.Enum
 {
     public enum UserStatus
     {

@@ -1,6 +1,6 @@
 ﻿using MongoDB.Bson;
 using System.ComponentModel.DataAnnotations;
-using UserMicroService.DBContexts.Enum;
+using UserMicroservice.DBContexts.Enum;
 
 namespace UserMicroservice.Models.UserManagerModel
 {

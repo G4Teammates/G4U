@@ -38,6 +38,7 @@ namespace ProductMicroservice.DBContexts.Entities
     /// </summary>
     public class Products
     {
+        public string? ErrorMessage { get; set; } // Thuộc tính để chứa thông báo lỗi
         /// <summary>
         /// Unique identifier for the product.
         /// <br/>
