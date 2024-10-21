@@ -1,5 +1,6 @@
 ﻿using Client.Models;
 using Client.Models.ProductDTO;
+using Client.Models.ProductDTO;
 using Client.Models.UserDTO;
 using Client.Repositories.Interfaces;
 using Client.Repositories.Interfaces.Product;
@@ -163,103 +164,36 @@ namespace Client.Controllers
 
         }
 
-        /////////////////////////////////////////////////////
-        //                                                 //
-        //                     PRODUCT                     //
-        //                                                 //
-        /////////////////////////////////////////////////////
 
 
-        // GetAll Product
         public async Task<IActionResult> ProductsManager()
 
         {
-            List<ProductModel?> list = new();
-            ResponseModel? response = await _productService.GetAllProductAsync();
-
-            if (response != null && response.IsSuccess)
+            ProductViewModel product = new();
+            try
             {
-
-                list = JsonConvert.DeserializeObject<List<ProductModel>>(Convert.ToString(response.Result));
-
-            }
-            else
-            {
-                TempData["error"] = response?.Message;
-            }
-            return View(list);
-        }
-
-        // UpdateProduct
-        public async Task<IActionResult> UpdateProduct(string id)
-        {
-            ResponseModel? response = await _productService.GetProductByIdAsync(id);
-
-            if (response != null && response.IsSuccess)
-            {
-                // Deserialize vào lớp trung gian với kiểu ProductModel
-                ResponseResultModel<UpdateProductModel>? data =
-                    JsonConvert.DeserializeObject<ResponseResultModel<UpdateProductModel>>(Convert.ToString(response.Result));
-
-                // Lấy dữ liệu từ trường "result" và gán vào model
-                UpdateProductModel? model = data?.result;
-
-                return View(model);
-            }
-            else
-            {
-                TempData["error"] = response?.Message;
-            }
-            return NotFound();
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> UpdateProduct(List<IFormFile> imageFiles, UpdateProductModel product, ScanFileRequest request)
-        {
-            // Chuyển đổi danh sách các danh mục từ product.Categories thành List<CategoryModel>
-            var categories = product.Categories?.Select(c => new CategoryModel { CategoryName = c.CategoryName }).ToList();
-
-            if (ModelState.IsValid)
-            {
-                // Cập nhật mô hình UpdateProductModel với các giá trị từ product
-                var updateProduct = new UpdateProductModel
-                {
-                    Id = product.Id,
-                    Name = product.Name,
-                    Description = product.Description,
-                    Price = product.Price,
-                    Sold = product.Sold,
-                    Discount = product.Discount,
-                    Categories = categories,
-                    Platform = product.Platform, // Giá trị enum PlatformType
-                    Status = product.Status, // Giá trị enum ProductStatus
-                    CreatedAt = product.CreatedAt,
-                    UpdatedAt = DateTime.UtcNow,
-                    UserName = product.UserName
-                };
-
-                // Gửi yêu cầu cập nhật sản phẩm thông qua service
-                var response = await _productService.UpdateProductAsync(imageFiles, updateProduct, request);
+                ResponseModel? response = await _productService.GetAllProductAsync();
 
                 if (response != null && response.IsSuccess)
                 {
-                    TempData["success"] = "Product updated successfully";
-                    return RedirectToAction(nameof(ProductsManager));
+
+                    product.Product = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response.Result.ToString()!));
+
                 }
                 else
                 {
                     TempData["error"] = response?.Message;
                 }
+
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = ex.Message;
             }
 
-            // Nếu ModelState không hợp lệ, trả về lại model để hiển thị lỗi
             return View(product);
         }
-
-
-
-        // DeleteProduct
-        public async Task<IActionResult> DeleteProduct(string id)
+        public async Task<IActionResult> UpdateProduct(string id)
         {
             ResponseModel? response = await _productService.GetProductByIdAsync(id);
 
@@ -280,76 +214,61 @@ namespace Client.Controllers
             }
             return NotFound();
         }
-        [HttpPost]
-        public async Task<IActionResult> DeleteProduct(ProductModel product)
-        {
-            // Thực hiện xóa sản phẩm
-            ResponseModel? response = await _productService.DeleteProductAsysnc(product.Id);
 
-            if (response != null && response.IsSuccess)
+        [HttpPut]
+        [Route("UpdateProduct")]
+        public async Task<IActionResult> UpdateProduct([FromForm] string id,
+                                                   [FromForm] string name,
+                                                   [FromForm] string description,
+                                                   [FromForm] decimal price,
+                                                   [FromForm] int sold,
+                                                   [FromForm] int numOfView,
+                                                   [FromForm] int numOfLike,
+                                                   [FromForm] float discount,
+                                                   [FromForm] List<string> categories,
+                                                   [FromForm] int platform,
+                                                   [FromForm] int status,
+                                                   [FromForm] DateTime createAt,
+                                                   [FromForm] List<IFormFile> imageFiles,
+                                                   [FromForm] ScanFileRequest request,
+                                                   [FromForm] string username)
+        {
+            try
             {
-                TempData["success"] = "Product deleted successfully.";
-                return RedirectToAction(nameof(ProductsManager));
+                // Gọi service UpdateProduct từ phía Client
+                var response = await _productService.UpdateProductAsync(
+                    id, name, description, price, sold, numOfView, numOfLike, discount,
+                    categories, platform, status, createAt, imageFiles, request, username);
+
+                if (response.IsSuccess)
+                {
+                    return Ok(response); // Trả về kết quả thành công
+                }
+                else
+                {
+                    return BadRequest(response.Message); // Trả về lỗi từ service
+                }
             }
-            else
+            catch (Exception ex)
             {
-                TempData["error"] = response?.Message;
+                return StatusCode(500, $"An error occurred: {ex.Message}");
             }
-            return View(product);
         }
 
-        /*public async Task<IActionResult> Sort(string sort)
+        [HttpPost]
+        public async Task<IActionResult> CreateProduct([FromForm] CreateProductModel model, [FromForm] List<IFormFile> imageFiles, [FromForm] IFormFile gameFile, string username)
         {
-            var response = await _productService.SortAsync(sort);
-            if (response.IsSuccess)
+            if (!ModelState.IsValid)
             {
-                return View("ProductList", response.Result);
+                var errors = ModelState.Values.SelectMany(v => v.Errors)
+                                              .Select(e => e.ErrorMessage);
+                return BadRequest(new { Errors = errors });
             }
-            ViewBag.ErrorMessage = response.Message;
-            return View("Error");
-        }*/
 
-       /* public async Task<IActionResult> Filter(decimal? minrange, decimal? maxrange, int? sold, bool? discount, int? platform, string? category)
-        {
-            var response = await _productService.FilterAsync(minrange, maxrange, sold, discount, platform, category);
-            if (response.IsSuccess)
+            try
             {
-                return View("ProductList", response.Result);
-            }
-            ViewBag.ErrorMessage = response.Message;
-            return View("Error");
-        }  */ 
-        // SearchProduct
-        /*public async Task<IActionResult> Search(string keyword)
-		{
-			var products = await _productService.SearchProductAsync(keyword);
-			return View("ProductsManager", products); // Hiển thị sản phẩm tìm được trong view ProductsManager
-		}*/
-        /*[HttpGet("SearchProducts")]
-		public async Task<IActionResult> SearchProducts(string searchString)
-		{
-			if (string.IsNullOrWhiteSpace(searchString))
-			{
-				return View(new List<ProductModel>()); // Trả về view với danh sách rỗng nếu không có từ khóa tìm kiếm
-			}
-
-			var response = await _productService.SearchProductAsync(searchString);
-
-			if (response.IsSuccess && response.Result is List<ProductModel> productList)
-			{
-				return View(productList); // Trả về view với kết quả tìm kiếm
-			}
-
-			TempData["ErrorMessage"] = response.Message; // Hiển thị thông báo lỗi
-			return View(new List<ProductModel>());
-		}*/
-
-        /*[HttpPost]
-        public async Task<IActionResult> ProductCreate(CreateProductModel createProduct)
-        {
-            if (ModelState.IsValid)
-            {
-                ResponseModel? response = await _productService.Crea(createProduct);
+                // Pass the image files and game file to the service along with the product model and username
+                var response = await _productService.CreateProductAsync(imageFiles, model, gameFile, User.Identity?.Name ?? "default_username");
 
                 if (response != null && response.IsSuccess)
                 {
@@ -358,56 +277,59 @@ namespace Client.Controllers
                 }
                 else
                 {
-                    TempData["error"] = response?.Message;
-                } 
-
+                    TempData["error"] = response?.Message ?? "An unknown error occurred.";
+                    return View(model);
+                }
             }
-            return View(createProduct);
+            catch (Exception ex)
+            {
+                TempData["error"] = $"An error occurred: {ex.Message}";
+                return View(model);
+            }
         }
 
-        // Update Product ProductUpdate
 
-       
 
-        
+
+
 
 
         //Delete Product
         public async Task<IActionResult> ProductDelete(string id)
-        {
-            ResponseModel? response = await _productService.GetProductByIdAsync(id);
+    {
+        ResponseModel? response = await _productService.GetProductByIdAsync(id);
 
-            if (response != null && response.IsSuccess)
-            {
-                ProductModel? model = JsonConvert.DeserializeObject<ProductModel>(Convert.ToString(response.Result));
-                return View(model);
-            }
-            else
-            {
-                TempData["error"] = response?.Message;
-            }
-            return NotFound();
+        if (response != null && response.IsSuccess)
+        {
+            ProductModel? model = JsonConvert.DeserializeObject<ProductModel>(Convert.ToString(response.Result));
+            return View(model);
         }
-
-        [HttpPost]
-        public async Task<IActionResult> ProductDelete(ProductModel product)
+        else
         {
-            ResponseModel? response = await _productService.DeleteProductAsync(product.Id);
+            TempData["error"] = response?.Message;
+        }
+        return NotFound();
+    }
 
-            if (response != null && response.IsSuccess)
-            {
-                TempData["success"] = "Coupon deleted successfully";
-                return RedirectToAction(nameof(ProductsManager));
-            }
-            else
-            {
-                TempData["error"] = response?.Message;
-            }
-            return View(product);
-        }*/
+    //[HttpPost]
+    //public async Task<IActionResult> ProductDelete(ProductModel product)
+    //{
+    //    ResponseModel? response = await _productService.DeleteProductAsync(product.Id);
+
+    //    if (response != null && response.IsSuccess)
+    //    {
+    //        TempData["success"] = "Coupon deleted successfully";
+    //        return RedirectToAction(nameof(ProductsManager));
+    //    }
+    //    else
+    //    {
+    //        TempData["error"] = response?.Message;
+    //    }
+    //    return View(product);
+    //}
 
 
-        public IActionResult OrdersManager()
+    public IActionResult OrdersManager()
         {
             return View();
         }
