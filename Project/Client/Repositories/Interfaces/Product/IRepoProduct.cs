@@ -9,7 +9,6 @@ namespace Client.Repositories.Interfaces.Product
         Task<ResponseModel?> GetAllProductAsync();
         Task<ResponseModel> UpdateProductAsync(List<IFormFile> imageFiles,UpdateProductModel product,ScanFileRequest request);
         Task<ResponseModel> DeleteProductAsysnc(string Id);
-        
     }
 }
 
