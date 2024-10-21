@@ -169,20 +169,29 @@ namespace Client.Controllers
         public async Task<IActionResult> ProductsManager()
 
         {
-            List<ProductModel?> list = new();
-            ResponseModel? response = await _productService.GetAllProductAsync();
-
-            if (response != null && response.IsSuccess)
+            ProductViewModel product = new();
+            try
             {
+                ResponseModel? response = await _productService.GetAllProductAsync();
 
-                list = JsonConvert.DeserializeObject<List<ProductModel>>(Convert.ToString(response.Result));
+                if (response != null && response.IsSuccess)
+                {
+
+                    product.Product = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response.Result.ToString()!));
+
+                }
+                else
+                {
+                    TempData["error"] = response?.Message;
+                }
 
             }
-            else
+            catch (Exception ex)
             {
-                TempData["error"] = response?.Message;
+                TempData["error"] = ex.Message;
             }
-            return View(list);
+
+            return View(product);
         }
         public async Task<IActionResult> UpdateProduct(string id)
         {
@@ -246,12 +255,20 @@ namespace Client.Controllers
             }
         }
 
-        /*[HttpPost]
-        public async Task<IActionResult> ProductCreate(CreateProductModel createProduct)
+        [HttpPost]
+        public async Task<IActionResult> CreateProduct([FromForm] CreateProductModel model, [FromForm] List<IFormFile> imageFiles, [FromForm] IFormFile gameFile, string username)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                ResponseModel? response = await _productService.Crea(createProduct);
+                var errors = ModelState.Values.SelectMany(v => v.Errors)
+                                              .Select(e => e.ErrorMessage);
+                return BadRequest(new { Errors = errors });
+            }
+
+            try
+            {
+                // Pass the image files and game file to the service along with the product model and username
+                var response = await _productService.CreateProductAsync(imageFiles, model, gameFile, User.Identity?.Name ?? "default_username");
 
                 if (response != null && response.IsSuccess)
                 {
@@ -260,56 +277,59 @@ namespace Client.Controllers
                 }
                 else
                 {
-                    TempData["error"] = response?.Message;
-                } 
-
+                    TempData["error"] = response?.Message ?? "An unknown error occurred.";
+                    return View(model);
+                }
             }
-            return View(createProduct);
+            catch (Exception ex)
+            {
+                TempData["error"] = $"An error occurred: {ex.Message}";
+                return View(model);
+            }
         }
 
-        // Update Product ProductUpdate
 
-       
 
-        
+
+
 
 
         //Delete Product
         public async Task<IActionResult> ProductDelete(string id)
-        {
-            ResponseModel? response = await _productService.GetProductByIdAsync(id);
+    {
+        ResponseModel? response = await _productService.GetProductByIdAsync(id);
 
-            if (response != null && response.IsSuccess)
-            {
-                ProductModel? model = JsonConvert.DeserializeObject<ProductModel>(Convert.ToString(response.Result));
-                return View(model);
-            }
-            else
-            {
-                TempData["error"] = response?.Message;
-            }
-            return NotFound();
+        if (response != null && response.IsSuccess)
+        {
+            ProductModel? model = JsonConvert.DeserializeObject<ProductModel>(Convert.ToString(response.Result));
+            return View(model);
         }
-
-        [HttpPost]
-        public async Task<IActionResult> ProductDelete(ProductModel product)
+        else
         {
-            ResponseModel? response = await _productService.DeleteProductAsync(product.Id);
+            TempData["error"] = response?.Message;
+        }
+        return NotFound();
+    }
 
-            if (response != null && response.IsSuccess)
-            {
-                TempData["success"] = "Coupon deleted successfully";
-                return RedirectToAction(nameof(ProductsManager));
-            }
-            else
-            {
-                TempData["error"] = response?.Message;
-            }
-            return View(product);
-        }*/
+    //[HttpPost]
+    //public async Task<IActionResult> ProductDelete(ProductModel product)
+    //{
+    //    ResponseModel? response = await _productService.DeleteProductAsync(product.Id);
+
+    //    if (response != null && response.IsSuccess)
+    //    {
+    //        TempData["success"] = "Coupon deleted successfully";
+    //        return RedirectToAction(nameof(ProductsManager));
+    //    }
+    //    else
+    //    {
+    //        TempData["error"] = response?.Message;
+    //    }
+    //    return View(product);
+    //}
 
 
-        public IActionResult OrdersManager()
+    public IActionResult OrdersManager()
         {
             return View();
         }

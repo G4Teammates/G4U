@@ -2,6 +2,7 @@
 using System.Net.Http.Headers;
 using System.Text;
 using Client.Models;
+using Client.Models.ProductDTO;
 using Client.Repositories.Interfaces;
 using Client.Repositories.Interfaces.Authentication;
 using Newtonsoft.Json;
@@ -9,11 +10,16 @@ using static Client.Utility.StaticTypeApi;
 
 namespace Client.Repositories.Services
 {
-    public class BaseService(IHttpClientFactory httpClientFactory, ITokenProvider tokenProvider) : IBaseService
+    public class BaseService : IBaseService
     {
-        private readonly IHttpClientFactory _httpClientFactory = httpClientFactory;
-        private readonly ITokenProvider _tokenProvider = tokenProvider;
+        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly ITokenProvider _tokenProvider;
 
+        public BaseService(IHttpClientFactory httpClientFactory, ITokenProvider tokenProvider)
+        {
+            _httpClientFactory = httpClientFactory;
+            _tokenProvider = tokenProvider;
+        }
 
         public async Task<ResponseModel> SendAsync(RequestModel requestDTO, bool withBearer = true)
         {
@@ -22,13 +28,12 @@ namespace Client.Repositories.Services
                 HttpClient client = _httpClientFactory.CreateClient("G4TAPI");
                 HttpRequestMessage message = new();
                 message.Headers.Add("Accept", "application/json");
-                //Token
+
+                // Thêm Token nếu cần
                 if (withBearer)
                 {
-
                     var token = _tokenProvider.GetToken();
                     message.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                    //message.Headers.Add("Authorization", $"Bearer {token}");
                 }
 
                 message.RequestUri = new Uri(requestDTO.Url!);
@@ -37,8 +42,7 @@ namespace Client.Repositories.Services
                     message.Content = new StringContent(JsonConvert.SerializeObject(requestDTO.Data), Encoding.UTF8, "application/json");
                 }
 
-                HttpResponseMessage? apiResponse = null;
-
+                // Xác định phương thức API
                 switch (requestDTO.ApiType)
                 {
                     case ApiType.POST:
@@ -55,18 +59,20 @@ namespace Client.Repositories.Services
                         break;
                 }
 
-                apiResponse = await client.SendAsync(message);
+                // Gửi yêu cầu đến API
+                HttpResponseMessage? apiResponse = await client.SendAsync(message);
 
+                // Xử lý phản hồi từ API
                 switch (apiResponse.StatusCode)
                 {
                     case HttpStatusCode.NotFound:
-                        return new() { IsSuccess = false, Message = "Not Found" };
+                        return new() { IsSuccess = false, Message = "Không tìm thấy" };
                     case HttpStatusCode.Forbidden:
-                        return new() { IsSuccess = false, Message = "Access Denied" };
+                        return new() { IsSuccess = false, Message = "Truy cập bị từ chối" };
                     case HttpStatusCode.Unauthorized:
-                        return new() { IsSuccess = false, Message = "Unauthorized" };
+                        return new() { IsSuccess = false, Message = "Không có quyền truy cập" };
                     case HttpStatusCode.InternalServerError:
-                        return new() { IsSuccess = false, Message = "Internal Sever Error" };
+                        return new() { IsSuccess = false, Message = "Lỗi máy chủ nội bộ" };
 
                     default:
                         var apiContent = await apiResponse.Content.ReadAsStringAsync();
@@ -76,13 +82,12 @@ namespace Client.Repositories.Services
             }
             catch (Exception ex)
             {
-                var dto = new ResponseModel()
+                return new ResponseModel()
                 {
                     Message = ex.Message,
                     IsSuccess = false,
                 };
-                return dto;
             }
-         }
+        }
     }
 }
