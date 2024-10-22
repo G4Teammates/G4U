@@ -53,7 +53,12 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-
+builder.Services.AddLogging(loggingBuilder =>
+{
+    loggingBuilder.AddConsole();
+    loggingBuilder.AddDebug();
+    loggingBuilder.AddFile("Logs/ocelotlog.txt"); // Nếu bạn đang sử dụng logging file
+});
 
 
 // Thêm Ocelot

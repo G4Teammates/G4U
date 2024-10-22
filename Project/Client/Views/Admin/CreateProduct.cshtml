@@ -78,21 +78,23 @@
 
     <!-- ImageFiles (Upload multiple images) -->
     <div class="form-group">
-        <label class="control-label">Upload Images</label>
-        <input type="file" name="imageFiles" multiple class="form-control" />
+        <label class="control-label" asp-for="@Model.imageFiles" >Upload Images</label>
+        <input type="file" name="imageFiles" multiple class="form-control" asp-for="@Model.imageFiles" />
+        <span asp-validation-for="@Model.imageFiles" class="text-danger"></span>
     </div>
 
     <!-- Username -->
     <div class="form-group">
-        <label class="control-label">Username</label>
-        <input type="text" name="username" class="form-control" />
-        <span class="text-danger"></span> <!-- Không cần validation cho trường này -->
+        <label class="control-label" asp-for="@Model.Username">Username</label>
+        <input type="text" name="username" class="form-control" asp-for="@Model.Username" />
+        <span asp-validation-for="@Model.Username" class="text-danger"></span> <!-- Không cần validation cho trường này -->
     </div>
 
     <!-- Game File (Upload game file) -->
     <div class="form-group">
-        <label class="control-label">Upload Game File</label>
-        <input type="file" name="gameFile" class="form-control" />
+        <label class="control-label" asp-for="@Model.gameFile">Upload Game File</label>
+        <input type="file" name="gameFile" multiple class="form-control" asp-for="@Model.gameFile" />
+        <span asp-validation-for="@Model.gameFile" class="text-danger"></span>
     </div>
 
     <!-- Submit Button -->

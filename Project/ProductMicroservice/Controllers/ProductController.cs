@@ -38,7 +38,13 @@
                                 [FromForm] string username
                                 )
             {
-                try
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors)
+                                              .Select(e => e.ErrorMessage);
+                return BadRequest(new { Errors = errors });
+            }
+            try
                 {
                     // Kiểm tra tệp hình ảnh
                     if (imageFiles == null || !imageFiles.Any())
@@ -81,8 +87,10 @@
 
                     var newProduct = await _repoProduct.Moderate(imageFiles, product, gameFile, username);
                     _responseDTO.Result = newProduct;
+                    string mess = "success" + newProduct;
+                Console.WriteLine(mess);
 
-                    if (newProduct == null)
+                if (newProduct == null)
                     {
                         _responseDTO.Message = "There are some files that do not match";
                     }

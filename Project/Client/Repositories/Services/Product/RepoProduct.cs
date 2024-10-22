@@ -75,60 +75,22 @@ namespace Client.Repositories.Services.Product
             return response;
         }
 
+        public Task<ResponseModel> DeleteProductAsync(string Id)
+        {
+            throw new NotImplementedException();
+        }
 
-        //public async Task<ResponseModel> CreateProductAsync(
-        //    string name,
-        //    string description,
-        //    decimal price,
-        //    float discount,
-        //    ICollection<CategoryModel> categories,
-        //    int platform,
-        //    int status,
-        //    List<IFormFile> imageFiles,
-        //    ScanFileRequest request,
-        //    string username)
-        //{
-        //    // Tạo MultipartFormDataContent để gửi yêu cầu
-        //    var formData = new MultipartFormDataContent();
-        //    formData.Add(new StringContent(name), "name");
-        //    formData.Add(new StringContent(description ?? string.Empty), "description");
-        //    formData.Add(new StringContent(price.ToString()), "price");
-        //    formData.Add(new StringContent(discount.ToString()), "discount");
-        //    formData.Add(new StringContent(platform.ToString()), "platform");
-        //    formData.Add(new StringContent(status.ToString()), "status");
-        //    formData.Add(new StringContent(username), "username");
-        //    formData.Add(new StringContent(categories.ToString()), "categories");
+        public async Task<ResponseModel> DeleteProductAsysnc(string Id)
+        {
+            return await _baseService.SendAsync(new RequestModel()
+            {
+                ApiType = StaticTypeApi.ApiType.DELETE,
+                Url = StaticTypeApi.APIGateWay + "/Product/" + Id
+            });
+        }
 
-        //    // Gửi tệp hình ảnh
-        //    foreach (var file in imageFiles)
-        //    {
-        //        var fileContent = new StreamContent(file.OpenReadStream())
-        //        {
-        //            Headers = { ContentType = new MediaTypeHeaderValue(file.ContentType) }
-        //        };
-        //        formData.Add(fileContent, "imageFiles", file.FileName);
-        //    }
 
-        //    // Gửi tệp game từ ScanFileRequest
-        //    if (request?.gameFile != null)
-        //    {
-        //        var gameFileContent = new StreamContent(request.gameFile.OpenReadStream())
-        //        {
-        //            Headers = { ContentType = new MediaTypeHeaderValue(request.gameFile.ContentType) }
-        //        };
-        //        formData.Add(gameFileContent, "gameFile", request.gameFile.FileName);
-        //    }
-
-        //    // Gửi yêu cầu POST thông qua base service
-        //    var response = await _baseService.SendAsync(new RequestModel()
-        //    {
-        //        ApiType = StaticTypeApi.ApiType.POST,
-        //        Url = StaticTypeApi.APIGateWay + "/Product",
-        //        Data = formData
-        //    });
-
-        //    return response;
-        //}
+       
 
         public async Task<ResponseModel?> GetAllProductAsync()
         {
@@ -148,69 +110,19 @@ namespace Client.Repositories.Services.Product
             });
         }
 
-        public async Task<ResponseModel> UpdateProductAsync(string id,
-                                                            string name,
-                                                            string description,
-                                                            decimal price,
-                                                            int sold,
-                                                            int numOfView,
-                                                            int numOfLike,
-                                                            float discount,
-                                                            List<string> categories,
-                                                            int platform,
-                                                            int status,
-                                                            DateTime createAt,
-                                                            List<IFormFile> imageFiles,
-                                                            ScanFileRequest request,
-                                                            string username)
+            public async Task<ResponseModel?> SearchProductAsync(string? query) // Sửa tên phương thức
+            {
+            // Thực hiện gửi yêu cầu tìm kiếm qua API Gateway
+                return await _baseService.SendAsync(new RequestModel
+                {
+                    ApiType = StaticTypeApi.ApiType.GET,
+                    Url = StaticTypeApi.APIGateWay + $"/Product/search" // Encode URL để tránh lỗi
+                });
+            }
+
+        public Task<ResponseModel> UpdateProductAsync(List<IFormFile> imageFiles, UpdateProductModel product, ScanFileRequest request)
         {
-            var formData = new MultipartFormDataContent();
-
-            // Thêm các tham số vào formData
-            formData.Add(new StringContent(id), "id");
-            formData.Add(new StringContent(name), "name");
-            formData.Add(new StringContent(description), "description");
-            formData.Add(new StringContent(price.ToString()), "price");
-            formData.Add(new StringContent(sold.ToString()), "sold");
-            formData.Add(new StringContent(numOfView.ToString()), "numOfView");
-            formData.Add(new StringContent(numOfLike.ToString()), "numOfLike");
-            formData.Add(new StringContent(discount.ToString()), "discount");
-            formData.Add(new StringContent(platform.ToString()), "platform");
-            formData.Add(new StringContent(status.ToString()), "status");
-            formData.Add(new StringContent(createAt.ToString("o")), "createAt");
-            formData.Add(new StringContent(username), "username");
-
-            // Thêm các danh mục vào formData
-            foreach (var category in categories)
-            {
-                formData.Add(new StringContent(category), "categories");
-            }
-
-            // Thêm tệp hình ảnh vào formData
-            foreach (var file in imageFiles)
-            {
-                var fileContent = new StreamContent(file.OpenReadStream());
-                fileContent.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
-                formData.Add(fileContent, "imageFiles", file.FileName);
-            }
-
-            // Thêm tệp trò chơi từ ScanFileRequest
-            if (request != null && request.gameFile != null)
-            {
-                var gameFileContent = new StreamContent(request.gameFile.OpenReadStream());
-                gameFileContent.Headers.ContentType = new MediaTypeHeaderValue(request.gameFile.ContentType);
-                formData.Add(gameFileContent, "request.gameFile", request.gameFile.FileName);
-            }
-
-            // Gửi yêu cầu PUT thông qua base service
-            var response = await _baseService.SendAsync(new RequestModel()
-            {
-                ApiType = StaticTypeApi.ApiType.PUT,
-                Url = StaticTypeApi.APIGateWay + "/Product",
-                Data = formData
-            });
-
-            return response;
+            throw new NotImplementedException();
         }
     }
 }
