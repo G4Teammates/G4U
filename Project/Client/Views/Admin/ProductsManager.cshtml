@@ -213,88 +213,62 @@
     </div>
 </div>
 
-<div class="container mt-4">
+<<div class="container mt-4">
     <!-- Thanh tìm kiếm và nút Thêm -->
     <div class="d-flex justify-content-between mb-3">
-        <div class="col-md-4">
-            <input class="form-control" type="text" placeholder="Search by..." />
-        </div>
+        <form id="searchForm" method="get" onsubmit="return submitSearchForm();" asp-action="SearchProduct">
+            <input type="text" id="searchInput" name="query" placeholder="Search products..." class="form-control" onkeydown="if(event.key === 'Enter') submitSearchForm();" />
+        </form>
         <div>
             <button class="btn btn-success" data-toggle="modal" data-target="#modalProduct">+ Add</button>
         </div>
     </div>
 
-    <!-- Bảng thông tin -->
-    <div id="checkBoxBar" style="display:none">
-        <div class="text-end m-2">
-            @* <button class="btn btn-success mx-2 w-100">Public All</button> *@
-            <a class="text-danger mx-2" href="" data-toggle="modal" data-target="#deleteProductModal">
-                <i class="fas fa-trash"></i>
-            </a>
-        </div>
-    </div>
-    <table class="table table-bordered table-hover align-middle">
-        <thead class="table-light">
-            <tr>
-                <th scope="col"><input type="checkbox" id="selectAll"></th>
-                <th scope="col">Id</th>
-
-                <th scope="col">Name</th>
-                <th scope="col">Description</th>
-
-                <th scope="col">Price</th>
-                <th scope="col">Sold</th>
-                <th scope="col">Interactions</th>
-                <th scope="col">Discount</th>
-                <th scope="col">Platform</th>
-                <th scope="col">Links</th>
-                <th scope="col">Categories</th>
-                <th scope="col">Status</th>
-
-                <th scope="col">CreatedAt</th>
-                <th scope="col">UpdatedAt</th>
-                <th scope="col">UserName</th>
-
-                <th scope="col"></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var product in Model.Product) // Giả sử 'Products' là danh sách các sản phẩm
-            {
-                <tr>
-                    <td><input type="checkbox" class="product-checkbox"></td>
-                    <td>@product.Id</td>
-                    <td>@product.Name</td>
-                    <td>@product.Description</td>
-                    <td>@product.Price.ToString("C")</td>
-                    <td>@product.Sold</td>
-                    <td>
-                        <div>Likes: @product.Interactions?.NumberOfLikes ?? 0</div>
-                        <div>Views: @product.Interactions?.NumberOfViews ?? 0</div>
-                    </td>
-                    <td>@product.Discount %</td>
-                    <td>@product.Platform</td>
-                    <td>
-                        @if (product.Links != null)
-
-                        {
-                            <ul>
-                                @foreach (var link in product.Links)
+    <div id="productList">
+        @if (Model.Product != null && Model.Product.Any())
+        {
+            <table class="table table-bordered table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Price</th>
+                        <th>Sold</th>
+                        <th>Interactions</th>
+                        <th>Discount</th>
+                        <th>Platform</th>
+                        <th>Links</th>
+                        <th>Categories</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var product in Model.Product)
+                    {
+                        <tr>
+                            <td>@product.Id</td>
+                            <td>@product.Name</td>
+                            <td>@product.Description</td>
+                            <td>@product.Price</td>
+                            <td>@product.Sold</td>
+                            <td>@product.Interactions.NumberOfLikes / @product.Interactions.NumberOfViews</td>
+                            <td>@product.Discount</td>
+                            <td>@product.Platform.ToString()</td>
+                            <td>
+                                @if (product.Links != null && product.Links.Any())
                                 {
-                                    <li>@link.Url</li>
+                                    <ul>
+                                        @foreach (var link in product.Links)
+                                        {
+                                            <li><a href="@link.Url" target="_blank">@link.Url</a></li>
+                                        }
+                                    </ul>
                                 }
-                            </ul>
-                        }
-
-                    </td>
-                    <td>
-                        @if (product.Categories != null)
-
-                        {
-                            <ul>
-                                @foreach (var category in product.Categories)
+                                else
                                 {
-                                    <li>@category.CategoryName</li>
+                                    <span>None</span>
                                 }
                             </ul>
                         }
@@ -468,4 +442,24 @@
         element: document.getElementById("descriptionEditor"),
         toolbar: ["bold", "italic", "heading", "|", "quote", "unordered-list", "ordered-list", "|", "link", "image", "|", "preview", "side-by-side", "fullscreen", "guide"]
     });
+
+
+    function submitSearchForm() {
+        const query = document.getElementById("searchInput").value;
+        if (query) {
+            $.ajax({
+                url: '@Url.Action("SearchProduct")',
+                type: 'GET',
+                data: { query: query },
+                success: function (data) {
+                    $('#productList').html(data); // Cập nhật nội dung sản phẩm
+                },
+                error: function (xhr, status, error) {
+                    alert('Error occurred: ' + error);
+                }
+            });
+        }
+        return false; // Ngăn chặn form từ việc gửi thông qua phương thức mặc định
+    }
 </script>
+
