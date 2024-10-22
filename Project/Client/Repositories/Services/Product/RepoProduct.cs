@@ -75,7 +75,6 @@ namespace Client.Repositories.Services.Product
             return response;
         }
 
-
         public Task<ResponseModel> DeleteProductAsync(string Id)
         {
             throw new NotImplementedException();
@@ -92,6 +91,7 @@ namespace Client.Repositories.Services.Product
 
 
        
+
         public async Task<ResponseModel?> GetAllProductAsync()
         {
             return await _baseService.SendAsync(new RequestModel()

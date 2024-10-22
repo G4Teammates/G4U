@@ -215,7 +215,8 @@ namespace Client.Controllers
             return NotFound();
         }
 
-        [HttpPost]
+        [HttpPut]
+        [Route("UpdateProduct")]
         public async Task<IActionResult> UpdateProduct([FromForm] string id,
                                                    [FromForm] string name,
                                                    [FromForm] string description,

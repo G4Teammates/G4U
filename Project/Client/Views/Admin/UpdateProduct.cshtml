@@ -1,4 +1,4 @@
-﻿@model Client.Models.ProductDTO.ProductModel
+﻿@model Client.Models.ProductDTO.UpdateProductModel
 @{
     ViewData["Title"] = "Update Product";
 }
@@ -49,28 +49,19 @@
         <label for="discount">Discount (%)</label>
         <input type="number" class="form-control" asp-for="Discount" step="0.01" required />
     </div>
+
     <div class="form-group">
-        <label>Categories</label>
+
+        <label for="categories">Categories</label>
         @if (Model.Categories != null && Model.Categories.Any())
         {
-            int i = 0;
-            @foreach (var category in Model.Categories)
-            {
-                <div>
-                    <input type="text" name="Categories[@i].CategoryName" value="@category.CategoryName" class="form-control" />
-                </div>
-                i++;
-            }
-
+            <select asp-for="Categories" asp-items="new SelectList(Model.Categories)"></select>
         }
         else
         {
             <p>No categories available</p>
         }
     </div>
-
-
-
 
     <div class="form-group">
         <label for="platform">Platform</label>
@@ -97,42 +88,6 @@
     <div class="form-group">
         <label for="createAt">Created At</label>
         <input type="datetime-local" class="form-control" asp-for="CreatedAt" required />
-    </div>
-    <div class="form-group">
-        <label>Images and Game</label>
-        @if (Model.Links != null)
-        {
-            int i = 0;
-            <ul>
-                @foreach (var link in Model.Links)
-                {
-                    <li>
-                        @if (link.Url.Contains("cloudinary"))
-                        {
-                            <label>Images</label>
-                            <!-- Hiển thị hình ảnh từ Cloudinary -->
-                            <img src="@link.Url" alt="Cloudinary Image" style="max-width: 150px; height: auto;" />
-                        }
-                        else if (link.Url.Contains("drive.google.com"))
-                        {
-                            <label>Game</label>
-                            <!-- Hiển thị đường link Google Drive -->
-                            <a href="@link.Url" target="_blank">View on Google Drive</a>
-                        }
-                        else
-                        {
-                            <!-- Hiển thị link khác -->
-                            <a href="@link.Url" target="_blank">@link.Url</a>
-                        }
-                    </li>
-
-                    <div>
-                        <input type="text" name="Links[@i].Url" value="@link.Url" class="form-control mt-2" />
-                    </div>
-                    i++;
-                }
-            </ul>
-        }
     </div>
 
     <div class="form-group">
