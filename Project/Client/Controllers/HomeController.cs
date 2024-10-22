@@ -46,11 +46,9 @@ namespace Client.Controllers
                     return View();
                 }
                 LoginResponseModel user = _helperService.GetUserFromJwtToken((JwtSecurityToken)response.Result);
-                UserProductViewModel userProduct = new UserProductViewModel
-                {
-                    User = user
-                };
-                return View(userProduct);
+
+                ViewBag.User = user;
+                return View();
             }
             catch (Exception ex)
             {

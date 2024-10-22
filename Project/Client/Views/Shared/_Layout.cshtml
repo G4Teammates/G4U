@@ -1,7 +1,4 @@
-﻿@using Client.Models.UserProductDTO
-@model UserProductViewModel
-
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -102,13 +99,12 @@
                                 <a class="nav-link" href="#"><i class="fa-solid fa-bell"></i></a>
                             </li>
                             <li class="nav-item">
-                                @if (Model != null)
+                                @if (ViewBag.User != null)
                                 {
                                     <a class="nav-link d-flex" asp-controller="User" asp-action="Information">
-                                        <img id="avatar" src="@Model.User.Avatar" alt="Profile" class="rounded-circle" width="30" height="30">
-                                        <span class="align-content-center px-1">@Model.User.Username</span>
+                                        <img id="avatar" src="@ViewBag.User.Avatar" alt="Profile" class="rounded-circle" width="30" height="30">
+                                        <span class="align-content-center px-1">@ViewBag.User.DisplayName</span>
                                     </a>
-
                                 }
                                 else
                                 {
