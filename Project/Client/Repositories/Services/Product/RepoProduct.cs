@@ -44,7 +44,7 @@ namespace Client.Repositories.Services.Product
             {
                 foreach (var category in Product.Categories)
                 {
-                    formData.Add(new StringContent(category.CategoryName.ToString()), "categories"); // Giả sử mỗi danh mục có thuộc tính Id
+                    formData.Add(new StringContent(category.ToString()), "categories"); // Giả sử mỗi danh mục có thuộc tính Id
                 }
             }
 
@@ -75,6 +75,10 @@ namespace Client.Repositories.Services.Product
             return response;
         }
 
+        public Task<ResponseModel> CreateProductAsync(string name, string description, decimal price, float discount, List<string> categories, int platform, int status, List<IFormFile> imageFiles, ScanFileRequest request, string username)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<ResponseModel> DeleteProductAsync(string Id)
         {
@@ -121,6 +125,11 @@ namespace Client.Repositories.Services.Product
             }
 
         public Task<ResponseModel> UpdateProductAsync(List<IFormFile> imageFiles, UpdateProductModel product, ScanFileRequest request)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<ResponseModel> UpdateProductAsync(string id, string name, string description, decimal price, int sold, int numOfView, int numOfLike, float discount, List<string> categories, int platform, int status, DateTime createAt, List<IFormFile> imageFiles, ScanFileRequest request, string username)
         {
             throw new NotImplementedException();
         }
