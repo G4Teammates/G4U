@@ -749,11 +749,6 @@ namespace ProductMicroservice.Repostories
             await _db.SaveChangesAsync();
             return productEntity;
         }
-
-        public Task<List<Products>> GetProductsByCategoryNameAsync(string categoryName)
-        {
-            throw new NotImplementedException();
-        }
         #endregion
 
     }

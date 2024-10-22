@@ -90,19 +90,7 @@
       "UpstreamPathTemplate": "/Product/sort={sort}",
       "UpstreamHttpMethod": [ "Get" ]
     },
-    //Search
-    {
-      "DownstreamPathTemplate": "/api/Product/search",
-      "DownstreamScheme": "https",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 7159
-        }
-      ],
-      "UpstreamPathTemplate": "/Product/search",
-      "UpstreamHttpMethod": [ "Get" ]
-    },
+   
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -198,7 +186,7 @@
       "UpstreamPathTemplate": "/Auth/login-google",
       "UpstreamHttpMethod": [ "Post" ]
     },
-    //signin-google
+     //signin-google
     {
       "DownstreamPathTemplate": "/api/Auth/signin-google",
       "DownstreamScheme": "https",
