@@ -7,8 +7,9 @@ namespace Client.Repositories.Interfaces.Product
     {
         Task<ResponseModel?> GetProductByIdAsync(string Id);
         Task<ResponseModel?> GetAllProductAsync();
-        Task<ResponseModel> UpdateProductAsync(List<IFormFile> imageFiles,UpdateProductModel product,ScanFileRequest request);
-        Task<ResponseModel> DeleteProductAsysnc(string Id);
+        Task<ResponseModel> UpdateProductAsync(List<IFormFile> imageFiles, UpdateProductModel product, ScanFileRequest request);
+        Task<ResponseModel> DeleteProductAsync(string Id); // Sửa chính tả
+        Task<ResponseModel?> SearchProductAsync(string? query); // Sửa tên phương thức
     }
 }
 
