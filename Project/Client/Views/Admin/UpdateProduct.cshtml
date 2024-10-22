@@ -55,7 +55,7 @@
         <label for="categories">Categories</label>
         @if (Model.Categories != null && Model.Categories.Any())
         {
-                    <select asp-for="Categories" asp-items="new SelectList(Model.Categories)"></select>
+            <select asp-for="Categories" asp-items="new SelectList(Model.Categories)"></select>
         }
         else
         {
