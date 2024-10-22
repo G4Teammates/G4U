@@ -1,6 +1,5 @@
 ﻿using Client.Models;
 using Client.Models.ProductDTO;
-using Client.Models.ProductDTO;
 using Client.Models.UserDTO;
 using Client.Repositories.Interfaces;
 using Client.Repositories.Interfaces.Product;
@@ -68,33 +67,45 @@ namespace Client.Controllers
         {
             if (ModelState.IsValid)
             {
+                // Kiểm tra xem có avatar không
                 if (user.AvatarFile != null && user.AvatarFile.Length > 0)
                 {
-                    using (var stream = user.AvatarFile.OpenReadStream())
+                    await using (var stream = user.AvatarFile.OpenReadStream())
                     {
-                        // Gọi phương thức upload lên Cloudinary
-                        string imageUrl = await _helperService.UploadImageAsync(stream, user.AvatarFile.FileName);
+                        // Gọi phương thức kiểm duyệt từ _helperService
+                        var resultModerate = await _helperService.Moderate(stream);
+                        if (!resultModerate.IsSuccess)
+                        {
+                            TempData["error"] = "Avatar is not safe";
+                            return RedirectToAction(nameof(UsersManager));
+                        }
+
+                        // Đặt vị trí stream về đầu và upload lên Cloudinary
+                        stream.Position = 0;
+                        var imageUrl = await _helperService.UploadImageAsync(stream, user.AvatarFile.FileName);
 
                         // Lưu URL của avatar vào model
                         user.Avatar = imageUrl;
                     }
                 }
 
-                ResponseModel? response = await _userService.CreateUserAsync(user);
+                // Gọi phương thức tạo user từ _userService
+                var response = await _userService.CreateUserAsync(user);
 
-                if (response != null && response.IsSuccess)
+                if (response?.IsSuccess == true)
                 {
                     TempData["success"] = "User created successfully";
                     return RedirectToAction(nameof(UsersManager));
                 }
                 else
                 {
-                    TempData["error"] = response?.Message;
+                    TempData["error"] = response?.Message ?? "Failed to create user";
                 }
-
             }
+
             return RedirectToAction(nameof(UsersManager));
         }
+
 
 
         public async Task<IActionResult> UserDelete(string id)
@@ -105,6 +116,22 @@ namespace Client.Controllers
             {
                 UsersDTO? model = JsonConvert.DeserializeObject<UsersDTO>(Convert.ToString(response.Result));
                 return View(model);
+            }
+            else
+            {
+                TempData["error"] = response?.Message;
+            }
+            return NotFound();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UserDelete(UsersDTO user)
+        {
+            ResponseModel? response = await _userService.DeleteUser(user.Id);
+
+            if (response != null && response.IsSuccess)
+            {
+                return RedirectToAction(nameof(UsersManager));
             }
             else
             {
@@ -311,40 +338,40 @@ namespace Client.Controllers
 
         //Delete Product
         public async Task<IActionResult> ProductDelete(string id)
-    {
-        ResponseModel? response = await _productService.GetProductByIdAsync(id);
-
-        if (response != null && response.IsSuccess)
         {
-            ProductModel? model = JsonConvert.DeserializeObject<ProductModel>(Convert.ToString(response.Result));
-            return View(model);
+            ResponseModel? response = await _productService.GetProductByIdAsync(id);
+
+            if (response != null && response.IsSuccess)
+            {
+                ProductModel? model = JsonConvert.DeserializeObject<ProductModel>(Convert.ToString(response.Result));
+                return View(model);
+            }
+            else
+            {
+                TempData["error"] = response?.Message;
+            }
+            return NotFound();
         }
-        else
-        {
-            TempData["error"] = response?.Message;
-        }
-        return NotFound();
-    }
 
-    //[HttpPost]
-    //public async Task<IActionResult> ProductDelete(ProductModel product)
-    //{
-    //    ResponseModel? response = await _productService.DeleteProductAsync(product.Id);
+        //[HttpPost]
+        //public async Task<IActionResult> ProductDelete(ProductModel product)
+        //{
+        //    ResponseModel? response = await _productService.DeleteProductAsync(product.Id);
 
-    //    if (response != null && response.IsSuccess)
-    //    {
-    //        TempData["success"] = "Coupon deleted successfully";
-    //        return RedirectToAction(nameof(ProductsManager));
-    //    }
-    //    else
-    //    {
-    //        TempData["error"] = response?.Message;
-    //    }
-    //    return View(product);
-    //}
+        //    if (response != null && response.IsSuccess)
+        //    {
+        //        TempData["success"] = "Coupon deleted successfully";
+        //        return RedirectToAction(nameof(ProductsManager));
+        //    }
+        //    else
+        //    {
+        //        TempData["error"] = response?.Message;
+        //    }
+        //    return View(product);
+        //}
 
 
-    public IActionResult OrdersManager()
+        public IActionResult OrdersManager()
         {
             return View();
         }

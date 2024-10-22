@@ -45,9 +45,9 @@ namespace Client.Repositories.Services
                 }
                 else if (requestDTO.Data != null)
                 {
-                    // Nếu không phải là multipart, có thể log hoặc xử lý một cách phù hợp
-                    return new ResponseModel() { IsSuccess = false, Message = "Dữ liệu không hợp lệ." };
+                    message.Content = new StringContent(JsonConvert.SerializeObject(requestDTO.Data), Encoding.UTF8, "application/json");
                 }
+
 
                 // Xác định phương thức API
                 switch (requestDTO.ApiType)
