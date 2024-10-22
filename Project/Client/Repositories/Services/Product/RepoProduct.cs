@@ -90,62 +90,6 @@ namespace Client.Repositories.Services.Product
             return response;
         }
 
-
-
-        //public async Task<ResponseModel> CreateProductAsync(
-        //    string name,
-        //    string description,
-        //    decimal price,
-        //    float discount,
-        //    ICollection<CategoryModel> categories,
-        //    int platform,
-        //    int status,
-        //    List<IFormFile> imageFiles,
-        //    ScanFileRequest request,
-        //    string username)
-        //{
-        //    // Tạo MultipartFormDataContent để gửi yêu cầu
-        //    var formData = new MultipartFormDataContent();
-        //    formData.Add(new StringContent(name), "name");
-        //    formData.Add(new StringContent(description ?? string.Empty), "description");
-        //    formData.Add(new StringContent(price.ToString()), "price");
-        //    formData.Add(new StringContent(discount.ToString()), "discount");
-        //    formData.Add(new StringContent(platform.ToString()), "platform");
-        //    formData.Add(new StringContent(status.ToString()), "status");
-        //    formData.Add(new StringContent(username), "username");
-        //    formData.Add(new StringContent(categories.ToString()), "categories");
-
-        //    // Gửi tệp hình ảnh
-        //    foreach (var file in imageFiles)
-        //    {
-        //        var fileContent = new StreamContent(file.OpenReadStream())
-        //        {
-        //            Headers = { ContentType = new MediaTypeHeaderValue(file.ContentType) }
-        //        };
-        //        formData.Add(fileContent, "imageFiles", file.FileName);
-        //    }
-
-        //    // Gửi tệp game từ ScanFileRequest
-        //    if (request?.gameFile != null)
-        //    {
-        //        var gameFileContent = new StreamContent(request.gameFile.OpenReadStream())
-        //        {
-        //            Headers = { ContentType = new MediaTypeHeaderValue(request.gameFile.ContentType) }
-        //        };
-        //        formData.Add(gameFileContent, "gameFile", request.gameFile.FileName);
-        //    }
-
-        //    // Gửi yêu cầu POST thông qua base service
-        //    var response = await _baseService.SendAsync(new RequestModel()
-        //    {
-        //        ApiType = StaticTypeApi.ApiType.POST,
-        //        Url = StaticTypeApi.APIGateWay + "/Product",
-        //        Data = formData
-        //    });
-
-        //    return response;
-        //}
-
         public async Task<ResponseModel?> GetAllProductAsync()
         {
             return await _baseService.SendAsync(new RequestModel()
