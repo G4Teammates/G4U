@@ -6,6 +6,19 @@
 	<span class="titleManager bg-success py-3 px-5 rounded-4 fw-bold text-white">Categories Manager</span>
 </div>
 
+<!-- Thông báo -->
+@* @if (!string.IsNullOrEmpty(notification))
+{ *@
+<div class="alert alert-success">
+	@* @notification *@
+	ádjflkajklajsdlfkjadsklfjkladsfj
+</div>
+<div class="alert alert-danger">
+	@* @notification *@
+	ádjflkajklajsdlfkjadsklfjkladsfj
+</div>
+@* } *@
+
 <div class="container mt-4">
 	<!-- Thanh tìm kiếm và nút Thêm -->
 	<div class="d-flex justify-content-between mb-3">
@@ -94,7 +107,8 @@
 	</div>
 </div>
 
-</div>
+
+
 
 
 
@@ -147,3 +161,14 @@
 		</div>
 	</div>
 </div>
+
+
+<script>
+	function showSuccessToast() {
+		$('#successToast').toast('show');
+	}
+
+	function showErrorToast() {
+		$('#errorToast').toast('show');
+	}
+</script>

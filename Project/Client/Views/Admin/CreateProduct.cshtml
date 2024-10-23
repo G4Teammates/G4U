@@ -54,13 +54,28 @@
         <span asp-validation-for="@Model.Discount" class="text-danger"></span>
     </div>
 
-    <!-- Categories -->
+@*     <!-- Categories -->
     <div class="form-group">
         <label asp-for="@Model.Categories" class="control-label"></label>
         <input asp-for="@Model.Categories" class="form-control" type="text" />
         <span asp-validation-for="@Model.Categories" class="text-danger"></span>
+        <div><a href=""><i class="fa-solid fa-plus"></i></a></div>
+        <small class="form-text text-muted">Enter categories separated by commas.</small>
+    </div> *@
+    <!-- Categories -->
+    <div class="form-group">
+        <label asp-for="@Model.Categories" class="control-label"></label>
+        <div id="category-container">
+            <input asp-for="@Model.Categories" class="form-control" type="text" />
+        </div>
+        <span asp-validation-for="@Model.Categories" class="text-danger"></span>
+        <div>
+            <a href="javascript:void(0)" id="add-category" class="m-2"><i class="fa-solid fa-plus"></i></a>
+            <a href="javascript:void(0)" id="remove-category" class="m-2"><i class="fa-solid fa-minus"></i></a>
+        </div>
         <small class="form-text text-muted">Enter categories separated by commas.</small>
     </div>
+
 
     <!-- Platform -->
     <div class="form-group">

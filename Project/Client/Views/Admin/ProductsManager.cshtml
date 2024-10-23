@@ -6,7 +6,7 @@
 
 @model ProductViewModel
 
-
+ 
 
 <div class="pt-3 pb-4">
     <span class="titleManager bg-success py-3 px-5 rounded-4 fw-bold text-white">Products Manager</span>
@@ -41,110 +41,6 @@
     <div class="m-3">
         <h4 class="mt-3">Filters</h4>
         <hr>
-        @* <div class="accordion" id="filterAccordion">
-        <!-- Genres Filter -->
-        <div class="accordion-item">
-        <h2 class="accordion-header" id="headingGenres">
-        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseGenres" aria-expanded="false" aria-controls="collapseGenres">
-        Genres
-        </button>
-        </h2>
-        <div id="collapseGenres" class="accordion-collapse collapse" aria-labelledby="headingGenres" data-bs-parent="#filterAccordion">
-        <div class="accordion-body">
-        <div class="form-check">
-        <input class="form-check-input" type="checkbox" value="Action" id="actionCheck">
-        <label class="form-check-label" for="actionCheck">Action</label>
-        </div>
-        <div class="form-check">
-        <input class="form-check-input" type="checkbox" value="Adventure" id="adventureCheck">
-        <label class="form-check-label" for="adventureCheck">Adventure</label>
-        </div>
-        <div class="form-check">
-        <input class="form-check-input" type="checkbox" value="RPG" id="rpgCheck">
-        <label class="form-check-label" for="rpgCheck">RPG</label>
-        </div>
-        </div>
-        </div>
-        </div>
-
-        <!-- Categories Filter -->
-        <div class="accordion-item">
-        <h2 class="accordion-header" id="headingCategories">
-        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCategories" aria-expanded="false" aria-controls="collapseCategories">
-        Categories
-        </button>
-        </h2>
-        <div id="collapseCategories" class="accordion-collapse collapse" aria-labelledby="headingCategories" data-bs-parent="#filterAccordion">
-        <div class="accordion-body">
-        <div class="form-check">
-        <input class="form-check-input" type="checkbox" value="Simulation" id="simulationCheck">
-        <label class="form-check-label" for="simulationCheck">Simulation</label>
-        </div>
-        <div class="form-check">
-        <input class="form-check-input" type="checkbox" value="Strategy" id="strategyCheck">
-        <label class="form-check-label" for="strategyCheck">Strategy</label>
-        </div>
-        <div class="form-check">
-        <input class="form-check-input" type="checkbox" value="Puzzle" id="puzzleCheck">
-        <label class="form-check-label" for="puzzleCheck">Puzzle</label>
-        </div>
-        </div>
-        </div>
-        </div>
-
-        <!-- Price Range Filter -->
-        <div class="accordion-item">
-        <h2 class="accordion-header" id="headingPriceRange">
-        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePriceRange" aria-expanded="false" aria-controls="collapsePriceRange">
-        Price Range
-        </button>
-        </h2>
-        <div id="collapsePriceRange" class="accordion-collapse collapse" aria-labelledby="headingPriceRange" data-bs-parent="#filterAccordion">
-        <div class="accordion-body">
-        <input type="range" class="form-range" min="0" max="500" id="priceRange">
-        <p>Price: <span id="priceValue">$0 - $500</span></p>
-        </div>
-        </div>
-        </div>
-
-        <!-- Platform Filter -->
-        <div class="accordion-item">
-        <h2 class="accordion-header" id="headingPlatform">
-        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePlatform" aria-expanded="false" aria-controls="collapsePlatform">
-        Platform
-        </button>
-        </h2>
-        <div id="collapsePlatform" class="accordion-collapse collapse" aria-labelledby="headingPlatform" data-bs-parent="#filterAccordion">
-        <div class="accordion-body">
-        <select class="form-select">
-        <option value="">Select Platform</option>
-        <option value="PC">PC</option>
-        <option value="PlayStation">PlayStation</option>
-        <option value="Xbox">Xbox</option>
-        <option value="Nintendo">Nintendo</option>
-        </select>
-        </div>
-        </div>
-        </div>
-
-        <!-- Release Date Filter -->
-        <div class="accordion-item">
-        <h2 class="accordion-header" id="headingReleaseDate">
-        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseReleaseDate" aria-expanded="true" aria-controls="collapseReleaseDate">
-        Release Date
-        </button>
-        </h2>
-        <div id="collapseReleaseDate" class="accordion-collapse collapse show" aria-labelledby="headingReleaseDate" data-bs-parent="#filterAccordion">
-        <div class="accordion-body">
-        <input type="date" class="form-control">
-        </div>
-        </div>
-        </div>
-
-        </div>
-
-        <button class="btn btn-primary w-100 mt-3">Apply Filters</button> *@
-
         <!-- -------------------------------------------------------------------------------------------------------------------------------------------------- -->
         <!-- Price Filter -->
         <div class="mb-4">
@@ -259,70 +155,71 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var product in Model.Product) // Giả sử 'Products' là danh sách các sản phẩm
-            {
-                <tr>
-                    <td><input type="checkbox" class="product-checkbox"></td>
-                    <td>@product.Id</td>
-                    <td>@product.Name</td>
-                    <td>@product.Description</td>
-                    <td>@product.Price.ToString("C")</td>
-                    <td>@product.Sold</td>
-                    <td>
-                        <div>Likes: @product.Interactions?.NumberOfLikes ?? 0</div>
-                        <div>Views: @product.Interactions?.NumberOfViews ?? 0</div>
-                    </td>
-                    <td>@product.Discount %</td>
-                    <td>@product.Platform</td>
-                    <td>
-                        @if (product.Links != null)
+            @if (Model.Product != null) {
+                @foreach (var product in Model.Product) // Giả sử 'Products' là danh sách các sản phẩm
+                {
+                    <tr>
+                        <td><input type="checkbox" class="product-checkbox"></td>
+                        <td>@product.Id</td>
+                        <td>@product.Name</td>
+                        <td>@product.Description</td>
+                        <td>@product.Price.ToString("C")</td>
+                        <td>@product.Sold</td>
+                        <td>
+                            <div>Likes: @product.Interactions?.NumberOfLikes ?? 0</div>
+                            <div>Views: @product.Interactions?.NumberOfViews ?? 0</div>
+                        </td>
+                        <td>@product.Discount %</td>
+                        <td>@product.Platform</td>
+                        <td>
+                            @if (product.Links != null)
 
-                        {
-                            <ul>
-                                @foreach (var link in product.Links)
-                                {
-                                    <li>@link.Url</li>
-                                }
-                            </ul>
-                        }
+                            {
+                                <ul>
+                                    @foreach (var link in product.Links)
+                                    {
+                                        <li>@link.Url</li>
+                                    }
+                                </ul>
+                            }
 
-                    </td>
-                    <td>
-                        @if (product.Categories != null)
+                        </td>
+                        <td>
+                            @if (product.Categories != null)
 
-                        {
-                            <ul>
-                                @foreach (var category in product.Categories)
-                                {
-                                    <li>@category.CategoryName</li>
-                                }
-                            </ul>
-                        }
+                            {
+                                <ul>
+                                    @foreach (var category in product.Categories)
+                                    {
+                                        <li>@category.CategoryName</li>
+                                    }
+                                </ul>
+                            }
 
-                    </td>
+                        </td>
 
-                    <td>@product.Status</td>
-                    <td>@product.CreatedAt.ToString("dd/MM/yyyy")</td>
-                    <td>@product.UpdatedAt.ToString("dd/MM/yyyy")</td>
-                    <td>@product.UserName</td>
+                        <td>@product.Status</td>
+                        <td>@product.CreatedAt.ToString("dd/MM/yyyy")</td>
+                        <td>@product.UpdatedAt.ToString("dd/MM/yyyy")</td>
+                        <td>@product.UserName</td>
 
-                   
-
-                    <td>
-                        <a asp-action="UpdateProduct" asp-route-id="@product.Id" class="text-danger mx-2">
-                            <i class="fa-regular fa-pen-to-square"></i>
-                        </a>
-                    </td>
-                    <td>
-                        @* <form asp-action="UsersDelete" >
+                        <td>
+                            <a asp-action="UpdateProduct" asp-route-id="@product.Id" class="text-danger mx-2">
+                                <i class="fa-regular fa-pen-to-square"></i>
+                            </a>
+                        </td>
+                        <td>
+                            @* <form asp-action="UsersDelete" >
                     <input type="submit" value="Delete" class="btn btn-danger" />
                     </form> *@
-                        <a asp-action="ProductDelete" asp-route-Id="@product.Id" class="text-danger mx-2"> <i class="fas fa-trash"></i></a>
-                        @* <a asp-action="UsersDelete" asp-route-Id="@user.Id"> <i class="fas fa-trash"></i></a> *@
-                    </td>
+                            <a asp-action="ProductDelete" asp-route-Id="@product.Id" class="text-danger mx-2"> <i class="fas fa-trash"></i></a>
+                            @* <a asp-action="UsersDelete" asp-route-Id="@user.Id"> <i class="fas fa-trash"></i></a> *@
+                        </td>
 
-                </tr>
+                    </tr>
+                }
             }
+            
             <!-- Thêm các dòng dữ liệu tương tự -->
 
         </tbody>
@@ -468,4 +365,30 @@
         element: document.getElementById("descriptionEditor"),
         toolbar: ["bold", "italic", "heading", "|", "quote", "unordered-list", "ordered-list", "|", "link", "image", "|", "preview", "side-by-side", "fullscreen", "guide"]
     });
+
+    // Sự kiện khi nhấn vào nút "+" để thêm input mới
+    document.getElementById('add-category').addEventListener('click', function () {
+        // Tạo một phần tử input mới
+        var newInput = document.createElement('input');
+        newInput.type = 'text';
+        newInput.name = 'Categories';
+        newInput.classList.add('form-control', 'mt-2'); // Thêm class cho form đẹp hơn
+
+        // Thêm input mới vào container
+        var container = document.getElementById('category-container');
+        container.appendChild(newInput);
+    });
+
+    // Sự kiện khi nhấn vào nút "-" để xóa input cuối cùng
+    document.getElementById('remove-category').addEventListener('click', function () {
+        var container = document.getElementById('category-container');
+        var inputs = container.getElementsByTagName('input');
+
+        // Chỉ xóa nếu còn nhiều hơn 1 input
+        if (inputs.length > 1) {
+            container.removeChild(inputs[inputs.length - 1]);
+        }
+    });
+
+
 </script>
