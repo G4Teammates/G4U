@@ -22,6 +22,8 @@ namespace Client.Configure
             #region Initialize Cloudinary
             ConfigKeyModel.CloudinaryKey = config["14"]!;
             ConfigKeyModel.CloudinarySecret = config["15"]!;
+            ConfigKeyModel.EndpointContentSafety = config["10022002"]!;
+            ConfigKeyModel.ApiKeyContentSafety = config["19102001"]!;
             #endregion
 
             #region Register Mapper
