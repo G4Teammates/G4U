@@ -1,13 +1,15 @@
 ﻿using Client.Models;
-using Client.Models.ProductDTO;
+using Client.Models.CategorisDTO;
 using Client.Models.ProductDTO;
 using Client.Models.UserDTO;
 using Client.Repositories.Interfaces;
+using Client.Repositories.Interfaces.Categories;
 using Client.Repositories.Interfaces.Product;
 using Client.Repositories.Interfaces.User;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 using ProductModel = Client.Models.ProductDTO.ProductModel;
 
@@ -15,7 +17,7 @@ using ProductModel = Client.Models.ProductDTO.ProductModel;
 namespace Client.Controllers
 {
 
-    public class AdminController(IUserService userService, IHelperService helperService, IRepoProduct repoProduct) : Controller
+    public class AdminController(IUserService userService, IHelperService helperService, IRepoProduct repoProduct, ICategoriesService categoryService) : Controller
 
     {
 
@@ -23,11 +25,13 @@ namespace Client.Controllers
         public readonly IHelperService _helperService = helperService;
 
         public readonly IRepoProduct _productService = repoProduct;
+		public readonly ICategoriesService _categoryService = categoryService;
 
-        public IActionResult Index()
+		public IActionResult Index()
         {
             return View();
         }
+
 
         public IActionResult AdminDashboard()
         {
@@ -349,10 +353,73 @@ namespace Client.Controllers
             return View();
         }
 
-        public IActionResult CategoriesManager()
+
+
+        public async Task<IActionResult> CategoriesManager()
         {
-            return View();
+            CategoriesViewModel categories = new();
+            try
+            {
+                ResponseModel? response = await _categoryService.GetAllCategoryAsync();
+
+                if (response != null && response.IsSuccess)
+                {
+
+                    categories.Categories = JsonConvert.DeserializeObject<ICollection<CategoriesModel>>(Convert.ToString(response.Result.ToString()!));
+
+                }
+                else
+                {
+                    TempData["error"] = response?.Message;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = ex.Message;
+            }
+
+            return View(categories);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateCategory(CreateCategories model)
+        {
+            if (ModelState.IsValid)
+            {
+                // Ghi lại thông tin trước khi gửi
+                Console.WriteLine("Model is valid. Sending request: " + JsonConvert.SerializeObject(model));
+
+                ResponseModel? response = await _categoryService.CreateCategoryAsync(model);
+
+                if (response != null && response.IsSuccess)
+                {
+                    TempData["success"] = "Category created successfully";
+                    return RedirectToAction(nameof(CategoriesManager));
+                }
+                else
+                {
+                    TempData["error"] = response?.Message ?? "Failed to create category.";
+                }
+            }
+            else
+            {
+                // Ghi lại thông tin lỗi
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+                TempData["error"] = string.Join(", ", errors);
+            }
+
+            return RedirectToAction(nameof(CategoriesManager));
+        }
+
+
+
+
+
+
+
+
+
 
         public IActionResult CensorshipManager()
         {
