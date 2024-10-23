@@ -1,6 +1,10 @@
-﻿@{
+﻿@using Client.Models.CategorisDTO
+
+@{
 	Layout = "_LayoutAdmin";
 }
+@model CategoriesViewModel
+
 
 <div class="pt-3 pb-4">
 	<span class="titleManager bg-success py-3 px-5 rounded-4 fw-bold text-white">Categories Manager</span>
@@ -45,40 +49,50 @@
 		<thead class="table-light">
 			<tr>
 				<th scope="col"><input type="checkbox" id="selectAll"></th>
-				<th scope="col">Avatar</th>
-				<th scope="col">User Name</th>
-				<th scope="col">Display Name</th>
-				<th scope="col">Email</th>
-				<th scope="col">Phone Number</th>
+				<th scope="col">ID</th>
+				<th scope="col">Name</th>
+				<th scope="col">Type</th>
+				<th scope="col">Description</th>
 				<th scope="col">Status</th>
-				<th scope="col">CreateAt</th>
-				<th scope="col"></th>
-				@* <th scope="col">UpdateAt</th> *@
 			</tr>
 		</thead>
 		<tbody>
-			<tr>
-				<td><input type="checkbox" class="user-checkbox"></td>
-				<td><img src="~/Image/avatar.jpeg" alt="Alternate Text" style="width: 80px; height: 80px" /></td>
-				<td>tuanlx123</td>
-				<td>Tuan Dep Trai</td>
-				<td>tuanpham147369@gmail.com</td>
-				<td><span class="text-success">0933 808 235</span></td>
-				<td>Đã kích hoạt</td>
-				<td>10/05/2024</td>
-				<td><span><i class="fa-regular fa-pen-to-square"></i></span></td>
-			</tr>
-			<tr>
-				<td><input type="checkbox" class="user-checkbox"></td>
-				<td>-</td>
-				<td>-</td>
-				<td>Quá ok tụi anh q...</td>
-				<td>-</td>
-				<td><span class="text-success">024 3747 4700</span></td>
-				<td>-</td>
-				<td>-</td>
-				@* <td>-</td> *@
-			</tr>
+			@if (Model.Categories != null)
+			{
+				foreach (var categories in Model.Categories)
+				{
+					<tr>
+						<td><input type="checkbox" class="user-checkbox" /></td>
+						<td>@categories.Id</td>
+						<td>@categories.Name</td>
+						<td>@categories.Type</td>
+						<td>@categories.Description</td>
+						<td>@categories.Status</td>
+						@*Đây là nút Update*@
+						<td>
+							<a asp-action="UserUpdate" asp-route-Id="@categories.Id" class="text-danger mx-2"><span><i class="fa-regular fa-pen-to-square"></i></span></a>
+						</td>
+						<td><button class="btn btn-success" data-toggle="modal" data-target="#modalUsers" asp-action="UserUpdate" asp-route-Id="@categories.Id">+ Update</button></td>
+						<td>
+							@* <form asp-action="UsersDelete" >
+					<input type="submit" value="Delete" class="btn btn-danger" />
+					</form> *@
+							<a asp-action="UserDelete" asp-route-Id="@categories.Id" class="text-danger mx-2"> <i class="fas fa-trash"></i></a>
+							@* <a asp-action="UsersDelete" asp-route-Id="@user.Id"> <i class="fas fa-trash"></i></a> *@
+						</td>
+					</tr>
+				}
+			}
+			else
+			{
+				<tr>
+					<td colspan="9" class="text-center">Không có người dùng nào để hiển thị.</td>
+				</tr>
+			}
+			@* @{
+			@await Component.InvokeAsync("UsersIndex")
+			} *@
+			@* @Html.Partial("~/Views/User/UsersIndex.cshtml") *@
 			<!-- Thêm các dòng dữ liệu tương tự -->
 		</tbody>
 	</table>
@@ -121,42 +135,7 @@
 	<div class="modal-dialog modal-xl">
 		<div class="modal-content">
 			<div class="container-fluid p-5">
-				<form class="row" asp-action="Create">
-					<div asp-validation-summary="ModelOnly" class="text-danger"></div>
-					<div class="row">
-						<div class="col">
-							<div class="mb-2">
-								<label class="form-label">Email address</label>
-								<input type="email" class="form-control">
-								<span class="text-danger"></span>
-							</div>
-							<div class="mb-2">
-								<label class="form-label">Email address</label>
-								<input type="email" class="form-control">
-								<span class="text-danger"></span>
-							</div>
-							<div class="mb-2">
-								<label class="form-label">Email address</label>
-								<input type="email" class="form-control">
-								<span class="text-danger"></span>
-							</div>
-						</div>
-						<div class="col">
-							<div class="text-center">
-								<div>
-									<img src="~/image/avatar.jpeg" alt="Alternate Text" style="width:200px; height200px;" />
-								</div>
-								<a class="btn btn-outline-dark text-center mt-2">Change Avatar</a>
-							</div>
-						</div>
-					</div>
-					<div class="form-group mt-3 text-center">
-						<input type="submit" value="Create" asp-action="CreateOrder" class="btn btn-danger w-50" />
-					</div>
-					<div class="form-group mt-3 text-center">
-						<input type="submit" value="Save" asp-action="SaveEdit" class="btn btn-primary w-50" />
-					</div>
-				</form>
+				@await Html.PartialAsync("CreateCategory", Model.CreateCategory)
 			</div>
 		</div>
 	</div>

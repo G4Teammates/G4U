@@ -9,7 +9,7 @@
 
 <form asp-action="UpdateProduct" method="post" enctype="multipart/form-data">
     <input type="hidden" name="_method" value="PUT" /> <!-- Giả lập PUT method -->
-
+    <!-- Các trường cơ bản của sản phẩm -->
     <div class="form-group">
         <label for="id">Product ID</label>
         <input type="text" class="form-control" asp-for="Id" readonly />
@@ -25,115 +25,66 @@
         <textarea class="form-control" asp-for="Description" rows="4" required></textarea>
     </div>
 
-    <div class="form-group">
-        <label for="price">Price</label>
-        <input type="number" class="form-control" asp-for="Price" required />
-    </div>
-
-    <div class="form-group">
-        <label for="sold">Sold</label>
-        <input type="number" class="form-control" asp-for="Sold" required />
-    </div>
-
-    <div class="form-group">
-        <label for="numOfView">Number of Views</label>
-        <input type="number" class="form-control" asp-for="Interactions.NumberOfViews" required />
-    </div>
-
-    <div class="form-group">
-        <label for="numOfLike">Number of Likes</label>
-        <input type="number" class="form-control" asp-for="Interactions.NumberOfLikes" required />
-    </div>
-
-    <div class="form-group">
-        <label for="discount">Discount (%)</label>
-        <input type="number" class="form-control" asp-for="Discount" step="0.01" required />
-    </div>
+    <!-- Cập nhật các danh mục sản phẩm -->
     <div class="form-group">
         <label>Categories</label>
-        @if (Model.Categories != null && Model.Categories.Any())
-        {
-            int i = 0;
-            @foreach (var category in Model.Categories)
+        <div id="categories-list">
+            @if (Model.Categories != null && Model.Categories.Any())
             {
-                <div>
-                    <input type="text" name="Categories[@i].CategoryName" value="@category.CategoryName" class="form-control" />
-                </div>
-                i++;
+                int i = 0;
+                @foreach (var category in Model.Categories)
+                {
+                    <div class="input-group mb-2">
+                        <input type="text" name="Categories[@i].CategoryName" value="@category.CategoryName" class="form-control" />
+                        <div class="input-group-append">
+                            <button type="button" class="btn btn-danger" onclick="removeCategory(this)">Remove</button>
+                        </div>
+                    </div>
+                    i++;
+                }
             }
-        }
-        else
-        {
-            <p>No categories available</p>
-        }
+        </div>
+        <button type="button" class="btn btn-success" onclick="addCategory()">Add Category</button>
     </div>
 
-
-
-
-    <div class="form-group">
-        <label for="platform">Platform</label>
-        @foreach (Client.Models.Enum.ProductEnum.PlatformType platform in Enum.GetValues(typeof(Client.Models.Enum.ProductEnum.PlatformType)))
-        {
-            <div class="form-check">
-                <input type="radio" class="form-check-input" id="platform_@(platform.ToString())" name="Platform" value="@(platform)" @(platform == Model.Platform ? "checked" : "") />
-                <label class="form-check-label" for="platform_@(platform.ToString())">@platform</label>
-            </div>
-        }
-    </div>
-
-    <div class="form-group">
-        <label for="status">Status</label>
-        @foreach (Client.Models.Enum.ProductEnum.ProductStatus status in Enum.GetValues(typeof(Client.Models.Enum.ProductEnum.ProductStatus)))
-        {
-            <div class="form-check">
-                <input type="radio" class="form-check-input" id="status_@(status.ToString())" name="Status" value="@(status)" @(status == Model.Status ? "checked" : "") />
-                <label class="form-check-label" for="status_@(status.ToString())">@status</label>
-            </div>
-        }
-    </div>
-
-    <div class="form-group">
-        <label for="createAt">Created At</label>
-        <input type="datetime-local" class="form-control" asp-for="CreatedAt" required />
-    </div>
+    <!-- Cập nhật các đường dẫn (Links) -->
     <div class="form-group">
         <label>Images and Game</label>
-        @if (Model.Links != null)
-        {
-            int i = 0;
-            <ul>
+        <div id="links-list">
+            @if (Model.Links != null)
+            {
+                int i = 0;
                 @foreach (var link in Model.Links)
                 {
-                    <li>
+                    <div class="input-group mb-2">
                         @if (link.Url.Contains("cloudinary"))
                         {
                             <label>Images</label>
-                            <!-- Hiển thị hình ảnh từ Cloudinary -->
                             <img src="@link.Url" alt="Cloudinary Image" style="max-width: 150px; height: auto;" />
                         }
                         else if (link.Url.Contains("drive.google.com"))
                         {
                             <label>Game</label>
-                            <!-- Hiển thị đường link Google Drive -->
                             <a href="@link.Url" target="_blank">View on Google Drive</a>
                         }
                         else
                         {
-                            <!-- Hiển thị link khác -->
                             <a href="@link.Url" target="_blank">@link.Url</a>
                         }
-                    </li>
 
-                    <div>
                         <input type="text" name="Links[@i].Url" value="@link.Url" class="form-control mt-2" />
+                        <div class="input-group-append">
+                            <button type="button" class="btn btn-danger" onclick="removeLink(this)">Remove</button>
+                        </div>
                     </div>
                     i++;
                 }
-            </ul>
-        }
+            }
+        </div>
+        <button type="button" class="btn btn-success" onclick="addLink()">Add Link</button>
     </div>
 
+    <!-- Upload hình ảnh và file game -->
     <div class="form-group">
         <label for="imageFiles">Upload Images</label>
         <input type="file" class="form-control" name="imageFiles" multiple />
@@ -144,12 +95,44 @@
         <input type="file" class="form-control" name="request.gameFile" />
     </div>
 
-    <div class="form-group">
-        <label for="username">Username</label>
-        <input type="text" class="form-control" asp-for="UserName" readonly />
-    </div>
-
     <button type="submit" class="btn btn-primary">Update Product</button>
     <a asp-action="ProductsManager" class="btn btn-secondary">Back To List</a>
 </form>
 
+<!-- JavaScript để thêm/xóa Categories và Links -->
+@section Scripts {
+    <script type="text/javascript">
+        let categoryIndex = @Model.Categories?.Count() ?? 0;
+        let linkIndex = @Model.Links?.Count() ?? 0;
+
+        function addCategory() {
+            let html = `<div class="input-group mb-2">
+                                    <input type="text" name="Categories[${categoryIndex}].CategoryName" class="form-control" />
+                                    <div class="input-group-append">
+                                        <button type="button" class="btn btn-danger" onclick="removeCategory(this)">Remove</button>
+                                    </div>
+                                </div>`;
+            $('#categories-list').append(html);
+            categoryIndex++;
+        }
+
+        function removeCategory(button) {
+            $(button).closest('.input-group').remove();
+        }
+
+        function addLink() {
+            let html = `<div class="input-group mb-2">
+                                    <input type="text" name="Links[${linkIndex}].Url" class="form-control" />
+                                    <div class="input-group-append">
+                                        <button type="button" class="btn btn-danger" onclick="removeLink(this)">Remove</button>
+                                    </div>
+                                </div>`;
+            $('#links-list').append(html);
+            linkIndex++;
+        }
+
+        function removeLink(button) {
+            $(button).closest('.input-group').remove();
+        }
+    </script>
+}

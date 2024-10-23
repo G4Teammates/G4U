@@ -1,10 +1,11 @@
 ﻿using Azure.Identity;
 using Client.Configure;
 using Client.Repositories.Interfaces;
-
+using Client.Repositories.Interfaces.Categories;
 using Client.Repositories.Interfaces.Product;
 using Client.Repositories.Interfaces.User;
 using Client.Repositories.Services;
+using Client.Repositories.Services.Categories;
 using Client.Repositories.Services.Product;
 
 using Client.Utility;
@@ -33,6 +34,7 @@ StaticTypeApi.APIGateWay = builder.Configuration["ServiceUrls:APIGateWay"];
 builder.Services.AddScoped<IBaseService, BaseService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IRepoProduct, RepoProduct>();
+builder.Services.AddScoped<ICategoriesService, CategoriesService>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAllOrigins",
