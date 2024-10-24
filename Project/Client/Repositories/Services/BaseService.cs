@@ -72,6 +72,8 @@ namespace Client.Repositories.Services
                 // Xử lý phản hồi từ API
                 switch (apiResponse.StatusCode)
                 {
+                    case HttpStatusCode.BadRequest:
+                        return new() { IsSuccess = false, Message = "Lỗi Request" };
                     case HttpStatusCode.NotFound:
                         return new() { IsSuccess = false, Message = "Không tìm thấy" };
                     case HttpStatusCode.Forbidden:

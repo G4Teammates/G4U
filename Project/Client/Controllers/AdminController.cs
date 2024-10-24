@@ -1,26 +1,27 @@
 ﻿using Client.Models;
+using Client.Models.AuthenModel;
 using Client.Models.ProductDTO;
 using Client.Models.UserDTO;
 using Client.Repositories.Interfaces;
+using Client.Repositories.Interfaces.Authentication;
 using Client.Repositories.Interfaces.Product;
 using Client.Repositories.Interfaces.User;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-
+using System.IdentityModel.Tokens.Jwt;
 using ProductModel = Client.Models.ProductDTO.ProductModel;
 
 
 namespace Client.Controllers
 {
 
-    public class AdminController(IUserService userService, IHelperService helperService, IRepoProduct repoProduct) : Controller
-
+    public class AdminController(IUserService userService, IHelperService helperService, IRepoProduct repoProduct, ITokenProvider tokenProvider) : Controller
     {
 
         public readonly IUserService _userService = userService;
         public readonly IHelperService _helperService = helperService;
-
+        public readonly ITokenProvider _tokenProvider = tokenProvider;
         public readonly IRepoProduct _productService = repoProduct;
 
         public IActionResult Index()
@@ -30,6 +31,38 @@ namespace Client.Controllers
 
         public IActionResult AdminDashboard()
         {
+            try
+            {
+                #region Check IsLogin Cookie
+                var isLogin = HttpContext.Request.Cookies["IsLogin"];
+                if (string.IsNullOrEmpty(isLogin))
+                {
+                    // Trường hợp cookie không tồn tại
+                    ViewData["IsLogin"] = false;
+                }
+                else
+                {
+                    ViewData["IsLogin"] = isLogin;
+                }
+                #endregion
+
+                // Lấy token từ provider
+                var token = _tokenProvider.GetToken();
+                ResponseModel response = _helperService.CheckAndReadToken(token);
+                if (!response.IsSuccess)
+                {
+                    ViewData["IsLogin"] = false;
+                    return View();
+                }
+                LoginResponseModel user = _helperService.GetUserFromJwtToken((JwtSecurityToken)response.Result);
+
+                ViewBag.User = user;
+                return View();
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = ex.Message;
+            }
             return View();
         }
 
