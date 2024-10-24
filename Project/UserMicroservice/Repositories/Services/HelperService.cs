@@ -52,7 +52,7 @@ namespace UserMicroservice.Repositories.Services
 				x.Username == username ||
 				x.Email == email ||
 				x.PhoneNumber == phoneNumber &&
-				!phoneNumber.IsNullOrEmpty()))
+				phoneNumber!=null))
 			{
 				response.IsSuccess = false;
 				response.Message = "Username or email already exist in database.";

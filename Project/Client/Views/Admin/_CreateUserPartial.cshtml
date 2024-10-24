@@ -29,9 +29,9 @@
         <div class="col">
             <div class="text-center">
                 <div>
-                    <img id="avatarPreview" src="https://static.vecteezy.com/system/resources/previews/020/911/747/non_2x/user-profile-icon-profile-avatar-user-icon-male-icon-face-icon-profile-icon-free-png.png" alt="Avatar Preview" style="width:200px; height:200px;" />
+                    <img id="avatarPreview" src="@Model.Avatar" alt="Avatar Preview" style="width:200px; height:200px;" />
                 </div>
-                <input type="file" id="avatarInput" asp-for="@Model.AvatarFile" class="form-control mt-2" style="display: none;" accept="image/*" />
+                <input type="file" id="avatarInput" asp-for="@Model.AvatarFile" class="form-control mt-2" style="display: none;" accept=".png, .jpg" />
                 <a id="changeAvatarBtn" class="btn btn-outline-dark text-center mt-2">Change Avatar</a>
             </div>
         </div>

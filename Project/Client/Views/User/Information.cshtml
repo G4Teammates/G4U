@@ -1,14 +1,14 @@
 ﻿@model Client.Models.UserDTO.UpdateUser
 
-
 <div class="main">
     <div class="row justify-content-center">
         <div class="col-md-3 p-3">
             <div class="d-flex align-items-center mb-3 p-2 rounded border border-1">
                 <img src="@Model.Avatar" class="rounded me-3" alt="Avatar" style="width:80px; height:80px;" />
-                <div>
+                <div class="d-flex flex-column text-truncate">
                     <h5 class="mb-0">@Model.DisplayName</h5>
-                    <p class="mb-0 text-muted">@Model.Email<br>@Model.PhoneNumber</p>
+                    <p class="mb-0 text-muted" title="@Model.Email">@Model.Email</p>
+                    <p class="mb-0 text-muted" title="@Model.PhoneNumber"> @Model.PhoneNumber</p>
                 </div>
             </div>
 
@@ -34,6 +34,11 @@
                         <i class="fas fa-heart"></i> Wishlist
                     </button>
                 </div>
+                <div class="custom-nav-item">
+                    <button type="button" >
+                        <i class="fas fa-heart"></i> Logout
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -43,25 +48,34 @@
             </div>
             <hr />
             <div class="mt-5">
-                <div class="row">
-                    <div class="col-md-4">
-                        @* 
-                        <div>
-                            <div class="text-center">
-                                <img src="@Model.Avatar" class="rounded" alt="Avatar" style="width:150px; height:150px;" />
-                                <div class="mt-3">
-                                    <button class="btn btn-success fw-bold" type="button">
-                                        <i class="fas fa-edit me-2"></i>Edit Avatar
-                                    </button>
+
+                    <form  class="row" asp-action="Information" method="post" enctype="multipart/form-data">
+                        <div class="col-md-4">
+                            <div>
+                                <div class="text-center">
+                                    <img src="@Model.Avatar" id="avatarPreview" class="rounded" alt="Avatar" style="width:150px; height:150px;" />
+                                    <div class="mt-3">
+                                        <input type="file" id="avatarInput" asp-for="@Model.AvatarFile" class="form-control mt-2" style="display: none;" accept=".png, .jpg" />
+                                        <a id="changeAvatarBtn" class="btn btn-outline-dark text-center mt-2">Change Avatar</a>
+                                    </div>
                                 </div>
                             </div>
+
                         </div>
-                        *@
-                    </div>
-                    <div class="col-md-8">
-                        <!-- Bắt đầu form -->
-                        <form asp-action="Information" method="post">
-                            <input type="hidden" name="Id" value="@Model.Id" />
+                        <div class="col-md-8">
+                            <!-- Bắt đầu form -->
+                            <input type="hidden" name="Id" asp-for="@Model.Id" />
+                            <div class="row mb-3 px-3">
+                                <div class="col-md-3 align-content-center">
+                                    <div class="text-center fw-bold">
+                                        Username
+                                    </div>
+                                </div>
+                                <div class="col-md-9">
+                                    <input type="text" class="form-control" id="Username" name="Username" asp-for="@Model.Username">
+                                    <span asp-validation-for="@Model.Username" class="text-danger"></span>
+                                </div>
+                            </div>
                             <div class="row mb-3 px-3">
                                 <div class="col-md-3 align-content-center">
                                     <div class="text-center fw-bold">
@@ -69,7 +83,8 @@
                                     </div>
                                 </div>
                                 <div class="col-md-9">
-                                    <input type="text" class="form-control" id="displayName" name="DisplayName" value="@Model.DisplayName">
+                                    <input type="text" class="form-control" id="displayName" name="DisplayName" asp-for="@Model.DisplayName">
+                                    <span asp-validation-for="@Model.DisplayName" class="text-danger"></span>
                                 </div>
                             </div>
                             <div class="row mb-3 px-3">
@@ -79,7 +94,7 @@
                                     </div>
                                 </div>
                                 <div class="col-md-9">
-                                    <input type="email" class="form-control" id="email" name="Email" value="@Model.Email">
+                                    <input type="email" readonly class="form-control" id="email" name="Email" asp-for="@Model.Email">
                                 </div>
                             </div>
                             <div class="row mb-3 px-3">
@@ -89,7 +104,8 @@
                                     </div>
                                 </div>
                                 <div class="col-md-9">
-                                    <input type="text" class="form-control" id="phoneNumber" name="PhoneNumber" value="@Model.PhoneNumber">
+                                    <input type="text" class="form-control" id="phoneNumber" name="PhoneNumber" asp-for="@Model.PhoneNumber">
+                                    <span asp-validation-for="@Model.PhoneNumber" class="text-danger"></span>
                                 </div>
                             </div>
                             <div class="row mb-3 px-3">
@@ -99,31 +115,58 @@
                                     </div>
                                 </div>
                                 <div class="col-md-9">
-                                    
-                                    <select asp-for="@Model.Role" class="form-control form-control-sm">
-                                        <option value="User">User</option>
-                                        <option value="Admin">Admin</option>
-                                    </select>
+                                    <input type="text" readonly class="form-control" id="role" name="Role" asp-for="@Model.Role">
                                 </div>
                             </div>
-                            <div class="row mb-3 px-3">
-                                <div class="col-md-3 align-content-center">
-                                    <div class="text-center fw-bold">
-                                        Avatar URL
-                                    </div>
-                                </div>
-                                <div class="col-md-9">
-                                    <input type="text" class="form-control" id="avatar" name="Avatar" value="@Model.Avatar">
-                                </div>
+                                @*      <div class="row mb-3 px-3">
+                            <div class="col-md-3 align-content-center">
+                            <div class="text-center fw-bold">
+                            Avatar URL
                             </div>
+                            </div>
+                            <div class="col-md-9">
+                            <input type="text" class="form-control" id="avatar" name="Avatar" asp-for="@Model.Avatar">
+                            </div>
+                            </div> *@
                             <button type="submit" class="btn btn-success fw-bold">
                                 <i class="fas fa-save me-2"></i>Update
                             </button>
-                        </form>
-                        <!-- Kết thúc form -->
-                    </div>
-                </div>
+                            <button type="reset" class="btn btn-danger fw-bold">
+                                <i class="fas fa-save me-2"></i>Cancel
+                            </button>
+                            <!-- Kết thúc form -->
+                        </div>
+                    </form>
             </div>
         </div>
     </div>
 </div>
+
+
+
+<script>
+    // Mở hộp thoại chọn file khi nhấp vào nút "Change Avatar"
+    document.getElementById('changeAvatarBtn').addEventListener('click', function () {
+        document.getElementById('avatarInput').click();
+    });
+
+    // Xử lý sự kiện khi file ảnh được chọn
+    document.getElementById('avatarInput').addEventListener('change', function (event) {
+        const input = event.target;
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                // Hiển thị ảnh vừa chọn lên thẻ img
+                document.getElementById('avatarPreview').src = e.target.result;
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    });
+</script>
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
