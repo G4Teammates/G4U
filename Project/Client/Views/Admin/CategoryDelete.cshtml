@@ -1,0 +1,51 @@
+﻿@using Client.Models.CategorisDTO
+
+@model CategoriesModel
+
+@{
+    Layout = "_LayoutAdmin";
+    ViewData["Title"] = "Confirm Delete Category";
+}
+
+<h2>Confirm Delete Category</h2>
+
+<form asp-action="CategoryDeleteConfirmed" method="post">
+    <div class="form-group">
+        <label asp-for="Id">Category ID</label>
+        <input asp-for="Id" class="form-control" readonly="readonly" />
+        <span asp-validation-for="Id" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Name">Category Name</label>
+        <input asp-for="Name" class="form-control" readonly="readonly" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Type">Type</label>
+        <input asp-for="Type" class="form-control" readonly="readonly" />
+        <span asp-validation-for="Type" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Description">Description</label>
+        <textarea asp-for="Description" class="form-control" rows="3" readonly="readonly"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Status">Status</label>
+        <input asp-for="Status" class="form-control" readonly="readonly" />
+        <span asp-validation-for="Status" class="text-danger"></span>
+    </div>
+
+    <input type="submit" value="Delete" class="btn btn-danger" />
+    <a asp-action="CategoriesManager" class="btn btn-secondary">Back to List</a>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

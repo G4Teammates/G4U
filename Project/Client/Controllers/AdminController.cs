@@ -1,4 +1,5 @@
-﻿using Client.Models;
+﻿using CategoryMicroservice.Repositories.Services;
+using Client.Models;
 using Client.Models.CategorisDTO;
 using Client.Models.ProductDTO;
 using Client.Models.UserDTO;
@@ -8,8 +9,6 @@ using Client.Repositories.Interfaces.Product;
 using Client.Repositories.Interfaces.User;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 using ProductModel = Client.Models.ProductDTO.ProductModel;
 
@@ -116,6 +115,8 @@ namespace Client.Controllers
             }
             return NotFound();
         }
+
+        
         public async Task<IActionResult> UserUpdate(string id)
         {
             ResponseModel? response = await _userService.GetUserAsync(id);
@@ -313,7 +314,7 @@ namespace Client.Controllers
 
 
 
-        //Delete Product
+        //Delete Category
         public async Task<IActionResult> ProductDelete(string id)
     {
         ResponseModel? response = await _productService.GetProductByIdAsync(id);
@@ -385,12 +386,17 @@ namespace Client.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateCategory(CreateCategories model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                // Ghi lại thông tin trước khi gửi
-                Console.WriteLine("Model is valid. Sending request: " + JsonConvert.SerializeObject(model));
+                var errors = ModelState.Values.SelectMany(v => v.Errors)
+                                              .Select(e => e.ErrorMessage);
+                return BadRequest(new { Errors = errors });
+            }
 
-                ResponseModel? response = await _categoryService.CreateCategoryAsync(model);
+            try
+            {
+                // Gọi service CreateCategoryAsync
+                var response = await _categoryService.CreateCategoryAsync(model);
 
                 if (response != null && response.IsSuccess)
                 {
@@ -399,28 +405,110 @@ namespace Client.Controllers
                 }
                 else
                 {
-                    TempData["error"] = response?.Message ?? "Failed to create category.";
+                    TempData["error"] = response?.Message ?? "An unknown error occurred.";
+                    return RedirectToAction(nameof(CategoriesManager));
                 }
             }
-            else
+            catch (Exception ex)
             {
-                // Ghi lại thông tin lỗi
-                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
-                TempData["error"] = string.Join(", ", errors);
+                TempData["error"] = $"An error occurred: {ex.Message}";
+                return RedirectToAction(nameof(CategoriesManager));
             }
-
-            return RedirectToAction(nameof(CategoriesManager));
         }
 
 
+		public async Task<IActionResult> UpdateCategory(string id)
+		{
+            ResponseModel? response = await _categoryService.GetCategoryAsync(id);
 
+            if (response != null && response.IsSuccess)
+            {
+                CategoriesModel? model = JsonConvert.DeserializeObject<CategoriesModel>(Convert.ToString(response.Result));
 
+                // Trả về model UsersDTO để sử dụng trong View
+                return View(model);
+            }
+            else
+            {
+                TempData["error"] = response?.Message;
+            }
+            return NotFound();
+        }
 
+		[HttpPost]
+        public async Task<IActionResult> UpdateCategoryConfirm([FromForm]CategoriesModel category)
+        {
+			if (!ModelState.IsValid)
+			{
+				var errors = ModelState.Values.SelectMany(v => v.Errors)
+											  .Select(e => e.ErrorMessage);
+				return BadRequest(new { Errors = errors });
+			}
 
+			try
+			{
+				// Gọi service UpdateCategoryAsync từ ICategoriesService
+				var response = await _categoryService.UpdateCategoryAsync(category);
 
+				if (response != null && response.IsSuccess)
+				{
+					TempData["success"] = "Category updated successfully";
+					return RedirectToAction(nameof(CategoriesManager));
+				}
+				else
+				{
+					TempData["error"] = response?.Message ?? "An unknown error occurred.";
+                    return BadRequest(response.Message); // Trả về view với dữ liệu đã nhập
 
+                }
+			}
+			catch (Exception ex)
+			{
+				TempData["error"] = $"An error occurred: {ex.Message}";
+                return StatusCode (500); // Trả về view với dữ liệu đã nhập và lỗi
+            }
+		}
 
+		public async Task<IActionResult> CategoryDelete(string id)
+		{
+			ResponseModel? response = await _categoryService.GetCategoryAsync(id);
+			if (response != null && response.IsSuccess)
+			{
+                CategoriesModel? model = JsonConvert.DeserializeObject<CategoriesModel>(Convert.ToString(response.Result));
 
+                // Trả về model UsersDTO để sử dụng trong View
+                return View(model);
+            }
+			else
+			{
+				TempData["error"] = response?.Message;
+			}
+			return NotFound();
+		}
+        [HttpPost]
+        public async Task<IActionResult> CategoryDeleteConfirmed(string id)
+        {
+            try
+            {
+                ResponseModel? response = await _categoryService.DeleteCategoryAsync(id);
+
+                if (response != null && response.IsSuccess)
+                {
+                    TempData["success"] = "Category deleted successfully";
+                    return RedirectToAction(nameof(CategoriesManager));
+                }
+                else
+                {
+                    TempData["error"] = response?.Message ?? "An unknown error occurred.";
+                    return RedirectToAction(nameof(CategoriesManager));
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = $"An error occurred: {ex.Message}";
+                return RedirectToAction(nameof(CategoriesManager));
+            }
+        }
         public IActionResult CensorshipManager()
         {
             return View();

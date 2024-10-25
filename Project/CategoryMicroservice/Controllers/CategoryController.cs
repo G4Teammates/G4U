@@ -21,11 +21,11 @@ namespace CategoryMicroService.Controllers
         }
 
         [HttpGet("{id?}")]
-        public IActionResult GetById([FromRoute] string id)
+        public async Task<IActionResult> GetById([FromRoute] string id)
         {
             try
             {
-                var Cates = _categoryService.GetById(id);
+                var Cates = await _categoryService.GetById(id);
                 _responseModel.Result = Cates;
                 return Ok(_responseModel);
             }
@@ -69,11 +69,11 @@ namespace CategoryMicroService.Controllers
             }
         }
         [HttpPut]
-        public IActionResult UpdateCategory([FromForm] CategoryModel model)
+        public async Task<IActionResult> UpdateCategory([FromForm] CategoryModel model)
         {
             try
             {
-                var Cates = _categoryService.UpdateCategrori(model);
+                var Cates = await _categoryService.UpdateCategrori(model);
                 _responseModel.Result = Cates;
                 return Ok(_responseModel);
             }
