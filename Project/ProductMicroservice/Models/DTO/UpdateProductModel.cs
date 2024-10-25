@@ -31,6 +31,7 @@ namespace ProductMicroservice.Models.DTO
         [Range(0, 100, ErrorMessage = "The {0} must be greater or equal than {1}")]
         public float Discount { get; set; }
 
+        public ICollection<LinkModel> Links {  get; set; }   
         public ICollection<CategoryModel>? Categories { get; set; }
 
         public PlatformType Platform { get; set; } = PlatformType.Unknown;

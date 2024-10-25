@@ -469,3 +469,47 @@
         toolbar: ["bold", "italic", "heading", "|", "quote", "unordered-list", "ordered-list", "|", "link", "image", "|", "preview", "side-by-side", "fullscreen", "guide"]
     });
 </script>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- Đảm bảo jQuery đã được tải -->
+
+    <script type="text/javascript">
+        function initializeCategoryScripts() {
+            let categoryIndex = 0;
+
+            // Hàm thêm danh mục
+            function addCategory() {
+                let html = `<div class="input-group mb-2">
+                                        <input type="text" name="Categories[${categoryIndex}]" class="form-control" placeholder="Enter category" />
+                                        <div class="input-group-append">
+                                            <button type="button" class="btn btn-danger" onclick="removeCategory(this)">Remove</button>
+                                        </div>
+                                    </div>`;
+                $('#categories-list').append(html);
+                categoryIndex++;
+            }
+
+            // Gán hàm cho window để dùng được khi click
+            window.addCategory = addCategory;
+
+            // Hàm xóa danh mục
+            function removeCategory(button) {
+                $(button).closest('.input-group').remove();
+            }
+
+            // Gán hàm này vào window để có thể gọi khi bấm Remove
+            window.removeCategory = removeCategory;
+        }
+
+        // Kiểm tra nếu partial view được tải qua Ajax và script này cần được kích hoạt sau khi nạp
+        $(document).on('ajaxComplete', function () {
+            initializeCategoryScripts(); // Khởi tạo script sau khi partial view được nạp qua Ajax
+        });
+
+        // Hoặc gọi trực tiếp nếu partial không được nạp qua Ajax
+        $(document).ready(function () {
+            initializeCategoryScripts();
+        });
+    </script>
+
+}

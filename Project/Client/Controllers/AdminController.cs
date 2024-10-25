@@ -12,6 +12,7 @@ using Client.Repositories.Interfaces.Authentication;
 using Client.Repositories.Interfaces.Product;
 using Client.Repositories.Interfaces.User;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Newtonsoft.Json;
 using System.IdentityModel.Tokens.Jwt;
 using ProductModel = Client.Models.ProductDTO.ProductModel;
@@ -22,14 +23,17 @@ namespace Client.Controllers
 
     public class AdminController(IUserService userService, IHelperService helperService, IRepoProduct repoProduct, ITokenProvider tokenProvider, ICategoriesService categoryService) : Controller
     {
-
+        #region declaration and initialization
         public readonly IUserService _userService = userService;
         public readonly IHelperService _helperService = helperService;
         public readonly ITokenProvider _tokenProvider = tokenProvider;
         public readonly IRepoProduct _productService = repoProduct;
 		public readonly ICategoriesService _categoryService = categoryService;
 
-		public IActionResult Index()
+
+        #endregion
+        public IActionResult Index()
+
         {
             return View();
         }
@@ -71,6 +75,9 @@ namespace Client.Controllers
             }
             return View();
         }
+
+
+        #region User
 
         [HttpGet]
         public async Task<IActionResult> UsersManager()
@@ -202,6 +209,8 @@ namespace Client.Controllers
 
         }
 
+        #endregion
+
 
 
         public async Task<IActionResult> ProductsManager()
@@ -254,32 +263,38 @@ namespace Client.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> UpdateProduct([FromForm] string id,
-                                                   [FromForm] string name,
-                                                   [FromForm] string description,
-                                                   [FromForm] decimal price,
-                                                   [FromForm] int sold,
-                                                   [FromForm] int numOfView,
-                                                   [FromForm] int numOfLike,
-                                                   [FromForm] float discount,
-                                                   [FromForm] List<string> categories,
-                                                   [FromForm] int platform,
-                                                   [FromForm] int status,
-                                                   [FromForm] DateTime createAt,
-                                                   [FromForm] List<IFormFile> imageFiles,
-                                                   [FromForm] ScanFileRequest request,
-                                                   [FromForm] string username)
+        public async Task<IActionResult> UpdateProduct( UpdateProductModel model)
         {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors)
+                                              .Select(e => e.ErrorMessage);
+                return BadRequest(new { Errors = errors });
+            }
+
             try
             {
+                var numOfView = model.Interactions.NumberOfViews;
+                var numOfLike = model.Interactions.NumberOfLikes;
+
+                // Tạo đối tượng ScanFileRequest
+                var request = new ScanFileRequest
+                {
+                    gameFile = model.gameFile
+                };
+
                 // Gọi service UpdateProduct từ phía Client
                 var response = await _productService.UpdateProductAsync(
-                    id, name, description, price, sold, numOfView, numOfLike, discount,
-                    categories, platform, status, createAt, imageFiles, request, username);
+                    model.Id, model.Name, model.Description, model.Price, model.Sold,
+                   numOfView, numOfLike, model.Discount,
+                    model.Links, model.Categories, (int)model.Platform,
+                    (int)model.Status, model.CreatedAt, model.ImageFiles,
+                    request, model.UserName);
 
                 if (response.IsSuccess)
                 {
-                    return Ok(response); // Trả về kết quả thành công
+                    TempData["success"] = "Product created successfully";
+                    return RedirectToAction(nameof(ProductsManager));
                 }
                 else
                 {
@@ -291,6 +306,8 @@ namespace Client.Controllers
                 return StatusCode(500, $"An error occurred: {ex.Message}");
             }
         }
+
+
         [HttpPost]
         public async Task<IActionResult> CreateProduct(CreateProductModel model)
         {
@@ -412,6 +429,7 @@ namespace Client.Controllers
             {
                 TempData["error"] = ex.Message;
             }
+
 
             return View(categories);
         }
