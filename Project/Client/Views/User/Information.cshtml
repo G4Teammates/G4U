@@ -54,6 +54,7 @@
                             <div>
                                 <div class="text-center">
                                     <img src="@Model.Avatar" id="avatarPreview" class="rounded" alt="Avatar" style="width:150px; height:150px;" />
+                                    <input hidden asp-for="@Model.Avatar"/>
                                     <div class="mt-3">
                                         <input type="file" id="avatarInput" asp-for="@Model.AvatarFile" class="form-control mt-2" style="display: none;" accept=".png, .jpg" />
                                         <a id="changeAvatarBtn" class="btn btn-outline-dark text-center mt-2">Change Avatar</a>
