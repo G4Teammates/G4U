@@ -45,9 +45,9 @@ namespace Client.Repositories.Services
                 }
                 else if (requestDTO.Data != null)
                 {
+                    // Nếu không phải là multipart, có thể log hoặc xử lý một cách phù hợp
                     message.Content = new StringContent(JsonConvert.SerializeObject(requestDTO.Data), Encoding.UTF8, "application/json");
                 }
-
 
                 // Xác định phương thức API
                 switch (requestDTO.ApiType)
@@ -72,6 +72,8 @@ namespace Client.Repositories.Services
                 // Xử lý phản hồi từ API
                 switch (apiResponse.StatusCode)
                 {
+                    case HttpStatusCode.BadRequest:
+                        return new() { IsSuccess = false, Message = "Lỗi Request" };
                     case HttpStatusCode.NotFound:
                         return new() { IsSuccess = false, Message = "Không tìm thấy" };
                     case HttpStatusCode.Forbidden:

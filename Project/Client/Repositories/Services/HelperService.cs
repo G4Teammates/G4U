@@ -12,6 +12,8 @@ using Client.Models.ProductDTO;
 using System.IO;
 using Client.Models.UserDTO;
 using SharpCompress.Compressors.Xz;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
 
 namespace Client.Repositories.Services
 {
@@ -184,6 +186,72 @@ namespace Client.Repositories.Services
                 responseResult.Message = ex.Message;
                 return responseResult;
             }
+        }
+
+        public async Task<HttpContext> UpdateClaim(UserClaimModel user, HttpContext context)
+        {
+            try
+            {
+                // Lấy thông tin người dùng hiện tại
+                var authenticateResult = await context.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+                if (authenticateResult.Succeeded)
+                {
+                    // Xóa claim cũ nếu tồn tại
+                    var claims = new List<Claim>
+                    {
+                        new Claim(ClaimTypes.NameIdentifier, user.Id),
+                        new Claim(ClaimTypes.Name, user.Username),
+                        new Claim(ClaimTypes.GivenName, user.DisplayName),
+                        new Claim(ClaimTypes.Email, user.Email),
+                        new Claim("Avatar", user.Avatar),
+                        new Claim(ClaimTypes.Role, user.Role.ToString())
+                    };
+
+                    // Đăng xuất người dùng
+                    await context.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+                    // Tạo ClaimsIdentity mới với claims mới
+                    var newIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                    await context.SignInAsync(
+                        CookieAuthenticationDefaults.AuthenticationScheme,
+                        new ClaimsPrincipal(newIdentity),
+                        new AuthenticationProperties
+                        {
+                            IsPersistent = true
+                        }
+                    );
+                }
+                else
+                {
+                    var claims = new List<Claim>
+                    {
+                           new Claim(ClaimTypes.NameIdentifier, user.Id),
+                        new Claim(ClaimTypes.Name, user.Username),
+                        new Claim(ClaimTypes.GivenName, user.DisplayName),
+                        new Claim(ClaimTypes.Email, user.Email),
+                        new Claim("Avatar", user.Avatar),
+                        new Claim(ClaimTypes.Role, user.Role.ToString())
+                    };
+
+                    var newIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                    await context.SignInAsync(
+                        CookieAuthenticationDefaults.AuthenticationScheme,
+                        new ClaimsPrincipal(newIdentity),
+                        new AuthenticationProperties
+                        {
+                            IsPersistent = true
+                        }
+                    );
+                }
+            }
+            catch (Exception ex)
+            {
+                // Ném lỗi với thông tin chi tiết
+                throw new Exception($"An error occurred: {ex.Message}", ex);
+            }
+
+            return context;
         }
 
     }
