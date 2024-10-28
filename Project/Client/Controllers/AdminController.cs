@@ -221,7 +221,7 @@ namespace Client.Controllers
         #endregion
 
 
-
+        #region Product
         public async Task<IActionResult> ProductsManager( int? page)
         {
             int pageNumber = (page ?? 1);
@@ -380,14 +380,6 @@ namespace Client.Controllers
             }
         }
 
-
-
-
-
-
-
-
-        //Delete Category
         public async Task<IActionResult> ProductDelete(string id)
     {
         ResponseModel? response = await _productService.GetProductByIdAsync(id);
@@ -402,8 +394,7 @@ namespace Client.Controllers
             TempData["error"] = response?.Message;
         }
         return NotFound();
-    }
-
+  
 
         [HttpPost]
         public async Task<IActionResult> SearchProduct(string searchString)
@@ -510,7 +501,27 @@ namespace Client.Controllers
         //}
 
 
-        public IActionResult OrdersManager()
+       
+    //[HttpPost]
+    //public async Task<IActionResult> ProductDelete(ProductModel product)
+    //{
+    //    ResponseModel? response = await _productService.DeleteProductAsync(product.Id);
+
+    //    if (response != null && response.IsSuccess)
+    //    {
+    //        TempData["success"] = "Coupon deleted successfully";
+    //        return RedirectToAction(nameof(ProductsManager));
+    //    }
+    //    else
+    //    {
+    //        TempData["error"] = response?.Message;
+    //    }
+    //    return View(product);
+    //}
+
+#endregion
+    public IActionResult OrdersManager()
+
         {
             return View();
         }
