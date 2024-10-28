@@ -219,18 +219,21 @@ namespace Client.Controllers
 
 
         #region Product
-        public async Task<IActionResult> ProductsManager( int? page)
+        public async Task<IActionResult> ProductsManager( int? page, int pageSize=5)
         {
             int pageNumber = (page ?? 1);
-            var pageSize = 5;
             ProductViewModel product = new();
             try
             {
 
-                ResponseModel? response1 = await _categoryService.GetAllCategoryAsync();
+                ResponseModel? response1 = await _categoryService.GetAllCategoryAsync(1,99);
 
-                ResponseModel? response = await _productService.GetAllProductAsync(pageNumber);
+                ResponseModel? response = await _productService.GetAllProductAsync(pageNumber,pageSize);
 
+                ResponseModel? response2 = await _productService.GetAllProductAsync(1, 99);
+
+
+                var total= JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response2.Result.ToString()!));
 
                 if (response != null && response.IsSuccess)
                 {
@@ -243,7 +246,7 @@ namespace Client.Controllers
                     product.pageNumber = pageNumber;
                     product.totalItem = data.Count;
                     product.pageSize = pageSize;
-                    product.pageCount = (int)Math.Ceiling(36 / (double)pageSize);
+                    product.pageCount = (int)Math.Ceiling(total.Count/ (double)pageSize);
 
 
                 }
@@ -377,59 +380,160 @@ namespace Client.Controllers
             }
         }
 
-        public async Task<IActionResult> ProductDelete(string id)
-    {
-        ResponseModel? response = await _productService.GetProductByIdAsync(id);
-
-        if (response != null && response.IsSuccess)
+        public async Task<IActionResult> DeleteProduct(string id)
         {
-            ProductModel? model = JsonConvert.DeserializeObject<ProductModel>(Convert.ToString(response.Result));
-            return View(model);
+            ResponseModel? response = await _productService.GetProductByIdAsync(id);
+
+            if (response != null && response.IsSuccess)
+            {
+                // Deserialize vào lớp trung gian với kiểu ProductModel
+                ResponseResultModel<ProductModel>? data =
+                    JsonConvert.DeserializeObject<ResponseResultModel<ProductModel>>(Convert.ToString(response.Result));
+
+                // Lấy dữ liệu từ trường "result" và gán vào model
+                ProductModel? model = data?.result;
+
+                return View(model);
+            }
+            else
+            {
+                TempData["error"] = response?.Message;
+            }
+            return NotFound();
         }
-        else
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteProduct(ProductModel product)
         {
-            TempData["error"] = response?.Message;
+            ResponseModel? response = await _productService.DeleteProductAsync(product.Id);
+
+            if (response != null && response.IsSuccess)
+            {
+                TempData["success"] = "Product deleted successfully";
+                return RedirectToAction(nameof(ProductsManager));
+            }
+            else
+            {
+                TempData["error"] = response?.Message;
+            }
+            return View(product);
         }
-        return NotFound();
-    }
 
-    //[HttpPost]
-    //public async Task<IActionResult> ProductDelete(ProductModel product)
-    //{
-    //    ResponseModel? response = await _productService.DeleteProductAsync(product.Id);
+        [HttpPost]
+        public async Task<IActionResult> SearchProduct(string searchString)
+        {
+            ProductViewModel productViewModel = new();
 
-    //    if (response != null && response.IsSuccess)
-    //    {
-    //        TempData["success"] = "Coupon deleted successfully";
-    //        return RedirectToAction(nameof(ProductsManager));
-    //    }
-    //    else
-    //    {
-    //        TempData["error"] = response?.Message;
-    //    }
-    //    return View(product);
-    //}
+            try
+            {
+                // Gọi API để tìm kiếm sản phẩm theo từ khóa
+                ResponseModel? response = await _productService.SearchProductAsync(searchString);
 
-#endregion
-    public IActionResult OrdersManager()
+                if (response != null && response.IsSuccess)
+                {
+                    productViewModel.Product = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response.Result));
+                }
+                else
+                {
+                    TempData["error"] = response?.Message;
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = ex.Message;
+            }
+
+            return View("ProductsManager", productViewModel); // Trả về view ProductsManager với danh sách sản phẩm đã tìm kiếm
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SortProducts(string sort)
+        {
+            ProductViewModel productViewModel = new();
+
+            try
+            {
+                // Gọi API để lấy danh sách sản phẩm đã sắp xếp
+                ResponseModel? response = await _productService.SortProductAsync(sort);
+
+                if (response != null && response.IsSuccess)
+                {
+                    productViewModel.Product = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response.Result));
+                }
+                else
+                {
+                    TempData["error"] = response?.Message;
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = ex.Message;
+            }
+
+            return View("ProductsManager", productViewModel); // Trả về view ProductsManager với danh sách sản phẩm đã sắp xếp
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> FilterProducts(
+                                                        decimal? minRange,
+                                                        decimal? maxRange,
+                                                        int? sold,
+                                                        bool? discount,
+                                                        int? platform,
+                                                        string category)
+        {
+            ProductViewModel productViewModel = new();
+
+            try
+            {
+                // Gọi API để lọc sản phẩm theo các điều kiện
+                ResponseModel? response = await _productService.FilterProductAsync(minRange, maxRange, sold, discount, platform, category);
+
+                if (response != null && response.IsSuccess)
+                {
+                    productViewModel.Product = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response.Result));
+                }
+                else
+                {
+                    TempData["error"] = response?.Message;
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = ex.Message;
+            }
+
+            return View("ProductsManager", productViewModel); // Trả về view ProductsManager với danh sách sản phẩm đã lọc
+        }
+
+        #endregion
+
+
+        public IActionResult OrdersManager()
         {
             return View();
         }
 
 
-
-        public async Task<IActionResult> CategoriesManager()
+        #region Category
+        public async Task<IActionResult> CategoriesManager( int? page)
         {
             CategoriesViewModel categories = new();
+            int pageNumber = (page ?? 1);
+            var pageSize = 5;
             try
             {
-                ResponseModel? response = await _categoryService.GetAllCategoryAsync();
+                ResponseModel? response = await _categoryService.GetAllCategoryAsync(pageNumber,pageSize);
 
                 if (response != null && response.IsSuccess)
                 {
 
                     categories.Categories = JsonConvert.DeserializeObject<ICollection<CategoriesModel>>(Convert.ToString(response.Result.ToString()!));
-
+                    var data= categories.Categories;
+                    categories.pageNumber = pageNumber;
+                    categories.totalItem = data.Count;
+                    categories.pageSize = pageSize;
+                    categories.pageCount = (int)Math.Ceiling(36 / (double)pageSize);
                 }
                 else
                 {
@@ -572,93 +676,9 @@ namespace Client.Controllers
                 return RedirectToAction(nameof(CategoriesManager));
             }
         }
+        #endregion
 
-        [HttpPost]
-        public async Task<IActionResult> SearchProduct(string searchString)
-        {
-            ProductViewModel productViewModel = new();
-
-            try
-            {
-                // Gọi API để tìm kiếm sản phẩm theo từ khóa
-                ResponseModel? response = await _productService.SearchProductAsync(searchString);
-
-                if (response != null && response.IsSuccess)
-                {
-                    productViewModel.Product = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response.Result));
-                }
-                else
-                {
-                    TempData["error"] = response?.Message;
-                }
-            }
-            catch (Exception ex)
-            {
-                TempData["error"] = ex.Message;
-            }
-
-            return View("ProductsManager", productViewModel); // Trả về view ProductsManager với danh sách sản phẩm đã tìm kiếm
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> SortProducts(string sort)
-        {
-            ProductViewModel productViewModel = new();
-
-            try
-            {
-                // Gọi API để lấy danh sách sản phẩm đã sắp xếp
-                ResponseModel? response = await _productService.SortProductAsync(sort);
-
-                if (response != null && response.IsSuccess)
-                {
-                    productViewModel.Product = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response.Result));
-                }
-                else
-                {
-                    TempData["error"] = response?.Message;
-                }
-            }
-            catch (Exception ex)
-            {
-                TempData["error"] = ex.Message;
-            }
-
-            return View("ProductsManager", productViewModel); // Trả về view ProductsManager với danh sách sản phẩm đã sắp xếp
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> FilterProducts(
-                                                        decimal? minRange,
-                                                        decimal? maxRange,
-                                                        int? sold,
-                                                        bool? discount,
-                                                        int? platform,
-                                                        string category)
-        {
-            ProductViewModel productViewModel = new();
-
-            try
-            {
-                // Gọi API để lọc sản phẩm theo các điều kiện
-                ResponseModel? response = await _productService.FilterProductAsync(minRange, maxRange, sold, discount, platform, category);
-
-                if (response != null && response.IsSuccess)
-                {
-                    productViewModel.Product = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response.Result));
-                }
-                else
-                {
-                    TempData["error"] = response?.Message;
-                }
-            }
-            catch (Exception ex)
-            {
-                TempData["error"] = ex.Message;
-            }
-
-            return View("ProductsManager", productViewModel); // Trả về view ProductsManager với danh sách sản phẩm đã lọc
-        }
+       
 
     }
 }

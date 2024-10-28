@@ -16,7 +16,7 @@ namespace Client.Repositories.Interfaces.Product
         Task<ResponseModel> SortProductAsync(string sort);
         Task<ResponseModel> FilterProductAsync(decimal? minrange, decimal? maxrange, int? sold, bool? Discount, int? Platform, string Category);
 
-        Task<ResponseModel?> GetAllProductAsync(int? pageNumber);
+        Task<ResponseModel?> GetAllProductAsync(int? pageNumber, int pageSize);
 
         Task<ResponseModel> UpdateProductAsync(string id,
                                                      string name,
@@ -45,6 +45,6 @@ namespace Client.Repositories.Interfaces.Product
             List<IFormFile> imageFiles,
             ScanFileRequest request,
             string username);
-
+        Task<ResponseModel> DeleteProductAsync(string Id);
     }
 }

@@ -38,12 +38,11 @@ namespace CategoryMicroService.Controllers
             }
         }
         [HttpGet]
-        public IActionResult GetAll( int? page)
+        public IActionResult GetAll( int? page, int pageSize)
         {
             try
             {
                 int pageNumber = (page ?? 1);
-                int pageSize = 5;
                 var Cates = _categoryService.Categories;
                 _responseModel.Result = Cates.ToPagedList(pageNumber,pageSize);
                 return Ok(_responseModel);

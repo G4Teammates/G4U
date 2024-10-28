@@ -135,12 +135,11 @@ namespace ProductMicroService.Controllers
 
             [HttpGet]
 
-            public IActionResult GetAll( int? page)
+            public IActionResult GetAll( int? page, int pageSize)
             {
                 try
                 {
                     int pageNumber = (page ?? 1);
-                    int pageSize = 5;
                     var Products = _repoProduct.Products;
                     _responseDTO.Result = Products.ToPagedList(pageNumber,pageSize);
                     return Ok(_responseDTO);
@@ -248,12 +247,11 @@ namespace ProductMicroService.Controllers
 
 
             [HttpGet("sort={sort}")]
-            public IActionResult Sort([FromRoute] string sort, int? page)
+            public IActionResult Sort([FromRoute] string sort, int? page,int pageSize)
             {
                 try
                 {
                     int pageNumber = (page ?? 1);
-                    int pageSize = 5;
                     var SanPhams = _repoProduct.Sort(sort);
                     _responseDTO.Result = SanPhams.ToPagedList(pageNumber, pageSize);
                     return Ok(_responseDTO);
@@ -267,12 +265,11 @@ namespace ProductMicroService.Controllers
             }
 
             [HttpGet("search={searchString}")]
-            public IActionResult Search([FromRoute] string searchString, int? page)
+            public IActionResult Search([FromRoute] string searchString, int? page, int pageSize)
             {
                 try
                 {
                     int pageNumber = (page ?? 1);
-                    int pageSize = 5;
                     var SanPhams = _repoProduct.Search(searchString);
                     _responseDTO.Result = SanPhams.ToPagedList(pageNumber, pageSize);
                     return Ok(_responseDTO);
@@ -285,12 +282,11 @@ namespace ProductMicroService.Controllers
                 }
             }
             [HttpGet("filter")]
-		    public IActionResult Filter([FromQuery] decimal? minrange, [FromQuery] decimal? maxrange, [FromQuery] int? sold, [FromQuery] bool? Discount, [FromQuery] int? Platform, [FromQuery] string? Category, int? page)
+		    public IActionResult Filter([FromQuery] decimal? minrange, [FromQuery] decimal? maxrange, [FromQuery] int? sold, [FromQuery] bool? Discount, [FromQuery] int? Platform, [FromQuery] string? Category, int? page, int pageSize)
 		    {
 			    try
 			    {
                     int pageNumber = (page ?? 1);
-                    int pageSize = 5;
                     var SanPhams = _repoProduct.Filter(minrange,maxrange,sold,Discount,Platform,Category);
 				    _responseDTO.Result = SanPhams.ToPagedList(pageNumber, pageSize);
 				    return Ok(_responseDTO);
