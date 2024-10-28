@@ -1,0 +1,79 @@
+﻿@using Client.Models.ComentDTO
+
+@model CommentDTOModel
+
+@{
+    Layout = "_LayoutAdmin";
+}
+@{
+    ViewData["Title"] = "Update Comment";
+}
+
+<h2>Update Comment</h2>
+
+<form asp-action="UpdateCommentConfirm" method="post">
+    <div class="form-group">
+        <label asp-for="Id">Comment ID</label>
+        <input asp-for="Id" class="form-control" readonly="readonly" />
+        <span asp-validation-for="Id" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Content">Comment Content</label>
+        <input asp-for="Content" class="form-control" />
+        <span asp-validation-for="Content" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="NumberOfLikes">NumberOfLikes</label>
+        <textarea asp-for="NumberOfLikes" class="form-control" rows="3"></textarea>
+        <span asp-validation-for="NumberOfLikes" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Status" class="form-label">Status</label>
+        <select asp-for="Status" class="form-select" aria-label="Status">
+            <option value="0">0</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+        </select>
+        <span asp-validation-for="Status" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="UserId">UserId</label>
+        <textarea asp-for="UserId" class="form-control" rows="3"></textarea>
+        <span asp-validation-for="UserId" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="ProductId">ProductId</label>
+        <textarea asp-for="ProductId" class="form-control" rows="3"></textarea>
+        <span asp-validation-for="ProductId" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="ParentId">ParentId</label>
+        <textarea asp-for="ParentId" class="form-control" rows="3"></textarea>
+        <span asp-validation-for="ParentId" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="CreatedAt">CreatedAt</label>
+        <textarea asp-for="CreatedAt" class="form-control" rows="3"></textarea>
+        <span asp-validation-for="CreatedAt" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="UpdatedAt">UpdatedAt</label>
+        <textarea asp-for="UpdatedAt" class="form-control" rows="3"></textarea>
+        <span asp-validation-for="UpdatedAt" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="NumberOfDisLikes">NumberOfDisLikes</label>
+        <textarea asp-for="NumberOfDisLikes" class="form-control" rows="3"></textarea>
+        <span asp-validation-for="NumberOfDisLikes" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Update Category</button>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

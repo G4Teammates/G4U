@@ -1,0 +1,45 @@
+﻿@using Client.Models.ComentDTO
+
+@model List<CommentDTOModel>
+
+@{
+    Layout = "_LayoutAdmin";
+}
+
+@{
+    ViewData["Title"] = "Delete Comments";
+}
+
+<h2>Delete Comments</h2>
+
+@if (Model != null && Model.Any())
+{
+    foreach (var comment in Model)
+    {
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Comment ID: @comment.Id</h5>
+                <p class="card-text">Content: @comment.Content</p>
+                <p class="card-text">Number Of Likes: @comment.NumberOfLikes</p>
+                <p class="card-text">Status: @comment.Status</p>
+                <p class="card-text">UserId: @comment.UserId</p>
+                <p class="card-text">ProductId: @comment.ProductId</p>
+                <p class="card-text">ParentId: @comment.ParentId</p>
+                <p class="card-text">Created At: @comment.CreatedAt</p>
+                <p class="card-text">Updated At: @comment.UpdatedAt</p>
+                <p class="card-text">Number Of Dislikes: @comment.NumberOfDisLikes</p>
+            </div>
+        </div>
+    }
+
+    <p>Bạn có chắc chắn muốn xóa tất cả bình luận này?</p>
+    <form asp-action="CommentDeleteConfirmed" method="post">
+        <input type="hidden" name="ids" value="@string.Join(",", Model.Select(c => c.Id))" />
+        <input type="submit" value="Delete" class="btn btn-danger" />
+    </form>
+    <a asp-action="CommentManager" class="btn btn-secondary">Back to List</a>
+}
+else
+{
+    <p>Không tìm thấy bình luận nào.</p>
+}

@@ -20,12 +20,14 @@ using System.IdentityModel.Tokens.Jwt;
 
 using ProductModel = Client.Models.ProductDTO.ProductModel;
 using System.Drawing.Printing;
+using Client.Models.ComentDTO;
+using Client.Repositories.Interfaces.Comment;
 
 
 namespace Client.Controllers
 {
 
-    public class AdminController(IUserService userService, IHelperService helperService, IRepoProduct repoProduct, ITokenProvider tokenProvider, ICategoriesService categoryService) : Controller
+    public class AdminController(IUserService userService, IHelperService helperService, IRepoProduct repoProduct, ITokenProvider tokenProvider, ICategoriesService categoryService, ICommentService commentService) : Controller
     {
         #region declaration and initialization
         public readonly IUserService _userService = userService;
@@ -33,6 +35,7 @@ namespace Client.Controllers
         public readonly ITokenProvider _tokenProvider = tokenProvider;
         public readonly IRepoProduct _productService = repoProduct;
 		public readonly ICategoriesService _categoryService = categoryService;
+        public readonly ICommentService _commentService = commentService;
 
 
         #endregion
@@ -401,25 +404,113 @@ namespace Client.Controllers
         return NotFound();
     }
 
-    //[HttpPost]
-    //public async Task<IActionResult> ProductDelete(ProductModel product)
-    //{
-    //    ResponseModel? response = await _productService.DeleteProductAsync(product.Id);
 
-    //    if (response != null && response.IsSuccess)
-    //    {
-    //        TempData["success"] = "Coupon deleted successfully";
-    //        return RedirectToAction(nameof(ProductsManager));
-    //    }
-    //    else
-    //    {
-    //        TempData["error"] = response?.Message;
-    //    }
-    //    return View(product);
-    //}
+        [HttpPost]
+        public async Task<IActionResult> SearchProduct(string searchString)
+        {
+            ProductViewModel productViewModel = new();
+
+            try
+            {
+                // Gọi API để tìm kiếm sản phẩm theo từ khóa
+                ResponseModel? response = await _productService.SearchProductAsync(searchString);
+
+                if (response != null && response.IsSuccess)
+                {
+                    productViewModel.Product = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response.Result));
+                }
+                else
+                {
+                    TempData["error"] = response?.Message;
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = ex.Message;
+            }
+
+            return View("ProductsManager", productViewModel); // Trả về view ProductsManager với danh sách sản phẩm đã tìm kiếm
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SortProducts(string sort)
+        {
+            ProductViewModel productViewModel = new();
+
+            try
+            {
+                // Gọi API để lấy danh sách sản phẩm đã sắp xếp
+                ResponseModel? response = await _productService.SortProductAsync(sort);
+
+                if (response != null && response.IsSuccess)
+                {
+                    productViewModel.Product = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response.Result));
+                }
+                else
+                {
+                    TempData["error"] = response?.Message;
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = ex.Message;
+            }
+
+            return View("ProductsManager", productViewModel); // Trả về view ProductsManager với danh sách sản phẩm đã sắp xếp
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> FilterProducts(
+                                                        decimal? minRange,
+                                                        decimal? maxRange,
+                                                        int? sold,
+                                                        bool? discount,
+                                                        int? platform,
+                                                        string category)
+        {
+            ProductViewModel productViewModel = new();
+
+            try
+            {
+                // Gọi API để lọc sản phẩm theo các điều kiện
+                ResponseModel? response = await _productService.FilterProductAsync(minRange, maxRange, sold, discount, platform, category);
+
+                if (response != null && response.IsSuccess)
+                {
+                    productViewModel.Product = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response.Result));
+                }
+                else
+                {
+                    TempData["error"] = response?.Message;
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = ex.Message;
+            }
+
+            return View("ProductsManager", productViewModel); // Trả về view ProductsManager với danh sách sản phẩm đã lọc
+        }
+
+        //[HttpPost]
+        //public async Task<IActionResult> ProductDelete(ProductModel product)
+        //{
+        //    ResponseModel? response = await _productService.DeleteProductAsync(product.Id);
+
+        //    if (response != null && response.IsSuccess)
+        //    {
+        //        TempData["success"] = "Coupon deleted successfully";
+        //        return RedirectToAction(nameof(ProductsManager));
+        //    }
+        //    else
+        //    {
+        //        TempData["error"] = response?.Message;
+        //    }
+        //    return View(product);
+        //}
 
 
-    public IActionResult OrdersManager()
+        public IActionResult OrdersManager()
         {
             return View();
         }
@@ -580,93 +671,155 @@ namespace Client.Controllers
                 return RedirectToAction(nameof(CategoriesManager));
             }
         }
-
-        [HttpPost]
-        public async Task<IActionResult> SearchProduct(string searchString)
+        public async Task<IActionResult> CommentManager()
         {
-            ProductViewModel productViewModel = new();
-
+            CommentViewModel comment = new();
             try
             {
-                // Gọi API để tìm kiếm sản phẩm theo từ khóa
-                ResponseModel? response = await _productService.SearchProductAsync(searchString);
+                ResponseModel? response = await _commentService.GetAllCommentAsync();
 
                 if (response != null && response.IsSuccess)
                 {
-                    productViewModel.Product = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response.Result));
+
+                    comment.Comment = JsonConvert.DeserializeObject<ICollection<CommentDTOModel>>(Convert.ToString(response.Result.ToString()!));
+
                 }
                 else
                 {
                     TempData["error"] = response?.Message;
                 }
+
             }
             catch (Exception ex)
             {
                 TempData["error"] = ex.Message;
             }
 
-            return View("ProductsManager", productViewModel); // Trả về view ProductsManager với danh sách sản phẩm đã tìm kiếm
-        }
 
+            return View(comment);
+        }
         [HttpPost]
-        public async Task<IActionResult> SortProducts(string sort)
+        public async Task<IActionResult> CreateComment(CreateCommentDTOModel model)
         {
-            ProductViewModel productViewModel = new();
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors)
+                                              .Select(e => e.ErrorMessage);
+                return BadRequest(new { Errors = errors });
+            }
 
             try
             {
-                // Gọi API để lấy danh sách sản phẩm đã sắp xếp
-                ResponseModel? response = await _productService.SortProductAsync(sort);
+                // Gọi service CreateCommentAsync
+                var response = await _commentService.CreateCommentAsync(model);
 
                 if (response != null && response.IsSuccess)
                 {
-                    productViewModel.Product = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response.Result));
+                    TempData["success"] = "Category created successfully";
+                    return RedirectToAction(nameof(CommentManager));
                 }
                 else
                 {
-                    TempData["error"] = response?.Message;
+                    TempData["error"] = response?.Message ?? "An unknown error occurred.";
+                    return RedirectToAction(nameof(CommentManager));
                 }
             }
             catch (Exception ex)
             {
-                TempData["error"] = ex.Message;
+                TempData["error"] = $"An error occurred: {ex.Message}";
+                return RedirectToAction(nameof(CommentManager));
             }
+        }
+        public async Task<IActionResult> UpdateComment(string id)
+        {
+            ResponseModel? response = await _commentService.GetByIdAsync(id);
 
-            return View("ProductsManager", productViewModel); // Trả về view ProductsManager với danh sách sản phẩm đã sắp xếp
+            if (response != null && response.IsSuccess)
+            {
+                CommentDTOModel? model = JsonConvert.DeserializeObject<CommentDTOModel>(Convert.ToString(response.Result));
+
+                // Trả về model UsersDTO để sử dụng trong View
+                return View(model);
+            }
+            else
+            {
+                TempData["error"] = response?.Message;
+            }
+            return NotFound();
         }
 
         [HttpPost]
-        public async Task<IActionResult> FilterProducts(
-                                                        decimal? minRange,
-                                                        decimal? maxRange,
-                                                        int? sold,
-                                                        bool? discount,
-                                                        int? platform,
-                                                        string category)
+        public async Task<IActionResult> UpdateCommentConfirm([FromForm] CommentDTOModel comment)
         {
-            ProductViewModel productViewModel = new();
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors)
+                                              .Select(e => e.ErrorMessage);
+                return BadRequest(new { Errors = errors });
+            }
 
             try
             {
-                // Gọi API để lọc sản phẩm theo các điều kiện
-                ResponseModel? response = await _productService.FilterProductAsync(minRange, maxRange, sold, discount, platform, category);
+                var response = await _commentService.UpdateCommentAsync(comment);
 
                 if (response != null && response.IsSuccess)
                 {
-                    productViewModel.Product = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response.Result));
+                    TempData["success"] = "Category updated successfully";
+                    return RedirectToAction(nameof(CommentManager));
                 }
                 else
                 {
-                    TempData["error"] = response?.Message;
+                    TempData["error"] = response?.Message ?? "An unknown error occurred.";
+                    return BadRequest(response.Message); // Trả về view với dữ liệu đã nhập
+
                 }
             }
             catch (Exception ex)
             {
-                TempData["error"] = ex.Message;
+                TempData["error"] = $"An error occurred: {ex.Message}";
+                return StatusCode(500); // Trả về view với dữ liệu đã nhập và lỗi
+            }
+        }
+        public async Task<IActionResult> CommentDelete(string id)
+        {
+            ResponseModel? response = await _commentService.GetListByIdAsync(id);
+            if (response != null && response.IsSuccess)
+            {
+                var comments = JsonConvert.DeserializeObject<List<CommentDTOModel>>(Convert.ToString(response.Result));
+                return View(comments); // Trả về danh sách bình luận
+            }
+            else
+            {
+                TempData["error"] = response?.Message;
+            }
+            return NotFound();
+        }
+        [HttpPost]
+        public async Task<IActionResult> CommentDeleteConfirmed(string ids)
+        {
+            if (string.IsNullOrEmpty(ids))
+            {
+                TempData["error"] = "Không có ID nào để xóa.";
+                return RedirectToAction("CommentManager");
             }
 
-            return View("ProductsManager", productViewModel); // Trả về view ProductsManager với danh sách sản phẩm đã lọc
+            var idList = ids.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+
+            foreach (var id in idList)
+            {
+                var response = await _commentService.DeleteCommentAsync(id.Trim());
+                if (!response.IsSuccess)
+                {
+                    TempData["error"] = response.Message; // Ghi nhận lỗi
+                    return RedirectToAction("CommentManager");
+                }
+            }
+
+            TempData["success"] = "Xóa bình luận thành công.";
+            return RedirectToAction("CommentManager");
         }
+
+
 
     }
 }
