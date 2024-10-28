@@ -178,12 +178,13 @@ namespace Client.Controllers
             try
             {
                 ResponseModel? response = await _productService.GetAllProductAsync();
+                ResponseModel? response1 = await _categoryService.GetAllCategoryAsync();
 
                 if (response != null && response.IsSuccess)
                 {
 
                     product.Product = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response.Result.ToString()!));
-
+                    product.CategoriesModel = JsonConvert.DeserializeObject<ICollection<CategoriesModel>>(Convert.ToString(response1.Result.ToString()!));
                 }
                 else
                 {
@@ -509,9 +510,93 @@ namespace Client.Controllers
                 return RedirectToAction(nameof(CategoriesManager));
             }
         }
-        public IActionResult CensorshipManager()
+
+        [HttpPost]
+        public async Task<IActionResult> SearchProduct(string searchString)
         {
-            return View();
+            ProductViewModel productViewModel = new();
+
+            try
+            {
+                // Gọi API để tìm kiếm sản phẩm theo từ khóa
+                ResponseModel? response = await _productService.SearchProductAsync(searchString);
+
+                if (response != null && response.IsSuccess)
+                {
+                    productViewModel.Product = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response.Result));
+                }
+                else
+                {
+                    TempData["error"] = response?.Message;
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = ex.Message;
+            }
+
+            return View("ProductsManager", productViewModel); // Trả về view ProductsManager với danh sách sản phẩm đã tìm kiếm
         }
+
+        [HttpPost]
+        public async Task<IActionResult> SortProducts(string sort)
+        {
+            ProductViewModel productViewModel = new();
+
+            try
+            {
+                // Gọi API để lấy danh sách sản phẩm đã sắp xếp
+                ResponseModel? response = await _productService.SortProductAsync(sort);
+
+                if (response != null && response.IsSuccess)
+                {
+                    productViewModel.Product = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response.Result));
+                }
+                else
+                {
+                    TempData["error"] = response?.Message;
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = ex.Message;
+            }
+
+            return View("ProductsManager", productViewModel); // Trả về view ProductsManager với danh sách sản phẩm đã sắp xếp
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> FilterProducts(
+                                                        decimal? minRange,
+                                                        decimal? maxRange,
+                                                        int? sold,
+                                                        bool? discount,
+                                                        int? platform,
+                                                        string category)
+        {
+            ProductViewModel productViewModel = new();
+
+            try
+            {
+                // Gọi API để lọc sản phẩm theo các điều kiện
+                ResponseModel? response = await _productService.FilterProductAsync(minRange, maxRange, sold, discount, platform, category);
+
+                if (response != null && response.IsSuccess)
+                {
+                    productViewModel.Product = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response.Result));
+                }
+                else
+                {
+                    TempData["error"] = response?.Message;
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = ex.Message;
+            }
+
+            return View("ProductsManager", productViewModel); // Trả về view ProductsManager với danh sách sản phẩm đã lọc
+        }
+
     }
 }
