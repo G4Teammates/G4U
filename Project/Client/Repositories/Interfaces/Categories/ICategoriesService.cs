@@ -6,7 +6,7 @@ namespace Client.Repositories.Interfaces.Categories
 {
     public interface ICategoriesService
     {
-        Task<ResponseModel> GetAllCategoryAsync();
+        Task<ResponseModel> GetAllCategoryAsync(int pageNumber, int pageSize);
 
         Task<ResponseModel> GetCategoryAsync(string id);
 

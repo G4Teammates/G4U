@@ -40,11 +40,10 @@ namespace CommentMicroService.Controllers
         }
 
         [HttpGet("List/{id?}")]
-        public async Task<IActionResult> GetListById([FromRoute] string id, int? page)
+        public async Task<IActionResult> GetListById([FromRoute] string id, int? page,int pageSize)
         {
             try
             {
-                int pageSize = 10;
                 int pageNumber = (page ?? 1);
                 var Cates = await _db.GetListById(id);
                 _responseModel.Result = Cates.ToPagedList(pageNumber,pageSize);
@@ -59,12 +58,11 @@ namespace CommentMicroService.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAll(int? page)
+        public IActionResult GetAll(int? page, int pageSize)
         {
             try
             {
                 int pageNumber = (page ?? 1);
-                int pageSize = 10;
                 var Comm = _db.Comments;
                 _responseModel.Result = Comm.ToPagedList(pageNumber,pageSize);
                 return Ok(_responseModel);
