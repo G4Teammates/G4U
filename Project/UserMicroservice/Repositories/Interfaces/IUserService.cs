@@ -6,7 +6,7 @@ namespace UserMicroservice.Repositories.Interfaces
 {
     public interface IUserService
     {
-        Task<ResponseModel> GetAll();
+        Task<ResponseModel> GetAll(int pageNumber);
         Task<ResponseModel> GetUser(string id);
         Task<ResponseModel> AddUserAsync(AddUserModel user);
         Task<ResponseModel> UpdateUser(UserUpdate user);

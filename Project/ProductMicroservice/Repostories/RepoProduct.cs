@@ -288,14 +288,15 @@ namespace ProductMicroservice.Repostories
 				query = query.Where(p => (int)p.Platform == Platform.Value); // so sánh với enum PlatformType
 			}
 
-			// Lọc theo category
-			if (!string.IsNullOrEmpty(Category))
-			{
-				query = query.Where(p => p.Categories.Any(c => c.CategoryName.Contains(Category)));
-			}
+            // Lọc theo category
+            if (!string.IsNullOrEmpty(Category))
+            {
+                query = query.Where(p => p.Categories.Any(c => c.CategoryName.Equals(Category, StringComparison.OrdinalIgnoreCase)));
+            }
 
-			// Trả về danh sách sản phẩm sau khi áp dụng tất cả các bộ lọc
-			return query.ToList();
+
+            // Trả về danh sách sản phẩm sau khi áp dụng tất cả các bộ lọc
+            return query.ToList();
 		}
 
         public async Task<Products> Moderate(List<IFormFile> imageFiles, CreateProductModel Product, IFormFile gameFiles, string username)

@@ -5,6 +5,7 @@ using CategoryMicroservice.DBContexts.Entities;
 using CategoryMicroservice.Repositories.Interfaces;
 using CategoryMicroservice.Models.DTO;
 using CategoryMicroservice.Models;
+using X.PagedList.Extensions;
 
 namespace CategoryMicroService.Controllers
 {
@@ -21,11 +22,11 @@ namespace CategoryMicroService.Controllers
         }
 
         [HttpGet("{id?}")]
-        public IActionResult GetById([FromRoute] string id)
+        public async Task<IActionResult> GetById([FromRoute] string id)
         {
             try
             {
-                var Cates = _categoryService.GetById(id);
+                var Cates = await _categoryService.GetById(id);
                 _responseModel.Result = Cates;
                 return Ok(_responseModel);
             }
@@ -37,12 +38,14 @@ namespace CategoryMicroService.Controllers
             }
         }
         [HttpGet]
-        public IActionResult GetAll()
+        public IActionResult GetAll( int? page)
         {
             try
             {
+                int pageNumber = (page ?? 1);
+                int pageSize = 5;
                 var Cates = _categoryService.Categories;
-                _responseModel.Result = Cates;
+                _responseModel.Result = Cates.ToPagedList(pageNumber,pageSize);
                 return Ok(_responseModel);
             }
             catch (Exception ex)
@@ -51,6 +54,7 @@ namespace CategoryMicroService.Controllers
                 _responseModel.Message = "An error occurred while getting the Category: " + ex.Message;
                 return StatusCode(500, _responseModel); // Trả về mã lỗi 500 với thông báo lỗi chi tiết
             }
+            
         }
         [HttpPost]
         public IActionResult CreateCategory([FromForm] CreateCategoryModel model)
@@ -69,11 +73,11 @@ namespace CategoryMicroService.Controllers
             }
         }
         [HttpPut]
-        public IActionResult UpdateCategory([FromForm] CategoryModel model)
+        public async Task< IActionResult> UpdateCategory([FromForm] CategoryModel model)
         {
             try
             {
-                var Cates = _categoryService.UpdateCategrori(model);
+                var Cates =await _categoryService.UpdateCategrori(model);
                 _responseModel.Result = Cates;
                 return Ok(_responseModel);
             }
@@ -87,7 +91,7 @@ namespace CategoryMicroService.Controllers
 
 
         [HttpDelete("{id?}")]
-        public async Task<IActionResult> DeleteSanPham([FromRoute] string id)
+        public async Task<IActionResult> DeleteCategory([FromRoute] string id)
         {
             try
             {
