@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using OrderMicroservice.DBContexts.Entities;
 using OrderMicroservice.Models;
+using OrderMicroservice.Models.OrderModel;
 
 namespace OrderMicroservice.Configure
 {
@@ -16,8 +17,8 @@ namespace OrderMicroservice.Configure
             {
                 //Register mapper here⬇️
 
-                //cfg.CreateMap<User, UserModel>().ReverseMap();
-
+                cfg.CreateMap<Order, OrderModel>().ReverseMap();
+                cfg.CreateMap<OrderItems, OrderItemModel>().ReverseMap();
 
                 //Register mapper here⬆️
             });
