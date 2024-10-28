@@ -55,24 +55,24 @@ namespace Client.Controllers
                     }
 
                     // Tạo claims từ thông tin người dùng
-            //        var claims = new List<Claim>
-            //{
-            //    new Claim(ClaimTypes.Name, user.DisplayName),
-            //    new Claim("Avatar", user.Avatar),
-            //    new Claim("Token", user.Token) // Hoặc thêm claim khác cần thiết
-            //};
+                    //        var claims = new List<Claim>
+                    //{
+                    //    new Claim(ClaimTypes.Name, user.DisplayName),
+                    //    new Claim("Avatar", user.Avatar),
+                    //    new Claim("Token", user.Token) // Hoặc thêm claim khác cần thiết
+                    //};
 
-            //        var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-            //        var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+                    //        var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                    //        var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
 
-            //        // Đăng nhập và thiết lập cookie xác thực
-            //        await HttpContext.SignInAsync(
-            //            CookieAuthenticationDefaults.AuthenticationScheme,
-            //            claimsPrincipal,
-            //            new AuthenticationProperties
-            //            {
-            //                IsPersistent = true // Giữ phiên đăng nhập lâu dài
-            //            });
+                    //        // Đăng nhập và thiết lập cookie xác thực
+                    //        await HttpContext.SignInAsync(
+                    //            CookieAuthenticationDefaults.AuthenticationScheme,
+                    //            claimsPrincipal,
+                    //            new AuthenticationProperties
+                    //            {
+                    //                IsPersistent = true // Giữ phiên đăng nhập lâu dài
+                    //            });
 
                     _tokenProvider.SetToken(user!.Token);
                     HttpContext.Response.Cookies.Append("IsLogin", response.IsSuccess.ToString());
@@ -199,30 +199,29 @@ namespace Client.Controllers
         [HttpGet]
         public async Task<IActionResult> Information()
         {
-            //var token = _tokenProvider.GetToken();
-            //var handler = new JwtSecurityTokenHandler();
-            //var jsonToken = handler.ReadToken(token) as JwtSecurityToken;
-            //var id = jsonToken?.Claims.First(claim => claim.Type == ClaimTypes.NameIdentifier).Value;
+            var token = _tokenProvider.GetToken();
+            var handler = new JwtSecurityTokenHandler();
+            var jsonToken = handler.ReadToken(token) as JwtSecurityToken;
+            var id = jsonToken?.Claims.First(claim => claim.Type == ClaimTypes.NameIdentifier).Value;
 
-            //if (string.IsNullOrEmpty(id))
-            //{
-            //    return RedirectToAction("Login", "User");
-            //}
+            if (string.IsNullOrEmpty(id))
+            {
+                return RedirectToAction("Login", "User");
+            }
 
-            //// Lấy thông tin người dùng từ dịch vụ
-            //var response = await _userService.GetUserAsync(id);
-            //if (response.IsSuccess)
-            //{
-            //    var user = JsonConvert.DeserializeObject<UpdateUser>(response.Result.ToString()!);
-            //    return View(user); // Truyền dữ liệu người dùng vào view
-            //}
+            // Lấy thông tin người dùng từ dịch vụ
+            var response = await _userService.GetUserAsync(id);
+            if (response.IsSuccess)
+            {
+                var user = JsonConvert.DeserializeObject<UpdateUser>(response.Result.ToString()!);
+                return View(user); // Truyền dữ liệu người dùng vào view
+            }
 
-            //// Nếu không thành công, bạn có thể xử lý lỗi
-            //TempData["error"] = response.Message;
+            // Nếu không thành công, bạn có thể xử lý lỗi
+            TempData["error"] = response.Message;
             return View();
         }
 
-<<<<<<< Updated upstream
         [HttpPost]
         public async Task<IActionResult> Information(UpdateUser updateUser)
         {
@@ -283,29 +282,10 @@ namespace Client.Controllers
                     TempData["error"] = response.Message;
                 }
             }
-=======
-        //[HttpPost]
-        //public async Task<IActionResult> Information(UpdateUser updateUser)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        // Gọi dịch vụ để cập nhật thông tin người dùng
-        //        var response = await _userService.UpdateUser(updateUser);
-        //        if (response.IsSuccess)
-        //        {
-        //            TempData["success"] = "User updated successfully";
-        //            return RedirectToAction(nameof(Information));
-        //        }
-        //        else
-        //        {
-        //            TempData["error"] = response.Message;
-        //        }
-        //    }
->>>>>>> Stashed changes
 
-        //    // Nếu ModelState không hợp lệ, trả về lại model để hiển thị lỗi
-        //    return View(updateUser);
-        //}
+            // Nếu ModelState không hợp lệ, trả về lại model để hiển thị lỗi
+            return View(updateUser);
+        }
 
 
 
