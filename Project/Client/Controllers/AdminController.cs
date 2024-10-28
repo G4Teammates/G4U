@@ -218,7 +218,7 @@ namespace Client.Controllers
         #endregion
 
 
-
+        #region Product
         public async Task<IActionResult> ProductsManager( int? page)
         {
             int pageNumber = (page ?? 1);
@@ -377,14 +377,6 @@ namespace Client.Controllers
             }
         }
 
-
-
-
-
-
-
-
-        //Delete Category
         public async Task<IActionResult> ProductDelete(string id)
     {
         ResponseModel? response = await _productService.GetProductByIdAsync(id);
@@ -418,7 +410,7 @@ namespace Client.Controllers
     //    return View(product);
     //}
 
-
+#endregion
     public IActionResult OrdersManager()
         {
             return View();
