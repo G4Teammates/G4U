@@ -33,6 +33,7 @@
     <PackageReference Include="MongoDB.Bson" Version="2.29.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="RabbitMQ.Client" Version="6.8.1" />
+    <PackageReference Include="X.PagedList" Version="10.5.7" />
     <PackageReference Include="xunit.extensibility.core" Version="2.9.2" />
   </ItemGroup>
 

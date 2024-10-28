@@ -1,42 +1,11 @@
-﻿using CommentMicroservice.DBContexts.Enum;
-using Microsoft.EntityFrameworkCore;
+﻿using CommentMicroservice.DBContexts.Entities;
+using CommentMicroservice.DBContexts.Enum;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Diagnostics.CodeAnalysis;
 
-namespace CommentMicroservice.DBContexts.Entities
+namespace CommentMicroservice.Models
 {
-    #region SQL
-    //public class Comment
-    //{
-    //    public Guid Id { get; set; } = Guid.NewGuid();
-    //    [Required(ErrorMessage = "Content is required")]
-    //    [MaxLength(10000, ErrorMessage ="Content must be less than 10,000 characters")]
-    //    public required string Content { get; set; }
-    //    public int NumberOfLikes { get; set; }
-    //    public CommentStatus Status { get; set; }
-
-    //    public Guid UserId { get; set; }
-    //    public Guid ProductId { get; set; }
-
-    //    [DeleteBehavior(DeleteBehavior.NoAction)]
-    //    public Comment? Parent { get; set; }
-    //    public Guid? ParentId { get; set; }
-
-    //    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-    //    public DateTime UpdatedAt { get; set; }
-    //}
-    #endregion
-
-    #region noSQL
-    /// <summary>
-    /// Represents a comment in the system. Each comment can be associated with a product and a user.
-    /// <br/>
-    /// Đại diện cho một bình luận trong hệ thống. Mỗi bình luận có thể liên kết với một sản phẩm và một người dùng.
-    /// </summary>
-    public class Comment
+    public class CommentModel
     {
         /// <summary>
         /// Unique identifier for the comment.
@@ -128,7 +97,4 @@ namespace CommentMicroservice.DBContexts.Entities
         [BsonElement("numberOfDisLikes")]
         public int NumberOfDisLikes { get; set; }
     }
-    #endregion
-
-
 }

@@ -23,11 +23,12 @@ namespace UserMicroService.Controllers
 
         //[Authorize(Roles = "User")]
         [HttpGet]
-        public async Task<ActionResult> GetAll()
+        public async Task<ActionResult> GetAll(int? page)
         {
             try
             {
-                ResponseModel response = await _userService.GetAll();
+                int pageNumber = (page ?? 1);
+                ResponseModel response = await _userService.GetAll(pageNumber);
                 if (response.IsSuccess)
                     return Ok(response);
                 return BadRequest(response);

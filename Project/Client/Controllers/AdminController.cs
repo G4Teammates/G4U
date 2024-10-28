@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Newtonsoft.Json;
 using System.IdentityModel.Tokens.Jwt;
 using ProductModel = Client.Models.ProductDTO.ProductModel;
+using System.Drawing.Printing;
 
 
 namespace Client.Controllers
@@ -213,18 +214,24 @@ namespace Client.Controllers
 
 
 
-        public async Task<IActionResult> ProductsManager()
-
+        public async Task<IActionResult> ProductsManager( int? page)
         {
+            int pageNumber = (page ?? 1);
+            var pageSize = 5;
             ProductViewModel product = new();
             try
             {
-                ResponseModel? response = await _productService.GetAllProductAsync();
+                ResponseModel? response = await _productService.GetAllProductAsync(pageNumber);
 
                 if (response != null && response.IsSuccess)
                 {
 
                     product.Product = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response.Result.ToString()!));
+                    var data = product.Product;
+                    product.pageNumber = pageNumber;
+                    product.totalItem = data.Count;
+                    product.pageSize = pageSize;
+                    product.pageCount = (int)Math.Ceiling(36 / (double)pageSize);
 
                 }
                 else

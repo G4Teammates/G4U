@@ -1,15 +1,16 @@
 ﻿    using AutoMapper;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using ProductMicroservice.DBContexts;
+    using Newtonsoft.Json;
+    using ProductMicroservice.DBContexts;
     using ProductMicroservice.DBContexts.Entities;
     using ProductMicroservice.DBContexts.Enum;
     using ProductMicroservice.Models;
     using ProductMicroservice.Models.DTO;
     using ProductMicroservice.Repostories;
+    using X.PagedList.Extensions;
 
-    namespace ProductMicroService.Controllers
+namespace ProductMicroService.Controllers
     {
         [ApiController]
         [Route("api/[controller]")]
@@ -134,12 +135,14 @@ using ProductMicroservice.DBContexts;
 
             [HttpGet]
 
-            public IActionResult GetAll()
+            public IActionResult GetAll( int? page)
             {
                 try
                 {
+                    int pageNumber = (page ?? 1);
+                    int pageSize = 5;
                     var Products = _repoProduct.Products;
-                    _responseDTO.Result = Products;
+                    _responseDTO.Result = Products.ToPagedList(pageNumber,pageSize);
                     return Ok(_responseDTO);
                 }
                 catch (Exception ex)
@@ -170,8 +173,8 @@ using ProductMicroservice.DBContexts;
                 }
             }
 
-        [HttpPut]
-        public async Task<IActionResult> UpdateProduct(
+            [HttpPut]
+            public async Task<IActionResult> UpdateProduct(
                                                         [FromForm] string id,
                                                         [FromForm] string name,
                                                         [FromForm] string description,
@@ -244,13 +247,15 @@ using ProductMicroservice.DBContexts;
         }
 
 
-        [HttpGet("sort={sort}")]
-            public IActionResult Sort([FromRoute] string sort)
+            [HttpGet("sort={sort}")]
+            public IActionResult Sort([FromRoute] string sort, int? page)
             {
                 try
                 {
+                    int pageNumber = (page ?? 1);
+                    int pageSize = 5;
                     var SanPhams = _repoProduct.Sort(sort);
-                    _responseDTO.Result = SanPhams;
+                    _responseDTO.Result = SanPhams.ToPagedList(pageNumber, pageSize);
                     return Ok(_responseDTO);
                 }
                 catch (Exception ex)
@@ -262,12 +267,14 @@ using ProductMicroservice.DBContexts;
             }
 
             [HttpGet("search={searchString}")]
-            public IActionResult Search([FromRoute] string searchString)
+            public IActionResult Search([FromRoute] string searchString, int? page)
             {
                 try
                 {
+                    int pageNumber = (page ?? 1);
+                    int pageSize = 5;
                     var SanPhams = _repoProduct.Search(searchString);
-                    _responseDTO.Result = SanPhams;
+                    _responseDTO.Result = SanPhams.ToPagedList(pageNumber, pageSize);
                     return Ok(_responseDTO);
                 }
                 catch (Exception ex)
@@ -278,12 +285,14 @@ using ProductMicroservice.DBContexts;
                 }
             }
             [HttpGet("filter")]
-		    public IActionResult Filter([FromQuery] decimal? minrange, [FromQuery] decimal? maxrange, [FromQuery] int? sold, [FromQuery] bool? Discount, [FromQuery] int? Platform, [FromQuery] string? Category)
+		    public IActionResult Filter([FromQuery] decimal? minrange, [FromQuery] decimal? maxrange, [FromQuery] int? sold, [FromQuery] bool? Discount, [FromQuery] int? Platform, [FromQuery] string? Category, int? page)
 		    {
 			    try
 			    {
-				    var SanPhams = _repoProduct.Filter(minrange,maxrange,sold,Discount,Platform,Category);
-				    _responseDTO.Result = SanPhams;
+                    int pageNumber = (page ?? 1);
+                    int pageSize = 5;
+                    var SanPhams = _repoProduct.Filter(minrange,maxrange,sold,Discount,Platform,Category);
+				    _responseDTO.Result = SanPhams.ToPagedList(pageNumber, pageSize);
 				    return Ok(_responseDTO);
 			    }
 			    catch (Exception ex)

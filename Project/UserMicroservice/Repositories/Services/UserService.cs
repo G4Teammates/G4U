@@ -14,6 +14,7 @@ using UserMicroservice.Models.UserManagerModel;
 using UserMicroservice.Repositories.Interfaces;
 using UserMicroservice.DBContexts.Enum;
 using static Google.Apis.Requests.BatchRequest;
+using X.PagedList.Extensions;
 
 namespace UserMicroservice.Repositories.Services
 {
@@ -104,16 +105,17 @@ namespace UserMicroservice.Repositories.Services
             return response;
         }
 
-        public async Task<ResponseModel> GetAll()
+        public async Task<ResponseModel> GetAll(int pageNumber)
         {
             ResponseModel response = new();
             try
             {
+                int pageSize = 5;
                 var users = await _context.Users.ToListAsync();
                 if (users != null)
                 {
                     response.Message = $"Found {users.Count} users";
-                    response.Result = _mapper.Map<ICollection<UserModel>>(users);
+                    response.Result = _mapper.Map<ICollection<UserModel>>(users).ToPagedList(pageNumber,pageSize);
                 }
                 else
                 {
