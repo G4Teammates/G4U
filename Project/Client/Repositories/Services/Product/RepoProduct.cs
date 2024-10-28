@@ -102,12 +102,12 @@ namespace Client.Repositories.Services.Product
             return response;
         }
 
-        public async Task<ResponseModel?> GetAllProductAsync(int? pageNumber)
+        public async Task<ResponseModel?> GetAllProductAsync(int? pageNumber, int pageSize)
         {
             return await _baseService.SendAsync(new RequestModel()
             {
                 ApiType = StaticTypeApi.ApiType.GET,
-                Url = StaticTypeApi.APIGateWay + "/Product?page=" + pageNumber.ToString()
+                Url = StaticTypeApi.APIGateWay + "/Product?page=" + pageNumber.ToString() +"&pageSize=" + pageSize.ToString()
             });
         }
 
@@ -245,6 +245,13 @@ namespace Client.Repositories.Services.Product
             return response;
         }
 
-
+        public async Task<ResponseModel> DeleteProductAsync(string Id)
+        {
+            return await _baseService.SendAsync(new RequestModel()
+            {
+                ApiType = StaticTypeApi.ApiType.DELETE,
+                Url = StaticTypeApi.APIGateWay + "/Product/" + Id,
+            });
+        }
     }
 }
