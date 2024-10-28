@@ -11,7 +11,7 @@ namespace Client.Models.CategorisDTO
         /// <br/>
         /// Định danh duy nhất cho danh mục.
         /// </summary>
-        public string Id { get; set; } = ObjectId.GenerateNewId().ToString();
+        public string Id { get; set; } 
 
         /// <summary>
         /// The Name of the category.

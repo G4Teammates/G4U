@@ -1,0 +1,61 @@
+﻿@using Client.Models.CategorisDTO
+
+@model CategoriesModel
+
+@{
+    Layout = "_LayoutAdmin";
+}
+@{
+    ViewData["Title"] = "Update Category";
+}
+
+<h2>Update Category</h2>
+
+<form asp-action="UpdateCategoryConfirm" method="post">
+    <div class="form-group">
+        <label asp-for="Id">Category ID</label>
+        <input asp-for="Id" class="form-control" readonly="readonly" />
+        <span asp-validation-for="Id" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Name">Category Name</label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Type" class="form-label">Type</label>
+        <select asp-for="Type" class="form-select" aria-label="Type">
+            <option value="0">0</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+        </select>
+        <span asp-validation-for="Type" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Description">Description</label>
+        <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Status" class="form-label">Status</label>
+        <select asp-for="Status" class="form-select" aria-label="Status">
+            <option value="0">0</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+        </select>
+        <span asp-validation-for="Status" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Update Category</button>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

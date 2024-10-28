@@ -12,7 +12,12 @@ namespace Client.Repositories.Interfaces.Product
     public interface IRepoProduct
     {
         Task<ResponseModel?> GetProductByIdAsync(string Id);
+        Task<ResponseModel?> SearchProductAsync(string searchString);
+        Task<ResponseModel> SortProductAsync(string sort);
+        Task<ResponseModel> FilterProductAsync(decimal? minrange, decimal? maxrange, int? sold, bool? Discount, int? Platform, string Category);
+
         Task<ResponseModel?> GetAllProductAsync(int? pageNumber);
+
         Task<ResponseModel> UpdateProductAsync(string id,
                                                      string name,
                                                      string description,
