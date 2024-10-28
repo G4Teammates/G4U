@@ -91,6 +91,42 @@
       "UpstreamHttpMethod": [ "Get" ]
     },
 
+    //Search
+    {
+      "DownstreamPathTemplate": "/api/Product/search={searchString}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7159
+        }
+      ],
+      //"AuthenticationOptions": {
+      //  "AuthenticationProviderKey": "Bearer",
+      //  "AllowedScopes": []
+      //},
+      "UpstreamPathTemplate": "/Product/search={searchString}",
+      "UpstreamHttpMethod": [ "Get" ]
+    },
+
+    //Filter
+    {
+      "DownstreamPathTemplate": "/api/Product/filter",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7159
+        }
+      ],
+      //"AuthenticationOptions": {
+      //  "AuthenticationProviderKey": "Bearer",
+      //  "AllowedScopes": []
+      //},
+      "UpstreamPathTemplate": "/Product/filter",
+      "UpstreamHttpMethod": [ "Get" ]
+    },
+
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -258,7 +294,7 @@
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //                                                                                                                    //
-    //                                                User                                                                //
+    //                                                Categories                                                          //
     //                                                                                                                    //
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //get by id

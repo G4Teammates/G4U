@@ -6,7 +6,7 @@
 
 @model ProductViewModel
 
- 
+
 
 <div class="pt-3 pb-4">
     <span class="titleManager bg-success py-3 px-5 rounded-4 fw-bold text-white">Products Manager</span>
@@ -18,103 +18,103 @@
 <!-- Sidebar cho bộ lọc -->
 <div id="filterSidebar">
     <a href="javascript:void(0)" class="closebtn" onclick="closeSidebar()">&times;</a>
-    @* <h5 class="text-center mt-3">Filter products by</h5>
-    <ul class="mt-3">
-    <li class="m-2"><input type="checkbox" id="price"> <label for="price" class="fw-bold">Price</label></li>
-    <li class="m-2"><input type="checkbox" id="category"> <label for="category" class="fw-bold">Category</label></li>
-    <li class="m-2"><input type="checkbox" id="platform"> <label for="platform" class="fw-bold">Platform - OS</label></li>
-    <li class="m-2"><input type="checkbox" id="releaseDate"> <label for="releaseDate" class="fw-bold">Release Date</label></li>
-    <li class="m-2"><input type="checkbox" id="status"> <label for="status" class="fw-bold">Status</label></li>
-    <li><input type="checkbox" id="loaiKH"> <label for="loaiKH">Loại khách hàng</label></li>
-    <li><input type="checkbox" id="dienThoai"> <label for="dienThoai">Điện thoại</label></li>
-    <li><input type="checkbox" id="email"> <label for="email">Email</label></li>
-    <li><input type="checkbox" id="diaChiGD"> <label for="diaChiGD">Địa chỉ (Giao hàng)</label></li>
-    <li><input type="checkbox" id="diaChiHD"> <label for="diaChiHD">Địa chỉ (Hóa đơn)</label></li>
-    <li><input type="checkbox" id="moTa"> <label for="moTa">Mô tả</label></li>
-    <li><input type="checkbox" id="doanhSo"> <label for="doanhSo">Doanh số đơn hàng</label></li>
-    <li><input type="checkbox" id="congNo"> <label for="congNo">Công nợ</label></li>
-    <li><input type="checkbox" id="hanMuc"> <label for="hanMuc">Hạn mức nợ</label></li>
-    <li><input type="checkbox" id="doanhThu"> <label for="doanhThu">Doanh thu</label></li>
-    <li><input type="checkbox" id="chuSoHuu"> <label for="chuSoHuu">Chủ sở hữu</label></li>
-    </ul> *@
-    <!-- Sidebar Filter -->
-    <div class="m-3">
-        <h4 class="mt-3">Filters</h4>
-        <hr>
-        <!-- -------------------------------------------------------------------------------------------------------------------------------------------------- -->
+
+    <form asp-action="FilterProducts" asp-controller="Admin" method="post">
         <!-- Price Filter -->
         <div class="mb-4">
             <h5>Price</h5>
-            <input type="range" class="form-range" min="0" max="500" id="priceRange">
-            <p>Price: <span id="priceValue">$0 - $500</span></p>
+            <input type="text" class="form-range" name="minRange">
+            <input type="text" class="form-range" name="maxRange">
         </div>
 
         <!-- Category Filter -->
         <div class="mb-4">
             <h5>Category</h5>
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="Action" id="actionCheck">
-                <label class="form-check-label" for="actionCheck">Action</label>
-            </div>
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="Adventure" id="adventureCheck">
-                <label class="form-check-label" for="adventureCheck">Adventure</label>
-            </div>
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="RPG" id="rpgCheck">
-                <label class="form-check-label" for="rpgCheck">RPG</label>
-            </div>
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="Simulation" id="simulationCheck">
-                <label class="form-check-label" for="simulationCheck">Simulation</label>
-            </div>
+            <select class="form-select" name="category">
+                @if (Model.CategoriesModel != null)
+                {
+                    foreach (var cate in Model.CategoriesModel)
+                    {
+                        <option value="@cate.Name">@cate.Name</option>
+                    }
+                }
+                else
+                {
+                    <option disabled>Không có danh mục nào</option>
+                }
+            </select>
         </div>
 
         <!-- Platform Filter -->
         <div class="mb-4">
             <h5>Platform</h5>
-            <select class="form-select">
-                <option value="">Select Platform</option>
-                <option value="PC">PC</option>
-                <option value="PlayStation">PlayStation</option>
-                <option value="Xbox">Xbox</option>
-                <option value="Nintendo">Nintendo</option>
+            <select class="form-select" name="platform">
+                @if (Model.Product != null)
+                {
+                    foreach (Client.Models.Enum.ProductEnum.PlatformType platform in Enum.GetValues(typeof(Client.Models.Enum.ProductEnum.PlatformType)))
+                    {
+                        <option value="@(platform)">@platform</option>
+                    }
+                }
+                else
+                {
+                    <option disabled>Không có danh mục nào</option>
+                }
             </select>
         </div>
 
-        <!-- Release Date Filter -->
+        <!-- Discount Filter -->
         <div class="mb-4">
-            <h5>Release Date</h5>
-            <input type="date" class="form-control">
+            <label for="discount" class="form-label">Discount</label>
+            <select name="discount" class="form-select" aria-label="Type">
+                <option value="True">True</option>
+                <option value="False">False</option>
+            </select>
         </div>
 
-        <!-- Status Filter -->
+        <!-- Sold Filter -->
         <div class="mb-4">
-            <h5>Status</h5>
-            <div class="form-check">
-                <input class="form-check-input" type="radio" name="status" id="statusReleased" value="Released">
-                <label class="form-check-label" for="statusReleased">Released</label>
-            </div>
-            <div class="form-check">
-                <input class="form-check-input" type="radio" name="status" id="statusUpcoming" value="Upcoming">
-                <label class="form-check-label" for="statusUpcoming">Upcoming</label>
-            </div>
-            <div class="form-check">
-                <input class="form-check-input" type="radio" name="status" id="statusInDevelopment" value="In Development">
-                <label class="form-check-label" for="statusInDevelopment">In Development</label>
-            </div>
+            <label for="sold" class="form-label">Sort</label>
+            <select name="sold" class="form-select" aria-label="Type">
+                <option value="0">>0</option>
+                <option value="100">>100</option>
+                <option value="200">>200</option>
+                <option value="500">>500</option>
+                <option value="1000">>1000</option>
+            </select>
         </div>
 
-        <button class="btn btn-primary w-100">Apply Filters</button>
-    </div>
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-primary w-100">Apply Filters</button>
+    </form>
 </div>
+
+
+
+
+<form class="form-group" asp-action="SortProducts" asp-controller="Admin" method="post">
+    <label for="sort" class="form-label">Sort</label>
+    <select name="sort" class="form-select" aria-label="Type">
+        <option value="ascPrice">Giá tăng dần</option>
+        <option value="descPrice">Giá giảm dần</option>
+        <option value="ascView">View tăng dần</option>
+        <option value="descView">View giảm dần</option>
+        <option value="ascLike">Like tăng dần</option>
+        <option value="descLike">Like giảm dần</option>
+        <option value="ascSold">Lượt mua tăng dần</option>
+        <option value="descSold">Lượt mua giảm dần</option>
+    </select>
+    <button type="submit" class="btn btn-primary mt-2">Sort</button>
+</form>
+
+
 
 <div class="container mt-4">
     <!-- Thanh tìm kiếm và nút Thêm -->
     <div class="d-flex justify-content-between mb-3">
-        <div class="col-md-4">
-            <input class="form-control" type="text" placeholder="Search by..." />
-        </div>
+        <form asp-action="SearchProduct" asp-controller="Admin" method="post">
+            <input class="form-control" type="text" placeholder="Search by..." name="searchString" />
+        </form>
         <div>
             <button class="btn btn-success" data-toggle="modal" data-target="#modalProduct">+ Add</button>
         </div>
@@ -155,71 +155,70 @@
             </tr>
         </thead>
         <tbody>
-            @if (Model.Product != null) {
-                @foreach (var product in Model.Product) // Giả sử 'Products' là danh sách các sản phẩm
-                {
-                    <tr>
-                        <td><input type="checkbox" class="product-checkbox"></td>
-                        <td>@product.Id</td>
-                        <td>@product.Name</td>
-                        <td>@product.Description</td>
-                        <td>@product.Price.ToString("C")</td>
-                        <td>@product.Sold</td>
-                        <td>
-                            <div>Likes: @product.Interactions?.NumberOfLikes ?? 0</div>
-                            <div>Views: @product.Interactions?.NumberOfViews ?? 0</div>
-                        </td>
-                        <td>@product.Discount %</td>
-                        <td>@product.Platform</td>
-                        <td>
-                            @if (product.Links != null)
+            @foreach (var product in Model.Product) // Giả sử 'Products' là danh sách các sản phẩm
+            {
+                <tr>
+                    <td><input type="checkbox" class="product-checkbox"></td>
+                    <td>@product.Id</td>
+                    <td>@product.Name</td>
+                    <td>@product.Description</td>
+                    <td>@product.Price.ToString("C")</td>
+                    <td>@product.Sold</td>
+                    <td>
+                        <div>Likes: @product.Interactions?.NumberOfLikes ?? 0</div>
+                        <div>Views: @product.Interactions?.NumberOfViews ?? 0</div>
+                    </td>
+                    <td>@product.Discount %</td>
+                    <td>@product.Platform</td>
+                    <td>
+                        @if (product.Links != null)
 
-                            {
-                                <ul>
-                                    @foreach (var link in product.Links)
-                                    {
-                                        <li>@link.Url</li>
-                                    }
-                                </ul>
-                            }
+                        {
+                            <ul>
+                                @foreach (var link in product.Links)
+                                {
+                                    <li>@link.Url</li>
+                                }
+                            </ul>
+                        }
 
-                        </td>
-                        <td>
-                            @if (product.Categories != null)
+                    </td>
+                    <td>
+                        @if (product.Categories != null)
 
-                            {
-                                <ul>
-                                    @foreach (var category in product.Categories)
-                                    {
-                                        <li>@category.CategoryName</li>
-                                    }
-                                </ul>
-                            }
+                        {
+                            <ul>
+                                @foreach (var category in product.Categories)
+                                {
+                                    <li>@category.CategoryName</li>
+                                }
+                            </ul>
+                        }
 
-                        </td>
+                    </td>
 
-                        <td>@product.Status</td>
-                        <td>@product.CreatedAt.ToString("dd/MM/yyyy")</td>
-                        <td>@product.UpdatedAt.ToString("dd/MM/yyyy")</td>
-                        <td>@product.UserName</td>
+                    <td>@product.Status</td>
+                    <td>@product.CreatedAt.ToString("dd/MM/yyyy")</td>
+                    <td>@product.UpdatedAt.ToString("dd/MM/yyyy")</td>
+                    <td>@product.UserName</td>
 
-                        <td>
-                            <a asp-action="UpdateProduct" asp-route-id="@product.Id" class="text-danger mx-2">
-                                <i class="fa-regular fa-pen-to-square"></i>
-                            </a>
-                        </td>
-                        <td>
-                            @* <form asp-action="UsersDelete" >
+                   
+
+                    <td>
+                        <a asp-action="UpdateProduct" asp-route-id="@product.Id" class="text-danger mx-2">
+                            <i class="fa-regular fa-pen-to-square"></i>
+                        </a>
+                    </td>
+                    <td>
+                        @* <form asp-action="UsersDelete" >
                     <input type="submit" value="Delete" class="btn btn-danger" />
                     </form> *@
-                            <a asp-action="ProductDelete" asp-route-Id="@product.Id" class="text-danger mx-2"> <i class="fas fa-trash"></i></a>
-                            @* <a asp-action="UsersDelete" asp-route-Id="@user.Id"> <i class="fas fa-trash"></i></a> *@
-                        </td>
+                        <a asp-action="ProductDelete" asp-route-Id="@product.Id" class="text-danger mx-2"> <i class="fas fa-trash"></i></a>
+                        @* <a asp-action="UsersDelete" asp-route-Id="@user.Id"> <i class="fas fa-trash"></i></a> *@
+                    </td>
 
-                    </tr>
-                }
+                </tr>
             }
-            
             <!-- Thêm các dòng dữ liệu tương tự -->
 
         </tbody>
@@ -227,7 +226,7 @@
 
 
     <!-- Phân trang -->
-    <div class="d-flex justify-content-between mt-3">
+    @* <div class="d-flex justify-content-between mt-3">
         <div>Total: 3,145</div>
         <div>
             <select class="form-select form-select-sm w-auto d-inline-block">
@@ -247,6 +246,26 @@
                 </ul>
             </nav>
         </div>
+    </div> *@
+    <div>
+        Trang @(Model.pageNumber) / @(Model.pageCount)
+    </div>
+    <div class="d-flex justify-content-center">
+        <ul class="pagination">
+            <li class="page-item @(Model.pageNumber == 1 ? "disabled": "")">
+                <a class="page-link" asp-controller="Admin" asp-action="ProductsManager" asp-route-page="@(Model.pageNumber - 1)"> Previous </a>
+            </li>
+            @for (var pg = 1; pg <= Model.pageCount; pg++)
+            {
+                <li class="page-item @(pg == Model.pageNumber ? "active" :"")">
+                    <a class="page-link" asp-controller="Admin" asp-action="ProductsManager" asp-route-page="@pg"> @pg </a>
+                </li>
+            }
+            <li class="page-item @(Model.pageNumber == Model.pageCount ? "disabled": "")">
+                <a class="page-link" asp-controller="Admin" asp-action="ProductsManager" asp-route-page="@(Model.pageNumber + 1)"> Next </a>
+            </li>
+        </ul>
+
     </div>
 </div>
 
@@ -366,29 +385,68 @@
         toolbar: ["bold", "italic", "heading", "|", "quote", "unordered-list", "ordered-list", "|", "link", "image", "|", "preview", "side-by-side", "fullscreen", "guide"]
     });
 
-    // Sự kiện khi nhấn vào nút "+" để thêm input mới
-    document.getElementById('add-category').addEventListener('click', function () {
-        // Tạo một phần tử input mới
-        var newInput = document.createElement('input');
-        newInput.type = 'text';
-        newInput.name = 'Categories';
-        newInput.classList.add('form-control', 'mt-2'); // Thêm class cho form đẹp hơn
 
-        // Thêm input mới vào container
-        var container = document.getElementById('category-container');
-        container.appendChild(newInput);
+
+
+
+    const priceRange = document.getElementById("priceRange");
+    const priceValue = document.getElementById("priceValue");
+
+    // Đặt giá trị mặc định cho hiển thị
+    priceValue.textContent = `$${priceRange.value}`;
+
+    // Cập nhật giá trị khi thanh trượt được kéo
+    priceRange.addEventListener("input", function () {
+        // Cập nhật giá trị hiển thị
+        priceValue.textContent = `$${priceRange.value}`;
+
+        // Đặt giá trị của thuộc tính value cho thanh trượt (đã tự động cập nhật nhưng vẫn có thể làm rõ)
+        priceRange.setAttribute("value", priceRange.value);
     });
-
-    // Sự kiện khi nhấn vào nút "-" để xóa input cuối cùng
-    document.getElementById('remove-category').addEventListener('click', function () {
-        var container = document.getElementById('category-container');
-        var inputs = container.getElementsByTagName('input');
-
-        // Chỉ xóa nếu còn nhiều hơn 1 input
-        if (inputs.length > 1) {
-            container.removeChild(inputs[inputs.length - 1]);
-        }
-    });
-
 
 </script>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- Đảm bảo jQuery đã được tải -->
+
+    <script type="text/javascript">
+        function initializeCategoryScripts() {
+            let categoryIndex = 0;
+
+            // Hàm thêm danh mục
+            function addCategory() {
+                let html = `<div class="input-group mb-2">
+                                        <input type="text" name="Categories[${categoryIndex}]" class="form-control" placeholder="Enter category" />
+                                        <div class="input-group-append">
+                                            <button type="button" class="btn btn-danger" onclick="removeCategory(this)">Remove</button>
+                                        </div>
+                                    </div>`;
+                $('#categories-list').append(html);
+                categoryIndex++;
+            }
+
+            // Gán hàm cho window để dùng được khi click
+            window.addCategory = addCategory;
+
+            // Hàm xóa danh mục
+            function removeCategory(button) {
+                $(button).closest('.input-group').remove();
+            }
+
+            // Gán hàm này vào window để có thể gọi khi bấm Remove
+            window.removeCategory = removeCategory;
+        }
+
+        // Kiểm tra nếu partial view được tải qua Ajax và script này cần được kích hoạt sau khi nạp
+        $(document).on('ajaxComplete', function () {
+            initializeCategoryScripts(); // Khởi tạo script sau khi partial view được nạp qua Ajax
+        });
+
+        // Hoặc gọi trực tiếp nếu partial không được nạp qua Ajax
+        $(document).ready(function () {
+            initializeCategoryScripts();
+        });
+    </script>
+
+}
+

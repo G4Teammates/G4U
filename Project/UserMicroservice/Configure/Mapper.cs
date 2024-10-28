@@ -1,5 +1,4 @@
-﻿using Amazon.Auth.AccessControlPolicy;
-using AutoMapper;
+﻿using AutoMapper;
 using UserMicroservice.DBContexts.Entities;
 using UserMicroservice.Models.AuthModel;
 using UserMicroservice.Models.UserManagerModel;

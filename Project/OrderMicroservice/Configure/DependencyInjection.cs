@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using OrderMicroservice.Repositories.Interfaces;
+using OrderMicroservice.Repositories.Services;
 
 namespace OrderMicroservice.Configure
 {
@@ -13,10 +15,8 @@ namespace OrderMicroservice.Configure
         {
             //Register DI here ⬇️
 
-            //services.AddScoped<IUserService, UserService>();
-            //services.AddScoped<IUserRepository, UserRepository>();
-            //services.AddScoped<IUserMapper, UserMapper>();
-
+            services.AddScoped<IOrderService, OrderService>();
+            services.AddScoped<IPaymentService, PaymentService>();
             //Register DI here ⬆️
 
             return services;

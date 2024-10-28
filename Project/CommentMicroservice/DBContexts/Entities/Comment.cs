@@ -1,5 +1,6 @@
 ﻿using CommentMicroservice.DBContexts.Enum;
 using Microsoft.EntityFrameworkCore;
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -43,7 +44,8 @@ namespace CommentMicroservice.DBContexts.Entities
         /// ID của bình luận.
         /// </summary>
         [BsonId]
-        public Guid Id { get; set; }
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string Id { get; set; } = ObjectId.GenerateNewId().ToString();
 
         /// <summary>
         /// The content of the comment.
@@ -75,7 +77,7 @@ namespace CommentMicroservice.DBContexts.Entities
         /// ID của người dùng đã đăng bình luận.
         /// </summary>
         [BsonElement("userId")]
-        public Guid UserId { get; set; }
+        public string UserId { get; set; }
 
         /// <summary>
         /// The identifier of the product related to the comment.
@@ -83,7 +85,7 @@ namespace CommentMicroservice.DBContexts.Entities
         /// ID của sản phẩm liên quan đến bình luận.
         /// </summary>
         [BsonElement("productId")]
-        public Guid ProductId { get; set; }
+        public string ProductId { get; set; }
 
         /// <summary>
         /// The identifier of the parent comment, if any (for nested comments).
@@ -91,16 +93,16 @@ namespace CommentMicroservice.DBContexts.Entities
         /// ID của bình luận cha, nếu có (dành cho bình luận lồng nhau).
         /// </summary>
         [BsonElement("parentId")]
-        public Guid? ParentId { get; set; }
+        public string? ParentId { get; set; }
 
         /// <summary>
         /// A list of replies to this comment, if applicable.
         /// <br/>
         /// Danh sách các bình luận trả lời bình luận này, nếu có.
         /// </summary>    
-        [BsonIgnore]
+        /*[BsonIgnore]
         //[BsonElement("replies")]
-        public List<Comment>? Replies { get; set; }
+        public List<Comment>? Replies { get; set; }*/
 
         /// <summary>
         /// The date and time when the comment was created.
@@ -117,6 +119,14 @@ namespace CommentMicroservice.DBContexts.Entities
         /// </summary>
         [BsonElement("updatedAt")]
         public DateTime UpdatedAt { get; set; }
+
+        /// <summary>
+        /// The number of likes the comment has received.
+        /// <br/>
+        /// Số lượt thích mà bình luận đã nhận được.
+        /// </summary>
+        [BsonElement("numberOfDisLikes")]
+        public int NumberOfDisLikes { get; set; }
     }
     #endregion
 
