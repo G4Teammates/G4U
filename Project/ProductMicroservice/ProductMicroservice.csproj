@@ -28,6 +28,7 @@
     <PackageReference Include="RabbitMQ.Client" Version="6.8.1" />
     <PackageReference Include="RestSharp" Version="112.1.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+    <PackageReference Include="X.PagedList" Version="10.5.7" />
   </ItemGroup>
 
   <ItemGroup>

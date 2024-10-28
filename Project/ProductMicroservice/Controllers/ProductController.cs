@@ -1,14 +1,16 @@
 ﻿    using AutoMapper;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using Newtonsoft.Json;
     using ProductMicroservice.DBContexts;
     using ProductMicroservice.DBContexts.Entities;
     using ProductMicroservice.DBContexts.Enum;
     using ProductMicroservice.Models;
     using ProductMicroservice.Models.DTO;
     using ProductMicroservice.Repostories;
+    using X.PagedList.Extensions;
 
-    namespace ProductMicroService.Controllers
+namespace ProductMicroService.Controllers
     {
         [ApiController]
         [Route("api/[controller]")]
@@ -133,12 +135,14 @@
 
             [HttpGet]
 
-            public IActionResult GetAll()
+            public IActionResult GetAll( int? page)
             {
                 try
                 {
+                    int pageNumber = (page ?? 1);
+                    int pageSize = 5;
                     var Products = _repoProduct.Products;
-                    _responseDTO.Result = Products;
+                    _responseDTO.Result = Products.ToPagedList(pageNumber,pageSize);
                     return Ok(_responseDTO);
                 }
                 catch (Exception ex)
@@ -170,63 +174,88 @@
             }
 
             [HttpPut]
-            public async Task<IActionResult> UpdateProduct( [FromForm] string id,
-                                                            [FromForm] string name,
-                                                            [FromForm] string description,
-                                                            [FromForm] decimal price,
-                                                            [FromForm] int sold,
-                                                            [FromForm] int numOfVIew,
-                                                            [FromForm] int numOfLike,
-                                                            [FromForm] float discount,
-                                                            [FromForm] List<string> categories,
-                                                            [FromForm] int platform,
-                                                            [FromForm] int status,
-                                                            [FromForm] DateTime createAt,
-                                                            [FromForm] List<IFormFile> imageFiles,
-                                                            [FromForm] ScanFileRequest request,
-                                                            [FromForm] string username)
+            public async Task<IActionResult> UpdateProduct(
+                                                        [FromForm] string id,
+                                                        [FromForm] string name,
+                                                        [FromForm] string description,
+                                                        [FromForm] decimal price,
+                                                        [FromForm] int sold,
+                                                        [FromForm] int numOfView,
+                                                        [FromForm] int numOfLike,
+                                                        [FromForm] float discount,
+                                                        [FromForm] List<string> categories,
+                                                        [FromForm] int platform,
+                                                        [FromForm] int status,
+                                                        [FromForm] DateTime createdAt,
+                                                        [FromForm] List<string>? links, // Thay đổi kiểu thành List<string>
+                                                        [FromForm] List<IFormFile>? imageFiles,
+                                                        [FromForm] ScanFileRequest? request,
+                                                        [FromForm] string username)
+        {
+            try
             {
-                try
-                {
-                    // Chuyển đổi danh sách chuỗi thành danh sách CategoryModel
-                    var categoryModels = categories.Select(c => new CategoryModel { CategoryName = c }).ToList();
-                    var gameFile = request.gameFile;
-                    var product = new UpdateProductModel
-                    {
-                        Id = id,
-                        Name = name,
-                        Description = description,
-                        Price = price,
-                        Sold = sold,
-                        Interactions= new InteractionModel { NumberOfLikes=numOfLike, NumberOfViews=numOfVIew},
-                        Discount = discount,
-                        Categories = categoryModels,
-                        Platform = (PlatformType)platform,
-                        Status = (ProductStatus)status,
-                        CreatedAt = createAt,
-                        UserName = username
-                    };
+                // Chuyển đổi danh sách chuỗi thành danh sách CategoryModel
+                var categoryModels = categories.Select(c => new CategoryModel { CategoryName = c }).ToList();
+                var gameFile = request?.gameFile;
 
-                    var newProduct = await _repoProduct.UpdateProduct(imageFiles, product, gameFile);
-                    _responseDTO.Result = newProduct;
-                    if (newProduct == null) { _responseDTO.Message = "There are some files that do not match"; }
+                
+                // Tạo danh sách links mới từ các chuỗi JSON
+                var linkModels = links.Select(linkJson => JsonConvert.DeserializeObject<LinkModel>(linkJson)).ToList();
+
+                var product = new UpdateProductModel
+                {
+                    Id = id,
+                    Name = name,
+                    Description = description,
+                    Price = price,
+                    Sold = sold,
+                    Interactions = new InteractionModel { NumberOfLikes = numOfLike, NumberOfViews = numOfView },
+                    Discount = discount,
+                    Categories = categoryModels,
+                    Platform = (PlatformType)platform,
+                    Status = (ProductStatus)status,
+                    CreatedAt = createdAt,
+                    Links = linkModels, // Lưu links dưới dạng LinkModel
+                    UserName = username
+                };
+
+                // Kiểm tra nếu không có tệp nào được gửi
+                if (imageFiles == null || imageFiles.Count == 0)
+                {
+                    // Thực hiện cập nhật sản phẩm mà không cần tệp
+                    var newProductNoFiles = await _repoProduct.UpdateProduct(null, product, gameFile);
+                    _responseDTO.Result = newProductNoFiles;
                     return Ok(_responseDTO);
                 }
-                catch (Exception ex)
+
+                var newProduct = await _repoProduct.UpdateProduct(imageFiles, product, gameFile);
+                _responseDTO.Result = newProduct;
+
+                if (newProduct == null)
                 {
-                    _responseDTO.IsSuccess = false;
-                    _responseDTO.Message = "An error occurred while creating the Product: " + ex.Message;
-                    return StatusCode(500, _responseDTO);
+                    _responseDTO.Message = "There are some files that do not match";
                 }
+
+                return Ok(_responseDTO);
             }
+            catch (Exception ex)
+            {
+                _responseDTO.IsSuccess = false;
+                _responseDTO.Message = "An error occurred while updating the Product: " + ex.Message;
+                return StatusCode(500, _responseDTO);
+            }
+        }
+
 
             [HttpGet("sort={sort}")]
-            public IActionResult Sort([FromRoute] string sort)
+            public IActionResult Sort([FromRoute] string sort, int? page)
             {
                 try
                 {
+                    int pageNumber = (page ?? 1);
+                    int pageSize = 5;
                     var SanPhams = _repoProduct.Sort(sort);
-                    _responseDTO.Result = SanPhams;
+                    _responseDTO.Result = SanPhams.ToPagedList(pageNumber, pageSize);
                     return Ok(_responseDTO);
                 }
                 catch (Exception ex)
@@ -238,12 +267,14 @@
             }
 
             [HttpGet("search={searchString}")]
-            public IActionResult Search([FromRoute] string searchString)
+            public IActionResult Search([FromRoute] string searchString, int? page)
             {
                 try
                 {
+                    int pageNumber = (page ?? 1);
+                    int pageSize = 5;
                     var SanPhams = _repoProduct.Search(searchString);
-                    _responseDTO.Result = SanPhams;
+                    _responseDTO.Result = SanPhams.ToPagedList(pageNumber, pageSize);
                     return Ok(_responseDTO);
                 }
                 catch (Exception ex)
@@ -254,12 +285,14 @@
                 }
             }
             [HttpGet("filter")]
-		    public IActionResult Filter([FromQuery] decimal? minrange, [FromQuery] decimal? maxrange, [FromQuery] int? sold, [FromQuery] bool? Discount, [FromQuery] int? Platform, [FromQuery] string? Category)
+		    public IActionResult Filter([FromQuery] decimal? minrange, [FromQuery] decimal? maxrange, [FromQuery] int? sold, [FromQuery] bool? Discount, [FromQuery] int? Platform, [FromQuery] string? Category, int? page)
 		    {
 			    try
 			    {
-				    var SanPhams = _repoProduct.Filter(minrange,maxrange,sold,Discount,Platform,Category);
-				    _responseDTO.Result = SanPhams;
+                    int pageNumber = (page ?? 1);
+                    int pageSize = 5;
+                    var SanPhams = _repoProduct.Filter(minrange,maxrange,sold,Discount,Platform,Category);
+				    _responseDTO.Result = SanPhams.ToPagedList(pageNumber, pageSize);
 				    return Ok(_responseDTO);
 			    }
 			    catch (Exception ex)

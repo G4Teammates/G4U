@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Azure.Identity;
 using MongoDB.Driver;
 using MongoDB.Bson;
+using OrderMicroservice.Models;
 
 namespace OrderMicroservice.Configure
 {
@@ -33,6 +34,10 @@ namespace OrderMicroservice.Configure
             #endregion
 
             #region noSQL
+
+            MoMoOptionModel.AccessKey = config["16"];
+            MoMoOptionModel.SecretKey = config["17"];
+
             //Connect MongoDb by connection string
             var client = new MongoClient(config["1"]!);
             //Create or get if database exists

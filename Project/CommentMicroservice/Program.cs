@@ -1,6 +1,7 @@
 using Azure.Identity;
 using CommentMicroservice.Configure;
 using CommentMicroservice.DBContexts;
+using CommentMicroservice.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,6 +16,9 @@ builder.Services.AddSwaggerGen();
 builder.Configuration.AddAzureKeyVault(new Uri("https://duantotnghiep.vault.azure.net/"),
     new DefaultAzureCredential());
 builder.Services.AddStartupService(builder.Configuration);
+
+builder.Services.AddScoped<IRepoComment, RepoComment>();
+
 
 var app = builder.Build();
 

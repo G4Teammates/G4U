@@ -2,9 +2,13 @@
 using Client.Models.Enum;
 using Client.Models.Enum.UserEnum;
 using Client.Models.UserDTO;
+using Client.Repositories.Interfaces;
 using Client.Repositories.Interfaces.Authentication;
 using Client.Repositories.Interfaces.User;
 using Google.Apis.Auth;
+using Google.Apis.Drive.v3.Data;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -14,14 +18,16 @@ using System.Security.Claims;
 using UserMicroservice.DBContexts.Entities;
 using LoginRequestModel = Client.Models.AuthenModel.LoginRequestModel;
 using ResponseModel = Client.Models.ResponseModel;
+using IAuthenticationService = Client.Repositories.Interfaces.Authentication.IAuthenticationService;
 
 namespace Client.Controllers
 {
-    public class UserController(IAuthenticationService authenService, IUserService userService, ITokenProvider tokenProvider) : Controller
+    public class UserController(IAuthenticationService authenService, IUserService userService, ITokenProvider tokenProvider, IHelperService helperService) : Controller
     {
         private readonly IAuthenticationService _authenService = authenService;
         public readonly IUserService _userService = userService;
         public readonly ITokenProvider _tokenProvider = tokenProvider;
+        public readonly IHelperService _helperService = helperService;
 
 
 
@@ -41,9 +47,48 @@ namespace Client.Controllers
                 var response = await _authenService.LoginAsync(loginModel);
                 if (response.IsSuccess)
                 {
-                    var user = JsonConvert.DeserializeObject<LoginResponseModel>(response.Result.ToString()!);
+                    LoginResponseModel user = JsonConvert.DeserializeObject<LoginResponseModel>(response.Result.ToString()!);
+                    if (user == null)
+                    {
+                        TempData["error"] = "Login failed";
+                        return View();
+                    }
+
+                    // Tạo claims từ thông tin người dùng
+            //        var claims = new List<Claim>
+            //{
+            //    new Claim(ClaimTypes.Name, user.DisplayName),
+            //    new Claim("Avatar", user.Avatar),
+            //    new Claim("Token", user.Token) // Hoặc thêm claim khác cần thiết
+            //};
+
+            //        var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            //        var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+
+            //        // Đăng nhập và thiết lập cookie xác thực
+            //        await HttpContext.SignInAsync(
+            //            CookieAuthenticationDefaults.AuthenticationScheme,
+            //            claimsPrincipal,
+            //            new AuthenticationProperties
+            //            {
+            //                IsPersistent = true // Giữ phiên đăng nhập lâu dài
+            //            });
+
                     _tokenProvider.SetToken(user!.Token);
                     HttpContext.Response.Cookies.Append("IsLogin", response.IsSuccess.ToString());
+
+                    IEnumerable<Claim> claim = HttpContext.User.Claims;
+                    UserClaimModel userClaim = new UserClaimModel
+                    {
+                        Id = user.Id!,
+                        Username = user.Username!,
+                        Email = user.Email!,
+                        Role = user.Role!,
+                        DisplayName = user.DisplayName!,
+                        Avatar = user.Avatar!
+                    };
+                    await _helperService.UpdateClaim(userClaim, HttpContext);
+
                     return RedirectToAction("Index", "Home");
                 }
                 return RedirectToAction(nameof(Register), "User");
@@ -57,7 +102,7 @@ namespace Client.Controllers
         {
             var google_csrf_name = "g_csrf_token";
             try
-            { 
+            {
                 var cookie = Request.Cookies[google_csrf_name];
 
                 if (cookie == null)
@@ -83,6 +128,19 @@ namespace Client.Controllers
                 if (response.IsSuccess)
                 {
                     var user = JsonConvert.DeserializeObject<LoginResponseModel>(response.Result.ToString()!);
+
+                    IEnumerable<Claim> claim = HttpContext.User.Claims;
+                    UserClaimModel userClaim = new UserClaimModel
+                    {
+                        Id = user.Id!,
+                        Username = user.Username!,
+                        Email = user.Email!,
+                        Role = user.Role!,
+                        DisplayName = user.DisplayName!,
+                        Avatar = user.Avatar
+                    };
+                    await _helperService.UpdateClaim(userClaim, HttpContext);
+
                     _tokenProvider.SetToken(user.Token);
                     HttpContext.Response.Cookies.Append("IsLogin", response.IsSuccess.ToString());
                     return RedirectToAction("Index", "Home");
@@ -96,10 +154,12 @@ namespace Client.Controllers
             return RedirectToAction("Index");
         }
 
-        [HttpPost]
         public IActionResult Logout()
         {
             _tokenProvider.ClearToken();
+            HttpContext.Response.Cookies.Delete("IsLogin");
+            HttpContext.Response.Cookies.Delete("g_csrf_token");
+
             return RedirectToAction("Index", "Home");
         }
 
@@ -168,7 +228,50 @@ namespace Client.Controllers
             if (ModelState.IsValid)
             {
                 // Gọi dịch vụ để cập nhật thông tin người dùng
+                if (updateUser.AvatarFile != null && updateUser.AvatarFile.Length > 0)
+                {
+                    await using (var stream = updateUser.AvatarFile.OpenReadStream())
+                    {
+                        // Gọi phương thức kiểm duyệt từ _helperService
+                        var resultModerate = await _helperService.Moderate(stream);
+                        if (!resultModerate.IsSuccess)
+                        {
+                            TempData["error"] = "Avatar is not safe";
+                            return RedirectToAction(nameof(Information));
+                        }
+
+                        // Đặt vị trí stream về đầu và upload lên Cloudinary
+                        stream.Position = 0;
+                        var imageUrl = await _helperService.UploadImageAsync(stream, updateUser.AvatarFile.FileName);
+
+                        // Lưu URL của avatar vào model
+                        updateUser.Avatar = imageUrl;
+                    }
+                }
+                else
+                {
+
+                }
+
+
+                IEnumerable<Claim> claim = HttpContext.User.Claims;
+                UserClaimModel user = new UserClaimModel
+                {
+                    Id = claim.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value!,
+                    Username = updateUser.Username!,
+                    Email = claim.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value!,
+                    Role = claim.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value!,
+                    DisplayName = updateUser.DisplayName!,
+                    Avatar = updateUser.Avatar!
+                };
+
+                await _helperService.UpdateClaim(user, HttpContext);
                 var response = await _userService.UpdateUser(updateUser);
+
+
+
+
+
                 if (response.IsSuccess)
                 {
                     TempData["success"] = "User updated successfully";

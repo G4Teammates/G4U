@@ -79,8 +79,10 @@ namespace Client.Repositories.Services
 						break;
 				}
 
+
 				// Gửi yêu cầu đến API
 				HttpResponseMessage apiResponse = await client.SendAsync(message);
+
 
 				// Xử lý phản hồi từ API
 				switch (apiResponse.StatusCode)

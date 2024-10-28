@@ -12,9 +12,15 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Client.Repositories.Interfaces;
 using IRepoProduct = Client.Repositories.Interfaces.Product.IRepoProduct;
+
 using Microsoft.SqlServer.Server;
 using CategoryMicroservice.DBContexts.Entities;
 using Microsoft.CodeAnalysis;
+
+using ProductMicroservice.Models;
+using LinkModel = Client.Models.ProductDTO.LinkModel;
+using CategoryModel = Client.Models.ProductDTO.CategoryModel;
+
 
 namespace Client.Repositories.Services.Product
 {
@@ -52,10 +58,13 @@ namespace Client.Repositories.Services.Product
             formData.Add(new StringContent(status.ToString()), "status");
             formData.Add(new StringContent(username), "username");
 
-            // Thêm các danh mục vào formData
-            foreach (var category in categories)
+            // Thêm từng danh mục vào formData như các phần tử riêng lẻ
+            if (categories != null && categories.Count > 0)
             {
-                formData.Add(new StringContent(category), "categories");
+                for (int i = 0; i < categories.Count; i++)
+                {
+                    formData.Add(new StringContent(categories[i]), $"categories[{i}]");
+                }
             }
 
             // Thêm các tệp hình ảnh vào formData
@@ -93,12 +102,12 @@ namespace Client.Repositories.Services.Product
             return response;
         }
 
-        public async Task<ResponseModel?> GetAllProductAsync()
+        public async Task<ResponseModel?> GetAllProductAsync(int? pageNumber)
         {
             return await _baseService.SendAsync(new RequestModel()
             {
                 ApiType = StaticTypeApi.ApiType.GET,
-                Url = StaticTypeApi.APIGateWay + "/Product"
+                Url = StaticTypeApi.APIGateWay + "/Product?page=" + pageNumber.ToString()
             });
         }
 
@@ -112,20 +121,21 @@ namespace Client.Repositories.Services.Product
         }
 
         public async Task<ResponseModel> UpdateProductAsync(string id,
-                                                            string name,
-                                                            string description,
-                                                            decimal price,
-                                                            int sold,
-                                                            int numOfView,
-                                                            int numOfLike,
-                                                            float discount,
-                                                            List<string> categories,
-                                                            int platform,
-                                                            int status,
-                                                            DateTime createAt,
-                                                            List<IFormFile> imageFiles,
-                                                            ScanFileRequest request,
-                                                            string username)
+                                                    string name,
+                                                    string description,
+                                                    decimal price,
+                                                    int sold,
+                                                    int numOfView,
+                                                    int numOfLike,
+                                                    float discount,
+                                                    List<LinkModel> links,
+                                                    List<string> categories,
+                                                    int platform,
+                                                    int status,
+                                                    DateTime createdAt,
+                                                    List<IFormFile>? imageFiles,
+                                                    ScanFileRequest? request,
+                                                    string username)
         {
             var formData = new MultipartFormDataContent();
 
@@ -140,31 +150,50 @@ namespace Client.Repositories.Services.Product
             formData.Add(new StringContent(discount.ToString()), "discount");
             formData.Add(new StringContent(platform.ToString()), "platform");
             formData.Add(new StringContent(status.ToString()), "status");
-            formData.Add(new StringContent(createAt.ToString("o")), "createAt");
+            formData.Add(new StringContent(createdAt.ToString("o")), "createdAt");
             formData.Add(new StringContent(username), "username");
 
-            // Thêm các danh mục vào formData
-            foreach (var category in categories)
+            // Thêm từng danh mục vào formData như các phần tử riêng lẻ
+            if (categories != null && categories.Count > 0)
             {
-                formData.Add(new StringContent(category), "categories");
+                for (int i = 0; i < categories.Count; i++)
+                {
+                    formData.Add(new StringContent(categories[i]), $"categories[{i}]");
+                }
+            }
+
+            // Thêm các liên kết vào formData
+            if (links != null && links.Count > 0)
+            {
+                for (int i = 0; i < links.Count; i++)
+                {
+                    var linkJson = JsonConvert.SerializeObject(links[i]);
+                    formData.Add(new StringContent(linkJson), $"links[{i}]"); // Gửi từng đối tượng LinkModel dưới dạng JSON
+                }
             }
 
             // Thêm tệp hình ảnh vào formData
-            foreach (var file in imageFiles)
+            if (imageFiles != null && imageFiles.Count > 0)
             {
-                var fileContent = new StreamContent(file.OpenReadStream());
-                fileContent.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
-                formData.Add(fileContent, "imageFiles", file.FileName);
+                foreach (var file in imageFiles)
+                {
+                    var fileContent = new StreamContent(file.OpenReadStream());
+                    fileContent.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
+                    formData.Add(fileContent, "imageFiles", file.FileName);
+                }
             }
 
-            // Thêm tệp trò chơi từ ScanFileRequest
-            if (request != null && request.gameFile != null)
+            // Thêm tệp game vào formData
+            if (request?.gameFile != null)
             {
                 var gameFileContent = new StreamContent(request.gameFile.OpenReadStream());
-                gameFileContent.Headers.ContentType = new MediaTypeHeaderValue(request.gameFile.ContentType);
-                formData.Add(gameFileContent, "request.gameFile", request.gameFile.FileName);
+                gameFileContent.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data")
+                {
+                    Name = "gameFile",
+                    FileName = request.gameFile.FileName
+                };
+                formData.Add(gameFileContent);
             }
-
             // Gửi yêu cầu PUT thông qua base service
             var response = await _baseService.SendAsync(new RequestModel()
             {
@@ -215,6 +244,7 @@ namespace Client.Repositories.Services.Product
 
             return response;
         }
+
 
     }
 }

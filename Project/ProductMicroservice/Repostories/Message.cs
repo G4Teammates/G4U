@@ -162,7 +162,7 @@ namespace ProductMicroservice.Repostories
         private async Task<bool> CanDeleteCategoryAsync(IRepoProduct repo, string categoryName)
         {
             // Use the GetProductsByCategoryIdAsync method to get products associated with the category
-            List<Products> products = await repo.GetProductsByCategoryIdAsync(categoryName);
+            List<Products> products = await repo.GetProductsByCategoryNameAsync(categoryName);
 
             // Return false if there are products associated with the category
             return !products.Any();

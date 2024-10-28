@@ -2,6 +2,10 @@
 using Microsoft.AspNetCore.Mvc;
 using CommentMicroservice.DBContexts;
 using CommentMicroservice.DBContexts.Entities;
+using CommentMicroservice.Models.DTO;
+using CommentMicroservice.Repositories;
+using CommentMicroservice.Models;
+using X.PagedList.Extensions;
 
 namespace CommentMicroService.Controllers
 {
@@ -9,29 +13,120 @@ namespace CommentMicroService.Controllers
     [Route("api/[controller]")]
     public class CommentController : ControllerBase
     {
-        private readonly CommentDbContext _context;
-        private readonly IMapper _mapper;
-        public CommentController(CommentDbContext context, IMapper mapper)
+        private readonly IRepoComment _db;
+        private ResponseModel _responseModel;
+        public CommentController(IRepoComment context)
         {
-            _context = context;
-            _mapper = mapper;
+            _db = context;
+            _responseModel = new ResponseModel();
+        }
+
+
+        [HttpGet("{id?}")]
+        public async Task<IActionResult> GetById([FromRoute] string id)
+        {
+            try
+            {
+                var Cates = await _db.GetById(id);
+                _responseModel.Result = Cates;
+                return Ok(_responseModel);
+            }
+            catch (Exception ex)
+            {
+                _responseModel.IsSuccess = false;
+                _responseModel.Message = "An error occurred while getting the Comment: " + ex.Message;
+                return StatusCode(500, _responseModel); // Trả về mã lỗi 500 với thông báo lỗi chi tiết
+            }
+        }
+
+        [HttpGet("List/{id?}")]
+        public async Task<IActionResult> GetListById([FromRoute] string id, int? page)
+        {
+            try
+            {
+                int pageSize = 10;
+                int pageNumber = (page ?? 1);
+                var Cates = await _db.GetListById(id);
+                _responseModel.Result = Cates.ToPagedList(pageNumber,pageSize);
+                return Ok(_responseModel);
+            }
+            catch (Exception ex)
+            {
+                _responseModel.IsSuccess = false;
+                _responseModel.Message = "An error occurred while getting the Comment: " + ex.Message;
+                return StatusCode(500, _responseModel); // Trả về mã lỗi 500 với thông báo lỗi chi tiết
+            }
+        }
+
+        [HttpGet]
+        public IActionResult GetAll(int? page)
+        {
+            try
+            {
+                int pageNumber = (page ?? 1);
+                int pageSize = 10;
+                var Comm = _db.Comments;
+                _responseModel.Result = Comm.ToPagedList(pageNumber,pageSize);
+                return Ok(_responseModel);
+            }
+            catch (Exception ex)
+            {
+                _responseModel.IsSuccess = false;
+                _responseModel.Message = "An error occurred while getting the Comment: " + ex.Message;
+                return StatusCode(500, _responseModel); // Trả về mã lỗi 500 với thông báo lỗi chi tiết
+            }
         }
 
         [HttpPost]
-        public ActionResult ActionResult(Comment Comment)
+        public IActionResult CreateComment([FromForm] CreateCommentDTO model)
         {
-            //_context.Add(_mapper.Map<CommentModel, Comment>(Comment));
-            _context.Add(_mapper.Map<Comment>(Comment));
-            _context.SaveChanges();
-            return Ok(Comment);
-        }
-        [HttpGet]
-        public ActionResult Get1(Guid id)
-        {
-            var Comments = _context.Comments.ToList();
-            var Comment = Comments.Find(u => u.Id == id);
-            return Ok(Comment);
+            try
+            {
+                var Comm = _db.CreateComment(model);
+                _responseModel.Result = Comm;
+                return Ok(_responseModel);
+            }
+            catch (Exception ex)
+            {
+                _responseModel.IsSuccess = false;
+                _responseModel.Message = "An error occurred while getting the Comment: " + ex.Message;
+                return StatusCode(500, _responseModel); // Trả về mã lỗi 500 với thông báo lỗi chi tiết
+            }
         }
 
+        [HttpPut]
+        public async Task<IActionResult> UpdateComment([FromForm] CommentModel model)
+        {
+            try
+            {
+                var Comm = await _db.UpdateComment(model);
+                _responseModel.Result = Comm;
+                return Ok(_responseModel);
+            }
+            catch (Exception ex)
+            {
+                _responseModel.IsSuccess = false;
+                _responseModel.Message = "An error occurred while getting the Comment: " + ex.Message;
+                return StatusCode(500, _responseModel); // Trả về mã lỗi 500 với thông báo lỗi chi tiết
+            }
+        }
+
+
+        [HttpDelete("{id?}")]
+        public async Task<IActionResult> DeleteComment([FromRoute] string id)
+        {
+            try
+            {
+                _db.DeleteComment(id);
+                _responseModel.Result = null;
+                return Ok(_responseModel);
+            }
+            catch (Exception ex)
+            {
+                _responseModel.IsSuccess = false;
+                _responseModel.Message = "An error occurred while getting the Comment: " + ex.Message;
+                return StatusCode(500, _responseModel); // Trả về mã lỗi 500 với thông báo lỗi chi tiết
+            }
+        }
     }
 }

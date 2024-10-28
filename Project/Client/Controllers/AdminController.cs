@@ -5,28 +5,39 @@ using Client.Models.ProductDTO;
 using Client.Models.UserDTO;
 using Client.Repositories.Interfaces;
 using Client.Repositories.Interfaces.Categories;
+using Client.Models.AuthenModel;
+using Client.Models.ProductDTO;
+using Client.Models.UserDTO;
+using Client.Repositories.Interfaces;
+using Client.Repositories.Interfaces.Authentication;
 using Client.Repositories.Interfaces.Product;
 using Client.Repositories.Interfaces.User;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Newtonsoft.Json;
 
+using System.IdentityModel.Tokens.Jwt;
+
 using ProductModel = Client.Models.ProductDTO.ProductModel;
+using System.Drawing.Printing;
 
 
 namespace Client.Controllers
 {
 
-    public class AdminController(IUserService userService, IHelperService helperService, IRepoProduct repoProduct, ICategoriesService categoryService) : Controller
-
+    public class AdminController(IUserService userService, IHelperService helperService, IRepoProduct repoProduct, ITokenProvider tokenProvider, ICategoriesService categoryService) : Controller
     {
-
+        #region declaration and initialization
         public readonly IUserService _userService = userService;
         public readonly IHelperService _helperService = helperService;
-
+        public readonly ITokenProvider _tokenProvider = tokenProvider;
         public readonly IRepoProduct _productService = repoProduct;
 		public readonly ICategoriesService _categoryService = categoryService;
 
-		public IActionResult Index()
+
+        #endregion
+        public IActionResult Index()
+
         {
             return View();
         }
@@ -34,8 +45,43 @@ namespace Client.Controllers
 
         public IActionResult AdminDashboard()
         {
+            try
+            {
+                #region Check IsLogin Cookie
+                var isLogin = HttpContext.Request.Cookies["IsLogin"];
+                if (string.IsNullOrEmpty(isLogin))
+                {
+                    // Trường hợp cookie không tồn tại
+                    ViewData["IsLogin"] = false;
+                }
+                else
+                {
+                    ViewData["IsLogin"] = isLogin;
+                }
+                #endregion
+
+                // Lấy token từ provider
+                var token = _tokenProvider.GetToken();
+                ResponseModel response = _helperService.CheckAndReadToken(token);
+                if (!response.IsSuccess)
+                {
+                    ViewData["IsLogin"] = false;
+                    return View();
+                }
+                LoginResponseModel user = _helperService.GetUserFromJwtToken((JwtSecurityToken)response.Result);
+
+                ViewBag.User = user;
+                return View();
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = ex.Message;
+            }
             return View();
         }
+
+
+        #region User
 
         [HttpGet]
         public async Task<IActionResult> UsersManager()
@@ -169,22 +215,37 @@ namespace Client.Controllers
 
         }
 
+        #endregion
 
 
-        public async Task<IActionResult> ProductsManager()
 
+        public async Task<IActionResult> ProductsManager( int? page)
         {
+            int pageNumber = (page ?? 1);
+            var pageSize = 5;
             ProductViewModel product = new();
             try
             {
-                ResponseModel? response = await _productService.GetAllProductAsync();
+
                 ResponseModel? response1 = await _categoryService.GetAllCategoryAsync();
+
+                ResponseModel? response = await _productService.GetAllProductAsync(pageNumber);
+
 
                 if (response != null && response.IsSuccess)
                 {
 
                     product.Product = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response.Result.ToString()!));
+
                     product.CategoriesModel = JsonConvert.DeserializeObject<ICollection<CategoriesModel>>(Convert.ToString(response1.Result.ToString()!));
+
+                    var data = product.Product;
+                    product.pageNumber = pageNumber;
+                    product.totalItem = data.Count;
+                    product.pageSize = pageSize;
+                    product.pageCount = (int)Math.Ceiling(36 / (double)pageSize);
+
+
                 }
                 else
                 {
@@ -222,32 +283,38 @@ namespace Client.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> UpdateProduct([FromForm] string id,
-                                                   [FromForm] string name,
-                                                   [FromForm] string description,
-                                                   [FromForm] decimal price,
-                                                   [FromForm] int sold,
-                                                   [FromForm] int numOfView,
-                                                   [FromForm] int numOfLike,
-                                                   [FromForm] float discount,
-                                                   [FromForm] List<string> categories,
-                                                   [FromForm] int platform,
-                                                   [FromForm] int status,
-                                                   [FromForm] DateTime createAt,
-                                                   [FromForm] List<IFormFile> imageFiles,
-                                                   [FromForm] ScanFileRequest request,
-                                                   [FromForm] string username)
+        public async Task<IActionResult> UpdateProduct( UpdateProductModel model)
         {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors)
+                                              .Select(e => e.ErrorMessage);
+                return BadRequest(new { Errors = errors });
+            }
+
             try
             {
+                var numOfView = model.Interactions.NumberOfViews;
+                var numOfLike = model.Interactions.NumberOfLikes;
+
+                // Tạo đối tượng ScanFileRequest
+                var request = new ScanFileRequest
+                {
+                    gameFile = model.gameFile
+                };
+
                 // Gọi service UpdateProduct từ phía Client
                 var response = await _productService.UpdateProductAsync(
-                    id, name, description, price, sold, numOfView, numOfLike, discount,
-                    categories, platform, status, createAt, imageFiles, request, username);
+                    model.Id, model.Name, model.Description, model.Price, model.Sold,
+                   numOfView, numOfLike, model.Discount,
+                    model.Links, model.Categories, (int)model.Platform,
+                    (int)model.Status, model.CreatedAt, model.ImageFiles,
+                    request, model.UserName);
 
                 if (response.IsSuccess)
                 {
-                    return Ok(response); // Trả về kết quả thành công
+                    TempData["success"] = "Product created successfully";
+                    return RedirectToAction(nameof(ProductsManager));
                 }
                 else
                 {
@@ -259,6 +326,8 @@ namespace Client.Controllers
                 return StatusCode(500, $"An error occurred: {ex.Message}");
             }
         }
+
+
         [HttpPost]
         public async Task<IActionResult> CreateProduct(CreateProductModel model)
         {
@@ -380,6 +449,7 @@ namespace Client.Controllers
             {
                 TempData["error"] = ex.Message;
             }
+
 
             return View(categories);
         }

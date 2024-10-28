@@ -8,7 +8,7 @@ namespace ProductMicroservice.Repostories
     {
         /*Products CreateProduct(CreateProductModel Product);*/
         Task<Products> GetById(string id);
-        Task<Products> UpdateProduct(List<IFormFile> imageFiles, UpdateProductModel Product, IFormFile gameFiles);
+        Task<Products> UpdateProduct(List<IFormFile>? imageFiles, UpdateProductModel Product, IFormFile? gameFiles);
         IEnumerable<Products> Products { get; }
         void DeleteProduct(string id);
         IEnumerable<Products> Sort(string sort);
@@ -16,6 +16,6 @@ namespace ProductMicroservice.Repostories
 		IEnumerable<Products> Filter(decimal? minrange, decimal? maxrange, int? sold , bool? Discount, int? Platform, string Category);
 
 		Task<Products> Moderate(List<IFormFile> imageFiles, CreateProductModel Product, IFormFile gameFiles, string username);
-        Task<List<Products>> GetProductsByCategoryIdAsync(string categoryName);
+        Task<List<Products>> GetProductsByCategoryNameAsync(string categoryName);
     }
 }

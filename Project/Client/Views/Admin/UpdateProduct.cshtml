@@ -9,7 +9,7 @@
 
 <form asp-action="UpdateProduct" method="post" enctype="multipart/form-data">
     <input type="hidden" name="_method" value="PUT" /> <!-- Giả lập PUT method -->
-
+    <!-- Các trường cơ bản của sản phẩm -->
     <div class="form-group">
         <label for="id">Product ID</label>
         <input type="text" class="form-control" asp-for="Id" readonly />
@@ -17,7 +17,7 @@
 
     <div class="form-group">
         <label for="name">Product Name</label>
-        <input type="text" class="form-control" asp-for="Name" required />
+        <input type="text" class="form-control" asp-for="Name" required value="@Model.Name" />
     </div>
 
     <div class="form-group">
@@ -49,27 +49,6 @@
         <label for="discount">Discount (%)</label>
         <input type="number" class="form-control" asp-for="Discount" step="0.01" required />
     </div>
-    <div class="form-group">
-        <label>Categories</label>
-        @if (Model.Categories != null && Model.Categories.Any())
-        {
-            int i = 0;
-            @foreach (var category in Model.Categories)
-            {
-                <div>
-                    <input type="text" name="Categories[@i].CategoryName" value="@category.CategoryName" class="form-control" />
-                </div>
-                i++;
-            }
-        }
-        else
-        {
-            <p>No categories available</p>
-        }
-    </div>
-
-
-
 
     <div class="form-group">
         <label for="platform">Platform</label>
@@ -97,59 +76,135 @@
         <label for="createAt">Created At</label>
         <input type="datetime-local" class="form-control" asp-for="CreatedAt" required />
     </div>
+
+   <!-- Cập nhật các danh mục sản phẩm -->
+    <div class="form-group">
+        <label>Categories</label>
+        <div id="categories-list">
+            @if (Model.Categories != null && Model.Categories.Any())
+            {
+                int i = 0;
+                @foreach (var category in Model.Categories)
+                {
+                    <div class="input-group mb-2 category-item" data-index="@i">
+                        <input type="text" name="Categories[@i]" value="@category.CategoryName" class="form-control" placeholder="Enter category" />
+                        <div class="input-group-append">
+                            <button type="button" class="btn btn-danger remove-category">Remove</button>
+                        </div>
+                    </div>
+                    i++;
+                }
+            }
+        </div>
+        <button type="button" class="btn btn-success mt-2 add-category">Add Category</button>
+    </div>
+
+
+    <!-- Cập nhật các đường dẫn (Links) -->
     <div class="form-group">
         <label>Images and Game</label>
-        @if (Model.Links != null)
-        {
-            int i = 0;
-            <ul>
+        <div id="links-list">
+            @if (Model.Links != null)
+            {
+                int i = 0;
                 @foreach (var link in Model.Links)
                 {
-                    <li>
+                    <div class="input-group mb-2 links-item">
                         @if (link.Url.Contains("cloudinary"))
                         {
                             <label>Images</label>
-                            <!-- Hiển thị hình ảnh từ Cloudinary -->
                             <img src="@link.Url" alt="Cloudinary Image" style="max-width: 150px; height: auto;" />
+                            
                         }
                         else if (link.Url.Contains("drive.google.com"))
                         {
                             <label>Game</label>
-                            <!-- Hiển thị đường link Google Drive -->
                             <a href="@link.Url" target="_blank">View on Google Drive</a>
                         }
                         else
                         {
-                            <!-- Hiển thị link khác -->
+
                             <a href="@link.Url" target="_blank">@link.Url</a>
                         }
-                    </li>
-
-                    <div>
+                        <input type="text" name="Links[@i].Censorship.Status" value="@link.Censorship.Status" class="form-control mt-2" placeholder="Censorship Status" />
+                        <input type="text" name="Links[@i].Censorship.ProviderName" value="@link.Censorship.ProviderName" class="form-control mt-2" placeholder="Censorship Provider Name" />
+                        <input type="text" name="Links[@i].Censorship.Description" value="@link.Censorship.Description" class="form-control mt-2" placeholder="Censorship Description" />
+                        <input type="text" name="Links[@i].ProviderName" value="@link.ProviderName" class="form-control mt-2" />
                         <input type="text" name="Links[@i].Url" value="@link.Url" class="form-control mt-2" />
+                        <div class="input-group-append">
+                            <button type="button" class="btn btn-danger remove-link ">Remove</button>
+                        </div>
                     </div>
                     i++;
                 }
-            </ul>
-        }
+            }
+        </div>
     </div>
 
+    <!-- Upload hình ảnh và file game -->
     <div class="form-group">
-        <label for="imageFiles">Upload Images</label>
-        <input type="file" class="form-control" name="imageFiles" multiple />
+        <label for="ImageFiles">Upload Images</label>
+        <input type="file" class="form-control" name="ImageFiles" multiple />
     </div>
 
     <div class="form-group">
         <label for="gameFile">Upload Game File</label>
-        <input type="file" class="form-control" name="request.gameFile" />
+        <input type="file" class="form-control" name="gameFile" />
     </div>
 
     <div class="form-group">
-        <label for="username">Username</label>
-        <input type="text" class="form-control" asp-for="UserName" readonly />
+        <label for="UserName">UserName</label>
+        <input type="text" class="form-control" asp-for="UserName" />
     </div>
 
     <button type="submit" class="btn btn-primary">Update Product</button>
     <a asp-action="ProductsManager" class="btn btn-secondary">Back To List</a>
 </form>
 
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            let categoryIndex = @Model.Categories?.Count() ?? 0;
+            let linkIndex = @Model.Links?.Count() ?? 0;
+
+            // Hàm thêm một danh mục mới
+            function addCategory() {
+                const html = `<div class="input-group mb-2 category-item" data-index="${categoryIndex}">
+                                          <input type="text" name="Categories[${categoryIndex}]" class="form-control" placeholder="Enter category" />
+                                          <div class="input-group-append">
+                                              <button type="button" class="btn btn-danger remove-category">Remove</button>
+                                          </div>
+                                      </div>`;
+                $('#categories-list').append(html);
+                categoryIndex++;
+            }
+
+            // Hàm xóa một danh mục
+            function removeCategory(button) {
+                $(button).closest('.category-item').remove();
+            }
+
+            // Thêm sự kiện cho nút "Add Category"
+            $(document).on('click', '.add-category', function () {
+                addCategory();
+            });
+
+            // Thêm sự kiện cho nút "Remove" trong mỗi danh mục
+            $(document).on('click', '.remove-category', function () {
+                removeCategory(this);
+            });
+           
+
+
+
+            function removeLink(button) {
+                $(button).closest('.links-item').remove();
+            }
+            // Thêm sự kiện cho nút "Remove" trong mỗi danh mục
+            $(document).on('click', '.remove-link', function () {
+                removeLink(this);
+            });
+        });
+    </script>
+
+}

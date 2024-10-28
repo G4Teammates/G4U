@@ -14,6 +14,7 @@ using UserMicroservice.Models.UserManagerModel;
 using UserMicroservice.Repositories.Interfaces;
 using UserMicroservice.DBContexts.Enum;
 using static Google.Apis.Requests.BatchRequest;
+using X.PagedList.Extensions;
 
 namespace UserMicroservice.Repositories.Services
 {
@@ -42,6 +43,8 @@ namespace UserMicroservice.Repositories.Services
 
                 // Check if username or email already exists
                 response = await _helper.IsUserNotExist(userInput.Username, userInput.Email);
+                CountModel count = (CountModel)response.Result;
+                if(count.NumUsername !=0 || count.NumEmail !=0) return response;
                 if (!response.IsSuccess) return response;
 
                 // Map UserModel to User entity
@@ -102,16 +105,17 @@ namespace UserMicroservice.Repositories.Services
             return response;
         }
 
-        public async Task<ResponseModel> GetAll()
+        public async Task<ResponseModel> GetAll(int pageNumber)
         {
             ResponseModel response = new();
             try
             {
+                int pageSize = 5;
                 var users = await _context.Users.ToListAsync();
                 if (users != null)
                 {
                     response.Message = $"Found {users.Count} users";
-                    response.Result = _mapper.Map<ICollection<UserModel>>(users);
+                    response.Result = _mapper.Map<ICollection<UserModel>>(users).ToPagedList(pageNumber,pageSize);
                 }
                 else
                 {
@@ -168,8 +172,20 @@ namespace UserMicroservice.Repositories.Services
                 }
 
                 // Kiểm tra xem email và username có tồn tại không
-                response = await _helper.IsUserNotExist(updatedUserModel.Username, phone: updatedUserModel.PhoneNumber);
-                if (!response.IsSuccess)
+                response = await _helper.IsUserNotExist(updatedUserModel.Username, phone: updatedUserModel.PhoneNumber, email: updatedUserModel.Email);
+                CountModel count = new CountModel();
+                count = (CountModel)response.Result;
+
+                // Kiểm tra xem các giá trị mới có khác với giá trị cũ hay không
+                bool isUsernameChanged = !string.Equals(user.Username, updatedUserModel.Username, StringComparison.OrdinalIgnoreCase);
+                bool isEmailChanged = !string.Equals(user.Email, updatedUserModel.Email, StringComparison.OrdinalIgnoreCase);
+                bool isPhoneNumberChanged = !string.Equals(user.PhoneNumber, updatedUserModel.PhoneNumber, StringComparison.OrdinalIgnoreCase);
+
+                // Nếu không trùng lặp và có thay đổi các trường username, email hoặc phone number
+                if (response.IsSuccess &&
+                    (!isUsernameChanged || count.NumUsername == 0) &&
+                    (!isPhoneNumberChanged || count.NumPhoneNumber == 0) &&
+                    (!isEmailChanged || count.NumEmail == 0))
                 {
                     // Cập nhật thông tin từ UserModel vào đối tượng User
                     user.DisplayName = updatedUserModel.DisplayName ?? user.DisplayName;
@@ -192,8 +208,8 @@ namespace UserMicroservice.Repositories.Services
                 {
                     // Nếu có lỗi, trả về thông báo lỗi
                     response.IsSuccess = false;
-                    response.Message = response.Message;
                 }
+
             }
             catch (Exception ex)
             {

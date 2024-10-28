@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CommentMicroservice.DBContexts.Entities;
+using CommentMicroservice.Models;
 
 namespace CommentMicroservice.Configure
 {
@@ -15,7 +16,7 @@ namespace CommentMicroservice.Configure
             {
                 //Register mapper here⬇️
 
-                //cfg.CreateMap<Comment, CommentModel>().ReverseMap();
+                cfg.CreateMap<Comment, CommentModel>().ReverseMap();
 
 
                 //Register mapper here⬆️

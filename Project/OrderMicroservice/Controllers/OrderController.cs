@@ -3,36 +3,104 @@ using Microsoft.AspNetCore.Mvc;
 using OrderMicroservice.DBContexts;
 using OrderMicroservice.DBContexts.Entities;
 using OrderMicroservice.Models;
+using OrderMicroservice.Models.OrderModel;
+using OrderMicroservice.Models.PaymentModel;
+using OrderMicroservice.Repositories.Interfaces;
 
 namespace OrderMicroService.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class OrderController : ControllerBase
+    public class OrderController(IOrderService orderService) : ControllerBase
     {
-        private readonly OrderDbContext _context;
-        private readonly IMapper _mapper;
-        public OrderController(OrderDbContext context, IMapper mapper)
+        IOrderService _orderService = orderService;
+
+        [HttpGet]
+        public async Task<ActionResult> GetOrders()
         {
-            _context = context;
-            _mapper = mapper;
+            try
+            {
+                ResponseModel response = await _orderService.GetAll();
+                if (response.IsSuccess)
+                    return Ok(response);
+                return BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                // Trả về lỗi 500 cho các lỗi chưa dự đoán
+                return StatusCode(500, new { message = "An unexpected error occurred. Detail" + ex.Message });
+            }
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult> GetOrder(string id)
+        {
+            try
+            {
+                ResponseModel response = await _orderService.GetOrder(id);
+                if (response.IsSuccess)
+                    return Ok(response);
+                return BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                // Trả về lỗi 500 cho các lỗi chưa dự đoán
+                return StatusCode(500, new { message = "An unexpected error occurred. Detail" + ex.Message });
+            }
+        }
+
+        [HttpGet("{id}/items")]
+        public async Task<ActionResult> GetItems(string id)
+        {
+            try
+            {
+                ResponseModel response = await _orderService.GetOrderItems(id);
+                if (response.IsSuccess)
+                    return Ok(response);
+                return BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                // Trả về lỗi 500 cho các lỗi chưa dự đoán
+                return StatusCode(500, new { message = "An unexpected error occurred. Detail" + ex.Message });
+            }
         }
 
         [HttpPost]
-        public ActionResult ActionResult(Order Order)
+        public async Task<ActionResult> Create([FromBody]OrderModel order)
         {
-            //_context.Add(_mapper.Map<OrderModel, Order>(Order));
-            _context.Add(Order);
-            _context.SaveChanges();
-            return Ok(Order);
+            try
+            {
+                ResponseModel response = await _orderService.Create(order);
+                if (response.IsSuccess)
+                    return Ok(response);
+                return BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                // Trả về lỗi 500 cho các lỗi chưa dự đoán
+                return StatusCode(500, new { message = "An unexpected error occurred. Detail" + ex.Message });
+            }
         }
-        [HttpGet]
-        public ActionResult Get1(string id)
+
+        [HttpPut]
+        public async Task<ActionResult> UpdateStatus(string id, PaymentStatusModel status)
         {
-            var Orders = _context.Orders.ToList();
-            var Order = Orders.Find(u => u.Id == id);
-            return Ok(Order);
+            try
+            {
+                ResponseModel response = await _orderService.UpdateStatus(id, status);
+                if (response.IsSuccess)
+                    return Ok(response);
+                return BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                // Trả về lỗi 500 cho các lỗi chưa dự đoán
+                return StatusCode(500, new { message = "An unexpected error occurred. Detail" + ex.Message });
+            }
         }
+
+
 
     }
 }
