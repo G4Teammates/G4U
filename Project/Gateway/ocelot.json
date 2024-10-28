@@ -365,6 +365,96 @@
       ],
       "UpstreamPathTemplate": "/Category",
       "UpstreamHttpMethod": [ "Put" ]
+    },
+
+
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //                                                                                                                    //
+    //                                                Comment                                                             //
+    //                                                                                                                    //
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //get by id
+    {
+      "DownstreamPathTemplate": "/api/Comment/{id}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7250
+        }
+      ],
+      "UpstreamPathTemplate": "/Comment/{id}",
+      "UpstreamHttpMethod": [ "Get" ]
+    },
+    //get list by id
+    {
+      "DownstreamPathTemplate": "/api/Comment/List/{id}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7250
+        }
+      ],
+      "UpstreamPathTemplate": "/Comment/List/{id}",
+      "UpstreamHttpMethod": [ "Get" ]
+    },
+
+    //create
+    {
+      "DownstreamPathTemplate": "/api/Comment",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7250
+        }
+      ],
+      "UpstreamPathTemplate": "/Comment",
+      "UpstreamHttpMethod": [ "Post" ]
+    },
+
+    //GetAll
+    {
+      "DownstreamPathTemplate": "/api/Comment",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7250
+        }
+      ],
+      "UpstreamPathTemplate": "/Comment",
+      "UpstreamHttpMethod": [ "Get" ]
+    },
+
+    //Delete
+    {
+      "DownstreamPathTemplate": "/api/Comment/{id}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7250
+        }
+      ],
+      "UpstreamPathTemplate": "/Comment/{id}",
+      "UpstreamHttpMethod": [ "Delete" ]
+    },
+
+    //Update
+    {
+      "DownstreamPathTemplate": "/api/Comment",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7250
+        }
+      ],
+      "UpstreamPathTemplate": "/Comment",
+      "UpstreamHttpMethod": [ "Put" ]
     }
 
   ],
