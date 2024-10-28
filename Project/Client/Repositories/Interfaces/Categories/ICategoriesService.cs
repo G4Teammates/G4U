@@ -12,6 +12,7 @@ namespace Client.Repositories.Interfaces.Categories
 
         Task<ResponseModel> CreateCategoryAsync(CreateCategories category);
 
-        Task<ResponseModel> UpdateCategoryAsync(UpdateCategories category);
+        Task<ResponseModel> UpdateCategoryAsync(CategoriesModel category);
+        Task<ResponseModel> DeleteCategoryAsync(string id);
     }
 }

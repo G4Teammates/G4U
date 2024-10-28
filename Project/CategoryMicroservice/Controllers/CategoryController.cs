@@ -73,11 +73,13 @@ namespace CategoryMicroService.Controllers
             }
         }
         [HttpPut]
-        public async Task< IActionResult> UpdateCategory([FromForm] CategoryModel model)
+
+        public async Task<IActionResult> UpdateCategory([FromForm] CategoryModel model)
         {
             try
             {
-                var Cates =await _categoryService.UpdateCategrori(model);
+                var Cates = await _categoryService.UpdateCategrori(model);
+
                 _responseModel.Result = Cates;
                 return Ok(_responseModel);
             }

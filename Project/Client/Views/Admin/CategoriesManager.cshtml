@@ -57,14 +57,13 @@
 						<td>@categories.Status</td>
 						@*Đây là nút Update*@
 						<td>
-							<a asp-action="UserUpdate" asp-route-Id="@categories.Id" class="text-danger mx-2"><span><i class="fa-regular fa-pen-to-square"></i></span></a>
+							<a asp-action="UpdateCategory" asp-route-Id="@categories.Id" class="text-danger mx-2"><span><i class="fa-regular fa-pen-to-square"></i></span></a>
+
 						</td>
-						<td><button class="btn btn-success" data-toggle="modal" data-target="#modalUsers" asp-action="UserUpdate" asp-route-Id="@categories.Id">+ Update</button></td>
+						
 						<td>
-							@* <form asp-action="UsersDelete" >
-					<input type="submit" value="Delete" class="btn btn-danger" />
-					</form> *@
-							<a asp-action="UserDelete" asp-route-Id="@categories.Id" class="text-danger mx-2"> <i class="fas fa-trash"></i></a>
+
+							<a asp-action="CategoryDelete" asp-route-Id="@categories.Id" class="text-danger mx-2"> <i class="fas fa-trash"></i></a>
 							@* <a asp-action="UsersDelete" asp-route-Id="@user.Id"> <i class="fas fa-trash"></i></a> *@
 						</td>
 					</tr>

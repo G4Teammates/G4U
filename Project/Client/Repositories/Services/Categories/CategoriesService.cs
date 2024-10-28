@@ -17,11 +17,25 @@ namespace Client.Repositories.Services.Categories
 
         public async Task<ResponseModel> CreateCategoryAsync(CreateCategories category)
         {
+            var formData = new MultipartFormDataContent();
+            formData.Add(new StringContent(category.Description), "Description");
+            formData.Add(new StringContent(category.Type.ToString()), "Type");
+            formData.Add(new StringContent(category.Status.ToString()), "Status");
+            formData.Add(new StringContent(category.Name), "Name");
             return await _baseService.SendAsync(new RequestModel()
             {
                 ApiType = StaticTypeApi.ApiType.POST,
-                Data = category,
+                Data = formData,
                 Url = StaticTypeApi.APIGateWay + "/Category"
+            });
+        }
+
+        public async Task<ResponseModel> DeleteCategoryAsync(string id)
+        {
+            return await _baseService.SendAsync(new RequestModel()
+            {
+                ApiType = StaticTypeApi.ApiType.DELETE,
+                Url = StaticTypeApi.APIGateWay + "/Category/" + id
             });
         }
 
@@ -43,12 +57,18 @@ namespace Client.Repositories.Services.Categories
             });
         }
 
-        public async Task<ResponseModel> UpdateCategoryAsync(UpdateCategories category)
+        public async Task<ResponseModel> UpdateCategoryAsync(CategoriesModel category)
         {
+            var formData = new MultipartFormDataContent();
+            formData.Add(new StringContent(category.Id), "Id");
+            formData.Add(new StringContent(category.Description), "Description");
+            formData.Add(new StringContent(category.Type.ToString()), "Type");
+            formData.Add(new StringContent(category.Status.ToString()), "Status");
+            formData.Add(new StringContent(category.Name), "Name");
             return await _baseService.SendAsync(new RequestModel()
             {
                 ApiType = StaticTypeApi.ApiType.PUT,
-                Data = category,
+                Data = formData,
                 Url = StaticTypeApi.APIGateWay + "/Category"
             });
         }
