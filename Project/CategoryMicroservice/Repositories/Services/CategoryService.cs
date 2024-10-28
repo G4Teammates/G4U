@@ -11,13 +11,12 @@ namespace CategoryMicroservice.Repositories.Services
     {
         private readonly CategoryDbContext _db;
         private readonly IMapper _mapper;
-        private readonly IConfiguration _configuration;
+
         private readonly IMessage _message;
-        public CategoryService(CategoryDbContext db, IMapper mapper, IConfiguration configuration, IMessage message)
+        public CategoryService(CategoryDbContext db, IMapper mapper, IMessage message)
         {
             _db = db;
             _mapper = mapper;
-            _configuration = configuration;
             _message = message;
         }
 

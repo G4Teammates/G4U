@@ -1,5 +1,6 @@
 using Azure.Identity;
 using Microsoft.OpenApi.Models;
+using System.Text.Json.Serialization;
 using UserMicroService.Configure;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,7 +12,9 @@ builder.Configuration.AddAzureKeyVault(new Uri("https://duantotnghiep.vault.azur
     new DefaultAzureCredential());
 builder.Services.AddStartupService(builder.Configuration);
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(opt =>
 {

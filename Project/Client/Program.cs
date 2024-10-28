@@ -69,6 +69,7 @@ app.UseAntiforgery();
 app.UseRouting();
 app.UseSession();
 app.UseAuthorization();
+app.UseAuthentication();
 app.UseCors("AllowAllOrigins");
 app.MapControllerRoute(
     name: "default",

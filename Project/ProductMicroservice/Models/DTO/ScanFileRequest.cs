@@ -2,6 +2,6 @@
 {
     public class ScanFileRequest
     {
-        public IFormFile gameFile { get; set; }
+        public IFormFile? gameFile { get; set; }
     }
 }

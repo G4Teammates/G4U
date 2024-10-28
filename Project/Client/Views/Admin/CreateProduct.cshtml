@@ -55,12 +55,16 @@
     </div>
 
     <!-- Categories -->
+    <!-- Categories -->
     <div class="form-group">
-        <label asp-for="@Model.Categories" class="control-label"></label>
-        <input asp-for="@Model.Categories" class="form-control" type="text" />
-        <span asp-validation-for="@Model.Categories" class="text-danger"></span>
-        <small class="form-text text-muted">Enter categories separated by commas.</small>
+        <label>Categories</label>
+        <div id="categories-list">
+            <!-- Các danh mục sẽ được thêm tại đây -->
+        </div>
+        <button type="button" class="btn btn-success" onclick="addCategory()">Add Category</button>
     </div>
+
+
 
     <!-- Platform -->
     <div class="form-group">
@@ -107,7 +111,7 @@
 </form>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+
 }

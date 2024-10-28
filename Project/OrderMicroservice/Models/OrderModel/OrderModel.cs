@@ -3,7 +3,7 @@ using OrderMicroservice.DBContexts.Enum;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace OrderMicroservice.Models
+namespace OrderMicroservice.Models.OrderModel
 {
     /// <summary>
     /// Represents an order placed by a user, including details about payment, status, and items purchased.
@@ -40,7 +40,7 @@ namespace OrderMicroservice.Models
         /// <br/>
         /// Tổng lợi nhuận từ đơn hàng.
         /// </summary>
-        public decimal TotalProfit => TotalPrice * 0.9m;
+        public decimal TotalProfit => TotalPrice ;
 
         /// <summary>
         /// Status of the order, including: Pending, Processing, Shipping, Completed, Cancelled.
@@ -48,7 +48,7 @@ namespace OrderMicroservice.Models
         /// Trạng thái của đơn hàng, bao gồm: Đang chờ, Đang xử lý, Đang vận chuyển, Hoàn thành, Đã hủy.
         /// </summary>
         public OrderStatus OrderStatus { get; set; } = OrderStatus.Pending;
-        
+
         /// <summary>
         /// Name of the payment method (e.g., Momo, Vnpay, ViettinBank).
         /// <br/>
@@ -82,8 +82,20 @@ namespace OrderMicroservice.Models
         /// <br/>
         /// Ngày và giờ khi đơn hàng được cập nhật lần cuối.
         /// </summary>
-        public DateTime UpdateAt { get; set; }
-        public required string UserId { get; set; }
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+        
+        /// <summary>
+        /// The identifier of the user who placed the order.
+        /// <br/>
+        /// Định danh của người dùng đã đặt đơn hàng.
+        /// </summary>
+        public required string CustomerId { get; set; }
+
+        /// <summary>
+        /// A list of items included in the order.
+        /// <br/>
+        /// Danh sách các sản phẩm có trong đơn hàng.
+        /// </summary>
         public required ICollection<OrderItemModel> Items { get; set; }
     }
 }

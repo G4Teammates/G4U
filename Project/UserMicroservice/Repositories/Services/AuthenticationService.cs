@@ -117,8 +117,10 @@ namespace UserMicroservice.Repositories.Services
                 {
                     Token = token,
                     Username = user.Username,
+                    DisplayName = user.DisplayName,
                     Id = user.Id,
                     Email = user.Email,
+                    Avatar = user.Avatar!,
                     Role = user.Role.ToString()
                 };
                 response.IsSuccess = true;
