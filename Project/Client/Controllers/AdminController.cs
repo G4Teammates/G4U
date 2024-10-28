@@ -546,7 +546,7 @@ namespace Client.Controllers
                     TempData["error"] = ex.Message;
                 }
 
-                return View("ProductsManager", productViewModel); // Trả về view ProductsManager với danh sách sản phẩm đã tìm kiếm
+                return View(categories); 
             }
 
             
@@ -682,8 +682,10 @@ namespace Client.Controllers
                     return RedirectToAction(nameof(CategoriesManager));
                 }
             }
-            #endregion
-            public async Task<IActionResult> CommentManager()
+        #endregion
+
+        #region Comment
+        public async Task<IActionResult> CommentManager()
             {
                 CommentViewModel comment = new();
                 try
@@ -830,5 +832,6 @@ namespace Client.Controllers
                 TempData["success"] = "Xóa bình luận thành công.";
                 return RedirectToAction("CommentManager");
             }
-        }
+        #endregion
     }
+}
