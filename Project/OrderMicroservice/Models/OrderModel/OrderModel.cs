@@ -1,7 +1,6 @@
 ﻿using MongoDB.Bson;
 using OrderMicroservice.DBContexts.Enum;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace OrderMicroservice.Models.OrderModel
 {
@@ -24,7 +23,7 @@ namespace OrderMicroservice.Models.OrderModel
         /// <br/>
         /// Mã giao dịch thanh toán lấy từ dịch vụ thanh toán bên thứ ba (ví dụ: PayPal, Stripe, Ngân hàng).
         /// </summary>
-        public required string PaymentTransactionId { get; set; }
+        public string? PaymentTransactionId { get; set; }
 
         /// <summary>
         /// Total price of the order.
@@ -97,5 +96,6 @@ namespace OrderMicroservice.Models.OrderModel
         /// Danh sách các sản phẩm có trong đơn hàng.
         /// </summary>
         public required ICollection<OrderItemModel> Items { get; set; }
+
     }
 }

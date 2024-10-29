@@ -7,14 +7,17 @@ using Client.Repositories.Interfaces.User;
 using Client.Repositories.Services;
 using Client.Repositories.Services.Categories;
 using Client.Repositories.Services.Product;
-
+using Client.Repositories.Services.User;
 using Client.Utility;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddAzureKeyVault(new Uri("https://duantotnghiep.vault.azure.net/"),
     new DefaultAzureCredential());
-
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 builder.Services.AddStartupService(builder.Configuration);
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorComponents();
