@@ -538,10 +538,10 @@ namespace Client.Controllers
         #endregion
 
 
-        public IActionResult OrdersManager()
-        {
-            return View();
-        }
+        //public IActionResult OrdersManager()
+        //{
+        //    return View();
+        //}
 
 
         #region Category
