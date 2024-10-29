@@ -20,6 +20,14 @@ using Microsoft.CodeAnalysis;
 using ProductMicroservice.Models;
 using LinkModel = Client.Models.ProductDTO.LinkModel;
 using CategoryModel = Client.Models.ProductDTO.CategoryModel;
+using QRCoder;
+using System.Drawing;
+using System.Drawing.Imaging;
+
+using System.Net.NetworkInformation;
+using ZXing;
+using ZXing.Common;
+using ZXing.Windows.Compatibility;
 
 
 namespace Client.Repositories.Services.Product
@@ -253,5 +261,42 @@ namespace Client.Repositories.Services.Product
                 Url = StaticTypeApi.APIGateWay + "/Product/" + Id,
             });
         }
-    }
+
+		public string GenerateQRCode(string qrCodeUrl)
+		{
+			if (!string.IsNullOrEmpty(qrCodeUrl))
+			{
+				QRCodeGenerator qrGenerator = new QRCodeGenerator();
+				QRCodeData qrCodeData = qrGenerator.CreateQrCode(qrCodeUrl, QRCodeGenerator.ECCLevel.Q);
+				PngByteQRCode qrCode = new PngByteQRCode(qrCodeData);
+
+				byte[] qrCodeImage = qrCode.GetGraphic(20);
+				return $"data:image/png;base64,{Convert.ToBase64String(qrCodeImage)}";
+			}
+			return string.Empty;
+		}
+
+        /*public string GenerateBarCode(long barCodeUrl)
+        {
+            if (barCodeUrl != null)
+            {
+                var barcodeWriter = new BarcodeWriter();
+                barcodeWriter.Format = BarcodeFormat.UPC_A;
+                barcodeWriter.Options.Width = 250;
+                barcodeWriter.Options.Height = 50;
+
+                // Tạo Bitmap từ mã vạch
+                var barcodeBitmap = barcodeWriter.Write(barCodeUrl.ToString());
+
+                // Chuyển đổi Bitmap thành mảng byte[]
+                using var memoryStream = new MemoryStream();
+                barcodeBitmap.Save(memoryStream, System.Drawing.Imaging.ImageFormat.Png);
+                byte[] barCodeImage = memoryStream.ToArray();
+
+                // Trả về mã vạch dưới dạng chuỗi Base64
+                return $"data:image/png;base64,{Convert.ToBase64String(barCodeImage)}";
+            }
+            return string.Empty;
+        }*/
+	}
 }

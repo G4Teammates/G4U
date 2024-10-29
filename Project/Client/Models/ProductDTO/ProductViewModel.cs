@@ -14,5 +14,6 @@ namespace Client.Models.ProductDTO
         public int pageSize { get; set; }
         public int totalItem { get; set; }
         public int pageCount { get; set; }
+        
     }
 }
