@@ -456,11 +456,8 @@
       "UpstreamPathTemplate": "/Comment",
       "UpstreamHttpMethod": [ "Put" ]
     }
-
   ],
-
   "GlobalConfiguration": {
     "BaseUrl": "https://localhost:7260"
-  },
-
+  }
 }

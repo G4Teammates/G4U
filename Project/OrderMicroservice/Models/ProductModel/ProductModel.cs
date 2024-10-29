@@ -1,10 +1,7 @@
-﻿using ProductMicroservice.DBContexts.Enum;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using OrderMicroservice.Models.ProductModel.Enum;
 using System.ComponentModel.DataAnnotations;
-using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
 
-namespace ProductMicroservice.Models
+namespace OrderMicroservice.Models.ProductModel
 {
     /// <summary>
     /// Represents a product in the system.
@@ -18,7 +15,7 @@ namespace ProductMicroservice.Models
         /// <br/>
         /// Định danh duy nhất cho sản phẩm.
         /// </summary>
-        public string Id { get; set; } = ObjectId.GenerateNewId().ToString();
+        public string? Id { get; set; }
 
         /// <summary>
         /// The name of the product.
@@ -28,14 +25,6 @@ namespace ProductMicroservice.Models
         [Required(ErrorMessage = "Name is required")]
         [StringLength(256, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 2)]
         public required string Name { get; set; }
-
-        /// <summary>
-        /// A description of the product.
-        /// <br/>
-        /// Mô tả về sản phẩm.
-        /// </summary>
-        [MaxLength(10000, ErrorMessage = "The {0} must be at max {1} characters long.")]
-        public string? Description { get; set; }
 
         /// <summary>
         /// The original price of the product before any discounts are applied.
@@ -55,13 +44,6 @@ namespace ProductMicroservice.Models
         public int Sold { get; set; } = 0;
 
         /// <summary>
-        /// The number of views and likes the product has received. Default is 0.
-        /// <br/>
-        /// Số lượt xem và lượt thích mà sản phẩm nhận được. Mặc định là 0.
-        /// </summary>
-        public InteractionModel? Interactions { get; set; } = new InteractionModel { NumberOfLikes = 0, NumberOfViews = 0 };
-
-        /// <summary>
         /// The discount applied to the product. Only valid values are between 0 and 100.
         /// <br/>
         /// Giảm giá áp dụng cho sản phẩm. Chỉ có giá trị hợp lệ nằm giữa 0 và 100.
@@ -71,45 +53,11 @@ namespace ProductMicroservice.Models
         public float Discount { get; set; } = 0;
 
         /// <summary>
-        /// The platform where the product is available (e.g., Window, Android, WebGL,...).
-        /// <br/>
-        /// Nền tảng nơi sản phẩm có sẵn (ví dụ: Window, Android, WebGL,...).
-        /// </summary>
-        public PlatformType Platform { get; set; } = PlatformType.Unknown;
-
-        /// <summary>
-        /// Represents a Link entity in the system. Each link is associated with a user and can optionally be tied to a product.<br/>
-        /// Đại diện cho một thực thể liên kết trong hệ thống. Mỗi liên kết được gắn với một người dùng và có thể được liên kết với một sản phẩm.
-        /// </summary>
-        public ICollection<LinkModel>? Links { get; set; }
-
-        /// <summary>
-        /// A collection of categories that the product belongs to.
-        /// <br/>
-        /// Danh sách các danh mục mà sản phẩm thuộc về.
-        /// </summary>
-        public ICollection<CategoryModel>? Categories { get; set; }
-
-        /// <summary>
         /// The status of the product (e.g., Inactive, Active, Block, Deleted). 
         /// <br/>
         /// Trạng thái của sản phẩm (ví dụ: Inactive, Active, Block, Deleted).
         /// </summary>
         public ProductStatus Status { get; set; } = ProductStatus.Inactive;
-
-        /// <summary>
-        /// The date and time when the product was created.
-        /// <br/>
-        /// Ngày và giờ khi sản phẩm được tạo ra.
-        /// </summary>
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-
-        /// <summary>
-        /// The date and time when the product was last updated.
-        /// <br/>
-        /// Ngày và giờ khi sản phẩm được cập nhật lần cuối.
-        /// </summary>
-        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
         /// <summary>
         /// The identifier of the user who owns or created the product.
@@ -130,7 +78,7 @@ namespace ProductMicroservice.Models
         /// </returns>
         public decimal GetPrice()
         {
-            return Price - (Price * (decimal)Discount / 100);
+            return Price - Price * (decimal)Discount / 100;
         }
     }
 

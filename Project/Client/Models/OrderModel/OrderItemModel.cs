@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace OrderMicroservice.Models.OrderModel
+namespace Client.Models.OrderModel
 {
     /// <summary>
     /// Represents an item within an order, including product details and quantity.
