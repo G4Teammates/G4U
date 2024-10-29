@@ -39,6 +39,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CategoryMicroservice\CategoryMicroservice.csproj" />
+    <ProjectReference Include="..\CommentMicroservice\CommentMicroservice.csproj" />
     <ProjectReference Include="..\Gateway\Gateway.csproj" />
     <ProjectReference Include="..\ProductMicroservice\ProductMicroservice.csproj" />
     <ProjectReference Include="..\UserMicroservice\UserMicroservice.csproj" />

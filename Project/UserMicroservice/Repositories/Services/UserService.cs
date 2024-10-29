@@ -105,12 +105,11 @@ namespace UserMicroservice.Repositories.Services
             return response;
         }
 
-        public async Task<ResponseModel> GetAll(int pageNumber)
+        public async Task<ResponseModel> GetAll(int pageNumber, int pageSize)
         {
             ResponseModel response = new();
             try
             {
-                int pageSize = 5;
                 var users = await _context.Users.ToListAsync();
                 if (users != null)
                 {

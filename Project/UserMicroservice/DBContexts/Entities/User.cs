@@ -146,7 +146,7 @@ namespace UserMicroservice.DBContexts.Entities
         /// Tổng số tiền lời cuối cùng mà người dùng kiếm được từ việc bán game.
         /// </summary>
         [BsonElement("totalProfit")]
-        public float TotalProfit { get; set; }
+        public decimal TotalProfit { get; set; }
 
 
         /// <summary>

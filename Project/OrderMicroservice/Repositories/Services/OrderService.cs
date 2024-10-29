@@ -6,23 +6,37 @@ using OrderMicroservice.DBContexts.Entities;
 using OrderMicroservice.Models;
 using OrderMicroservice.Models.OrderModel;
 using OrderMicroservice.Models.PaymentModel;
+using OrderMicroservice.Models.UserModel;
 using OrderMicroservice.Repositories.Interfaces;
 
 namespace OrderMicroservice.Repositories.Services
 {
-    public class OrderService(OrderDbContext context, IMapper mapper) : IOrderService
+    public class OrderService(OrderDbContext context, IMapper mapper, IPaymentService paymentService) : IOrderService
     {
         OrderDbContext _context = context;
         IMapper _mapper = mapper;
+        IPaymentService _paymentService = paymentService;
 
-        public async Task<ResponseModel> Create(OrderModel order)
+        public async Task<ResponseModel> Create(OrderModel orderModel)
         {
             ResponseModel response = new();
-            var orderEntity = _mapper.Map<Order>(order);
-            _context.Orders.Add(orderEntity);
-            await _context.SaveChangesAsync();
-            response.Result = orderEntity;
-            response.Message = "Success";
+            try
+            {
+                _paymentService.MoMoPayment(orderModel.Id, (long)orderModel.TotalPrice);
+
+               
+                Order orderEntity = _mapper.Map<Order>(orderModel);
+                _context.Orders.Add(orderEntity);
+                await _context.SaveChangesAsync();
+
+                response.Result = orderModel;
+                response.Message = $"Create order success";
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = $"Failed to create order. Error: {ex.Message}";
+            }
             return response;
         }
 

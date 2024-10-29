@@ -1,7 +1,9 @@
 ﻿using Client.Repositories.Interfaces;
 using Client.Repositories.Interfaces.Authentication;
+using Client.Repositories.Interfaces.Order;
 using Client.Repositories.Services;
-using Client.Repositories.Services.AuthenticationService;
+using Client.Repositories.Services.Authentication;
+using Client.Repositories.Services.Order;
 
 namespace Client.Configure
 {
@@ -19,6 +21,7 @@ namespace Client.Configure
             services.AddScoped<IBaseService, BaseService>();
             services.AddScoped<ITokenProvider, TokenProvider>();
             services.AddScoped<IHelperService, HelperService>();
+            services.AddScoped<IOrderService, OrderService>();
             //Register DI here ⬆️
 
             return services;

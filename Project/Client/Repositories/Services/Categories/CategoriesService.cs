@@ -39,12 +39,12 @@ namespace Client.Repositories.Services.Categories
             });
         }
 
-        public async Task<ResponseModel> GetAllCategoryAsync()
+        public async Task<ResponseModel> GetAllCategoryAsync(int pageNumber, int pageSize)
         {
             return await _baseService.SendAsync(new RequestModel()
             {
                 ApiType = StaticTypeApi.ApiType.GET,
-                Url = StaticTypeApi.APIGateWay + "/Category"
+                Url = StaticTypeApi.APIGateWay + "/Category?page=" + pageNumber.ToString() + "&pageSize=" + pageSize.ToString()
             });
         }
 

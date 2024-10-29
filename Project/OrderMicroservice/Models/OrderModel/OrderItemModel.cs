@@ -53,12 +53,6 @@ namespace OrderMicroservice.Models.OrderModel
         public decimal TotalProfit => TotalPrice * (decimal)0.9;
 
         /// <summary>
-        /// The id of publisher
-        /// <br/>
-        /// Mã định danh của người đăng game
-        /// </summary>
-        public required string PublisherId { get; set; }
-        /// <summary>
         /// Username of publisher
         /// <br/>
         /// Username của người đăng game
