@@ -337,5 +337,9 @@ namespace Client.Controllers
             return View();
         }
 
+        public IActionResult PasswordSecurity()
+        {
+            return View();
+        }
     }
 }
