@@ -253,7 +253,6 @@ namespace Client.Controllers
                     product.pageSize = pageSize;
                     product.pageCount = (int)Math.Ceiling(total.Count/ (double)pageSize);
 
-
                 }
                 else
                 {
@@ -266,7 +265,17 @@ namespace Client.Controllers
                 TempData["error"] = ex.Message;
             }
 
-            return View(product);
+			// Tạo mã QR cho từng sản phẩm
+			foreach (var item in product.Product)
+			{
+				string qrCodeUrl = Url.Action("UpdateProduct", "Admin", new { id = item.Id }, Request.Scheme);
+				item.QrCode = _productService.GenerateQRCode(qrCodeUrl); // Tạo mã QR và lưu vào thuộc tính
+
+                /*string barCodeUrl = Url.Action("UpdateProduct", "Admin", new { id = item.Id }, Request.Scheme);
+                item.BarCode = _productService.GenerateBarCode(11111111111); // Tạo mã QR và lưu vào thuộc tính*/
+            }
+
+			return View(product);
         }
         public async Task<IActionResult> UpdateProduct(string id)
         {

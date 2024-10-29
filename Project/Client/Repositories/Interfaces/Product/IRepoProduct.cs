@@ -46,5 +46,9 @@ namespace Client.Repositories.Interfaces.Product
             ScanFileRequest request,
             string username);
         Task<ResponseModel> DeleteProductAsync(string Id);
+
+        string GenerateQRCode(string productId);
+
+        /*string GenerateBarCode(long barCodeUrl);*/
     }
 }
