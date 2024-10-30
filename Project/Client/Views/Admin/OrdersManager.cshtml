@@ -1,94 +1,105 @@
 ﻿@{
-	Layout = "_LayoutAdmin";
+    Layout = "_LayoutAdmin";
 }
+@using Client.Models.OrderModel;
+@model ICollection<OrderModel>
 
 <div class="pt-3 pb-4">
-	<span class="titleManager bg-success py-3 px-5 rounded-4 fw-bold text-white">Orders Manager</span>
+    <span class="titleManager bg-success py-3 px-5 rounded-4 fw-bold text-white">Orders Manager</span>
 </div>
 
 <div class="container mt-4">
-	<!-- Thanh tìm kiếm và nút Thêm -->
-	<div class="d-flex justify-content-between mb-3">
-		<div class="col-md-4">
-			<input class="form-control" type="text" placeholder="Search by..." />
-		</div>
-		<div>
-			<button class="btn btn-success" data-toggle="modal" data-target="#modalOrder">+ Add</button>
-		</div>
-	</div>
+    <!-- Thanh tìm kiếm và nút Thêm -->
+    <div class="d-flex justify-content-between mb-3">
+        <form asp-action="SearchOrder" method="get" class="col-md-4">
+            <input class="form-control" type="text" placeholder="Search by..." />
+        </form>
+       @*  <div>
+            <button class="btn btn-success" data-toggle="modal" data-target="#modalOrder">+ Add</button>
+        </div> *@
+    </div>
 
-	<!-- Bảng thông tin -->
-	<div id="checkBoxBar" style="display:none">
-		<div class="text-end m-2">
-			@* <button class="btn btn-success mx-2 w-100">Public All</button> *@
-			<a class="text-danger mx-2" href="" data-toggle="modal" data-target="#deleteProductModal">
-				<i class="fas fa-trash"></i>
-			</a>
-		</div>
-	</div>
-	<table class="table table-bordered table-hover align-middle">
-		<thead class="table-light">
-			<tr>
-				<th scope="col"><input type="checkbox" id="selectAll"></th>
-				<th scope="col">Avatar</th>
-				<th scope="col">User Name</th>
-				<th scope="col">Display Name</th>
-				<th scope="col">Email</th>
-				<th scope="col">Phone Number</th>
-				<th scope="col">Status</th>
-				<th scope="col">CreateAt</th>
-				@* <th scope="col">UpdateAt</th> *@
-			</tr>
-		</thead>
-		<tbody>
-			<tr>
-				<td><input type="checkbox" class="user-checkbox"></td>
-				<td><img src="~/Image/avatar.jpeg" alt="Alternate Text" style="width: 80px; height: 80px" /></td>
-				<td>tuanlx123</td>
-				<td>Tuan Dep Trai</td>
-				<td>tuanpham147369@gmail.com</td>
-				<td><span class="text-success">0933 808 235</span></td>
-				<td>Đã kích hoạt</td>
-				<td>10/05/2024</td>
-				@* <td>-</td> *@
-			</tr>
-			<tr>
-				<td><input type="checkbox" class="user-checkbox"></td>
-				<td>-</td>
-				<td>-</td>
-				<td>Quá ok tụi anh q...</td>
-				<td>-</td>
-				<td><span class="text-success">024 3747 4700</span></td>
-				<td>-</td>
-				<td>-</td>
-				@* <td>-</td> *@
-			</tr>
-			<!-- Thêm các dòng dữ liệu tương tự -->
-		</tbody>
-	</table>
+    <!-- Bảng thông tin -->
+    <div id="checkBoxBar" style="display:none">
+        <div class="text-end m-2">
+            @* <button class="btn btn-success mx-2 w-100">Public All</button> *@
+            @*      <a class="text-danger mx-2" href="" data-toggle="modal" data-target="#deleteProductModal">
+            <i class="fas fa-trash"></i>
+            </a> *@
+        </div>
+    </div>
+    <table class="table table-bordered table-hover align-middle">
+        <thead class="table-light">
+            <tr>
+           @*      <th scope="col"><input type="checkbox" id="selectAll"></th> *@
+                <th scope="col">Order Id</th>
+                <th scope="col">Transaction Id</th>
+                <th scope="col">Total Price</th>
+                <th scope="col">Order Status</th>
+                <th scope="col">Payment Name</th>
+                <th scope="col">Payment Status</th>
+                <th scope="col">Payment Method</th>
+                <th scope="col" >Create At</th>
+                <th scope="col">Update At</th>
+                <th scope="col">Customer Id</th>
+                @* <th scope="col">UpdateAt</th> *@
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null)
+            {
+                foreach (var order in Model)
+                {
+                    <tr>
+            @*             <td><input type="checkbox" class="order-checkbox"></td> *@
+                        <td scope="col">@order.Id</td>
+                        <td scope="col">@order.PaymentTransactionId</td>
+                        <td scope="col">@order.TotalPrice</td>
+                        <td scope="col">@order.OrderStatus</td>
+                        <td scope="col">@order.PaymentName</td>
+                        <td scope="col">@order.PaymentStatus</td>
+                        <td scope="col">@order.PaymentMethod</td>
+                        <td scope="col" title="@order.CreatedAt" style="max-width:90px" class="text-truncate">@order.CreatedAt</td>
+                        <td scope="col" title="@order.UpdatedAt" style="max-width:90px" class="text-truncate">@order.UpdatedAt</td>
+                        <td scope="col" title="@order.CustomerId" style="max-width:90px" class="text-truncate">@order.CustomerId</td>
+                        <td>
+                            <a asp-action="Order Detail" asp-route-Id="@order.Id" class="text-danger mx-2"><span><i class="fa-regular fa-pen-to-square"></i></span></a>
+                        </td>
+                        @* <td>-</td> *@
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="9" class="text-center">Không có hóa đơn nào để hiển thị.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
 
-	<!-- Phân trang -->
-	<div class="d-flex justify-content-between mt-3">
-		<div>Total: 3,145</div>
-		<div>
-			<select class="form-select form-select-sm w-auto d-inline-block">
-				<option>20 records per page</option>
-				<option>50 records per page</option>
-				<option>100 records per page</option>
-			</select>
-			<nav aria-label="Page navigation example" class="d-inline-block">
-				<ul class="pagination pagination-sm mb-0">
-					<li class="page-item disabled">
-						<a class="page-link" href="#">1 to 20</a>
-					</li>
-					<li class="page-item"><a class="page-link" href="#">1</a></li>
-					<li class="page-item"><a class="page-link" href="#">2</a></li>
-					<li class="page-item"><a class="page-link" href="#">3</a></li>
-					<li class="page-item"><a class="page-link" href="#">></a></li>
-				</ul>
-			</nav>
-		</div>
-	</div>
+    <!-- Phân trang -->
+    <div class="d-flex justify-content-between mt-3">
+        <div>Total: 3,145</div>
+        <div>
+            <select class="form-select form-select-sm w-auto d-inline-block">
+                <option>20 records per page</option>
+                <option>50 records per page</option>
+                <option>100 records per page</option>
+            </select>
+            <nav aria-label="Page navigation example" class="d-inline-block">
+                <ul class="pagination pagination-sm mb-0">
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#">1 to 20</a>
+                    </li>
+                    <li class="page-item"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item"><a class="page-link" href="#">></a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
 </div>
 
 
@@ -104,47 +115,47 @@
 
 
 @* Modal *@
-<div class="modal fade" id="modalOrder" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-	<div class="modal-dialog modal-xl">
-		<div class="modal-content">
-			<div class="container-fluid p-5">
-				<form class="row" asp-action="Create">
-					<div asp-validation-summary="ModelOnly" class="text-danger"></div>
-					<div class="row">
-						<div class="col">
-							<div class="mb-2">
-								<label class="form-label">Email address</label>
-								<input type="email" class="form-control">
-								<span class="text-danger"></span>
-							</div>
-							<div class="mb-2">
-								<label class="form-label">Email address</label>
-								<input type="email" class="form-control">
-								<span class="text-danger"></span>
-							</div>
-							<div class="mb-2">
-								<label class="form-label">Email address</label>
-								<input type="email" class="form-control">
-								<span class="text-danger"></span>
-							</div>
-						</div>
-						<div class="col">
-							<div class="text-center">
-								<div>
-									<img src="~/image/avatar.jpeg" alt="Alternate Text" style="width:200px; height200px;" />
-								</div>
-								<a class="btn btn-outline-dark text-center mt-2">Change Avatar</a>
-							</div>
-						</div>
-					</div>
-					<div class="form-group mt-3 text-center">
-						<input type="submit" value="Create" asp-action="CreateOrder" class="btn btn-danger w-50" />
-					</div>
-					<div class="form-group mt-3 text-center">
-						<input type="submit" value="Save" asp-action="SaveEdit" class="btn btn-primary w-50" />
-					</div>
-				</form>
-			</div>
-		</div>
-	</div>
-</div>
+@* <div class="modal fade" id="modalOrder" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="container-fluid p-5">
+                <form class="row" asp-action="Create">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="mb-2">
+                                <label class="form-label">Email address</label>
+                                <input type="email" class="form-control">
+                                <span class="text-danger"></span>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label">Email address</label>
+                                <input type="email" class="form-control">
+                                <span class="text-danger"></span>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label">Email address</label>
+                                <input type="email" class="form-control">
+                                <span class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="text-center">
+                                <div>
+                                    <img src="~/image/avatar.jpeg" alt="Alternate Text" style="width:200px; height200px;" />
+                                </div>
+                                <a class="btn btn-outline-dark text-center mt-2">Change Avatar</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group mt-3 text-center">
+                        <input type="submit" value="Create" asp-action="CreateOrder" class="btn btn-danger w-50" />
+                    </div>
+                    <div class="form-group mt-3 text-center">
+                        <input type="submit" value="Save" asp-action="SaveEdit" class="btn btn-primary w-50" />
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div> *@

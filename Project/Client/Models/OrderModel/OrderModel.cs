@@ -1,54 +1,28 @@
-﻿using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
-using OrderMicroservice.DBContexts.Enum;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using Client.Models.Enum.OrderEnum;
+using MongoDB.Bson;
+using System.ComponentModel.DataAnnotations;
 
-namespace OrderMicroservice.DBContexts.Entities
+namespace Client.Models.OrderModel
 {
-    #region SQL
-    //public class Order
-    //{
-    //    public Guid Id { get; set; }
-    //    public string PaymentTransactionId { get; set; }
-    //    [Column(TypeName = "decimal(18,2)")]
-    //    public decimal TotalPrice { get; set; }
-    //    public OrderStatus OrderStatus { get; set; }
-    //    public PaymentStatus PaymentStatus { get; set; }
-    //    public required string PaymentMethod { get; set; }
-
-    //    public DateTime CreatedAt { get; set; }
-    //    public DateTime UpdatedAt { get; set; }
-    //    //Collection Table
-    //    public Guid CartId { get; set; }
-    //    //Product Table
-    //    public Guid ProductId { get; set; }
-
-    //}
-    #endregion
-
-    #region noSQL
     /// <summary>
     /// Represents an order placed by a user, including details about payment, status, and items purchased.
     /// <br/>
     /// Đại diện cho một đơn hàng được đặt bởi người dùng, bao gồm thông tin về thanh toán, trạng thái, và các mặt hàng đã mua.
     /// </summary>
-    public class Order
+    public class OrderModel
     {
         /// <summary>
         /// Unique identifier for the order.
         /// <br/>
         /// Định danh duy nhất cho đơn hàng.
         /// </summary>
-        [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
-        public required string Id { get; set; }
+        public string? Id { get; set; }
 
         /// <summary>
         /// Payment Transaction Id. Obtained from Payment 3rd Party Service (e.g., PayPal, Stripe, Bank).
         /// <br/>
         /// Mã giao dịch thanh toán lấy từ dịch vụ thanh toán bên thứ ba (ví dụ: PayPal, Stripe, Ngân hàng).
         /// </summary>
-        [BsonElement("paymentTransactionId")]
         public string? PaymentTransactionId { get; set; }
 
         /// <summary>
@@ -56,7 +30,8 @@ namespace OrderMicroservice.DBContexts.Entities
         /// <br/>
         /// Tổng giá trị của đơn hàng.
         /// </summary>
-        [BsonElement("totalPrice")]
+        [Range(0, double.MaxValue, ErrorMessage = "The {0} must be greater or equal than {1}")]
+        [RegularExpression(@"^\d+(\.\d{1,2})?$", ErrorMessage = "The {0} must have no more than 2 decimal places")]
         public decimal TotalPrice { get; set; }
 
         /// <summary>
@@ -64,73 +39,63 @@ namespace OrderMicroservice.DBContexts.Entities
         /// <br/>
         /// Tổng lợi nhuận từ đơn hàng.
         /// </summary>
-        [BsonElement("totalProfit")]
-        public decimal TotalProfit { get; set; }
+        public decimal TotalProfit => TotalPrice;
 
         /// <summary>
         /// Status of the order, including: Pending, Processing, Shipping, Completed, Cancelled.
         /// <br/>
         /// Trạng thái của đơn hàng, bao gồm: Đang chờ, Đang xử lý, Đang vận chuyển, Hoàn thành, Đã hủy.
         /// </summary>
-        [BsonElement("orderStatus")]
-        public OrderStatus OrderStatus { get; set; }
+        public OrderStatus OrderStatus { get; set; } = OrderStatus.Pending;
 
         /// <summary>
         /// Name of the payment method (e.g., Momo, Vnpay, ViettinBank).
         /// <br/>
         /// Tên phương thức thanh toán (ví dụ: Momo, Vnpay, ViettinBank).
         /// </summary>
-        [BsonElement("paymentName")]
-        public required string PaymentName { get; set; }
+        public string? PaymentName { get; set; }
 
         /// <summary>
         /// Status of the payment, including: Pending, Paid, Failed.
         /// <br/>
         /// Trạng thái của thanh toán, bao gồm: Đang chờ, Đã thanh toán, Thất bại.
         /// </summary>
-        [BsonElement("paymentStatus")]
-        public PaymentStatus PaymentStatus { get; set; }
+        public PaymentStatus PaymentStatus { get; set; } = PaymentStatus.Pending;
 
         /// <summary>
         /// Method of payment, including: CreditCard, DebitCard, NetBanking, UPI, Wallet.
         /// <br/>
         /// Phương thức thanh toán, bao gồm: Thẻ tín dụng, Thẻ ghi nợ, Ngân hàng trực tuyến, UPI, Ví điện tử.
         /// </summary>
-        [BsonElement("paymentMethod")]
-        public PaymentMethod PaymentMethod { get; set; }
+        public PaymentMethod PaymentMethod { get; set; } = PaymentMethod.Pending;
 
         /// <summary>
         /// The date and time when the order was created.
         /// <br/>
         /// Ngày và giờ khi đơn hàng được tạo ra.
         /// </summary>
-        [BsonElement("createdAt")]
-        public DateTime CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         /// <summary>
         /// The date and time when the order was last updated.
         /// <br/>
         /// Ngày và giờ khi đơn hàng được cập nhật lần cuối.
         /// </summary>
-        [BsonElement("updatedAt")]
-        public DateTime UpdatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
         /// <summary>
         /// The identifier of the user who placed the order.
         /// <br/>
         /// Định danh của người dùng đã đặt đơn hàng.
         /// </summary>
-        [BsonElement("customerId")]
-        public required string CustomerId { get; set; }
+        public string? CustomerId { get; set; }
 
         /// <summary>
         /// A list of items included in the order.
         /// <br/>
         /// Danh sách các sản phẩm có trong đơn hàng.
         /// </summary>
-        [BsonElement("items")]
-        public required ICollection<OrderItems> Items { get; set; }
-    }
+        public ICollection<OrderItemModel>? Items { get; set; }
 
-    #endregion 
+    }
 }

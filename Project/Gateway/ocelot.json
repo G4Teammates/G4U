@@ -455,12 +455,73 @@
       ],
       "UpstreamPathTemplate": "/Comment",
       "UpstreamHttpMethod": [ "Put" ]
+    },
+
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //                                                                                                                    //
+    //                                                Order                                                               //
+    //                                                                                                                    //
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+    //Get all
+    {
+      "DownstreamPathTemplate": "/api/Order",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7297
+        }
+      ],
+      "UpstreamPathTemplate": "/Order",
+      "UpstreamHttpMethod": [ "Get" ]
+    },
+
+    //Get by id
+    {
+      "DownstreamPathTemplate": "/api/Order/{id}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7297
+        }
+      ],
+      "UpstreamPathTemplate": "/Order/{id}",
+      "UpstreamHttpMethod": [ "Get" ]
+    },
+
+    //Get order items
+    {
+      "DownstreamPathTemplate": "/api/Order/OrderItems/{id}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7297
+        }
+      ],
+      "UpstreamPathTemplate": "/Order/OrderItems/{id}",
+      "UpstreamHttpMethod": [ "Get" ]
+    },
+    //Update order status
+    {
+      "DownstreamPathTemplate": "/api/Order",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7297
+        }
+      ],
+      "UpstreamPathTemplate": "/Order",
+      "UpstreamHttpMethod": [ "Put" ]
     }
 
   ],
-
   "GlobalConfiguration": {
     "BaseUrl": "https://localhost:7260"
-  },
-
+  }
 }

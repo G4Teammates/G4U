@@ -6,9 +6,6 @@ using Client.Models.UserDTO;
 using Client.Repositories.Interfaces;
 using Client.Repositories.Interfaces.Categories;
 using Client.Models.AuthenModel;
-using Client.Models.ProductDTO;
-using Client.Models.UserDTO;
-using Client.Repositories.Interfaces;
 using Client.Repositories.Interfaces.Authentication;
 using Client.Repositories.Interfaces.Product;
 using Client.Repositories.Interfaces.User;
@@ -22,6 +19,11 @@ using ProductModel = Client.Models.ProductDTO.ProductModel;
 using System.Drawing.Printing;
 using Client.Models.ComentDTO;
 using Client.Repositories.Interfaces.Comment;
+
+using Client.Repositories.Interfaces.Order;
+using System.Drawing.Printing;
+using Client.Models.OrderModel;
+
 using ProductMicroservice.DBContexts.Entities;
 using UserMicroservice.Models.UserManagerModel;
 
@@ -29,7 +31,7 @@ using UserMicroservice.Models.UserManagerModel;
 namespace Client.Controllers
 {
 
-    public class AdminController(IUserService userService, IHelperService helperService, IRepoProduct repoProduct, ITokenProvider tokenProvider, ICategoriesService categoryService, ICommentService commentService) : Controller
+    public class AdminController(IUserService userService, IHelperService helperService, IRepoProduct repoProduct, ITokenProvider tokenProvider, ICategoriesService categoryService, IOrderService orderService, ICommentService commentService) : Controller
     {
         #region declaration and initialization
         public readonly IUserService _userService = userService;
@@ -39,6 +41,7 @@ namespace Client.Controllers
         public readonly ICategoriesService _categoryService = categoryService;
         public readonly ICommentService _commentService = commentService;
 
+        private readonly IOrderService _orderService = orderService;
 
         #endregion
         public IActionResult Index()
@@ -261,7 +264,6 @@ namespace Client.Controllers
                     product.pageSize = pageSize;
                     product.pageCount = (int)Math.Ceiling(total.Count/ (double)pageSize);
 
-
                 }
                 else
                 {
@@ -274,7 +276,17 @@ namespace Client.Controllers
                 TempData["error"] = ex.Message;
             }
 
-            return View(product);
+			// Tạo mã QR cho từng sản phẩm
+			foreach (var item in product.Product)
+			{
+				string qrCodeUrl = Url.Action("UpdateProduct", "Admin", new { id = item.Id }, Request.Scheme);
+				item.QrCode = _productService.GenerateQRCode(qrCodeUrl); // Tạo mã QR và lưu vào thuộc tính
+
+                /*string barCodeUrl = Url.Action("UpdateProduct", "Admin", new { id = item.Id }, Request.Scheme);
+                item.BarCode = _productService.GenerateBarCode(11111111111); // Tạo mã QR và lưu vào thuộc tính*/
+            }
+
+			return View(product);
         }
         public async Task<IActionResult> UpdateProduct(string id)
         {
@@ -416,6 +428,28 @@ namespace Client.Controllers
             return NotFound();
         }
 
+ public async Task<IActionResult> OrdersManager()
+        {
+            try
+            {
+                ResponseModel response = await _orderService.GetAll();
+
+                if (response.IsSuccess)
+                {
+                    var orders = JsonConvert.DeserializeObject<ICollection<OrderModel>>(Convert.ToString(response.Result.ToString()!));
+                    return View(orders);
+                }
+                else
+                {
+                    TempData["error"] = response.Message;
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = ex.Message;
+            }
+            return View();
+        }
         [HttpPost]
         public async Task<IActionResult> DeleteProduct(ProductModel product)
         {
@@ -547,10 +581,10 @@ namespace Client.Controllers
         #endregion
 
 
-        public IActionResult OrdersManager()
-        {
-            return View();
-        }
+        //public IActionResult OrdersManager()
+        //{
+        //    return View();
+        //}
 
 
         #region Category

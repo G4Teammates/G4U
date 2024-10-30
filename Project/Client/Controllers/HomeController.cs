@@ -1,5 +1,6 @@
 ﻿using Client.Models;
 using Client.Models.AuthenModel;
+
 using Client.Models.CategorisDTO;
 using Client.Models.ProductDTO;
 using Client.Models.UserDTO;
@@ -9,12 +10,11 @@ using Client.Repositories.Interfaces.Authentication;
 using Client.Repositories.Interfaces.Product;
 using Client.Repositories.Services.AuthenticationService;
 using Google.Apis.Auth;
+
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
-using System.Net;
-using System.Security.Claims;
 
 namespace Client.Controllers
 {

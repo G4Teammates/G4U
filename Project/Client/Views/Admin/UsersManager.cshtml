@@ -174,7 +174,9 @@
 
 	<!-- Phân trang -->
 	<div class="d-flex justify-content-between mt-3">
+
 		<div>Total: @(Model.totalItem) items</div>
+
 		<div>
 			<form method="get" asp-controller="Admin" asp-action="UsersManager" class="d-inline">
 				<select name="pageSize" class="form-select form-select-sm w-auto d-inline-block" onchange="this.form.submit()">

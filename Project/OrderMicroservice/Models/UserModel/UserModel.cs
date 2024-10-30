@@ -1,11 +1,7 @@
-﻿using MongoDB.Bson;
-using MongoDB.Bson.Serialization.IdGenerators;
-using System.ComponentModel;
+﻿using OrderMicroservice.Models.UserModel.Enum;
 using System.ComponentModel.DataAnnotations;
-using UserMicroservice.DBContexts.Entities;
-using UserMicroservice.DBContexts.Enum;
 
-namespace UserMicroservice.Models.UserManagerModel
+namespace OrderMicroservice.Models.UserModel
 {
     public class UserModel
     {
@@ -81,46 +77,11 @@ namespace UserMicroservice.Models.UserManagerModel
         public string Avatar { get; set; } = "https://static.vecteezy.com/system/resources/previews/020/911/747/non_2x/user-profile-icon-profile-avatar-user-icon-male-icon-face-icon-profile-icon-free-png.png";
 
         /// <summary>
-        /// The role of the user account, include <see cref="UserRole.User"/>,<see cref="UserRole.Admin"/>,<see cref="UserRole.Developer"/>.
-        /// <br/>
-        /// Vai trò của tài khoản người dùng, bao gồm <see cref="UserRole.User"/>(người dùng mặc định), <see cref="UserRole.Admin"/>(quản trị viên) và <see cref="UserRole.Developer"/>(lập trình viên).
-        /// </summary>
-        public UserRole Role { get; set; } = UserRole.User;
-
-        /// <summary>
         /// The total profit earned by the user from selling games. 
         /// <br/>
         /// Tổng số tiền lời cuối cùng mà người dùng kiếm được từ việc bán game.
         /// </summary>
         public decimal TotalProfit { get; set; } = 0;
-
-        /// <summary>
-        /// The collection of games added by the user to their wishlist.
-        /// <br/>
-        /// Danh sách các game được người dùng thêm vào danh sách yêu thích.
-        /// </summary>
-        public ICollection<UserWishlistModel>? Wishlist { get; set; }
-
-        /// <summary>
-        /// The status of the user account.
-        /// <br/>
-        /// Trạng thái của tài khoản người dùng.
-        /// </summary>
-        public UserStatus Status { get; set; } = UserStatus.Inactive;
-
-        /// <summary>
-        /// The date and time when the user account was created.
-        /// <br/>
-        /// Ngày và giờ khi tài khoản người dùng được tạo.
-        /// </summary>
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-
-        /// <summary>
-        /// The date and time when the user account was last updated.
-        /// <br/>
-        /// Ngày và giờ khi tài khoản người dùng được cập nhật lần cuối.
-        /// </summary>
-        public DateTime? UpdatedAt { get; set; }
     }
 
 }

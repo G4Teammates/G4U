@@ -77,27 +77,39 @@ namespace OrderMicroservice.Repositories.Services
             return response;
         }
 
-        //public async Task<ResponseModel> VierQRPayment(OrderModel model)
-        //{
-        //    string clientId = "e706845a-6c2d-49a1-8d3c-735bbe98df4a";
-        //    string apiKey = "caefb61c-cc8c-4236-bd9d-75b58a606660";
-        //    string checksumKey = "9a1a07556ff46320987f1e13c8f175c52d17fe010739a123cab0451141fc55ad";
+        public async Task<ResponseModel> VierQRPayment(OrderModel model)
+        {
+            string clientId = "e706845a-6c2d-49a1-8d3c-735bbe98df4a";
+            string apiKey = "caefb61c-cc8c-4236-bd9d-75b58a606660";
+            string checksumKey = "9a1a07556ff46320987f1e13c8f175c52d17fe010739a123cab0451141fc55ad";
+            ResponseModel response = new();
+            try
+            {
+                PayOS payOS = new PayOS(clientId, apiKey, checksumKey);
+                Random random = new Random();
+                long orderId = ((long)random.Next(int.MinValue, int.MaxValue) << 32) | (long)random.Next(int.MinValue, int.MaxValue);
 
-        //    PayOS payOS = new PayOS(clientId, apiKey, checksumKey);
-        //    ItemData item = new ItemData(productName, quantity, amount);
-        //    List<ItemData> items = new List<ItemData>();
-        //    items.Add(item);
+                List<ItemData> items = model.Items.Select(i => new ItemData(i.ProductName, i.Quantity, (int)i.Price)).ToList();
 
-        //    PaymentData paymentData = new PaymentData(orderId, amount, "Thanh toan don hang",
-        //         items, cancelUrl : "https://localhost:3002", returnUrl: "https://localhost:3002");
+                PaymentData paymentData = new PaymentData(orderId, (int)model.TotalPrice, $"Payment for order: {model.Id}",
+                     items, cancelUrl: "https://localhost:3002", returnUrl: "https://localhost:3002");
 
-        //    CreatePaymentResult createPayment = await payOS.createPaymentLink(paymentData);
-        //    return new ResponseModel
-        //    {
-        //        Result = createPayment.checkoutUrl,
-        //        IsSuccess = true,
-        //        Message = createPayment.status
-        //    };
-        //}
+                CreatePaymentResult createPayment = await payOS.createPaymentLink(paymentData);
+
+
+                response.Result = new VietQRResponse 
+                { 
+                    CheckoutUrl = createPayment.checkoutUrl, 
+                    PaymentTransactionId = orderId.ToString() 
+                };
+                response.Message = "Create VietQR payment success";
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = $"Error: {ex.Message}";
+            }
+            return response;
+        }
     }
 }

@@ -7,7 +7,7 @@ using System.Net.Http;
 using System.Text;
 
 
-namespace Client.Repositories.Services
+namespace Client.Repositories.Services.User
 {
     public class UserService : IUserService
     {
@@ -36,14 +36,14 @@ namespace Client.Repositories.Services
             });
         }
 
-		public async Task<ResponseModel> FindUsers(string? query)
-		{
-			return await _baseService.SendAsync(new RequestModel()
-			{
-				ApiType = StaticTypeApi.ApiType.GET,
-				Url = StaticTypeApi.APIGateWay + $"/User/search?query={query}"
-			});
-		}
+        public async Task<ResponseModel> FindUsers(string? query)
+        {
+            return await _baseService.SendAsync(new RequestModel()
+            {
+                ApiType = StaticTypeApi.ApiType.GET,
+                Url = StaticTypeApi.APIGateWay + $"/User/search?query={query}"
+            });
+        }
 
 
 		public async Task<ResponseModel> GetAllUserAsync(int? pageNumber, int pageSize)
