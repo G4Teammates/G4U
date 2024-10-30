@@ -566,23 +566,6 @@ namespace Client.Controllers
         }
 
 
-
-        public async Task<IActionResult> CategoriesManager()
-        {
-            ResponseModel? response = await _productService.DeleteProductAsync(product.Id);
-
-            if (response != null && response.IsSuccess)
-            {
-                TempData["success"] = "Product deleted successfully";
-                return RedirectToAction(nameof(ProductsManager));
-            }
-            else
-            {
-                TempData["error"] = response?.Message;
-            }
-            return View(product);
-        }
-
         [HttpPost]
         public async Task<IActionResult> SearchProduct(string searchString, int? page, int pageSize = 5)
         {
