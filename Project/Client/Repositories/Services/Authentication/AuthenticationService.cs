@@ -4,7 +4,7 @@ using Client.Models.AuthenModel;
 using Client.Repositories.Interfaces;
 using IAuthenticationService = Client.Repositories.Interfaces.Authentication.IAuthenticationService;
 using Client.Utility;
-namespace Client.Repositories.Services.AuthenticationService
+namespace Client.Repositories.Services.Authentication
 {
     public class AuthenticationService(IBaseService baseService) : IAuthenticationService
     {

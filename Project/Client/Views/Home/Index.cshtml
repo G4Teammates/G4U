@@ -1,5 +1,5 @@
-﻿@using Client.Models.UserProductDTO
-@model UserProductViewModel
+﻿@using Client.Models
+@model AllModel
 
 
 @*
@@ -51,82 +51,79 @@
     <div class="wrapper_gamemonth">
         <div class="slider_gamemonth">
             <div class="container_gamemonth owl-carousel owl-theme">
-                <div class="card_gamemonth item">
-                    <div class="img_gamemonth">
-                        <img src="~/Image/game.jpg" />
-                    </div>
-                    <div class="info">
-                        <span class="name">Justin Laketimber</span>
-                        <p class="about">Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
-                    </div>
-                    <div class="footeer_card">
-                        <div class="btn_card">
-                            <button>Read more...</button>
-                        </div>
-                    </div>
-                    @* Chứa thông tin chi tiết *@
 
-                </div>
-                <div class="card_gamemonth item">
-                    <div class="img_gamemonth">
-                        <img src="~/Image/game.jpg" />
-                    </div>
-                    <div class="info">
-                        <span class="name">Justin Laketimber</span>
-                        <p class="about">Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
-                    </div>
-                    <div class="footeer_card">
-                        <div class="btn_card">
-                            <button>Read more...</button>
-                        </div>
+                @if (Model.Product != null)
+                {
+                    foreach (var product in Model.Product)
+                    {
+                        <div class="card_gamemonth item">
+                            <div class="img_gamemonth">
+                                @if (product.Links != null)
+                                {
+                                    string firstImageUrl = null; // Biến để lưu URL hình ảnh đầu tiên
 
-                    </div>
-                </div>
-                <div class="card_gamemonth item">
-                    <div class="img_gamemonth">
-                        <img src="~/Image/game.jpg" />
-                    </div>
-                    <div class="info">
-                        <span class="name">Justin Laketimber</span>
-                        <p class="about">Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
-                    </div>
-                    <div class="footeer_card">
-                        <div class="btn_card">
-                            <button>Read more...</button>
-                        </div>
+                                    foreach (var link in product.Links) // Lặp qua từng đối tượng LinkModel
+                                    {
+                                        if (link.Url.Contains("cloudinary"))
+                                        {
+                                            firstImageUrl = link.Url; // Lưu URL hình ảnh đầu tiên
+                                            break; // Thoát khỏi vòng lặp khi đã tìm thấy
+                                        }
+                                    }
 
-                    </div>
-                </div>
-                <div class="card_gamemonth item">
-                    <div class="img_gamemonth">
-                        <img src="~/Image/game.jpg" />
-                    </div>
-                    <div class="info">
-                        <span class="name">Justin Laketimber</span>
-                        <p class="about">Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
-                    </div>
-                    <div class="footeer_card">
-                        <div class="btn_card">
-                            <button>Read more...</button>
-                        </div>
+                                    // Hiển thị hình ảnh đầu tiên nếu có
+                                    if (firstImageUrl != null)
+                                    {
+                                        <img src="@firstImageUrl" alt="Cloudinary Image" />
+                                    }
 
-                    </div>
-                </div>
-                <div class="card_gamemonth item">
-                    <div class="img_gamemonth">
-                        <img src="~/Image/game.jpg" />
-                    </div>
-                    <div class="info">
-                        <span class="name">Justin Laketimber</span>
-                        <p class="about">Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
-                    </div>
-                    <div class="footeer_card">
-                        <div class="btn_card">
-                            <button>Read more...</button>
+                                    // Kiểm tra và hiển thị các link khác
+                                    @* foreach (var link in product.Links)
+                                    {
+                                        if (link.Url.Contains("drive.google.com"))
+                                        {
+                                            <label>Game</label>
+                                            <a href="@link.Url" target="_blank">View on Google Drive</a>
+                                        }
+                                        else if (!link.Url.Contains("cloudinary"))
+                                        {
+                                            <a href="@link.Url" target="_blank">@link.Url</a>
+                                        }
+                                    } *@
+                                }
+                            </div>
+                            <div class="info">
+                                <span class="name">@product.Name</span>
+                                <p class="about">@product.Description</p>
+                            </div>
+                            <div class="footeer_card">
+                                <div class="btn_card">
+                                    <button>Read more...</button>
+                                </div>
+                            </div>
                         </div>
+                    }
+                }
 
+
+                else
+                {
+                    <div class="card_gamemonth item">
+                        <div class="img_gamemonth">
+                            <img src="~/Image/game.jpg" />
+                        </div>
+                        <div class="info">
+                            <span class="name">Justin Laketimber</span>
+                            <p class="about">Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
+                        </div>
+                        <div class="footeer_card">
+                            <div class="btn_card">
+                                <button>Read more...</button>
+                            </div>
+                        </div>
+                         @* Chứa thông tin chi tiết  *@
                     </div>
-                </div>
+                } 
             </div>
         </div>
     </div>
@@ -144,32 +141,62 @@
             </a>
         </div>
     </div>
-
     <div class="row" style="justify-content:space-around;">
-        <div class="col-12 col-sm-12 col-md-3 card_other mt-4">
-            <img src="~/Image/game.jpg" />
-            <div class="info_other">
-                <h1>Heading 2</h1>
-                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
-                <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
-            </div>
-        </div>
-        <div class="col-12 col-sm-12 col-md-3 card_other mt-4">
-            <img src="~/Image/game.jpg" />
-            <div class="info_other">
-                <h1>Heading 2</h1>
-                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
-                <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
-            </div>
-        </div>
-        <div class="col-12 col-sm-12 col-md-3 card_other mt-4">
-            <img src="~/Image/game.jpg" />
-            <div class="info_other">
-                <h1>Heading 2</h1>
-                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
-                <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
-            </div>
-        </div>
+    @if (Model.Product != null)
+    {
+        foreach (var product in Model.Product)
+        {
+                <div class="col-12 col-sm-12 col-md-3 card_other mt-4">
+                
+
+                    @if (product.Links != null)
+                    {
+                    
+                        string firstImageUrl = null; // Biến để lưu URL hình ảnh đầu tiên
+
+                        foreach (var link in product.Links) // Lặp qua từng đối tượng LinkModel
+                        {
+                            if (link.Url.Contains("cloudinary"))
+                            {
+                                firstImageUrl = link.Url; // Lưu URL hình ảnh đầu tiên
+                                break; // Thoát khỏi vòng lặp khi đã tìm thấy
+                            }
+                        }
+
+                        // Hiển thị hình ảnh đầu tiên nếu có
+                        if (firstImageUrl != null)
+                        {
+                            <img src="@firstImageUrl" alt="Cloudinary Image" />
+                        }
+
+                        
+                    }
+                    <div class="info_other">
+                        <h1>@product.Name</h1>
+                        <p>@product.Description</p>
+                        <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
+                    </div>
+                
+                @* <div class="col-12 col-sm-12 col-md-3 card_other mt-4">
+                    <img src="~/Image/game.jpg" />
+                    <div class="info_other">
+                        <h1>Heading 2</h1>
+                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
+                        <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-12 col-md-3 card_other mt-4">
+                    <img src="~/Image/game.jpg" />
+                    <div class="info_other">
+                        <h1>Heading 2</h1>
+                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
+                        <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
+                    </div>
+                </div> *@
+                </div>
+        }
+
+    }
     </div>
     <p>Discounts Now - Dec 10</p>
 </div>
@@ -187,49 +214,9 @@
         <a class="col-4 col-sm-2 col-md-2" href="#more">More</a>
     </div>
 
-    <section id="foryou" class="mt-5">
-        <div class="d-flex justify-content-between align-items-center mb-1">
-            <h3>For You</h3>
-            <a href="">View More</a>
-        </div>
-        <div class="wrapper_other">
-            <div class="card_other mt-4">
-                <img src="~/Image/game.jpg" />
-                <div class="info_other">
-                    <h1>Heading 1</h1>
-                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
-                    <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
-                </div>
-            </div>
-
-            <div class="card_other mt-4">
-                <img src="~/Image/game.jpg" />
-                <div class="info_other">
-                    <h1>Heading 2</h1>
-                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
-                    <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
-                </div>
-            </div>
-
-            <div class="card_other mt-4">
-                <img src="~/Image/game.jpg" />
-                <div class="info_other">
-                    <h1>Heading 3</h1>
-                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
-                    <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
-                </div>
-            </div>
-
-            <div class="card_other mt-4">
-                <img src="~/Image/game.jpg" />
-                <div class="info_other">
-                    <h1>Heading 4</h1>
-                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
-                    <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
-                </div>
-            </div>
-        </div>
-    </section>
+    
+    
+    
 
 
     <section id="popular" class="mt-5">
@@ -238,16 +225,42 @@
             <a href="">View More</a>
         </div>
         <div class="wrapper_other">
-            <div class="card_other mt-4">
-                <img src="~/Image/game.jpg" />
-                <div class="info_other">
-                    <h1>Heading 1</h1>
-                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
-                    <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
-                </div>
-            </div>
+            @if (Model.Product != null)
+            {
+                foreach (var product in Model.Product)
+                {
+                    <div class="card_other mt-4">
+                        @if (product.Links != null)
+                        {
+                            string firstImageUrl = null; // Biến để lưu URL hình ảnh đầu tiên
 
-            <div class="card_other mt-4">
+                            foreach (var link in product.Links) // Lặp qua từng đối tượng LinkModel
+                            {
+                                if (link.Url.Contains("cloudinary"))
+                                {
+                                    firstImageUrl = link.Url; // Lưu URL hình ảnh đầu tiên
+                                    break; // Thoát khỏi vòng lặp khi đã tìm thấy
+                                }
+                            }
+
+                            // Hiển thị hình ảnh đầu tiên nếu có
+                            if (firstImageUrl != null)
+                            {
+                                <img src="@firstImageUrl" alt="Cloudinary Image" />
+                            }
+
+
+                        }
+                        <div class="info_other">
+                            <h1>@product.Name</h1>
+                            <p>@product.Description</p>
+                            <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
+                        </div>
+                    </div>
+                }
+            }
+
+           @*  <div class="card_other mt-4">
                 <img src="~/Image/game.jpg" />
                 <div class="info_other">
                     <h1>Heading 2</h1>
@@ -272,7 +285,7 @@
                     <p>Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
                     <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
                 </div>
-            </div>
+            </div> *@
         </div>
     </section>
 

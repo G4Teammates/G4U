@@ -47,12 +47,12 @@ namespace Client.Repositories.Services.Comment
             });
         }
 
-        public async Task<ResponseModel> GetAllCommentAsync()
+        public async Task<ResponseModel> GetAllCommentAsync(int pageNumber, int pageSize)
         {
             return await _baseService.SendAsync(new RequestModel()
             {
                 ApiType = StaticTypeApi.ApiType.GET,
-                Url = StaticTypeApi.APIGateWay + "/Comment"
+                Url = StaticTypeApi.APIGateWay + "/Comment?page=" + pageNumber.ToString() + "&pageSize=" + pageSize.ToString()
             });
         }
 

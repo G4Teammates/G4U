@@ -6,7 +6,7 @@ namespace Client.Repositories.Interfaces.User
 {
     public interface IUserService
     {
-        Task<ResponseModel> GetAllUserAsync();
+        Task<ResponseModel> GetAllUserAsync(int? pageNumber, int pageSize);
         Task<ResponseModel> CreateUserAsync(CreateUser user);
         Task<ResponseModel> GetUserAsync(string id);
         Task<ResponseModel> UpdateUser(UpdateUser user);

@@ -1,7 +1,7 @@
 ﻿using Client.Repositories.Interfaces.Authentication;
 using Client.Utility;
 
-namespace Client.Repositories.Services.AuthenticationService
+namespace Client.Repositories.Services.Authentication
 {
     public class TokenProvider(IHttpContextAccessor contextAccessor) : ITokenProvider
     {

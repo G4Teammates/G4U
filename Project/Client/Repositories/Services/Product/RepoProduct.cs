@@ -20,6 +20,7 @@ using Microsoft.CodeAnalysis;
 using ProductMicroservice.Models;
 using LinkModel = Client.Models.ProductDTO.LinkModel;
 using CategoryModel = Client.Models.ProductDTO.CategoryModel;
+
 using QRCoder;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -28,6 +29,10 @@ using System.Net.NetworkInformation;
 using ZXing;
 using ZXing.Common;
 using ZXing.Windows.Compatibility;
+
+using System.Drawing.Printing;
+using Client.Models.CategorisDTO;
+
 
 
 namespace Client.Repositories.Services.Product
@@ -213,26 +218,26 @@ namespace Client.Repositories.Services.Product
             return response;
         }
 
-        public async Task<ResponseModel?> SearchProductAsync(string searchString)
+        public async Task<ResponseModel?> SearchProductAsync(string searchString, int? pageNumber, int pageSize)
         {
             return await _baseService.SendAsync(new RequestModel()
             {
                 ApiType = StaticTypeApi.ApiType.GET,
-                Url = $"{StaticTypeApi.APIGateWay}/Product/search={searchString}"
+                Url = $"{StaticTypeApi.APIGateWay}/Product/search={searchString}?page=" + pageNumber.ToString() + "&pageSize=" + pageSize.ToString()
             });
         }
 
 
-        public async Task<ResponseModel> SortProductAsync(string sort)
+        public async Task<ResponseModel> SortProductAsync(string sort, int? pageNumber, int pageSize)
         {
             return await _baseService.SendAsync(new RequestModel()
             {
                 ApiType = StaticTypeApi.ApiType.GET,
-                Url = $"{StaticTypeApi.APIGateWay}/Product/sort={sort}"
+                Url = $"{StaticTypeApi.APIGateWay}/Product/sort={sort}?page=" + pageNumber.ToString() +"&pageSize=" + pageSize.ToString()
             });
         }
 
-        public async Task<ResponseModel> FilterProductAsync(decimal? minrange, decimal? maxrange, int? sold, bool? Discount, int? Platform, string Category)
+        public async Task<ResponseModel> FilterProductAsync(decimal? minrange, decimal? maxrange, int? sold, bool? Discount, int? Platform, string Category, int? pageNumber, int pageSize)
         {
             // Tạo URL cho API với các tham số truy vấn
             var url = $"{StaticTypeApi.APIGateWay}/Product/filter?" +
@@ -241,7 +246,10 @@ namespace Client.Repositories.Services.Product
                       $"sold={sold}&" +
                       $"discount={Discount}&" +
                       $"platform={Platform}&" +
-                      $"category={Category}";
+                      $"category={Category}&" +
+                      $"page={pageNumber}&" +
+                      $"&pageSize={pageSize}";
+
 
             // Gửi yêu cầu GET thông qua base service
             var response = await _baseService.SendAsync(new RequestModel()
