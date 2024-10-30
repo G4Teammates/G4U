@@ -19,9 +19,13 @@ using ProductModel = Client.Models.ProductDTO.ProductModel;
 using System.Drawing.Printing;
 using Client.Models.ComentDTO;
 using Client.Repositories.Interfaces.Comment;
+
 using Client.Repositories.Interfaces.Order;
 using System.Drawing.Printing;
 using Client.Models.OrderModel;
+
+using ProductMicroservice.DBContexts.Entities;
+using UserMicroservice.Models.UserManagerModel;
 
 
 namespace Client.Controllers
@@ -88,19 +92,25 @@ namespace Client.Controllers
         #region User
 
         [HttpGet]
-        public async Task<IActionResult> UsersManager()
+        public async Task<IActionResult> UsersManager(int? page, int pageSize = 5)
         {
-            UserViewModel users = new();
+			int pageNumber = (page ?? 1);
+			UserViewModel users = new();
             try
             {
-                ResponseModel? response = await _userService.GetAllUserAsync();
+                ResponseModel? response = await _userService.GetAllUserAsync(pageNumber, pageSize);
+				ResponseModel? response2 = await _userService.GetAllUserAsync(1, 99);
+				var total = JsonConvert.DeserializeObject<ICollection<UsersDTO>>(Convert.ToString(response2.Result.ToString()!));
 
-                if (response != null && response.IsSuccess)
+				if (response != null && response.IsSuccess)
                 {
-
-                    users.Users = JsonConvert.DeserializeObject<ICollection<UsersDTO>>(Convert.ToString(response.Result.ToString()!));
-
-                }
+					users.Users = JsonConvert.DeserializeObject<ICollection<UsersDTO>>(Convert.ToString(response.Result.ToString()!));
+					var data = users.Users;
+					users.pageNumber = pageNumber;
+					users.totalItem = data.Count;
+					users.pageSize = pageSize;
+					users.pageCount = (int)Math.Ceiling(total.Count / (double)pageSize);
+				}
                 else
                 {
                     TempData["error"] = response?.Message;
@@ -458,18 +468,26 @@ namespace Client.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SearchProduct(string searchString)
+        public async Task<IActionResult> SearchProduct(string searchString, int? page, int pageSize = 5)
         {
+            int pageNumber = (page ?? 1);
             ProductViewModel productViewModel = new();
 
             try
             {
                 // Gọi API để tìm kiếm sản phẩm theo từ khóa
-                ResponseModel? response = await _productService.SearchProductAsync(searchString);
+                ResponseModel? response = await _productService.SearchProductAsync(searchString, page, pageSize);
+                ResponseModel? response2 = await _productService.GetAllProductAsync(1, 99);
+                var total = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response2.Result.ToString()!));
 
                 if (response != null && response.IsSuccess)
                 {
-                    productViewModel.Product = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response.Result));
+                    productViewModel.Product = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response.Result.ToString()!));
+                    var data = productViewModel.Product;
+                    productViewModel.pageNumber = pageNumber;
+                    productViewModel.totalItem = data.Count;
+                    productViewModel.pageSize = pageSize;
+                    productViewModel.pageCount = (int)Math.Ceiling(total.Count / (double)pageSize);
                 }
                 else
                 {
@@ -485,18 +503,25 @@ namespace Client.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SortProducts(string sort)
+        public async Task<IActionResult> SortProducts(string sort, int? page, int pageSize = 5)
         {
+            int pageNumber = (page ?? 1);
             ProductViewModel productViewModel = new();
 
             try
             {
                 // Gọi API để lấy danh sách sản phẩm đã sắp xếp
-                ResponseModel? response = await _productService.SortProductAsync(sort);
-
+                ResponseModel? response = await _productService.SortProductAsync(sort, page,pageSize);
+                ResponseModel? response2 = await _productService.GetAllProductAsync(1, 99);
+                var total = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response2.Result.ToString()!));
                 if (response != null && response.IsSuccess)
                 {
-                    productViewModel.Product = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response.Result));
+                    productViewModel.Product = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response.Result.ToString()!));
+                    var data = productViewModel.Product;
+                    productViewModel.pageNumber = pageNumber;
+                    productViewModel.totalItem = data.Count;
+                    productViewModel.pageSize = pageSize;
+                    productViewModel.pageCount = (int)Math.Ceiling(total.Count / (double)pageSize);
                 }
                 else
                 {
@@ -518,18 +543,27 @@ namespace Client.Controllers
                                                         int? sold,
                                                         bool? discount,
                                                         int? platform,
-                                                        string category)
+                                                        string category,
+                                                        int? page,
+                                                        int pageSize=5)
         {
+            int pageNumber = (page ?? 1);
             ProductViewModel productViewModel = new();
 
             try
             {
                 // Gọi API để lọc sản phẩm theo các điều kiện
-                ResponseModel? response = await _productService.FilterProductAsync(minRange, maxRange, sold, discount, platform, category);
-
+                ResponseModel? response = await _productService.FilterProductAsync(minRange, maxRange, sold, discount, platform, category, page, pageSize);
+                ResponseModel? response2 = await _productService.GetAllProductAsync(1, 99);
+                var total = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response2.Result.ToString()!));
                 if (response != null && response.IsSuccess)
                 {
-                    productViewModel.Product = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response.Result));
+                    productViewModel.Product = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response.Result.ToString()!));
+                    var data = productViewModel.Product;
+                    productViewModel.pageNumber = pageNumber;
+                    productViewModel.totalItem = data.Count;
+                    productViewModel.pageSize = pageSize;
+                    productViewModel.pageCount = (int)Math.Ceiling(total.Count / (double)pageSize);
                 }
                 else
                 {
@@ -554,25 +588,32 @@ namespace Client.Controllers
 
 
         #region Category
-        public async Task<IActionResult> CategoriesManager( int? page)
+        public async Task<IActionResult> CategoriesManager(int? page, int pageSize = 5)
         {
-            CategoriesViewModel categories = new();
-            int pageNumber = (page ?? 1);
-            var pageSize = 5;
+			int pageNumber = (page ?? 1);
+			CategoriesViewModel categories = new();
             try
             {
                 ResponseModel? response = await _categoryService.GetAllCategoryAsync(pageNumber,pageSize);
+				ResponseModel? response2 = await _categoryService.GetAllCategoryAsync(1, 99);
+				var total = JsonConvert.DeserializeObject<ICollection<CategoriesModel>>(Convert.ToString(response2.Result.ToString()!));
 
 
+				if (response != null && response.IsSuccess)
+				{
+					categories.Categories = JsonConvert.DeserializeObject<ICollection<CategoriesModel>>(Convert.ToString(response.Result.ToString()!));
+					var data = categories.Categories;
+					categories.pageNumber = pageNumber;
+					categories.totalItem = data.Count;
+					categories.pageSize = pageSize;
+					categories.pageCount = (int)Math.Ceiling(total.Count / (double)pageSize);
+				}
+				else
+				{
+					TempData["error"] = response?.Message;
+				}
 
-                    categories.Categories = JsonConvert.DeserializeObject<ICollection<CategoriesModel>>(Convert.ToString(response.Result.ToString()!));
-                    var data= categories.Categories;
-                    categories.pageNumber = pageNumber;
-                    categories.totalItem = data.Count;
-                    categories.pageSize = pageSize;
-                    categories.pageCount = (int)Math.Ceiling(36 / (double)pageSize);
-
-                }
+			}
                 catch (Exception ex)
                 {
                     TempData["error"] = ex.Message;
@@ -717,19 +758,25 @@ namespace Client.Controllers
         #endregion
 
         #region Comment
-        public async Task<IActionResult> CommentManager()
+        public async Task<IActionResult> CommentManager(int? page, int pageSize = 5)
             {
-                CommentViewModel comment = new();
+			int pageNumber = (page ?? 1);
+			CommentViewModel comment = new();
                 try
                 {
-                    ResponseModel? response = await _commentService.GetAllCommentAsync();
+                    ResponseModel? response = await _commentService.GetAllCommentAsync(pageNumber, pageSize);
+				    ResponseModel? response2 = await _commentService.GetAllCommentAsync(1, 99);
+				    var total = JsonConvert.DeserializeObject<ICollection<CommentDTOModel>>(Convert.ToString(response2.Result.ToString()!));
+				if (response != null && response.IsSuccess)
+                    { 
+					    comment.Comment = JsonConvert.DeserializeObject<ICollection<CommentDTOModel>>(Convert.ToString(response.Result.ToString()!));
+					    var data = comment.Comment;
+					    comment.pageNumber = pageNumber;
+					    comment.totalItem = data.Count;
+					    comment.pageSize = pageSize;
+					    comment.pageCount = (int)Math.Ceiling(total.Count / (double)pageSize);
 
-                    if (response != null && response.IsSuccess)
-                    {
-
-                        comment.Comment = JsonConvert.DeserializeObject<ICollection<CommentDTOModel>>(Convert.ToString(response.Result.ToString()!));
-
-                    }
+				}
                     else
                     {
                         TempData["error"] = response?.Message;

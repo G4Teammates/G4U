@@ -12,9 +12,9 @@ namespace Client.Repositories.Interfaces.Product
     public interface IRepoProduct
     {
         Task<ResponseModel?> GetProductByIdAsync(string Id);
-        Task<ResponseModel?> SearchProductAsync(string searchString);
-        Task<ResponseModel> SortProductAsync(string sort);
-        Task<ResponseModel> FilterProductAsync(decimal? minrange, decimal? maxrange, int? sold, bool? Discount, int? Platform, string Category);
+        Task<ResponseModel?> SearchProductAsync(string searchString, int? pageNumber, int pageSize);
+        Task<ResponseModel> SortProductAsync(string sort, int? pageNumber, int pageSize);
+        Task<ResponseModel> FilterProductAsync(decimal? minrange, decimal? maxrange, int? sold, bool? Discount, int? Platform, string Category, int? pageNumber, int pageSize);
 
         Task<ResponseModel?> GetAllProductAsync(int? pageNumber, int pageSize);
 
