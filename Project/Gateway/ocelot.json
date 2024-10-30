@@ -367,7 +367,7 @@
 
     //Get by id
     {
-      "DownstreamPathTemplate": "/api/Order/{id}",
+      "DownstreamPathTemplate": "/api/Order/search/{id}",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
@@ -375,7 +375,21 @@
           "Port": 7297
         }
       ],
-      "UpstreamPathTemplate": "/Order/{id}",
+      "UpstreamPathTemplate": "/Order/search/{id}",
+      "UpstreamHttpMethod": [ "Get" ]
+    },
+    
+    //Get by payment id
+    {
+      "DownstreamPathTemplate": "/api/Order/search-payment/{id}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7297
+        }
+      ],
+      "UpstreamPathTemplate": "/Order/search-payment/{id}",
       "UpstreamHttpMethod": [ "Get" ]
     },
 

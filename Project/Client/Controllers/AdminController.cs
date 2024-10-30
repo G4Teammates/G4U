@@ -14,7 +14,6 @@ using Newtonsoft.Json;
 using System.IdentityModel.Tokens.Jwt;
 using ProductModel = Client.Models.ProductDTO.ProductModel;
 using Client.Repositories.Interfaces.Order;
-using System.Drawing.Printing;
 using Client.Models.OrderModel;
 
 
@@ -398,16 +397,28 @@ namespace Client.Controllers
         //    return View(product);
         //}
 
-
+        [HttpGet]
         public async Task<IActionResult> OrdersManager()
         {
             try
             {
-                ResponseModel response = await _orderService.GetAll();
+                // Nếu có dữ liệu tìm kiếm, lấy từ TempData
+                if (TempData.ContainsKey("searchResult"))
+                {
+                    var orderJson = TempData["searchResult"] as string;
+                    if (!string.IsNullOrEmpty(orderJson))
+                    {
+                        // Convert JSON thành OrderModel
+                        var order = JsonConvert.DeserializeObject<ICollection<OrderModel>>(orderJson);
+                        return View(order);
+                    }
+                }
 
+                // Nếu không có dữ liệu tìm kiếm, lấy tất cả đơn hàng
+                ResponseModel response = await _orderService.GetAll();
                 if (response.IsSuccess)
                 {
-                    var orders = JsonConvert.DeserializeObject<ICollection<OrderModel>>(Convert.ToString(response.Result.ToString()!));
+                    var orders = JsonConvert.DeserializeObject<ICollection<OrderModel>>(Convert.ToString(response.Result)!);
                     return View(orders);
                 }
                 else
@@ -420,6 +431,109 @@ namespace Client.Controllers
                 TempData["error"] = ex.Message;
             }
             return View();
+        }
+
+
+
+        public async Task<IActionResult> SearchOrder(string id)
+        {
+            try
+            {
+                var response = await _orderService.GetOrderById(id);
+                if (response.Result == null)
+                {
+                    response = await _orderService.GetOrderByTransaction(id);
+                }
+                if (response.IsSuccess && response.Result != null)
+                {
+                    TempData["searchResult"] = JsonConvert.SerializeObject(response.Result);
+                    return RedirectToAction(nameof(OrdersManager)); 
+                }
+                else
+                {
+                    TempData["error"] = response.Message;
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = ex.Message;
+            }
+            return RedirectToAction(nameof(OrdersManager));
+        }
+
+
+
+        public async Task<IActionResult> OrderDetail(string id)
+        {
+            try
+            {
+                ResponseModel response = await _orderService.GetOrderItems(id);
+                
+                if (response.IsSuccess)
+                {
+                    var orderItems = JsonConvert.DeserializeObject<ICollection<OrderItemModel>>(Convert.ToString(response.Result.ToString()!));
+                    return View(orderItems);
+                }
+                else
+                {
+                    TempData["error"] = response.Message;
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = ex.Message;
+            }
+            return View();
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateOrderStatus(string id, PaymentStatusModel status)
+        {
+            try
+            {
+                ResponseModel response = await _orderService.UpdateStatus(id, status);
+
+                if (response.IsSuccess)
+                {
+                    TempData["success"] = "Order status updated successfully";
+                }
+                else
+                {
+                    TempData["error"] = response.Message;
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = ex.Message;
+            }
+            return RedirectToAction(nameof(OrdersManager));
+        }
+
+
+
+        [HttpGet]
+        public async Task<IActionResult> UpdateOrderStatus(string id)
+        {
+            try
+            {
+                ResponseModel response = await _orderService.GetOrderById(id);
+
+                if (response.IsSuccess)
+                {
+                    var order = JsonConvert.DeserializeObject<OrderModel>(Convert.ToString(response.Result.ToString()!));
+                    return View(order);
+                }
+                else
+                {
+                    TempData["error"] = response.Message;
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = ex.Message;
+            }
+            return RedirectToAction(nameof(OrdersManager));
         }
 
 
