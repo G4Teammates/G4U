@@ -501,6 +501,22 @@ namespace Client.Controllers
             return NotFound();
         }
 
+        [HttpPost]
+        public async Task<IActionResult> DeleteProduct(ProductModel product)
+        {
+            ResponseModel? response = await _productService.DeleteProductAsync(product.Id);
+            if (response != null && response.IsSuccess)
+            {
+                TempData["success"] = "Product deleted successfully";
+                return RedirectToAction(nameof(ProductsManager));
+            }
+            else
+            {
+                TempData["error"] = response?.Message;
+            }
+            return View(product);
+        }
+
         public async Task<IActionResult> OrdersManager()
         {
             try
