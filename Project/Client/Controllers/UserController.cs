@@ -346,5 +346,10 @@ namespace Client.Controllers
         {
             return View();
         }
+
+        public IActionResult UserDashboard()
+        {
+            return View();
+        }
     }
 }
