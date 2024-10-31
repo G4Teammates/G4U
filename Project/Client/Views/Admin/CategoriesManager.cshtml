@@ -10,25 +10,28 @@
 	<span class="titleManager bg-success py-3 px-5 rounded-4 fw-bold text-white">Categories Manager</span>
 </div>
 
+
+
+
 <!-- Thông báo -->
 @* @if (!string.IsNullOrEmpty(notification))
 { *@
 <div class="alert alert-success">
 	@* @notification *@
-	ádjflkajklajsdlfkjadsklfjkladsfj
+	Bạn đã thành công vào Admin Category
 </div>
 <div class="alert alert-danger">
 	@* @notification *@
-	ádjflkajklajsdlfkjadsklfjkladsfj
+	Bạn đã thành công vào Admin Category
 </div>
 @* } *@
 
 <div class="container mt-4">
 	<!-- Thanh tìm kiếm và nút Thêm -->
 	<div class="d-flex justify-content-between mb-3">
-		<div class="col-md-4">
-			<input class="form-control" type="text" placeholder="Search by..." />
-		</div>
+		<form asp-action="SearchCategory" asp-controller="Admin" method="post">
+			<input class="form-control" type="text" placeholder="Search by..." name="searchString" />
+		</form>
 		<div class="w-100">
 			<div class="text-end">
 				<button class="btn btn-success" data-toggle="modal" data-target="#modalCategory">+ Add</button>
@@ -165,4 +168,7 @@
 	function showErrorToast() {
 		$('#errorToast').toast('show');
 	}
+
+
 </script>
+

@@ -12,5 +12,6 @@ namespace CommentMicroservice.Repositories
         Comment CreateComment(CreateCommentDTO Comment);
         Task<Comment> UpdateComment(CommentModel Comment);
         Task DeleteComment(string id);
+        IEnumerable<Comment> Search(string searchstring);
     }
 }

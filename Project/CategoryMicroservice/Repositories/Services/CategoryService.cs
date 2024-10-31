@@ -111,7 +111,25 @@ namespace CategoryMicroservice.Repositories.Services
             return "Unknown error occurred during deletion.";
         }
 
+
         public async Task<Category> GetById(string id) => _db.Categories.Find(id);
+
+        public IEnumerable<Category> Search(string searchstring)
+        {
+            var Category = _db.Categories.AsQueryable();
+            if (!string.IsNullOrEmpty(searchstring))
+            {
+                // Tìm kiếm theo tên sản phẩm
+                var resultByName = Category.Where(x => x.Name.Contains(searchstring));
+                if (resultByName.Any())
+                {
+                    return resultByName;
+                }
+            }
+
+            // Nếu không có kết quả nào khớp với điều kiện tìm kiếm, trả về danh sách trống
+            return new List<Category>();
+        }
 
         public async Task<Category> UpdateCategrori(CategoryModel Categrori)
         {
