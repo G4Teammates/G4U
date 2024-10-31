@@ -49,7 +49,7 @@ namespace OrderMicroservice.DBContexts.Entities
         /// Mã giao dịch thanh toán lấy từ dịch vụ thanh toán bên thứ ba (ví dụ: PayPal, Stripe, Ngân hàng).
         /// </summary>
         [BsonElement("paymentTransactionId")]
-        public required string PaymentTransactionId { get; set; }
+        public string? PaymentTransactionId { get; set; }
 
         /// <summary>
         /// Total price of the order.

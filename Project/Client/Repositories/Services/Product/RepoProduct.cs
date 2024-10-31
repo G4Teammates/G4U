@@ -21,6 +21,19 @@ using ProductMicroservice.Models;
 using LinkModel = Client.Models.ProductDTO.LinkModel;
 using CategoryModel = Client.Models.ProductDTO.CategoryModel;
 
+using QRCoder;
+using System.Drawing;
+using System.Drawing.Imaging;
+
+using System.Net.NetworkInformation;
+using ZXing;
+using ZXing.Common;
+using ZXing.Windows.Compatibility;
+
+using System.Drawing.Printing;
+using Client.Models.CategorisDTO;
+
+
 
 namespace Client.Repositories.Services.Product
 {
@@ -102,12 +115,12 @@ namespace Client.Repositories.Services.Product
             return response;
         }
 
-        public async Task<ResponseModel?> GetAllProductAsync(int? pageNumber)
+        public async Task<ResponseModel?> GetAllProductAsync(int? pageNumber, int pageSize)
         {
             return await _baseService.SendAsync(new RequestModel()
             {
                 ApiType = StaticTypeApi.ApiType.GET,
-                Url = StaticTypeApi.APIGateWay + "/Product?page=" + pageNumber.ToString()
+                Url = StaticTypeApi.APIGateWay + "/Product?page=" + pageNumber.ToString() +"&pageSize=" + pageSize.ToString()
             });
         }
 
@@ -205,26 +218,26 @@ namespace Client.Repositories.Services.Product
             return response;
         }
 
-        public async Task<ResponseModel?> SearchProductAsync(string searchString)
+        public async Task<ResponseModel?> SearchProductAsync(string searchString, int? pageNumber, int pageSize)
         {
             return await _baseService.SendAsync(new RequestModel()
             {
                 ApiType = StaticTypeApi.ApiType.GET,
-                Url = $"{StaticTypeApi.APIGateWay}/Product/search={searchString}"
+                Url = $"{StaticTypeApi.APIGateWay}/Product/search={searchString}?page=" + pageNumber.ToString() + "&pageSize=" + pageSize.ToString()
             });
         }
 
 
-        public async Task<ResponseModel> SortProductAsync(string sort)
+        public async Task<ResponseModel> SortProductAsync(string sort, int? pageNumber, int pageSize)
         {
             return await _baseService.SendAsync(new RequestModel()
             {
                 ApiType = StaticTypeApi.ApiType.GET,
-                Url = $"{StaticTypeApi.APIGateWay}/Product/sort={sort}"
+                Url = $"{StaticTypeApi.APIGateWay}/Product/sort={sort}?page=" + pageNumber.ToString() +"&pageSize=" + pageSize.ToString()
             });
         }
 
-        public async Task<ResponseModel> FilterProductAsync(decimal? minrange, decimal? maxrange, int? sold, bool? Discount, int? Platform, string Category)
+        public async Task<ResponseModel> FilterProductAsync(decimal? minrange, decimal? maxrange, int? sold, bool? Discount, int? Platform, string Category, int? pageNumber, int pageSize)
         {
             // Tạo URL cho API với các tham số truy vấn
             var url = $"{StaticTypeApi.APIGateWay}/Product/filter?" +
@@ -233,7 +246,10 @@ namespace Client.Repositories.Services.Product
                       $"sold={sold}&" +
                       $"discount={Discount}&" +
                       $"platform={Platform}&" +
-                      $"category={Category}";
+                      $"category={Category}&" +
+                      $"page={pageNumber}&" +
+                      $"&pageSize={pageSize}";
+
 
             // Gửi yêu cầu GET thông qua base service
             var response = await _baseService.SendAsync(new RequestModel()
@@ -245,6 +261,50 @@ namespace Client.Repositories.Services.Product
             return response;
         }
 
+        public async Task<ResponseModel> DeleteProductAsync(string Id)
+        {
+            return await _baseService.SendAsync(new RequestModel()
+            {
+                ApiType = StaticTypeApi.ApiType.DELETE,
+                Url = StaticTypeApi.APIGateWay + "/Product/" + Id,
+            });
+        }
 
-    }
+		public string GenerateQRCode(string qrCodeUrl)
+		{
+			if (!string.IsNullOrEmpty(qrCodeUrl))
+			{
+				QRCodeGenerator qrGenerator = new QRCodeGenerator();
+				QRCodeData qrCodeData = qrGenerator.CreateQrCode(qrCodeUrl, QRCodeGenerator.ECCLevel.Q);
+				PngByteQRCode qrCode = new PngByteQRCode(qrCodeData);
+
+				byte[] qrCodeImage = qrCode.GetGraphic(20);
+				return $"data:image/png;base64,{Convert.ToBase64String(qrCodeImage)}";
+			}
+			return string.Empty;
+		}
+
+        /*public string GenerateBarCode(long barCodeUrl)
+        {
+            if (barCodeUrl != null)
+            {
+                var barcodeWriter = new BarcodeWriter();
+                barcodeWriter.Format = BarcodeFormat.UPC_A;
+                barcodeWriter.Options.Width = 250;
+                barcodeWriter.Options.Height = 50;
+
+                // Tạo Bitmap từ mã vạch
+                var barcodeBitmap = barcodeWriter.Write(barCodeUrl.ToString());
+
+                // Chuyển đổi Bitmap thành mảng byte[]
+                using var memoryStream = new MemoryStream();
+                barcodeBitmap.Save(memoryStream, System.Drawing.Imaging.ImageFormat.Png);
+                byte[] barCodeImage = memoryStream.ToArray();
+
+                // Trả về mã vạch dưới dạng chuỗi Base64
+                return $"data:image/png;base64,{Convert.ToBase64String(barCodeImage)}";
+            }
+            return string.Empty;
+        }*/
+	}
 }

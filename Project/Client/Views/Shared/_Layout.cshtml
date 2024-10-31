@@ -126,11 +126,12 @@
                                     <a class="navelement" asp-controller="Order" asp-action="History">History</a>
                                     <a class="navelement" asp-controller="User" asp-action="Information">Information</a>
                                     <a class="navelement" asp-controller="User" asp-action="ChangePassword">ChangePassword</a>
-                                    <a class="navelement" asp-controller="Cart" asp-action="Cart">Cart</a>
+                                    <a class="navelement" asp-controller="User" asp-action="Cart">Cart</a>
                                     <a class="navelement" asp-controller="Product" asp-action="ProductDetail">ProductDetail</a></>
                                     <a class="navelement" asp-controller="product" asp-action="Collection">Collection</a>
                                     <a class="navelement" asp-controller="Admin" asp-action="AdminDashboard">AdminDashboard</a>
                                     <a class="navelement" asp-controller="User" asp-action="EditProfile">EditProfile</a>
+                                    <a class="navelement" asp-controller="User" asp-action="PasswordSecurity">Password&Security</a>
                                 </div>
                             </li>
                         </ul>
@@ -144,57 +145,87 @@
                 @RenderBody()
             </main>
         </div>
-        <footer class="footer">
-            <div class="container_footer">
-                <div class="row">
-                    <div class="col-12 col-sm-6 col-md-3 footer_col">
-                        <h4>Company</h4>
-                        <ul>
-                            <li><a asp-controller="" asp-action="">Abour Us</a></li>
-                            <li><a asp-controller="" asp-action="">Our Service</a></li>
-                            <li><a asp-controller="" asp-action="">Pravacy Policy</a></li>
-                            <li><a asp-controller="" asp-action="">Affiliate Program</a></li>
-                        </ul>
-                    </div>
-                    <div class="col-12 col-sm-6 col-md-3 footer_col">
-                        <h4>Get Help</h4>
-                        <ul>
-                            <li><a asp-controller="" asp-action="">FAQ</a></li>
-                            <li><a asp-controller="" asp-action="">Shipping</a></li>
-                            <li><a asp-controller="" asp-action="">Returns</a></li>
-                            <li><a asp-controller="" asp-action="">Order Status</a></li>
-                            <li><a asp-controller="" asp-action="">Payment Options</a></li>
-                        </ul>
-                    </div>
-                    <div class="col-12 col-sm-6 col-md-3 footer_col">
-                        <h4>Online Shop</h4>
-                        <ul>
-                            <li><a asp-controller="" asp-action="">Watch</a></li>
-                            <li><a asp-controller="" asp-action="">Bag</a></li>
-                            <li><a asp-controller="" asp-action="">Shoes</a></li>
-                            <li><a asp-controller="" asp-action="">Dress</a></li>
-                        </ul>
-                    </div>
-                    <div class=" col-12 col-sm-6 col-md-3 footer_col">
-                        <h4>Follow US</h4>
-                        <div class="social-links">
-                            <a asp-controller="" asp-action="">
-                                <i class="fab fa-facebook-f"></i>
-                            </a>
-                            <a asp-controller="" asp-action="">
-                                <i class="fab fa-twitter"></i>
-                            </a>
-                            <a asp-controller="" asp-action="">
-                                <i class="fab fa-instagram"></i>
-                            </a>
-                            <a asp-controller="" asp-action="">
-                                <i class="fab fa-linkedin-in"></i>
-                            </a>
-                        </div>
-                    </div>
+        <footer style="background-color: #222; color: white; padding: 40px 20px; font-size: 14px;">
+            <div class="footer-container" style="display: flex; justify-content: space-between; max-width: 1200px; margin: 0 auto;">
+                <div class="footer-column">
+                    <h4>About Us</h4>
+                    <p>G4T Game Studio specializes in creating high-quality games. Our mission is to bring immersive gaming experiences to all types of players.</p>
+                </div>
+
+                <div class="social-links" style="display: flex; align-items: center;">
+                    <a href="#" style="color: white; font-size: 24px; margin-right: 20px;">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="#" style="color: white; font-size: 24px; margin-right: 20px;">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" style="color: white; font-size: 24px; margin-right: 20px;">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="#" style="color: white; font-size: 24px;">
+                        <i class="fab fa-linkedin-in"></i>
+                    </a>
                 </div>
             </div>
+
+            <div style="text-align: center; margin-top: 20px; border-top: 1px solid #444; padding-top: 20px;">
+                <p>© 2024 G4T Game Studio. All rights reserved.</p>
+                <img src="~/Image/Logo-remove.png" alt="Visa" width="50">
+            </div>
         </footer>
+
+
+        @* <footer class="footer">
+        <div class="container_footer">
+        <div class="row">
+        <div class="col-12 col-sm-6 col-md-3 footer_col">
+        <h4>Company</h4>
+        <ul>
+        <li><a asp-controller="" asp-action="">Abour Us</a></li>
+        <li><a asp-controller="" asp-action="">Our Service</a></li>
+        <li><a asp-controller="" asp-action="">Pravacy Policy</a></li>
+        <li><a asp-controller="" asp-action="">Affiliate Program</a></li>
+        </ul>
+        </div>
+        <div class="col-12 col-sm-6 col-md-3 footer_col">
+        <h4>Get Help</h4>
+        <ul>
+        <li><a asp-controller="" asp-action="">FAQ</a></li>
+        <li><a asp-controller="" asp-action="">Shipping</a></li>
+        <li><a asp-controller="" asp-action="">Returns</a></li>
+        <li><a asp-controller="" asp-action="">Order Status</a></li>
+        <li><a asp-controller="" asp-action="">Payment Options</a></li>
+        </ul>
+        </div>
+        <div class="col-12 col-sm-6 col-md-3 footer_col">
+        <h4>Online Shop</h4>
+        <ul>
+        <li><a asp-controller="" asp-action="">Watch</a></li>
+        <li><a asp-controller="" asp-action="">Bag</a></li>
+        <li><a asp-controller="" asp-action="">Shoes</a></li>
+        <li><a asp-controller="" asp-action="">Dress</a></li>
+        </ul>
+        </div>
+        <div class=" col-12 col-sm-6 col-md-3 footer_col">
+        <h4>Follow US</h4>
+        <div class="social-links">
+        <a asp-controller="" asp-action="">
+        <i class="fab fa-facebook-f"></i>
+        </a>
+        <a asp-controller="" asp-action="">
+        <i class="fab fa-twitter"></i>
+        </a>
+        <a asp-controller="" asp-action="">
+        <i class="fab fa-instagram"></i>
+        </a>
+        <a asp-controller="" asp-action="">
+        <i class="fab fa-linkedin-in"></i>
+        </a>
+        </div>
+        </div>
+        </div>
+        </div>
+        </footer> *@
     </div>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

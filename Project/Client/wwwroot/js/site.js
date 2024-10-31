@@ -1,4 +1,10 @@
-﻿// Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
+﻿window.setTimeout(function () {
+    $(".alert").fadeTo(500, 0).slideUp(500, function () {
+        $(this).remove();
+    });
+}, 5000);
+
+// Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
 // for details on configuring this project to bundle and minify static web assets.
 
 // Write your JavaScript code.
@@ -76,7 +82,45 @@ $(document).ready(function () {
                 items: 3
             }
         }
-    })
+    });
+
+    //function showDetailModal(element) {
+    //    var url = $(element).data('url');
+    //    console.log("URL: " + url);
+
+    //    $.ajax({
+    //        url: url,
+    //        type: 'GET',
+    //        success: function (response) {
+    //            $('#modalContainer').html(response);
+    //            $('#modalOrderDetail').modal('show');
+    //        },
+    //        error: function () {
+    //            alert('Có lỗi xảy ra khi tải nội dung modal.');
+    //        }
+    //    });
+    //}
+
+    //function showEditModal(element) {
+    //    var url = $(element).data('url');
+    //    console.log("URL: " + url);
+
+    //    $.ajax({
+    //        url: url,
+    //        type: 'GET',
+    //        success: function (response) {
+    //            $('#modalContainer').html(response);
+    //            $('#editModalAccount').modal('show');
+    //        },
+    //        error: function () {
+    //            alert('Có lỗi xảy ra khi tải nội dung modal.');
+    //        }
+    //    });
+    //}
+
+    //window.showDetailModal = showDetailModal;  // Gán hàm vào window
+    //window.showEditModal = showEditModal;      // Gán hàm vào window
+
 })
 
 //Scroll Other Product ở giữa màn hình khi được chọn
@@ -101,3 +145,6 @@ document.querySelectorAll('.lisotherproduct_name a').forEach(anchor => {
     });
 });
 
+//$(document).ready(function () {
+    
+//});

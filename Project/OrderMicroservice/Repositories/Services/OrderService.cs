@@ -6,23 +6,37 @@ using OrderMicroservice.DBContexts.Entities;
 using OrderMicroservice.Models;
 using OrderMicroservice.Models.OrderModel;
 using OrderMicroservice.Models.PaymentModel;
+using OrderMicroservice.Models.UserModel;
 using OrderMicroservice.Repositories.Interfaces;
 
 namespace OrderMicroservice.Repositories.Services
 {
-    public class OrderService(OrderDbContext context, IMapper mapper) : IOrderService
+    public class OrderService(OrderDbContext context, IMapper mapper, IPaymentService paymentService) : IOrderService
     {
         OrderDbContext _context = context;
         IMapper _mapper = mapper;
+        IPaymentService _paymentService = paymentService;
 
-        public async Task<ResponseModel> Create(OrderModel order)
+        public async Task<ResponseModel> Create(OrderModel orderModel)
         {
             ResponseModel response = new();
-            var orderEntity = _mapper.Map<Order>(order);
-            _context.Orders.Add(orderEntity);
-            await _context.SaveChangesAsync();
-            response.Result = orderEntity;
-            response.Message = "Success";
+            try
+            {
+                _paymentService.MoMoPayment(orderModel.Id, (long)orderModel.TotalPrice);
+
+
+                Order orderEntity = _mapper.Map<Order>(orderModel);
+                _context.Orders.Add(orderEntity);
+                await _context.SaveChangesAsync();
+
+                response.Result = orderModel;
+                response.Message = $"Create order success";
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = $"Failed to create order. Error: {ex.Message}";
+            }
             return response;
         }
 
@@ -47,7 +61,7 @@ namespace OrderMicroservice.Repositories.Services
         }
 
 
-        public async Task<ResponseModel> GetOrder(string id)
+        public async Task<ResponseModel> GetOrderById(string id)
         {
             ResponseModel response = new();
             try
@@ -73,6 +87,37 @@ namespace OrderMicroservice.Repositories.Services
                 // Xử lý ngoại lệ và trả về thông báo lỗi
                 response.IsSuccess = false;
                 response.Message = $"Failed to retrieve order with ID '{id}'. Error: {ex.Message}";
+            }
+
+            return response;
+        }
+
+        public async Task<ResponseModel> GetOrderByTransaction(string id)
+        {
+            ResponseModel response = new();
+            try
+            {
+                // Tìm đơn hàng theo ID
+                ICollection<Order>? order = await _context.Orders.Where(i => i.PaymentTransactionId!.Contains(id)).ToListAsync();
+
+                // Kiểm tra nếu không tìm thấy đơn hàng
+                if (order == null)
+                {
+                    response.IsSuccess = false;
+                    response.Message = $"Order with payment transaction ID '{id}' not found.";
+                    return response;
+                }
+
+                // Nếu tìm thấy, map và trả về kết quả
+                response.Result = _mapper.Map<ICollection<OrderModel>>(order);
+                response.IsSuccess = true;
+                response.Message = $"Order with payment transaction ID '{id}' retrieved successfully.";
+            }
+            catch (Exception ex)
+            {
+                // Xử lý ngoại lệ và trả về thông báo lỗi
+                response.IsSuccess = false;
+                response.Message = $"Failed to retrieve order with payment transaction ID '{id}'. Error: {ex.Message}";
             }
 
             return response;

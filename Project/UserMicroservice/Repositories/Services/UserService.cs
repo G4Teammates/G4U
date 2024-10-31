@@ -44,7 +44,7 @@ namespace UserMicroservice.Repositories.Services
                 // Check if username or email already exists
                 response = await _helper.IsUserNotExist(userInput.Username, userInput.Email);
                 CountModel count = (CountModel)response.Result;
-                if(count.NumUsername !=0 || count.NumEmail !=0) return response;
+                if (count.NumUsername != 0 || count.NumEmail != 0) return response;
                 if (!response.IsSuccess) return response;
 
                 // Map UserModel to User entity
@@ -105,17 +105,16 @@ namespace UserMicroservice.Repositories.Services
             return response;
         }
 
-        public async Task<ResponseModel> GetAll(int pageNumber)
+        public async Task<ResponseModel> GetAll(int pageNumber, int pageSize)
         {
             ResponseModel response = new();
             try
             {
-                int pageSize = 5;
-                var users = await _context.Users.ToListAsync();
+                var users = await _context.Users.Where(u=>u.Status==UserStatus.Active).ToListAsync();
                 if (users != null)
                 {
                     response.Message = $"Found {users.Count} users";
-                    response.Result = _mapper.Map<ICollection<UserModel>>(users).ToPagedList(pageNumber,pageSize);
+                    response.Result = _mapper.Map<ICollection<UserModel>>(users).ToPagedList(pageNumber, pageSize);
                 }
                 else
                 {
@@ -137,7 +136,7 @@ namespace UserMicroservice.Repositories.Services
             try
             {
                 var user = await _context.Users.FindAsync(id);
-                if(user != null)
+                if (user != null)
                 {
                     response.Message = $"Found success user: {id} ";
                     response.Result = _mapper.Map<UserModel>(user);
@@ -263,6 +262,41 @@ namespace UserMicroservice.Repositories.Services
                     }
                 }
 
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+            }
+
+            return response;
+        }
+
+        public async Task<ResponseModel> ChangeStatus(string id, UserStatus status)
+        {
+            var response = new ResponseModel();
+
+            try
+            {
+                var user = await _context.Users.FindAsync(id);
+                if (user == null)
+                {
+                    response.IsSuccess = false;
+                    response.Message = $"User with ID {id} not found.";
+                    return response;
+                }
+                else
+                {
+                    response.IsSuccess = false;
+                    response.Message = $"Invalid status value: {status}.";
+                }
+                user.Status = status;
+                user.UpdatedAt = DateTime.UtcNow;
+                _context.Users.Update(user);
+                await _context.SaveChangesAsync();
+                response.IsSuccess = true;
+                response.Message = "User status updated successfully.";
+                response.Result = _mapper.Map<UserModel>(user);
             }
             catch (Exception ex)
             {

@@ -11,6 +11,7 @@ using IAuthenService = UserMicroservice.Repositories.Interfaces.IAuthenticationS
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using UserMicroservice.Models.UserManagerModel;
+using UserMicroservice.DBContexts.Enum;
 namespace UserMicroService.Controllers
 {
     [ApiController]
@@ -23,12 +24,12 @@ namespace UserMicroService.Controllers
 
         //[Authorize(Roles = "User")]
         [HttpGet]
-        public async Task<ActionResult> GetAll(int? page)
+        public async Task<ActionResult> GetAll(int? page, int pageSize)
         {
             try
             {
                 int pageNumber = (page ?? 1);
-                ResponseModel response = await _userService.GetAll(pageNumber);
+                ResponseModel response = await _userService.GetAll(pageNumber, pageSize);
                 if (response.IsSuccess)
                     return Ok(response);
                 return BadRequest(response);
@@ -119,6 +120,22 @@ namespace UserMicroService.Controllers
             try
             {
                 ResponseModel response = await _userService.UpdateUser(updatedUserModel);
+                if (response.IsSuccess)
+                    return Ok(response);
+                return BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An unexpected error occurred. Detail: " + ex.Message });
+            }
+        }
+
+        [HttpPut("status/{id}")]
+        public async Task<ActionResult> UpdateUser(string id, [FromBody]UserStatus status)
+        {
+            try
+            {
+                ResponseModel response = await _userService.ChangeStatus(id, status);
                 if (response.IsSuccess)
                     return Ok(response);
                 return BadRequest(response);

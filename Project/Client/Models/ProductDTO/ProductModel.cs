@@ -45,7 +45,12 @@ namespace Client.Models.ProductDTO
 
         public required string UserName { get; set; }
 
-        public decimal GetPrice()
+
+		public string QrCode { get; set; }
+
+        /*public string BarCode { get; set; }*/
+
+		public decimal GetPrice()
         {
             return Price - (Price * (decimal)Discount / 100);
         }

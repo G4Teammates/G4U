@@ -92,7 +92,7 @@ namespace UserMicroservice.Models.UserManagerModel
         /// <br/>
         /// Tổng số tiền lời cuối cùng mà người dùng kiếm được từ việc bán game.
         /// </summary>
-        public float TotalProfit { get; set; } = 0;
+        public decimal TotalProfit { get; set; } = 0;
 
         /// <summary>
         /// The collection of games added by the user to their wishlist.
