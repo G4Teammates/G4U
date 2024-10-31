@@ -17,5 +17,6 @@ namespace CategoryMicroservice.Repositories.Interfaces
         Category CreateCategory(CreateCategoryModel Category);
         Task<Category> UpdateCategrori(CategoryModel Categrori);
         Task<string> DeleteCategory(string id);
+        IEnumerable<Category> Search(string searchstring);
     }
 }

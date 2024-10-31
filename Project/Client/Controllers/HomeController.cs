@@ -8,7 +8,6 @@ using Client.Models.UserProductDTO;
 using Client.Repositories.Interfaces;
 using Client.Repositories.Interfaces.Authentication;
 using Client.Repositories.Interfaces.Product;
-using Client.Repositories.Services.AuthenticationService;
 using Google.Apis.Auth;
 
 using Microsoft.AspNetCore.Mvc;
@@ -64,31 +63,60 @@ namespace Client.Controllers
         //}
         public async Task<IActionResult> Index(int? page, int pageSize = 5)
         {
-            int pageNumber = (page ?? 1);
+            int pageNumber = page ?? 1;
             AllModel product = new();
+
             try
             {
+                #region Check IsLogin Cookie and Token
+                var isLogin = HttpContext.Request.Cookies["IsLogin"];
 
-                // Lấy danh sách sản phẩm
-                ResponseModel? productResponse = await _productService.GetAllProductAsync(pageNumber, pageSize);
-                ResponseModel? allProductsResponse = await _productService.GetAllProductAsync(1, 99);
-
-                var total = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(allProductsResponse.Result.ToString()!));
-
-                if (productResponse != null && productResponse.IsSuccess)
+                if (string.IsNullOrEmpty(isLogin))
                 {
-                    product.Product = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(productResponse.Result.ToString()!));
-
-                    var data = product.Product;
-                    product.pageNumber = pageNumber;
-                    product.totalItem = data.Count;
-                    product.pageSize = pageSize;
-                    product.pageCount = (int)Math.Ceiling(total.Count / (double)pageSize);
+                    ViewData["IsLogin"] = false;
                 }
                 else
                 {
-                    TempData["error"] = productResponse?.Message;
+                    ViewData["IsLogin"] = isLogin;
                 }
+
+                // Lấy token và kiểm tra tính hợp lệ, nhưng luôn tiếp tục để lấy sản phẩm
+                var token = _tokenProvider.GetToken();
+                var response = _helperService.CheckAndReadToken(token);
+                if (response.IsSuccess)
+                {
+                    var user = _helperService.GetUserFromJwtToken((JwtSecurityToken)response.Result);
+                    ViewBag.User = user;
+                    ViewData["IsLogin"] = true;
+                }
+                else
+                {
+                    ViewData["IsLogin"] = false;
+                }
+                #endregion
+
+                #region Lấy dữ liệu sản phẩm
+                // Gọi API để lấy danh sách sản phẩm dựa trên phân trang
+                var responseModel = await _productService.GetAllProductAsync(pageNumber, pageSize);
+                // Gọi API một lần nữa để lấy tổng số sản phẩm (không phân trang)
+                var totalProductsResponse = await _productService.GetAllProductAsync(1, 99);
+
+                if (responseModel != null && responseModel.IsSuccess)
+                {
+                    // Đọc và gán dữ liệu sản phẩm cho model
+                    product.Product = JsonConvert.DeserializeObject<ICollection<ProductModel>>(responseModel.Result.ToString()!);
+                    var totalProducts = JsonConvert.DeserializeObject<ICollection<ProductModel>>(totalProductsResponse.Result.ToString()!);
+
+                    product.pageNumber = pageNumber;
+                    product.totalItem = totalProducts.Count;
+                    product.pageSize = pageSize;
+                    product.pageCount = (int)Math.Ceiling(totalProducts.Count / (double)pageSize);
+                }
+                else
+                {
+                    TempData["error"] = responseModel?.Message;
+                }
+                #endregion
             }
             catch (Exception ex)
             {
@@ -97,6 +125,7 @@ namespace Client.Controllers
 
             return View(product);
         }
+
 
 
         public IActionResult Privacy()

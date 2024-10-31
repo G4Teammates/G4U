@@ -1,6 +1,8 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson;
 using CommentMicroservice.DBContexts.Enum;
+using System.ComponentModel.DataAnnotations;
+
 namespace Client.Models.ComentDTO
 {
     public class CommentDTOModel
@@ -20,6 +22,8 @@ namespace Client.Models.ComentDTO
         /// Nội dung của bình luận.
         /// </summary>
         [BsonElement("content")]
+        [Required(ErrorMessage = "Comment content is required.")]
+        [StringLength(500, ErrorMessage = "Comment content must not exceed {1} characters.")]
         public required string Content { get; set; }
 
         /// <summary>
@@ -44,6 +48,7 @@ namespace Client.Models.ComentDTO
         /// ID của người dùng đã đăng bình luận.
         /// </summary>
         [BsonElement("userId")]
+        [Required(ErrorMessage = "User ID is required.")]
         public string UserId { get; set; }
 
         /// <summary>
@@ -52,6 +57,7 @@ namespace Client.Models.ComentDTO
         /// ID của sản phẩm liên quan đến bình luận.
         /// </summary>
         [BsonElement("productId")]
+        [Required(ErrorMessage = "Product ID is required.")]
         public string ProductId { get; set; }
 
         /// <summary>
@@ -63,20 +69,12 @@ namespace Client.Models.ComentDTO
         public string? ParentId { get; set; }
 
         /// <summary>
-        /// A list of replies to this comment, if applicable.
-        /// <br/>
-        /// Danh sách các bình luận trả lời bình luận này, nếu có.
-        /// </summary>    
-        /*[BsonIgnore]
-        //[BsonElement("replies")]
-        public List<Comment>? Replies { get; set; }*/
-
-        /// <summary>
         /// The date and time when the comment was created.
         /// <br/>
         /// Ngày và giờ khi bình luận được tạo ra.
         /// </summary>
         [BsonElement("createdAt")]
+        [Required(ErrorMessage = "Creation time of the comment is required.")]
         public DateTime CreatedAt { get; set; }
 
         /// <summary>
@@ -85,12 +83,13 @@ namespace Client.Models.ComentDTO
         /// Ngày và giờ khi bình luận được cập nhật lần cuối.
         /// </summary>
         [BsonElement("updatedAt")]
+        [Required(ErrorMessage = "Update time of the comment is required.")]
         public DateTime UpdatedAt { get; set; }
 
         /// <summary>
-        /// The number of likes the comment has received.
+        /// The number of dislikes the comment has received.
         /// <br/>
-        /// Số lượt thích mà bình luận đã nhận được.
+        /// Số lượt không thích mà bình luận đã nhận được.
         /// </summary>
         [BsonElement("numberOfDisLikes")]
         public int NumberOfDisLikes { get; set; }

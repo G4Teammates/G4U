@@ -755,10 +755,46 @@ namespace Client.Controllers
                     return RedirectToAction(nameof(CategoriesManager));
                 }
             }
-        #endregion
 
-        #region Comment
-        public async Task<IActionResult> CommentManager(int? page, int pageSize = 5)
+
+		[HttpPost]
+		public async Task<IActionResult> SearchCategory(string searchString, int? page, int pageSize = 5)
+		{
+			int pageNumber = (page ?? 1);
+			CategoriesViewModel categoryViewModel = new();
+
+			try
+			{
+				// Gọi API để tìm kiếm sản phẩm theo từ khóa
+				ResponseModel? response = await _categoryService.SearchProductAsync(searchString, page, pageSize);
+				ResponseModel? response2 = await _categoryService.GetAllCategoryAsync(1, 99);
+				var total = JsonConvert.DeserializeObject<ICollection<CategoriesModel>>(Convert.ToString(response2.Result.ToString()!));
+
+				if (response != null && response.IsSuccess)
+				{
+					categoryViewModel.Categories = JsonConvert.DeserializeObject<ICollection<CategoriesModel>>(Convert.ToString(response.Result.ToString()!));
+					var data = categoryViewModel.Categories;
+					categoryViewModel.pageNumber = pageNumber;
+					categoryViewModel.totalItem = data.Count;
+					categoryViewModel.pageSize = pageSize;
+					categoryViewModel.pageCount = (int)Math.Ceiling(total.Count / (double)pageSize);
+				}
+				else
+				{
+					TempData["error"] = response?.Message;
+				}
+			}
+			catch (Exception ex)
+			{
+				TempData["error"] = ex.Message;
+			}
+
+			return View("CategoriesManager", categoryViewModel); // Trả về view ProductsManager với danh sách sản phẩm đã tìm kiếm
+		}
+		#endregion
+
+		#region Comment
+		public async Task<IActionResult> CommentManager(int? page, int pageSize = 5)
             {
 			int pageNumber = (page ?? 1);
 			CommentViewModel comment = new();
@@ -841,39 +877,36 @@ namespace Client.Controllers
                 return NotFound();
             }
 
-            [HttpPost]
-            public async Task<IActionResult> UpdateCommentConfirm([FromForm] CommentDTOModel comment)
+        [HttpPost]
+        public async Task<IActionResult> UpdateCommentConfirm([FromForm] CommentDTOModel comment)
+        {
+            if (!ModelState.IsValid)
             {
-                if (!ModelState.IsValid)
+                var errors = ModelState.ToDictionary(k => k.Key, v => v.Value.Errors.Select(e => e.ErrorMessage).ToArray());
+                return BadRequest(new { Errors = errors }); // Trả về lỗi với định dạng JSON
+            }
+
+            try
+            {
+                var response = await _commentService.UpdateCommentAsync(comment);
+
+                if (response != null && response.IsSuccess)
                 {
-                    var errors = ModelState.Values.SelectMany(v => v.Errors)
-                                                  .Select(e => e.ErrorMessage);
-                    return BadRequest(new { Errors = errors });
+                    return Ok(new { Success = true, Message = "Cập nhật bình luận thành công." });
                 }
-
-                try
+                else
                 {
-                    var response = await _commentService.UpdateCommentAsync(comment);
-
-                    if (response != null && response.IsSuccess)
-                    {
-                        TempData["success"] = "Category updated successfully";
-                        return RedirectToAction(nameof(CommentManager));
-                    }
-                    else
-                    {
-                        TempData["error"] = response?.Message ?? "An unknown error occurred.";
-                        return BadRequest(response.Message); // Trả về view với dữ liệu đã nhập
-
-                    }
-                }
-                catch (Exception ex)
-                {
-                    TempData["error"] = $"An error occurred: {ex.Message}";
-                    return StatusCode(500); // Trả về view với dữ liệu đã nhập và lỗi
+                    return BadRequest(new { Errors = new[] { response?.Message ?? "Có lỗi xảy ra." } });
                 }
             }
-            public async Task<IActionResult> CommentDelete(string id)
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Errors = new[] { $"Lỗi xảy ra: {ex.Message}" } });
+            }
+        }
+
+
+        public async Task<IActionResult> CommentDelete(string id)
             {
                 ResponseModel? response = await _commentService.GetListByIdAsync(id);
                 if (response != null && response.IsSuccess)

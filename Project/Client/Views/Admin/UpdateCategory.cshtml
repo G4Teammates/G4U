@@ -1,5 +1,4 @@
 ﻿@using Client.Models.CategorisDTO
-
 @model CategoriesModel
 
 @{
@@ -27,9 +26,9 @@
     <div class="form-group">
         <label asp-for="Type" class="form-label">Type</label>
         <select asp-for="Type" class="form-select" aria-label="Type">
-            <option value="0">0</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
+            <option value="0">Tag</option>
+            <option value="1">Category</option>
+            <option value="2">Genre</option>
         </select>
         <span asp-validation-for="Type" class="text-danger"></span>
     </div>
@@ -43,10 +42,10 @@
     <div class="form-group">
         <label asp-for="Status" class="form-label">Status</label>
         <select asp-for="Status" class="form-select" aria-label="Status">
-            <option value="0">0</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
+            <option value="0">Active</option>
+            <option value="1">Inactive</option>
+            <option value="2">Block</option>
+            <option value="3">Deleted</option>
         </select>
         <span asp-validation-for="Status" class="text-danger"></span>
     </div>
@@ -55,7 +54,7 @@
 </form>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+
+    <!-- Đảm bảo tải _ValidationScriptsPartial -->
+    @await Html.PartialAsync("_ValidationScriptsPartial")
 }
