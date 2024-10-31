@@ -12,17 +12,17 @@
             <div class="mb-2">
                 <label asp-for="Status" class="form-label">Status</label>
                 <select asp-for="Status" class="form-select" aria-label="Status">
-                    <option value="0" selected>0</option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
+                    <option value="0">Active</option>
+                    <option value="1">Inactive</option>
+                    <option value="2">Block</option>
+                    <option value="3">Deleted</option>
                 </select>
                 <span asp-validation-for="Status" class="text-danger"></span>
             </div>
             <div class="mb-2">
-                <label asp-for="UserId" class="form-label">UserId</label>
-                <input asp-for="UserId" type="text" placeholder="UserId" class="form-control" />
-                <span asp-validation-for="UserId" class="text-danger"></span>
+                <label asp-for="UserName" class="form-label">UserId</label>
+                <input asp-for="UserName" type="text" placeholder="UserId" class="form-control" />
+                <span asp-validation-for="UserName" class="text-danger"></span>
             </div>
             <div class="mb-2">
                 <label asp-for="ProductId" class="form-label">ProductId</label>
@@ -40,7 +40,7 @@
         <input type="submit" value="Create" class="btn btn-danger w-50" />
     </div>
     <div class="form-group mt-3 text-center">
-        <input type="button" value="Cancel" data-bs-dismiss="modal" class="btn btn-primary w-50" />
+        <a href="@Url.Action("CommentManager")" class="btn btn-primary w-50">Cancel</a>
     </div>
 </form>
 

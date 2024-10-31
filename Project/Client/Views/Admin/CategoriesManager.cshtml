@@ -10,25 +10,28 @@
 	<span class="titleManager bg-success py-3 px-5 rounded-4 fw-bold text-white">Categories Manager</span>
 </div>
 
+
+
+
 <!-- Thông báo -->
 @* @if (!string.IsNullOrEmpty(notification))
 { *@
 <div class="alert alert-success">
 	@* @notification *@
-	ádjflkajklajsdlfkjadsklfjkladsfj
+	Bạn đã thành công vào Admin Category
 </div>
 <div class="alert alert-danger">
 	@* @notification *@
-	ádjflkajklajsdlfkjadsklfjkladsfj
+	Bạn đã thành công vào Admin Category
 </div>
 @* } *@
 
 <div class="container mt-4">
 	<!-- Thanh tìm kiếm và nút Thêm -->
 	<div class="d-flex justify-content-between mb-3">
-		<div class="col-md-4">
-			<input class="form-control" type="text" placeholder="Search by..." />
-		</div>
+		<form asp-action="SearchCategory" asp-controller="Admin" method="post">
+			<input class="form-control" type="text" placeholder="Search by..." name="searchString" />
+		</form>
 		<div class="w-100">
 			<div class="text-end">
 				<button class="btn btn-success" data-toggle="modal" data-target="#modalCategory">+ Add</button>
@@ -98,22 +101,38 @@
 
 	<!-- Phân trang -->
 	<div class="d-flex justify-content-between mt-3">
-		<div>Total: 3,145</div>
+		<div>Total: @(Model.totalItem) items</div>
 		<div>
-			<select class="form-select form-select-sm w-auto d-inline-block">
-				<option>20 records per page</option>
-				<option>50 records per page</option>
-				<option>100 records per page</option>
-			</select>
+			<form method="get" asp-controller="Admin" asp-action="CategoriesManager" class="d-inline">
+				<select name="pageSize" class="form-select form-select-sm w-auto d-inline-block" onchange="this.form.submit()">
+					<option>Select records per page</option>
+					<option value="3">3 records per page</option>
+					<option value="5">5 records per page</option>
+					<option value="10">10 records per page</option>
+				</select>
+				<input type="hidden" name="page" value="1" />
+			</form>
+
 			<nav aria-label="Page navigation example" class="d-inline-block">
 				<ul class="pagination pagination-sm mb-0">
-					<li class="page-item disabled">
-						<a class="page-link" href="#">1 to 20</a>
+					<li class="page-item @(Model.pageNumber == 1 ? "disabled" : "")">
+						<a class="page-link" asp-controller="Admin" asp-action="CategoriesManager" asp-route-page="@(Model.pageNumber - 1)" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
+							Previous
+						</a>
 					</li>
-					<li class="page-item"><a class="page-link" href="#">1</a></li>
-					<li class="page-item"><a class="page-link" href="#">2</a></li>
-					<li class="page-item"><a class="page-link" href="#">3</a></li>
-					<li class="page-item"><a class="page-link" href="#">></a></li>
+					@for (var pg = 1; pg <= Model.pageCount; pg++)
+					{
+						<li class="page-item @(pg == Model.pageNumber ? "active" : "")">
+							<a class="page-link" asp-controller="Admin" asp-action="CategoriesManager" asp-route-page="@pg" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
+								@pg
+							</a>
+						</li>
+					}
+					<li class="page-item @(Model.pageNumber == Model.pageCount ? "disabled" : "")">
+						<a class="page-link" asp-controller="Admin" asp-action="CategoriesManager" asp-route-page="@(Model.pageNumber + 1)" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
+							Next
+						</a>
+					</li>
 				</ul>
 			</nav>
 		</div>
@@ -149,4 +168,7 @@
 	function showErrorToast() {
 		$('#errorToast').toast('show');
 	}
+
+
 </script>
+

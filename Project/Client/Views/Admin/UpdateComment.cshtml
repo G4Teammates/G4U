@@ -32,17 +32,17 @@
     <div class="form-group">
         <label asp-for="Status" class="form-label">Status</label>
         <select asp-for="Status" class="form-select" aria-label="Status">
-            <option value="0">0</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
+            <option value="0">Active</option>
+            <option value="1">Inactive</option>
+            <option value="2">Block</option>
+            <option value="3">Deleted</option>
         </select>
         <span asp-validation-for="Status" class="text-danger"></span>
     </div>
     <div class="form-group">
-        <label asp-for="UserId">UserId</label>
-        <textarea asp-for="UserId" class="form-control" rows="3"></textarea>
-        <span asp-validation-for="UserId" class="text-danger"></span>
+        <label asp-for="UserName">UserId</label>
+        <textarea asp-for="UserName" class="form-control" rows="3"></textarea>
+        <span asp-validation-for="UserName" class="text-danger"></span>
     </div>
     <div class="form-group">
         <label asp-for="ProductId">ProductId</label>
@@ -73,7 +73,7 @@
 </form>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+
+    <!-- Đảm bảo tải _ValidationScriptsPartial -->
+    @await Html.PartialAsync("_ValidationScriptsPartial")
 }

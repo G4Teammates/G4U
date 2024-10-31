@@ -82,7 +82,45 @@ $(document).ready(function () {
                 items: 3
             }
         }
-    })
+    });
+
+    //function showDetailModal(element) {
+    //    var url = $(element).data('url');
+    //    console.log("URL: " + url);
+
+    //    $.ajax({
+    //        url: url,
+    //        type: 'GET',
+    //        success: function (response) {
+    //            $('#modalContainer').html(response);
+    //            $('#modalOrderDetail').modal('show');
+    //        },
+    //        error: function () {
+    //            alert('Có lỗi xảy ra khi tải nội dung modal.');
+    //        }
+    //    });
+    //}
+
+    //function showEditModal(element) {
+    //    var url = $(element).data('url');
+    //    console.log("URL: " + url);
+
+    //    $.ajax({
+    //        url: url,
+    //        type: 'GET',
+    //        success: function (response) {
+    //            $('#modalContainer').html(response);
+    //            $('#editModalAccount').modal('show');
+    //        },
+    //        error: function () {
+    //            alert('Có lỗi xảy ra khi tải nội dung modal.');
+    //        }
+    //    });
+    //}
+
+    //window.showDetailModal = showDetailModal;  // Gán hàm vào window
+    //window.showEditModal = showEditModal;      // Gán hàm vào window
+
 })
 
 //Scroll Other Product ở giữa màn hình khi được chọn
@@ -107,3 +145,6 @@ document.querySelectorAll('.lisotherproduct_name a').forEach(anchor => {
     });
 });
 
+//$(document).ready(function () {
+    
+//});
