@@ -63,12 +63,18 @@
     <div class="container mt-4">
         <!-- Thanh tìm kiếm và nút Thêm -->
         <div class="d-flex justify-content-between mb-3">
+            <form asp-action="SearchCmt" asp-controller="Admin" method="post" class="d-flex gap-2">
+                <input class="form-control" type="text" placeholder="Search by username..." name="searchString" />
+                <input class="form-control" type="date" name="searchDate" />
+                <button class="btn btn-primary" type="submit">Search</button>
+            </form>
             <div class="w-100">
                 <div class="text-end">
                     <button class="btn btn-success" data-toggle="modal" data-target="#modalComment">+ Add</button>
                 </div>
             </div>
         </div>
+
     <div id="checkBoxBar" style="display:none">
         <div class="text-end m-2 d-flex">
             <button class="btn btn-success mx-2 w-100">Public All</button>
@@ -86,7 +92,7 @@
                 <th scope="col">Content</th>
                 <th scope="col">NumberOfLikes</th>
                 <th scope="col">Status</th>
-                <th scope="col">User Id</th>
+                <th scope="col">User Name</th>
                 <th scope="col">Product Id</th>
                 <th scope="col">Parent Id</th>
                 <th scope="col">CreatedAt</th>

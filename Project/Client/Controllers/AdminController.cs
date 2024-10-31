@@ -957,9 +957,46 @@ namespace Client.Controllers
             catch (Exception ex)
             {
                 TempData["error"] = $"An error occurred: {ex.Message}";
-                return RedirectToAction(nameof(CategoriesManager));
+                return StatusCode(500); // Trả về view với dữ liệu đã nhập và lỗi
             }
         }
+
+
+		[HttpPost]
+		public async Task<IActionResult> SearchCategory(string searchString, int? page, int pageSize = 5)
+		{
+			int pageNumber = (page ?? 1);
+			CategoriesViewModel categoryViewModel = new();
+
+			try
+			{
+				// Gọi API để tìm kiếm sản phẩm theo từ khóa
+				ResponseModel? response = await _categoryService.SearchProductAsync(searchString, page, pageSize);
+				ResponseModel? response2 = await _categoryService.GetAllCategoryAsync(1, 99);
+				var total = JsonConvert.DeserializeObject<ICollection<CategoriesModel>>(Convert.ToString(response2.Result.ToString()!));
+
+				if (response != null && response.IsSuccess)
+				{
+					categoryViewModel.Categories = JsonConvert.DeserializeObject<ICollection<CategoriesModel>>(Convert.ToString(response.Result.ToString()!));
+					var data = categoryViewModel.Categories;
+					categoryViewModel.pageNumber = pageNumber;
+					categoryViewModel.totalItem = data.Count;
+					categoryViewModel.pageSize = pageSize;
+					categoryViewModel.pageCount = (int)Math.Ceiling(total.Count / (double)pageSize);
+				}
+				else
+				{
+					TempData["error"] = response?.Message;
+				}
+			}
+			catch (Exception ex)
+			{
+				TempData["error"] = ex.Message;
+			}
+
+			return View("CategoriesManager", categoryViewModel); // Trả về view ProductsManager với danh sách sản phẩm đã tìm kiếm
+		}
+		
         #endregion
 
         #region Comment
@@ -968,6 +1005,7 @@ namespace Client.Controllers
             int pageNumber = (page ?? 1);
             CommentViewModel comment = new();
             try
+
             {
                 ResponseModel? response = await _commentService.GetAllCommentAsync(pageNumber, pageSize);
                 ResponseModel? response2 = await _commentService.GetAllCommentAsync(1, 99);
@@ -1027,7 +1065,9 @@ namespace Client.Controllers
                 TempData["error"] = $"An error occurred: {ex.Message}";
                 return RedirectToAction(nameof(CommentManager));
             }
+
         }
+
         public async Task<IActionResult> UpdateComment(string id)
         {
             ResponseModel? response = await _commentService.GetByIdAsync(id);
@@ -1057,6 +1097,7 @@ namespace Client.Controllers
             }
 
             try
+
             {
                 var response = await _commentService.UpdateCommentAsync(comment);
 
@@ -1115,6 +1156,41 @@ namespace Client.Controllers
 
             TempData["success"] = "Xóa bình luận thành công.";
             return RedirectToAction("CommentManager");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SearchCmt(string searchString, int? page, int pageSize = 5)
+        {
+            int pageNumber = (page ?? 1);
+            CommentViewModel cmtViewModel = new();
+
+            try
+            {
+                // Gọi API để tìm kiếm sản phẩm theo từ khóa
+                ResponseModel? response = await _commentService.SearchCmtAsync(searchString, page, pageSize);
+                ResponseModel? response2 = await _commentService.GetAllCommentAsync(1, 99);
+                var total = JsonConvert.DeserializeObject<ICollection<CommentDTOModel>>(Convert.ToString(response2.Result.ToString()!));
+
+                if (response != null && response.IsSuccess)
+                {
+                    cmtViewModel.Comment = JsonConvert.DeserializeObject<ICollection<CommentDTOModel>>(Convert.ToString(response.Result.ToString()!));
+                    var data = cmtViewModel.Comment;
+                    cmtViewModel.pageNumber = pageNumber;
+                    cmtViewModel.totalItem = data.Count;
+                    cmtViewModel.pageSize = pageSize;
+                    cmtViewModel.pageCount = (int)Math.Ceiling(total.Count / (double)pageSize);
+                }
+                else
+                {
+                    TempData["error"] = response?.Message;
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = ex.Message;
+            }
+
+            return View("CommentManager", cmtViewModel); // Trả về view ProductsManager với danh sách sản phẩm đã tìm kiếm
         }
         #endregion
     }
