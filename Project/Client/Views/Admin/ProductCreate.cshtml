@@ -1,7 +1,7 @@
-﻿@* @using Client.Models.ProductDTO
+﻿@using Client.Models.ProductDTO
 
-@model CreateProductModel *@
-@* @{
+@model CreateProductModel
+@{
     ViewData["Title"] = "Create Product";
 }
 <form asp-action="ProductCreate" asp-controller="Product" method="post" class="row">
@@ -16,8 +16,8 @@
             <div class="mb-2">
                 <label class="form-label fw-bold fs-5">Price</label>
                 <input asp-for="Price" class="form-control" />
-                <span asp-validation-for="Price" class="text-danger"></span> *@
-                @* <label class="form-label fw-bold fs-5">Price</label>
+                <span asp-validation-for="Price" class="text-danger"></span>
+                <label class="form-label fw-bold fs-5">Price</label>
                 <div class="row">
                     <div class="col-md-5">
                         <ul class="flex-column" id="pricingTabs" role="tablist">
@@ -53,8 +53,8 @@
                             </div>
                         </div>
                     </div>
-                </div> *@
-               @*  <span asp-validation-for="Price" class="text-danger"></span>
+                </div>
+                <span asp-validation-for="Price" class="text-danger"></span>
             </div>
             <div class="mb-2">
                 <label class="form-label fw-bold fs-5">Discount</label>
@@ -82,16 +82,16 @@
                         <span asp-validation-for="Description" class="text-danger"></span>
                     </div>
                     <div class="mb-2">
-                        <label class="form-label fw-bold fs-6">Category</label> *@
-                       @*  <select asp-for="Categories" class="form-select">
+                        <label class="form-label fw-bold fs-6">Category</label>
+                        <select asp-for="Categories" class="form-select">
                             <option value="default">Please choose an option</option>
                             @foreach (var category in ViewBag.Categories)
                             {
                                 <option value="@category.Id">@category.Name</option>
                             }
                         </select>
-                        <span asp-validation-for="Categories" class="text-danger"></span> *@
-                        @* <input asp-for="Categories" class="form-control" />
+                        <span asp-validation-for="Categories" class="text-danger"></span>
+                        <input asp-for="Categories" class="form-control" />
                         <span asp-validation-for="Categories" class="text-danger"></span>
                     </div>
                     <div class="mb-2">
@@ -138,4 +138,4 @@
     <div class="form-group mt-3 text-center">
         <input type="submit" value="Create" class="btn btn-danger w-50" />
     </div>
-</form> *@
+</form>
