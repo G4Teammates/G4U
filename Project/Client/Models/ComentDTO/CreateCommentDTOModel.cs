@@ -22,16 +22,7 @@ namespace Client.Models.ComentDTO
         /// Trạng thái của bình luận (ví dụ: Ẩn, Hiển thị).
         /// </summary>
         [BsonElement("status")]
-        public CommentStatus Status { get; set; }
-
-        /// <summary>
-        /// The identifier of the user who made the comment.
-        /// <br/>
-        /// ID của người dùng đã đăng bình luận.
-        /// </summary>
-        [BsonElement("userId")]
-        [Required(ErrorMessage = "User ID is required.")]
-        public string UserId { get; set; }
+        public CommentStatus Status { get; set; }    
 
         /// <summary>
         /// The identifier of the product related to the comment.
@@ -41,6 +32,11 @@ namespace Client.Models.ComentDTO
         [BsonElement("productId")]
         [Required(ErrorMessage = "Product ID is required.")]
         public string ProductId { get; set; }
+        
+
+        
+      
+        public string UserName { get; set; }
 
         /// <summary>
         /// The identifier of the parent comment, if any (for nested comments).

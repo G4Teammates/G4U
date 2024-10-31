@@ -21,7 +21,6 @@ using Client.Models.ComentDTO;
 using Client.Repositories.Interfaces.Comment;
 
 using Client.Repositories.Interfaces.Order;
-using System.Drawing.Printing;
 using Client.Models.OrderModel;
 
 using ProductMicroservice.DBContexts.Entities;
@@ -94,23 +93,42 @@ namespace Client.Controllers
         [HttpGet]
         public async Task<IActionResult> UsersManager(int? page, int pageSize = 5)
         {
-			int pageNumber = (page ?? 1);
-			UserViewModel users = new();
+            if (TempData.ContainsKey("searchResult"))
+            {
+                var orderJson = TempData["searchResult"] as string;
+                if (!string.IsNullOrEmpty(orderJson))
+                {
+                    // Convert JSON thành OrderModel
+                    var order = JsonConvert.DeserializeObject<ICollection<OrderModel>>(orderJson);
+                    OrderViewModel orderViewModel = new()
+                    {
+                        Orders = order
+                    };
+                    return View(orderViewModel);
+                }
+            }
+
+
+            int pageNumber = (page ?? 1);
+            UserViewModel users = new()
+            {
+                CreateUser = new CreateUser()
+            };
             try
             {
                 ResponseModel? response = await _userService.GetAllUserAsync(pageNumber, pageSize);
-				ResponseModel? response2 = await _userService.GetAllUserAsync(1, 99);
-				var total = JsonConvert.DeserializeObject<ICollection<UsersDTO>>(Convert.ToString(response2.Result.ToString()!));
+                ResponseModel? response2 = await _userService.GetAllUserAsync(1, 99);
+                var total = JsonConvert.DeserializeObject<ICollection<UsersDTO>>(Convert.ToString(response2.Result.ToString()!));
 
-				if (response != null && response.IsSuccess)
+                if (response != null && response.IsSuccess)
                 {
-					users.Users = JsonConvert.DeserializeObject<ICollection<UsersDTO>>(Convert.ToString(response.Result.ToString()!));
-					var data = users.Users;
-					users.pageNumber = pageNumber;
-					users.totalItem = data.Count;
-					users.pageSize = pageSize;
-					users.pageCount = (int)Math.Ceiling(total.Count / (double)pageSize);
-				}
+                    users.Users = JsonConvert.DeserializeObject<ICollection<UsersDTO>>(Convert.ToString(response.Result.ToString()!));
+                    var data = users.Users;
+                    users.pageNumber = pageNumber;
+                    users.totalItem = data.Count;
+                    users.pageSize = pageSize;
+                    users.pageCount = (int)Math.Ceiling(total.Count / (double)pageSize);
+                }
                 else
                 {
                     TempData["error"] = response?.Message;
@@ -176,7 +194,27 @@ namespace Client.Controllers
             return NotFound();
         }
 
+        [HttpPost]
+        public async Task<IActionResult> UserDelete(UsersDTO user)
+        {
+            ResponseModel? response = await _userService.ChangeStatus(user.Id, Client.Models.Enum.UserEnum.User.UserStatus.Deleted);
 
+            if (response != null && response.IsSuccess)
+            {
+                UsersDTO? model = JsonConvert.DeserializeObject<UsersDTO>(Convert.ToString(response.Result));
+                return View(model);
+            }
+            else
+            {
+                TempData["error"] = response?.Message;
+            }
+            return NotFound();
+        }
+        
+
+
+
+        [HttpGet]
         public async Task<IActionResult> UserUpdate(string id)
         {
             ResponseModel? response = await _userService.GetUserAsync(id);
@@ -184,9 +222,12 @@ namespace Client.Controllers
             if (response != null && response.IsSuccess)
             {
                 UpdateUser? user = JsonConvert.DeserializeObject<UpdateUser>(Convert.ToString(response.Result));
-
+                UserViewModel userViewModel = new()
+                {
+                    UpdateUser = user
+                };
                 // Trả về model UsersDTO để sử dụng trong View
-                return View(user);
+                return PartialView("UserUpdate", user);
             }
             else
             {
@@ -197,6 +238,7 @@ namespace Client.Controllers
         [HttpPost]
         public async Task<IActionResult> UserUpdate(UpdateUser user)
         {
+            UserViewModel userViewModel = new() { UpdateUser = user };
             if (ModelState.IsValid)
             {
                 var updateUser = new UpdateUser
@@ -225,16 +267,47 @@ namespace Client.Controllers
             }
 
             // Nếu ModelState không hợp lệ, trả về lại model để hiển thị lỗi
-            return View(user);
+            return RedirectToAction(nameof(UsersManager));
 
         }
+
+
+        public async Task<IActionResult> SearchUsers(string query)
+        {
+            try
+            {
+                // Gọi phương thức FindUser để tìm kiếm người dùng theo query
+                var response = await _userService.FindUsers(query);
+
+                // Kiểm tra xem tìm kiếm có thành công và trả về kết quả không
+                if (response.IsSuccess && response.Result != null)
+                {
+                    var users = JsonConvert.DeserializeObject<ICollection<UsersDTO>>(response.Result.ToString());
+                    TempData["searchResult"] = JsonConvert.SerializeObject(users);
+
+                    return RedirectToAction(nameof(UsersManager));
+                }
+                else
+                {
+                    TempData["error"] = response.Message ?? "User not found";
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = ex.Message;
+            }
+
+            // Nếu có lỗi hoặc không tìm thấy người dùng, chuyển hướng đến trang quản lý người dùng
+            return RedirectToAction(nameof(UsersManager));
+        }
+
 
         #endregion
 
 
         #region Product
 
-        public async Task<IActionResult> ProductsManager( int? page, int pageSize=5)
+        public async Task<IActionResult> ProductsManager(int? page, int pageSize = 5)
 
         {
             int pageNumber = (page ?? 1);
@@ -242,14 +315,14 @@ namespace Client.Controllers
             try
             {
 
-                ResponseModel? response1 = await _categoryService.GetAllCategoryAsync(1,99);
+                ResponseModel? response1 = await _categoryService.GetAllCategoryAsync(1, 99);
 
-                ResponseModel? response = await _productService.GetAllProductAsync(pageNumber,pageSize);
+                ResponseModel? response = await _productService.GetAllProductAsync(pageNumber, pageSize);
 
                 ResponseModel? response2 = await _productService.GetAllProductAsync(1, 99);
 
 
-                var total= JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response2.Result.ToString()!));
+                var total = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response2.Result.ToString()!));
 
                 if (response != null && response.IsSuccess)
                 {
@@ -262,7 +335,7 @@ namespace Client.Controllers
                     product.pageNumber = pageNumber;
                     product.totalItem = data.Count;
                     product.pageSize = pageSize;
-                    product.pageCount = (int)Math.Ceiling(total.Count/ (double)pageSize);
+                    product.pageCount = (int)Math.Ceiling(total.Count / (double)pageSize);
 
                 }
                 else
@@ -276,17 +349,17 @@ namespace Client.Controllers
                 TempData["error"] = ex.Message;
             }
 
-			// Tạo mã QR cho từng sản phẩm
-			foreach (var item in product.Product)
-			{
-				string qrCodeUrl = Url.Action("UpdateProduct", "Admin", new { id = item.Id }, Request.Scheme);
-				item.QrCode = _productService.GenerateQRCode(qrCodeUrl); // Tạo mã QR và lưu vào thuộc tính
+            // Tạo mã QR cho từng sản phẩm
+            foreach (var item in product.Product)
+            {
+                string qrCodeUrl = Url.Action("UpdateProduct", "Admin", new { id = item.Id }, Request.Scheme);
+                item.QrCode = _productService.GenerateQRCode(qrCodeUrl); // Tạo mã QR và lưu vào thuộc tính
 
                 /*string barCodeUrl = Url.Action("UpdateProduct", "Admin", new { id = item.Id }, Request.Scheme);
                 item.BarCode = _productService.GenerateBarCode(11111111111); // Tạo mã QR và lưu vào thuộc tính*/
             }
 
-			return View(product);
+            return View(product);
         }
         public async Task<IActionResult> UpdateProduct(string id)
         {
@@ -311,7 +384,9 @@ namespace Client.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> UpdateProduct(UpdateProductModel model)
+		[RequestSizeLimit(60 * 1024 * 1024)] // 50MB
+		[RequestFormLimits(MultipartBodyLengthLimit = 60 * 1024 * 1024)] // Đặt giới hạn cho form multipart
+		public async Task<IActionResult> UpdateProduct(UpdateProductModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -357,7 +432,9 @@ namespace Client.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> CreateProduct(CreateProductModel model)
+		[RequestSizeLimit(60 * 1024 * 1024)] // 50MB
+		[RequestFormLimits(MultipartBodyLengthLimit = 60 * 1024 * 1024)] // Đặt giới hạn cho form multipart
+		public async Task<IActionResult> CreateProduct(CreateProductModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -428,16 +505,52 @@ namespace Client.Controllers
             return NotFound();
         }
 
- public async Task<IActionResult> OrdersManager()
+        [HttpPost]
+        public async Task<IActionResult> DeleteProduct(ProductModel product)
+        {
+            ResponseModel? response = await _productService.DeleteProductAsync(product.Id);
+            if (response != null && response.IsSuccess)
+            {
+                TempData["success"] = "Product deleted successfully";
+                return RedirectToAction(nameof(ProductsManager));
+            }
+            else
+            {
+                TempData["error"] = response?.Message;
+            }
+            return View(product);
+        }
+
+        public async Task<IActionResult> OrdersManager()
         {
             try
             {
-                ResponseModel response = await _orderService.GetAll();
+                // Nếu có dữ liệu tìm kiếm, lấy từ TempData
+                if (TempData.ContainsKey("searchResult"))
+                {
+                    var orderJson = TempData["searchResult"] as string;
+                    if (!string.IsNullOrEmpty(orderJson))
+                    {
+                        // Convert JSON thành OrderModel
+                        var order = JsonConvert.DeserializeObject<ICollection<OrderModel>>(orderJson);
+                        OrderViewModel orderViewModel = new()
+                        {
+                            Orders = order
+                        };
+                        return View(orderViewModel);
+                    }
+                }
 
+                // Nếu không có dữ liệu tìm kiếm, lấy tất cả đơn hàng
+                ResponseModel response = await _orderService.GetAll();
                 if (response.IsSuccess)
                 {
-                    var orders = JsonConvert.DeserializeObject<ICollection<OrderModel>>(Convert.ToString(response.Result.ToString()!));
-                    return View(orders);
+                    var orders = JsonConvert.DeserializeObject<ICollection<OrderModel>>(Convert.ToString(response.Result)!);
+                    OrderViewModel orderViewModel = new()
+                    {
+                        Orders = orders
+                    };
+                    return View(orderViewModel);
                 }
                 else
                 {
@@ -450,22 +563,114 @@ namespace Client.Controllers
             }
             return View();
         }
-        [HttpPost]
-        public async Task<IActionResult> DeleteProduct(ProductModel product)
-        {
-            ResponseModel? response = await _productService.DeleteProductAsync(product.Id);
 
-            if (response != null && response.IsSuccess)
+
+
+        public async Task<IActionResult> SearchOrder(string id)
+        {
+            try
             {
-                TempData["success"] = "Product deleted successfully";
-                return RedirectToAction(nameof(ProductsManager));
+                var response = await _orderService.GetOrderById(id);
+                if (response.Result == null)
+                {
+                    response = await _orderService.GetOrderByTransaction(id);
+                }
+                if (response.IsSuccess && response.Result != null)
+                {
+                    TempData["searchResult"] = JsonConvert.SerializeObject(response.Result);
+                    return RedirectToAction(nameof(OrdersManager));
+                }
+                else
+                {
+                    TempData["error"] = response.Message;
+                }
             }
-            else
+            catch (Exception ex)
             {
-                TempData["error"] = response?.Message;
+                TempData["error"] = ex.Message;
             }
-            return View(product);
+            return RedirectToAction(nameof(OrdersManager));
         }
+
+
+        [HttpGet]
+        public async Task<IActionResult> OrderDetail(string id)
+        {
+            try
+            {
+                ResponseModel response = await _orderService.GetOrderItems(id);
+
+                if (response.IsSuccess)
+                {
+                    var orderItems = JsonConvert.DeserializeObject<ICollection<OrderItemModel>>(Convert.ToString(response.Result.ToString()!));
+                    OrderViewModel orderViewModel = new()
+                    {
+                        Items = orderItems
+                    };
+                    return PartialView("_OrderItemsPartial", orderViewModel);
+                }
+                else
+                {
+                    TempData["error"] = response.Message;
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = ex.Message;
+            }
+            return View();
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateOrderStatus(string id, PaymentStatusModel status)
+        {
+            try
+            {
+                ResponseModel response = await _orderService.UpdateStatus(id, status);
+
+                if (response.IsSuccess)
+                {
+                    TempData["success"] = "Order status updated successfully";
+                }
+                else
+                {
+                    TempData["error"] = response.Message;
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = ex.Message;
+            }
+            return RedirectToAction(nameof(OrdersManager));
+        }
+
+
+
+        [HttpGet]
+        public async Task<IActionResult> UpdateOrderStatus(string id)
+        {
+            try
+            {
+                ResponseModel response = await _orderService.GetOrderById(id);
+
+                if (response.IsSuccess)
+                {
+                    var order = JsonConvert.DeserializeObject<OrderModel>(Convert.ToString(response.Result.ToString()!));
+                    return View(order);
+                }
+                else
+                {
+                    TempData["error"] = response.Message;
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = ex.Message;
+            }
+            return RedirectToAction(nameof(OrdersManager));
+        }
+
 
         [HttpPost]
         public async Task<IActionResult> SearchProduct(string searchString, int? page, int pageSize = 5)
@@ -511,7 +716,7 @@ namespace Client.Controllers
             try
             {
                 // Gọi API để lấy danh sách sản phẩm đã sắp xếp
-                ResponseModel? response = await _productService.SortProductAsync(sort, page,pageSize);
+                ResponseModel? response = await _productService.SortProductAsync(sort, page, pageSize);
                 ResponseModel? response2 = await _productService.GetAllProductAsync(1, 99);
                 var total = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response2.Result.ToString()!));
                 if (response != null && response.IsSuccess)
@@ -545,7 +750,7 @@ namespace Client.Controllers
                                                         int? platform,
                                                         string category,
                                                         int? page,
-                                                        int pageSize=5)
+                                                        int pageSize = 5)
         {
             int pageNumber = (page ?? 1);
             ProductViewModel productViewModel = new();
@@ -590,171 +795,166 @@ namespace Client.Controllers
         #region Category
         public async Task<IActionResult> CategoriesManager(int? page, int pageSize = 5)
         {
-			int pageNumber = (page ?? 1);
-			CategoriesViewModel categories = new();
+            int pageNumber = (page ?? 1);
+            CategoriesViewModel categories = new();
             try
             {
-                ResponseModel? response = await _categoryService.GetAllCategoryAsync(pageNumber,pageSize);
-				ResponseModel? response2 = await _categoryService.GetAllCategoryAsync(1, 99);
-				var total = JsonConvert.DeserializeObject<ICollection<CategoriesModel>>(Convert.ToString(response2.Result.ToString()!));
+                ResponseModel? response = await _categoryService.GetAllCategoryAsync(pageNumber, pageSize);
+                ResponseModel? response2 = await _categoryService.GetAllCategoryAsync(1, 99);
+                var total = JsonConvert.DeserializeObject<ICollection<CategoriesModel>>(Convert.ToString(response2.Result.ToString()!));
 
-
-				if (response != null && response.IsSuccess)
-				{
-					categories.Categories = JsonConvert.DeserializeObject<ICollection<CategoriesModel>>(Convert.ToString(response.Result.ToString()!));
-					var data = categories.Categories;
-					categories.pageNumber = pageNumber;
-					categories.totalItem = data.Count;
-					categories.pageSize = pageSize;
-					categories.pageCount = (int)Math.Ceiling(total.Count / (double)pageSize);
-				}
-				else
-				{
-					TempData["error"] = response?.Message;
-				}
-
-			}
-                catch (Exception ex)
-                {
-                    TempData["error"] = ex.Message;
-                }
-
-                return View(categories); 
-            }
-
-            
-
-           
-            
-
-          
-
-            [HttpPost]
-            public async Task<IActionResult> CreateCategory(CreateCategories model)
-            {
-                if (!ModelState.IsValid)
-                {
-                    var errors = ModelState.Values.SelectMany(v => v.Errors)
-                                                  .Select(e => e.ErrorMessage);
-                    return BadRequest(new { Errors = errors });
-                }
-
-                try
-                {
-                    // Gọi service CreateCategoryAsync
-                    var response = await _categoryService.CreateCategoryAsync(model);
-
-                    if (response != null && response.IsSuccess)
-                    {
-                        TempData["success"] = "Category created successfully";
-                        return RedirectToAction(nameof(CategoriesManager));
-                    }
-                    else
-                    {
-                        TempData["error"] = response?.Message ?? "An unknown error occurred.";
-                        return RedirectToAction(nameof(CategoriesManager));
-                    }
-                }
-                catch (Exception ex)
-                {
-                    TempData["error"] = $"An error occurred: {ex.Message}";
-                    return RedirectToAction(nameof(CategoriesManager));
-                }
-            }
-
-
-            public async Task<IActionResult> UpdateCategory(string id)
-            {
-                ResponseModel? response = await _categoryService.GetCategoryAsync(id);
 
                 if (response != null && response.IsSuccess)
                 {
-                    CategoriesModel? model = JsonConvert.DeserializeObject<CategoriesModel>(Convert.ToString(response.Result));
-
-                    // Trả về model UsersDTO để sử dụng trong View
-                    return View(model);
+                    categories.Categories = JsonConvert.DeserializeObject<ICollection<CategoriesModel>>(Convert.ToString(response.Result.ToString()!));
+                    var data = categories.Categories;
+                    categories.pageNumber = pageNumber;
+                    categories.totalItem = data.Count;
+                    categories.pageSize = pageSize;
+                    categories.pageCount = (int)Math.Ceiling(total.Count / (double)pageSize);
                 }
                 else
                 {
                     TempData["error"] = response?.Message;
                 }
-                return NotFound();
+
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = ex.Message;
             }
 
-            [HttpPost]
-            public async Task<IActionResult> UpdateCategoryConfirm([FromForm] CategoriesModel category)
+            return View(categories);
+        }
+
+
+
+
+
+
+
+
+        [HttpPost]
+        public async Task<IActionResult> CreateCategory(CreateCategories model)
+        {
+            if (!ModelState.IsValid)
             {
-                if (!ModelState.IsValid)
-                {
-                    var errors = ModelState.Values.SelectMany(v => v.Errors)
-                                                  .Select(e => e.ErrorMessage);
-                    return BadRequest(new { Errors = errors });
-                }
-
-                try
-                {
-                    // Gọi service UpdateCategoryAsync từ ICategoriesService
-                    var response = await _categoryService.UpdateCategoryAsync(category);
-
-                    if (response != null && response.IsSuccess)
-                    {
-                        TempData["success"] = "Category updated successfully";
-                        return RedirectToAction(nameof(CategoriesManager));
-                    }
-                    else
-                    {
-                        TempData["error"] = response?.Message ?? "An unknown error occurred.";
-                        return BadRequest(response.Message); // Trả về view với dữ liệu đã nhập
-
-                    }
-                }
-                catch (Exception ex)
-                {
-                    TempData["error"] = $"An error occurred: {ex.Message}";
-                    return StatusCode(500); // Trả về view với dữ liệu đã nhập và lỗi
-                }
+                var errors = ModelState.Values.SelectMany(v => v.Errors)
+                                              .Select(e => e.ErrorMessage);
+                return BadRequest(new { Errors = errors });
             }
 
-            public async Task<IActionResult> CategoryDelete(string id)
+            try
             {
-                ResponseModel? response = await _categoryService.GetCategoryAsync(id);
+                // Gọi service CreateCategoryAsync
+                var response = await _categoryService.CreateCategoryAsync(model);
+
                 if (response != null && response.IsSuccess)
                 {
-                    CategoriesModel? model = JsonConvert.DeserializeObject<CategoriesModel>(Convert.ToString(response.Result));
-
-                    // Trả về model UsersDTO để sử dụng trong View
-                    return View(model);
+                    TempData["success"] = "Category created successfully";
+                    return RedirectToAction(nameof(CategoriesManager));
                 }
                 else
                 {
-                    TempData["error"] = response?.Message;
-                }
-                return NotFound();
-            }
-            [HttpPost]
-            public async Task<IActionResult> CategoryDeleteConfirmed(string id)
-            {
-                try
-                {
-                    ResponseModel? response = await _categoryService.DeleteCategoryAsync(id);
-
-                    if (response != null && response.IsSuccess)
-                    {
-                        TempData["success"] = "Category deleted successfully";
-                        return RedirectToAction(nameof(CategoriesManager));
-                    }
-                    else
-                    {
-                        TempData["error"] = response?.Message ?? "An unknown error occurred.";
-                        return RedirectToAction(nameof(CategoriesManager));
-                    }
-                }
-                catch (Exception ex)
-                {
-                    TempData["error"] = $"An error occurred: {ex.Message}";
+                    TempData["error"] = response?.Message ?? "An unknown error occurred.";
                     return RedirectToAction(nameof(CategoriesManager));
                 }
             }
+            catch (Exception ex)
+            {
+                TempData["error"] = $"An error occurred: {ex.Message}";
+                return RedirectToAction(nameof(CategoriesManager));
+            }
+        }
+
+
+        public async Task<IActionResult> UpdateCategory(string id)
+        {
+            ResponseModel? response = await _categoryService.GetCategoryAsync(id);
+
+            if (response != null && response.IsSuccess)
+            {
+                CategoriesModel? model = JsonConvert.DeserializeObject<CategoriesModel>(Convert.ToString(response.Result));
+
+                // Trả về model UsersDTO để sử dụng trong View
+                return View(model);
+            }
+            else
+            {
+                TempData["error"] = response?.Message;
+            }
+            return NotFound();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateCategoryConfirm([FromForm] CategoriesModel category)
+        {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors)
+                                              .Select(e => e.ErrorMessage);
+                return BadRequest(new { Errors = errors });
+            }
+
+            try
+            {
+                // Gọi service UpdateCategoryAsync từ ICategoriesService
+                var response = await _categoryService.UpdateCategoryAsync(category);
+
+                if (response != null && response.IsSuccess)
+                {
+                    TempData["success"] = "Category updated successfully";
+                    return RedirectToAction(nameof(CategoriesManager));
+                }
+                else
+                {
+                    TempData["error"] = response?.Message ?? "An unknown error occurred.";
+                    return BadRequest(response.Message); // Trả về view với dữ liệu đã nhập
+
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = $"An error occurred: {ex.Message}";
+                return StatusCode(500); // Trả về view với dữ liệu đã nhập và lỗi
+            }
+        }
+
+        public async Task<IActionResult> CategoryDelete(string id)
+        {
+            ResponseModel? response = await _categoryService.GetCategoryAsync(id);
+            if (response != null && response.IsSuccess)
+            {
+                CategoriesModel? model = JsonConvert.DeserializeObject<CategoriesModel>(Convert.ToString(response.Result));
+
+                // Trả về model UsersDTO để sử dụng trong View
+                return View(model);
+            }
+            else
+            {
+                TempData["error"] = response?.Message;
+            }
+            return NotFound();
+        }
+        [HttpPost]
+        public async Task<IActionResult> CategoryDeleteConfirmed(string id)
+        {
+            try
+            {
+                ResponseModel? response = await _categoryService.DeleteCategoryAsync(id);
+
+                if (response != null && response.IsSuccess)
+                {
+                    TempData["success"] = "Category deleted successfully";
+                    return RedirectToAction(nameof(CategoriesManager));
+                }
+                else
+                {
+                    TempData["error"] = response?.Message ?? "An unknown error occurred.";
+                    return RedirectToAction(nameof(CategoriesManager));
+                }
+            }
+
 
 
 		[HttpPost]
@@ -791,159 +991,168 @@ namespace Client.Controllers
 
 			return View("CategoriesManager", categoryViewModel); // Trả về view ProductsManager với danh sách sản phẩm đã tìm kiếm
 		}
-		#endregion
+		
+        #endregion
 
-		#region Comment
-		public async Task<IActionResult> CommentManager(int? page, int pageSize = 5)
+        #region Comment
+        public async Task<IActionResult> CommentManager(int? page, int pageSize = 5)
+        {
+            int pageNumber = (page ?? 1);
+            CommentViewModel comment = new();
+            try
+
             {
-			int pageNumber = (page ?? 1);
-			CommentViewModel comment = new();
-                try
-                {
-                    ResponseModel? response = await _commentService.GetAllCommentAsync(pageNumber, pageSize);
-				    ResponseModel? response2 = await _commentService.GetAllCommentAsync(1, 99);
-				    var total = JsonConvert.DeserializeObject<ICollection<CommentDTOModel>>(Convert.ToString(response2.Result.ToString()!));
-				if (response != null && response.IsSuccess)
-                    { 
-					    comment.Comment = JsonConvert.DeserializeObject<ICollection<CommentDTOModel>>(Convert.ToString(response.Result.ToString()!));
-					    var data = comment.Comment;
-					    comment.pageNumber = pageNumber;
-					    comment.totalItem = data.Count;
-					    comment.pageSize = pageSize;
-					    comment.pageCount = (int)Math.Ceiling(total.Count / (double)pageSize);
-
-				}
-                    else
-                    {
-                        TempData["error"] = response?.Message;
-                    }
-
-                }
-                catch (Exception ex)
-                {
-                    TempData["error"] = ex.Message;
-                }
-
-
-                return View(comment);
-            }
-            [HttpPost]
-            public async Task<IActionResult> CreateComment(CreateCommentDTOModel model)
-            {
-                if (!ModelState.IsValid)
-                {
-                    var errors = ModelState.Values.SelectMany(v => v.Errors)
-                                                  .Select(e => e.ErrorMessage);
-                    return BadRequest(new { Errors = errors });
-                }
-
-                try
-                {
-                    // Gọi service CreateCommentAsync
-                    var response = await _commentService.CreateCommentAsync(model);
-
-                    if (response != null && response.IsSuccess)
-                    {
-                        TempData["success"] = "Category created successfully";
-                        return RedirectToAction(nameof(CommentManager));
-                    }
-                    else
-                    {
-                        TempData["error"] = response?.Message ?? "An unknown error occurred.";
-                        return RedirectToAction(nameof(CommentManager));
-                    }
-                }
-                catch (Exception ex)
-                {
-                    TempData["error"] = $"An error occurred: {ex.Message}";
-                    return RedirectToAction(nameof(CommentManager));
-                }
-            }
-            public async Task<IActionResult> UpdateComment(string id)
-            {
-                ResponseModel? response = await _commentService.GetByIdAsync(id);
-
+                ResponseModel? response = await _commentService.GetAllCommentAsync(pageNumber, pageSize);
+                ResponseModel? response2 = await _commentService.GetAllCommentAsync(1, 99);
+                var total = JsonConvert.DeserializeObject<ICollection<CommentDTOModel>>(Convert.ToString(response2.Result.ToString()!));
                 if (response != null && response.IsSuccess)
                 {
-                    CommentDTOModel? model = JsonConvert.DeserializeObject<CommentDTOModel>(Convert.ToString(response.Result));
+                    comment.Comment = JsonConvert.DeserializeObject<ICollection<CommentDTOModel>>(Convert.ToString(response.Result.ToString()!));
+                    var data = comment.Comment;
+                    comment.pageNumber = pageNumber;
+                    comment.totalItem = data.Count;
+                    comment.pageSize = pageSize;
+                    comment.pageCount = (int)Math.Ceiling(total.Count / (double)pageSize);
 
-                    // Trả về model UsersDTO để sử dụng trong View
-                    return View(model);
                 }
                 else
                 {
                     TempData["error"] = response?.Message;
                 }
-                return NotFound();
+
             }
+            catch (Exception ex)
+            {
+                TempData["error"] = ex.Message;
+            }
+
+
+            return View(comment);
+        }
+        [HttpPost]
+        public async Task<IActionResult> CreateComment(CreateCommentDTOModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors)
+                                              .Select(e => e.ErrorMessage);
+                return BadRequest(new { Errors = errors });
+            }
+
+            try
+            {
+                // Gọi service CreateCommentAsync
+                var response = await _commentService.CreateCommentAsync(model);
+
+                if (response != null && response.IsSuccess)
+                {
+                    TempData["success"] = "Category created successfully";
+                    return RedirectToAction(nameof(CommentManager));
+                }
+                else
+                {
+                    TempData["error"] = response?.Message ?? "An unknown error occurred.";
+                    return RedirectToAction(nameof(CommentManager));
+                }
+            }
+
+        public async Task<IActionResult> CommentDelete(string id)
+
+            catch (Exception ex)
+            {
+                TempData["error"] = $"An error occurred: {ex.Message}";
+                return RedirectToAction(nameof(CommentManager));
+            }
+        }
+        public async Task<IActionResult> UpdateComment(string id)
+        {
+            ResponseModel? response = await _commentService.GetByIdAsync(id);
+
+            if (response != null && response.IsSuccess)
+            {
+                CommentDTOModel? model = JsonConvert.DeserializeObject<CommentDTOModel>(Convert.ToString(response.Result));
+
+                // Trả về model UsersDTO để sử dụng trong View
+                return View(model);
+            }
+            else
+            {
+                TempData["error"] = response?.Message;
+            }
+            return NotFound();
+        }
 
         [HttpPost]
         public async Task<IActionResult> UpdateCommentConfirm([FromForm] CommentDTOModel comment)
         {
             if (!ModelState.IsValid)
             {
-                var errors = ModelState.ToDictionary(k => k.Key, v => v.Value.Errors.Select(e => e.ErrorMessage).ToArray());
-                return BadRequest(new { Errors = errors }); // Trả về lỗi với định dạng JSON
+                var errors = ModelState.Values.SelectMany(v => v.Errors)
+                                              .Select(e => e.ErrorMessage);
+                return BadRequest(new { Errors = errors });
             }
 
             try
+
             {
                 var response = await _commentService.UpdateCommentAsync(comment);
 
                 if (response != null && response.IsSuccess)
                 {
-                    return Ok(new { Success = true, Message = "Cập nhật bình luận thành công." });
+                    TempData["success"] = "Category updated successfully";
+                    return RedirectToAction(nameof(CommentManager));
                 }
                 else
                 {
-                    return BadRequest(new { Errors = new[] { response?.Message ?? "Có lỗi xảy ra." } });
+                    TempData["error"] = response?.Message ?? "An unknown error occurred.";
+                    return BadRequest(response.Message); // Trả về view với dữ liệu đã nhập
+
                 }
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { Errors = new[] { $"Lỗi xảy ra: {ex.Message}" } });
+                TempData["error"] = $"An error occurred: {ex.Message}";
+                return StatusCode(500); // Trả về view với dữ liệu đã nhập và lỗi
             }
         }
-
-
         public async Task<IActionResult> CommentDelete(string id)
+        {
+            ResponseModel? response = await _commentService.GetListByIdAsync(id);
+            if (response != null && response.IsSuccess)
             {
-                ResponseModel? response = await _commentService.GetListByIdAsync(id);
-                if (response != null && response.IsSuccess)
-                {
-                    var comments = JsonConvert.DeserializeObject<List<CommentDTOModel>>(Convert.ToString(response.Result));
-                    return View(comments); // Trả về danh sách bình luận
-                }
-                else
-                {
-                    TempData["error"] = response?.Message;
-                }
-                return NotFound();
+                var comments = JsonConvert.DeserializeObject<List<CommentDTOModel>>(Convert.ToString(response.Result));
+                return View(comments); // Trả về danh sách bình luận
             }
-            [HttpPost]
-            public async Task<IActionResult> CommentDeleteConfirmed(string ids)
+            else
             {
-                if (string.IsNullOrEmpty(ids))
-                {
-                    TempData["error"] = "Không có ID nào để xóa.";
-                    return RedirectToAction("CommentManager");
-                }
-
-                var idList = ids.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-
-                foreach (var id in idList)
-                {
-                    var response = await _commentService.DeleteCommentAsync(id.Trim());
-                    if (!response.IsSuccess)
-                    {
-                        TempData["error"] = response.Message; // Ghi nhận lỗi
-                        return RedirectToAction("CommentManager");
-                    }
-                }
-
-                TempData["success"] = "Xóa bình luận thành công.";
+                TempData["error"] = response?.Message;
+            }
+            return NotFound();
+        }
+        [HttpPost]
+        public async Task<IActionResult> CommentDeleteConfirmed(string ids)
+        {
+            if (string.IsNullOrEmpty(ids))
+            {
+                TempData["error"] = "Không có ID nào để xóa.";
                 return RedirectToAction("CommentManager");
             }
+
+            var idList = ids.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+
+            foreach (var id in idList)
+            {
+                var response = await _commentService.DeleteCommentAsync(id.Trim());
+                if (!response.IsSuccess)
+                {
+                    TempData["error"] = response.Message; // Ghi nhận lỗi
+                    return RedirectToAction("CommentManager");
+                }
+            }
+
+            TempData["success"] = "Xóa bình luận thành công.";
+            return RedirectToAction("CommentManager");
+        }
         #endregion
     }
 }

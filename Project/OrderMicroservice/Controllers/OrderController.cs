@@ -32,12 +32,29 @@ namespace OrderMicroService.Controllers
             }
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("search/{id}")]
+        public async Task<ActionResult> GetOrderById(string id)
+        {
+            try
+            {
+                ResponseModel response = await _orderService.GetOrderById(id);
+                if (response.IsSuccess)
+                    return Ok(response);
+                return BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                // Trả về lỗi 500 cho các lỗi chưa dự đoán
+                return StatusCode(500, new { message = "An unexpected error occurred. Detail" + ex.Message });
+            }
+        }
+
+        [HttpGet("search-payment/{id}")]
         public async Task<ActionResult> GetOrder(string id)
         {
             try
             {
-                ResponseModel response = await _orderService.GetOrder(id);
+                ResponseModel response = await _orderService.GetOrderByTransaction(id);
                 if (response.IsSuccess)
                     return Ok(response);
                 return BadRequest(response);

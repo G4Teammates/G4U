@@ -47,9 +47,9 @@ namespace Client.Models.ComentDTO
         /// <br/>
         /// ID của người dùng đã đăng bình luận.
         /// </summary>
-        [BsonElement("userId")]
-        [Required(ErrorMessage = "User ID is required.")]
-        public string UserId { get; set; }
+
+        [BsonElement("userName")]
+        public string UserName { get; set; }
 
         /// <summary>
         /// The identifier of the product related to the comment.
