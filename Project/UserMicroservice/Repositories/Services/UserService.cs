@@ -55,7 +55,7 @@ namespace UserMicroservice.Repositories.Services
 
                 // Generate random password for admin creation (future functionality: send via email)
                 userCreate.PasswordHash = BCrypt.Net.BCrypt.HashPassword("Abc123!");
-
+                userCreate.UpdatedAt = DateTime.UtcNow;
                 // Save the user to the database
                 await _context.Users.AddAsync(userCreate);
                 await _context.SaveChangesAsync();
