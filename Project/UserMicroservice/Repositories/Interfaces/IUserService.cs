@@ -1,6 +1,5 @@
 ﻿using MongoDB.Bson;
 using UserMicroservice.DBContexts.Entities;
-using UserMicroservice.DBContexts.Enum;
 using UserMicroservice.Models;
 using UserMicroservice.Models.UserManagerModel;
 namespace UserMicroservice.Repositories.Interfaces
@@ -13,7 +12,7 @@ namespace UserMicroservice.Repositories.Interfaces
         Task<ResponseModel> UpdateUser(UserUpdate user);
         Task<ResponseModel> DeleteUser(string id);
         Task<ResponseModel>? FindUsers(string? query);
-        Task<ResponseModel> ChangeStatus(string id, UserStatus status);
+
 
         //Task<ICollection<UserModel>> FindUsersCriteria(SearchCriteria criteria);
 

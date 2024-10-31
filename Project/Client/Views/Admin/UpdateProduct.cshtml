@@ -13,49 +13,41 @@
     <div class="form-group">
         <label for="id">Product ID</label>
         <input type="text" class="form-control" asp-for="Id" readonly />
-        <span asp-validation-for="Id" class="text-danger"></span>
     </div>
 
     <div class="form-group">
         <label for="name">Product Name</label>
-        <input type="text" class="form-control" asp-for="Name" required />
-        <span asp-validation-for="Name" class="text-danger"></span>
+        <input type="text" class="form-control" asp-for="Name" required value="@Model.Name" />
     </div>
 
     <div class="form-group">
         <label for="description">Description</label>
         <textarea class="form-control" asp-for="Description" rows="4" required></textarea>
-        <span asp-validation-for="Description" class="text-danger"></span>
     </div>
 
     <div class="form-group">
         <label for="price">Price</label>
         <input type="number" class="form-control" asp-for="Price" required />
-        <span asp-validation-for="Price" class="text-danger"></span>
     </div>
 
     <div class="form-group">
         <label for="sold">Sold</label>
         <input type="number" class="form-control" asp-for="Sold" required />
-        <span asp-validation-for="Sold" class="text-danger"></span>
     </div>
 
     <div class="form-group">
         <label for="numOfView">Number of Views</label>
         <input type="number" class="form-control" asp-for="Interactions.NumberOfViews" required />
-        <span asp-validation-for="Interactions.NumberOfViews" class="text-danger"></span>
     </div>
 
     <div class="form-group">
         <label for="numOfLike">Number of Likes</label>
         <input type="number" class="form-control" asp-for="Interactions.NumberOfLikes" required />
-        <span asp-validation-for="Interactions.NumberOfLikes" class="text-danger"></span>
     </div>
 
     <div class="form-group">
         <label for="discount">Discount (%)</label>
         <input type="number" class="form-control" asp-for="Discount" step="0.01" required />
-        <span asp-validation-for="Discount" class="text-danger"></span>
     </div>
 
     <div class="form-group">
@@ -67,7 +59,6 @@
                 <label class="form-check-label" for="platform_@(platform.ToString())">@platform</label>
             </div>
         }
-        
     </div>
 
     <div class="form-group">
@@ -84,7 +75,6 @@
     <div class="form-group">
         <label for="createAt">Created At</label>
         <input type="datetime-local" class="form-control" asp-for="CreatedAt" required />
-        <span asp-validation-for="CreatedAt" class="text-danger"></span>
     </div>
 
    <!-- Cập nhật các danh mục sản phẩm -->
@@ -106,7 +96,6 @@
                 }
             }
         </div>
-        <span asp-validation-for="Categories" class="text-danger"></span>
         <button type="button" class="btn btn-success mt-2 add-category">Add Category</button>
     </div>
 
@@ -150,14 +139,12 @@
                 }
             }
         </div>
-        <span asp-validation-for="Links" class="text-danger"></span>
     </div>
 
     <!-- Upload hình ảnh và file game -->
     <div class="form-group">
         <label for="ImageFiles">Upload Images</label>
         <input type="file" class="form-control" name="ImageFiles" multiple />
-        
     </div>
 
     <div class="form-group">
@@ -168,7 +155,6 @@
     <div class="form-group">
         <label for="UserName">UserName</label>
         <input type="text" class="form-control" asp-for="UserName" />
-        <span asp-validation-for="UserName" class="text-danger"></span>
     </div>
 
     <button type="submit" class="btn btn-primary">Update Product</button>

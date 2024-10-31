@@ -18,21 +18,12 @@ namespace Client.Repositories.Services.Order
             });
         }
 
-        public async Task<ResponseModel> GetOrderById(string id)
+        public async Task<ResponseModel> GetOrder(string id)
         {
             return await _baseService.SendAsync(new RequestModel()
             {
                 ApiType = StaticTypeApi.ApiType.GET,
-                Url = StaticTypeApi.APIGateWay + "/Order/search/" + id
-            });
-        }
-
-        public async Task<ResponseModel> GetOrderByTransaction(string id)
-        {
-            return await _baseService.SendAsync(new RequestModel()
-            {
-                ApiType = StaticTypeApi.ApiType.GET,
-                Url = StaticTypeApi.APIGateWay + "/Order/search-payment/" + id
+                Url = StaticTypeApi.APIGateWay + "/Order/" + id
             });
         }
 
@@ -42,7 +33,7 @@ namespace Client.Repositories.Services.Order
             {
                 ApiType = StaticTypeApi.ApiType.PUT,
                 Data = order,
-                Url = StaticTypeApi.APIGateWay + "/Order/" + id
+                Url = StaticTypeApi.APIGateWay + "/Order" + id
             });
         }
 
@@ -51,7 +42,7 @@ namespace Client.Repositories.Services.Order
             return await _baseService.SendAsync(new RequestModel()
             {
                 ApiType = StaticTypeApi.ApiType.GET,
-                Url = StaticTypeApi.APIGateWay + "/Order/" + id + "/items"
+                Url = StaticTypeApi.APIGateWay + "/Order" + id + "/items"
             });
         }
     }

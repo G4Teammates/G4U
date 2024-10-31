@@ -9,7 +9,7 @@ namespace Client.Repositories.Interfaces.Comment
     public interface ICommentService
     {
         Task<ResponseModel> GetByIdAsync(string id);
-        Task<ResponseModel> GetAllCommentAsync(int pageNumber, int pageSize);
+        Task<ResponseModel> GetAllCommentAsync();
         Task<ResponseModel> GetListByIdAsync(string id);
         Task<ResponseModel> CreateCommentAsync(CreateCommentDTOModel Comment);
         Task<ResponseModel> UpdateCommentAsync(CommentDTOModel Comment);

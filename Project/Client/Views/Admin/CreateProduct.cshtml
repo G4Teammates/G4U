@@ -68,39 +68,16 @@
 
     <!-- Platform -->
     <div class="form-group">
-       @*  <label asp-for="@Model.Platform" class="control-label"></label>
+        <label asp-for="@Model.Platform" class="control-label"></label>
         <input asp-for="@Model.Platform" class="form-control" type="number" />
-        <span asp-validation-for="@Model.Platform" class="text-danger"></span> *@
-
-
-        <label asp-for="@Model.Status" class="form-label"></label>
-        <select asp-for="@Model.Status" class="form-select" aria-label="Status">
-            <option value="0" selected>Unknown</option>
-            <option value="1">Downloadable</option>
-            <option value="2">HTML</option>
-            <option value="3">WebGL</option>
-            <option value="4">Window</option>
-            <option value="5">Android</option>
-            <option value="6">iOS</option>
-            <option value="7">MacOS</option>
-            <option value="8">Linux</option>
-            <option value="9">Other</option>
-
-        </select>
-        <span asp-validation-for="Status" class="text-danger"></span>
+        <span asp-validation-for="@Model.Platform" class="text-danger"></span>
     </div>
 
     <!-- Status -->
     <div class="form-group">
-        <label asp-for="@Model.Status" class="form-label"></label>
-        <select asp-for="@Model.Status" class="form-select" aria-label="Status">
-            <option value="0" selected>Inactive</option>
-            <option value="1">Active</option>
-            <option value="2">Block</option>
-            <option value="3">Deleted</option>
-
-        </select>
-        <span asp-validation-for="Status" class="text-danger"></span>
+        <label asp-for="@Model.Status" class="control-label"></label>
+        <input asp-for="@Model.Status" class="form-control" type="number" />
+        <span asp-validation-for="@Model.Status" class="text-danger"></span>
     </div>
 
     <!-- ImageFiles (Upload multiple images) -->

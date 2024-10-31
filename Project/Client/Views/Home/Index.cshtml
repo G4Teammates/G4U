@@ -1,5 +1,5 @@
-﻿@using Client.Models
-@model AllModel
+﻿@using Client.Models.UserProductDTO
+@model UserProductViewModel
 
 
 @*
@@ -21,46 +21,18 @@
      data-login_uri='/google-response'
      data-auto_prompt='false'>
 </div>
+
 <div id="carouselExampleInterval" class="carousel slide mt-4 w-100 h-100" data-bs-ride="carousel" style="border-radius:5px; margin: 0 3%;">
     <div class="carousel-inner">
-        @if (Model.Product != null)
-        {
-            // Lọc và lấy 4 sản phẩm mới nhất theo CreatedAt
-            var latestProducts = Model.Product
-            .OrderByDescending(p => p.CreatedAt) // Sắp xếp theo CreatedAt từ mới đến cũ
-            .Take(4); // Lấy 4 sản phẩm đầu tiên
-
-            // Biến để kiểm tra xem sản phẩm đầu tiên có được đánh dấu là "active" không
-            bool isFirstItem = true;
-
-            foreach (var product in latestProducts)
-            {
-                <div class="carousel-item @(isFirstItem ? "active" : "")" data-bs-interval="3000" style="border-radius:5px;">
-                    @if (product.Links != null)
-                    {
-                        string firstImageUrl = null; // Biến để lưu URL hình ảnh đầu tiên
-
-                        foreach (var link in product.Links) // Lặp qua từng đối tượng LinkModel
-                        {
-                            if (link.Url.Contains("cloudinary"))
-                            {
-                                firstImageUrl = link.Url; // Lưu URL hình ảnh đầu tiên
-                                break; // Thoát khỏi vòng lặp khi đã tìm thấy
-                            }
-                        }
-
-                        // Hiển thị hình ảnh đầu tiên nếu có
-                        if (firstImageUrl != null)
-                        {
-                            <img src="@firstImageUrl" alt="Cloudinary Image" class="d-block w-100" style="border-radius:5px;" />
-                        }
-                    }
-                </div>
-
-                // Đánh dấu item đầu tiên để thiết lập class "active"
-                isFirstItem = false;
-            }
-        }
+        <div class="carousel-item active" data-bs-interval="3000" style="border-radius:5px;">
+            <img src="./Image/game.jpg" class="d-block w-100" alt="..." style="border-radius:5px;">
+        </div>
+        <div class="carousel-item" data-bs-interval="3000" style="border-radius:5px;">
+            <img src="./Image/game.jpg" class="d-block w-100" alt="..." style="border-radius:5px;">
+        </div>
+        <div class="carousel-item" data-bs-interval="3000" style="border-radius:5px;">
+            <img src="./Image/game.jpg  " class="d-block w-100" alt="..." style="border-radius:5px;">
+        </div>
     </div>
     <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleInterval" data-bs-slide="prev">
         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -72,7 +44,6 @@
     </button>
 </div>
 
-
 <div class="gamemonth">
     <section class="header_section">
         <h1>Game Of The Month</h1>
@@ -80,59 +51,86 @@
     <div class="wrapper_gamemonth">
         <div class="slider_gamemonth">
             <div class="container_gamemonth owl-carousel owl-theme">
-                @if (Model.Product != null && Model.Product.Any(p => p.CreatedAt.Year == DateTime.UtcNow.Year && p.CreatedAt.Month == DateTime.UtcNow.Month))
-                {
-                    int count = 0;
-                    foreach (var product in Model.Product.Where(p => p.CreatedAt.Year == DateTime.UtcNow.Year && p.CreatedAt.Month == DateTime.UtcNow.Month))
-                    {
-                        if (count >= 6) break; // Giới hạn hiển thị 5 sản phẩm đầu tiên
-                        count++;
-
-                        <div class="card_gamemonth item">
-                            <div class="img_gamemonth">
-                                @if (product.Links != null)
-                                {
-                                    string firstImageUrl = product.Links.FirstOrDefault(link => link.Url.Contains("cloudinary"))?.Url;
-                                    if (firstImageUrl != null)
-                                    {
-                                        <img src="@firstImageUrl" alt="Cloudinary Image" />
-                                    }
-                                }
-                            </div>
-                            <div class="info">
-                                <span class="name">@product.Name</span>
-                                <p class="about">@product.Description</p>
-                            </div>
-                            <div class="footeer_card">
-                                <div class="btn_card">
-                                    <button>Read more...</button>
-                                </div>
-                            </div>
-                        </div>
-                    }
-                }
-                else
-                {
-                    <div class="card_gamemonth item">
-                        <div class="img_gamemonth">
-                            <img src="~/Image/game.jpg" />
-                        </div>
-                        <div class="info">
-                            <span class="name">Justin Laketimber</span>
-                            <p class="about">Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
-                        </div>
-                        <div class="footeer_card">
-                            <div class="btn_card">
-                                <button>Read more...</button>
-                            </div>
+                <div class="card_gamemonth item">
+                    <div class="img_gamemonth">
+                        <img src="~/Image/game.jpg" />
+                    </div>
+                    <div class="info">
+                        <span class="name">Justin Laketimber</span>
+                        <p class="about">Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
+                    </div>
+                    <div class="footeer_card">
+                        <div class="btn_card">
+                            <button>Read more...</button>
                         </div>
                     </div>
-                }
+                    @* Chứa thông tin chi tiết *@
+
+                </div>
+                <div class="card_gamemonth item">
+                    <div class="img_gamemonth">
+                        <img src="~/Image/game.jpg" />
+                    </div>
+                    <div class="info">
+                        <span class="name">Justin Laketimber</span>
+                        <p class="about">Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
+                    </div>
+                    <div class="footeer_card">
+                        <div class="btn_card">
+                            <button>Read more...</button>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="card_gamemonth item">
+                    <div class="img_gamemonth">
+                        <img src="~/Image/game.jpg" />
+                    </div>
+                    <div class="info">
+                        <span class="name">Justin Laketimber</span>
+                        <p class="about">Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
+                    </div>
+                    <div class="footeer_card">
+                        <div class="btn_card">
+                            <button>Read more...</button>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="card_gamemonth item">
+                    <div class="img_gamemonth">
+                        <img src="~/Image/game.jpg" />
+                    </div>
+                    <div class="info">
+                        <span class="name">Justin Laketimber</span>
+                        <p class="about">Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
+                    </div>
+                    <div class="footeer_card">
+                        <div class="btn_card">
+                            <button>Read more...</button>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="card_gamemonth item">
+                    <div class="img_gamemonth">
+                        <img src="~/Image/game.jpg" />
+                    </div>
+                    <div class="info">
+                        <span class="name">Justin Laketimber</span>
+                        <p class="about">Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
+                    </div>
+                    <div class="footeer_card">
+                        <div class="btn_card">
+                            <button>Read more...</button>
+                        </div>
+
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
-
 
 <div class="gamefree row">
     <div class="row">
@@ -146,38 +144,35 @@
             </a>
         </div>
     </div>
-    <div class="row" style="justify-content:space-around;">
-        @if (Model.Product != null)
-        {
-            // Lọc sản phẩm có Discount > 0, sắp xếp giảm dần theo Discount và lấy 4 sản phẩm đầu tiên
-            var topDiscountProducts = Model.Product
-            .Where(p => p.Discount > 0)
-            .OrderByDescending(p => p.Discount)
-            .Take(4);
 
-            foreach (var product in topDiscountProducts)
-            {
-                <div class="col-12 col-sm-12 col-md-3 card_other mt-4">
-                    @if (product.Links != null)
-                    {
-                        string firstImageUrl = product.Links.FirstOrDefault(link => link.Url.Contains("cloudinary"))?.Url;
-                        if (firstImageUrl != null)
-                        {
-                            <img src="@firstImageUrl" alt="Cloudinary Image" />
-                        }
-                    }
-                    <div class="info_other">
-                        <h1>@product.Name</h1>
-                        <p>@product.Description</p>
-                        <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
-                    </div>
-                </div>
-            }
-        }
+    <div class="row" style="justify-content:space-around;">
+        <div class="col-12 col-sm-12 col-md-3 card_other mt-4">
+            <img src="~/Image/game.jpg" />
+            <div class="info_other">
+                <h1>Heading 2</h1>
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
+                <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
+            </div>
+        </div>
+        <div class="col-12 col-sm-12 col-md-3 card_other mt-4">
+            <img src="~/Image/game.jpg" />
+            <div class="info_other">
+                <h1>Heading 2</h1>
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
+                <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
+            </div>
+        </div>
+        <div class="col-12 col-sm-12 col-md-3 card_other mt-4">
+            <img src="~/Image/game.jpg" />
+            <div class="info_other">
+                <h1>Heading 2</h1>
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
+                <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
+            </div>
+        </div>
     </div>
     <p>Discounts Now - Dec 10</p>
 </div>
-
 <div class="ortherproduct">
     <section class="header_section">
         <h1>Orther Product</h1>
@@ -192,9 +187,49 @@
         <a class="col-4 col-sm-2 col-md-2" href="#more">More</a>
     </div>
 
+    <section id="foryou" class="mt-5">
+        <div class="d-flex justify-content-between align-items-center mb-1">
+            <h3>For You</h3>
+            <a href="">View More</a>
+        </div>
+        <div class="wrapper_other">
+            <div class="card_other mt-4">
+                <img src="~/Image/game.jpg" />
+                <div class="info_other">
+                    <h1>Heading 1</h1>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
+                    <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
+                </div>
+            </div>
 
+            <div class="card_other mt-4">
+                <img src="~/Image/game.jpg" />
+                <div class="info_other">
+                    <h1>Heading 2</h1>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
+                    <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
+                </div>
+            </div>
 
+            <div class="card_other mt-4">
+                <img src="~/Image/game.jpg" />
+                <div class="info_other">
+                    <h1>Heading 3</h1>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
+                    <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
+                </div>
+            </div>
 
+            <div class="card_other mt-4">
+                <img src="~/Image/game.jpg" />
+                <div class="info_other">
+                    <h1>Heading 4</h1>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
+                    <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
+                </div>
+            </div>
+        </div>
+    </section>
 
 
     <section id="popular" class="mt-5">
@@ -203,37 +238,43 @@
             <a href="">View More</a>
         </div>
         <div class="wrapper_other">
-            @if (Model.Product != null)
-            {
-                // Lấy 4 sản phẩm có số NumberOfViews cao nhất
-                var topViewedProducts = Model.Product
-                .Where(p => p.Interactions != null) // Kiểm tra xem Interactions có khác null không
-                .OrderByDescending(p => p.Interactions.NumberOfViews) // Sắp xếp theo NumberOfViews
-                .Take(4); // Lấy 4 sản phẩm đầu tiên
+            <div class="card_other mt-4">
+                <img src="~/Image/game.jpg" />
+                <div class="info_other">
+                    <h1>Heading 1</h1>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
+                    <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
+                </div>
+            </div>
 
-                foreach (var product in topViewedProducts)
-                {
-                    <div class="card_other mt-4">
-                        @if (product.Links != null)
-                        {
-                            string firstImageUrl = product.Links.FirstOrDefault(link => link.Url.Contains("cloudinary"))?.Url;
-                            if (firstImageUrl != null)
-                            {
-                                <img src="@firstImageUrl" alt="Cloudinary Image" />
-                            }
-                        }
-                        <div class="info_other">
-                            <h1>@product.Name</h1>
-                            <p>@product.Description</p>
-                            <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
-                        </div>
-                    </div>
-                }
-            }
+            <div class="card_other mt-4">
+                <img src="~/Image/game.jpg" />
+                <div class="info_other">
+                    <h1>Heading 2</h1>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
+                    <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
+                </div>
+            </div>
+
+            <div class="card_other mt-4">
+                <img src="~/Image/game.jpg" />
+                <div class="info_other">
+                    <h1>Heading 3</h1>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
+                    <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
+                </div>
+            </div>
+
+            <div class="card_other mt-4">
+                <img src="~/Image/game.jpg" />
+                <div class="info_other">
+                    <h1>Heading 4</h1>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
+                    <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
+                </div>
+            </div>
         </div>
     </section>
-
-
 
     <section id="free" class="mt-5">
         <div class="d-flex justify-content-between align-items-center mb-1">
@@ -241,38 +282,43 @@
             <a href="">View More</a>
         </div>
         <div class="wrapper_other">
-            @if (Model.Product != null)
-            {
-                // Lọc sản phẩm có Price = 0 và lấy 4 sản phẩm đầu tiên
-                var freeProducts = Model.Product
-                .Where(p => p.Price == 0)
-                .Take(4);
+            <div class="card_other mt-4">
+                <img src="~/Image/game.jpg" />
+                <div class="info_other">
+                    <h1>Heading 1</h1>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
+                    <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
+                </div>
+            </div>
 
-                foreach (var product in freeProducts)
-                {
-                    <div class="card_other mt-4">
-                        @if (product.Links != null)
-                        {
-                            // Tìm link ảnh đầu tiên từ Cloudinary
-                            string firstImageUrl = product.Links.FirstOrDefault(link => link.Url.Contains("cloudinary"))?.Url;
+            <div class="card_other mt-4">
+                <img src="~/Image/game.jpg" />
+                <div class="info_other">
+                    <h1>Heading 2</h1>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
+                    <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
+                </div>
+            </div>
 
-                            // Hiển thị ảnh đầu tiên nếu tồn tại
-                            if (firstImageUrl != null)
-                            {
-                                <img src="@firstImageUrl" alt="Cloudinary Image" />
-                            }
-                        }
-                        <div class="info_other">
-                            <h1>@product.Name</h1>
-                            <p>@product.Description</p>
-                            <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
-                        </div>
-                    </div>
-                }
-            }
+            <div class="card_other mt-4">
+                <img src="~/Image/game.jpg" />
+                <div class="info_other">
+                    <h1>Heading 3</h1>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
+                    <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
+                </div>
+            </div>
+
+            <div class="card_other mt-4">
+                <img src="~/Image/game.jpg" />
+                <div class="info_other">
+                    <h1>Heading 4</h1>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
+                    <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
+                </div>
+            </div>
         </div>
     </section>
-
 
     <section id="new" class="mt-5">
         <div class="d-flex justify-content-between align-items-center mb-1">
@@ -280,37 +326,43 @@
             <a href="">View More</a>
         </div>
         <div class="wrapper_other">
-            @if (Model.Product != null)
-            {
-                // Lọc và lấy 4 sản phẩm có CreatedAt mới nhất
-                var latestProducts = Model.Product
-                .OrderByDescending(p => p.CreatedAt) // Sắp xếp theo CreatedAt giảm dần
-                .Take(4); // Lấy 4 sản phẩm đầu tiên
+            <div class="card_other mt-4">
+                <img src="~/Image/game.jpg" />
+                <div class="info_other">
+                    <h1>Heading 1</h1>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
+                    <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
+                </div>
+            </div>
 
-                foreach (var product in latestProducts)
-                {
-                    <div class="card_other mt-4">
-                        @if (product.Links != null)
-                        {
-                            string firstImageUrl = product.Links.FirstOrDefault(link => link.Url.Contains("cloudinary"))?.Url;
+            <div class="card_other mt-4">
+                <img src="~/Image/game.jpg" />
+                <div class="info_other">
+                    <h1>Heading 2</h1>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
+                    <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
+                </div>
+            </div>
 
-                            // Hiển thị hình ảnh đầu tiên nếu có
-                            if (firstImageUrl != null)
-                            {
-                                <img src="@firstImageUrl" alt="Cloudinary Image" />
-                            }
-                        }
-                        <div class="info_other">
-                            <h1>@product.Name</h1>
-                            <p>@product.Description</p>
-                            <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
-                        </div>
-                    </div>
-                }
-            }
+            <div class="card_other mt-4">
+                <img src="~/Image/game.jpg" />
+                <div class="info_other">
+                    <h1>Heading 3</h1>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
+                    <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
+                </div>
+            </div>
+
+            <div class="card_other mt-4">
+                <img src="~/Image/game.jpg" />
+                <div class="info_other">
+                    <h1>Heading 4</h1>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
+                    <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
+                </div>
+            </div>
         </div>
     </section>
-
 
     <section id="more" class="mt-5">
         <div class="d-flex justify-content-between align-items-center mb-1">
@@ -318,40 +370,41 @@
             <a href="">View More</a>
         </div>
         <div class="wrapper_other">
-            @if (Model.Product != null)
-            {
-                foreach (var product in Model.Product)
-                {
-                    <div class="card_other mt-4">
-                        @if (product.Links != null)
-                        {
-                            string firstImageUrl = null; // Biến để lưu URL hình ảnh đầu tiên
+            <div class="card_other mt-4">
+                <img src="~/Image/game.jpg" />
+                <div class="info_other">
+                    <h1>Heading 1</h1>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
+                    <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
+                </div>
+            </div>
 
-                            foreach (var link in product.Links) // Lặp qua từng đối tượng LinkModel
-                            {
-                                if (link.Url.Contains("cloudinary"))
-                                {
-                                    firstImageUrl = link.Url; // Lưu URL hình ảnh đầu tiên
-                                    break; // Thoát khỏi vòng lặp khi đã tìm thấy
-                                }
-                            }
+            <div class="card_other mt-4">
+                <img src="~/Image/game.jpg" />
+                <div class="info_other">
+                    <h1>Heading 2</h1>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
+                    <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
+                </div>
+            </div>
 
-                            // Hiển thị hình ảnh đầu tiên nếu có
-                            if (firstImageUrl != null)
-                            {
-                                <img src="@firstImageUrl" alt="Cloudinary Image" />
-                            }
+            <div class="card_other mt-4">
+                <img src="~/Image/game.jpg" />
+                <div class="info_other">
+                    <h1>Heading 3</h1>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
+                    <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
+                </div>
+            </div>
 
-
-                        }
-                        <div class="info_other">
-                            <h1>@product.Name</h1>
-                            <p>@product.Description</p>
-                            <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
-                        </div>
-                    </div>
-                }
-            }
+            <div class="card_other mt-4">
+                <img src="~/Image/game.jpg" />
+                <div class="info_other">
+                    <h1>Heading 4</h1>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
+                    <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
+                </div>
+            </div>
         </div>
     </section>
 </div>
@@ -360,106 +413,137 @@
         <h2>
             <a href="" style="text-decoration:none;color:black;">Top Sellers <i class="fa-solid fa-angle-right"></i></a>
         </h2>
-        <div class="row">
-            @if (Model.Product != null)
-            {
-                // Lọc sản phẩm, sắp xếp giảm dần theo số lượng đã bán và lấy 4 sản phẩm đầu tiên
-                var topSoldProducts = Model.Product
-                .OrderByDescending(p => p.Sold)
-                .Take(4);
-
-                foreach (var product in topSoldProducts)
-                {
-                    <div class="col-4 col-sm-4 col-md-4 mt-3">
-                        @if (product.Links != null)
-                        {
-                            string firstImageUrl = product.Links.FirstOrDefault(link => link.Url.Contains("cloudinary"))?.Url;
-                            if (firstImageUrl != null)
-                            {
-                                <img src="@firstImageUrl" alt="Cloudinary Image" class="img-fluid" />
-                            }
-                        }
-                    </div>
-                    <div class="col-8 col-sm-8 col-md-8 mt-3">
-                        @product.Name
-                    </div>
-                }
-            }
+        <div class="row mt-3">
+            <div class="col-4 col-sm-4 col-md-4">
+                <img src="~/image/game.jpg" class="img-fluid" />
+            </div>
+            <div class="col-8 col-sm-8 col-md-8">
+                Game ne
+            </div>
         </div>
-    </div>
+        <div class="row mt-3">
+            <div class="col-4 col-sm-4 col-md-4">
+                <img src="~/image/game.jpg" class="img-fluid" />
+            </div>
+            <div class="col-8 col-sm-8 col-md-8">
+                Game ne
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-4 col-sm-4 col-md-4">
+                <img src="~/image/game.jpg" class="img-fluid" />
+            </div>
+            <div class="col-8 col-sm-8 col-md-8">
+                Game ne
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-4 col-sm-4 col-md-4">
+                <img src="~/image/game.jpg" class="img-fluid" />
+            </div>
+            <div class="col-8 col-sm-8 col-md-8">
+                Game ne
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-4 col-sm-4 col-md-4">
+                <img src="~/image/game.jpg" class="img-fluid" />
+            </div>
+            <div class="col-8 col-sm-8 col-md-8">
+                Game ne
+            </div>
+        </div>
 
+    </div>
     <div class="col-12 col-sm-12 col-md-4" style="border-right:1px solid black;border-left:1px solid black;">
         <h2>
             <a href="" style="text-decoration:none;color:black;">Most Played<i class="fa-solid fa-angle-right"></i></a>
         </h2>
-        <div class="row">
-            @if (Model.Product != null)
-            {
-                // Lọc sản phẩm có InteractionModel và sắp xếp theo NumberOfLikes, lấy 4 sản phẩm đầu tiên
-                var topLikedProducts = Model.Product
-                .Where(p => p.Interactions != null) // Đảm bảo InteractionModel không null
-                .OrderByDescending(p => p.Interactions.NumberOfLikes)
-                .Take(4);
-
-                foreach (var product in topLikedProducts)
-                {
-                    <div class="col-4 col-sm-4 col-md-4 mt-3">
-                        @if (product.Links != null)
-                        {
-                            string firstImageUrl = product.Links.FirstOrDefault(link => link.Url.Contains("cloudinary"))?.Url;
-                            if (firstImageUrl != null)
-                            {
-                                <img src="@firstImageUrl" alt="Cloudinary Image" class="img-fluid" />
-                            }
-                        }
-                    </div>
-                    <div class="col-8 col-sm-8 col-md-8 mt-3">
-                        @product.Name
-                    </div>
-                }
-            }
+        <div class="row mt-3">
+            <div class="col-4 col-sm-4 col-md-4">
+                <img src="~/image/game.jpg" class="img-fluid" />
+            </div>
+            <div class="col-8 col-sm-8 col-md-8">
+                Game ne
+            </div>
         </div>
-    </div>
+        <div class="row mt-3">
+            <div class="col-4 col-sm-4 col-md-4">
+                <img src="~/image/game.jpg" class="img-fluid" />
+            </div>
+            <div class="col-8 col-sm-8 col-md-8">
+                Game ne
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-4 col-sm-4 col-md-4">
+                <img src="~/image/game.jpg" class="img-fluid" />
+            </div>
+            <div class="col-8 col-sm-8 col-md-8">
+                Game ne
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-4 col-sm-4 col-md-4">
+                <img src="~/image/game.jpg" class="img-fluid" />
+            </div>
+            <div class="col-8 col-sm-8 col-md-8">
+                Game ne
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-4 col-sm-4 col-md-4">
+                <img src="~/image/game.jpg" class="img-fluid" />
+            </div>
+            <div class="col-8 col-sm-8 col-md-8">
+                Game ne
+            </div>
+        </div>
 
+    </div>
     <div class="col-12 col-sm-12 col-md-4" style="border-right:1px solid black;border-left:1px solid black;">
         <h2>
             <a href="" style="text-decoration:none;color:black;">Top Upcoming Wishlisted <i class="fa-solid fa-angle-right"></i></a>
         </h2>
-        <div class="row">
-            @if (Model.Product != null)
-            {
-                foreach (var product in Model.Product)
-                {
-                    <div class="col-4 col-sm-4 col-md-4 mt-3">
-                        @if (product.Links != null)
-                        {
-                            string firstImageUrl = null; // Biến để lưu URL hình ảnh đầu tiên
-
-                            foreach (var link in product.Links) // Lặp qua từng đối tượng LinkModel
-                            {
-                                if (link.Url.Contains("cloudinary"))
-                                {
-                                    firstImageUrl = link.Url; // Lưu URL hình ảnh đầu tiên
-                                    break; // Thoát khỏi vòng lặp khi đã tìm thấy
-                                }
-                            }
-
-                            // Hiển thị hình ảnh đầu tiên nếu có
-                            if (firstImageUrl != null)
-                            {
-                                <img src="@firstImageUrl" alt="Cloudinary Image" class="img-fluid" />
-                            }
-
-
-                        }
-                    </div>
-                    <div class="col-8 col-sm-8 col-md-8 mt-3">
-                        @product.Name
-                    </div>
-                }
-            }
-
-
+        <div class="row mt-3">
+            <div class="col-4 col-sm-4 col-md-4">
+                <img src="~/image/game.jpg" class="img-fluid" />
+            </div>
+            <div class="col-8 col-sm-8 col-md-8">
+                Game ne
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-4 col-sm-4 col-md-4">
+                <img src="~/image/game.jpg" class="img-fluid" />
+            </div>
+            <div class="col-8 col-sm-8 col-md-8">
+                Game ne
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-4 col-sm-4 col-md-4">
+                <img src="~/image/game.jpg" class="img-fluid" />
+            </div>
+            <div class="col-8 col-sm-8 col-md-8">
+                Game ne
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-4 col-sm-4 col-md-4">
+                <img src="~/image/game.jpg" class="img-fluid" />
+            </div>
+            <div class="col-8 col-sm-8 col-md-8">
+                Game ne
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-4 col-sm-4 col-md-4">
+                <img src="~/image/game.jpg" class="img-fluid" />
+            </div>
+            <div class="col-8 col-sm-8 col-md-8">
+                Game ne
+            </div>
         </div>
 
     </div>

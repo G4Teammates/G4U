@@ -45,8 +45,8 @@ namespace CommentMicroservice.Models
         /// <br/>
         /// ID của người dùng đã đăng bình luận.
         /// </summary>
-        [BsonElement("userName")]
-        public string UserName { get; set; }
+        [BsonElement("userId")]
+        public string UserId { get; set; }
 
         /// <summary>
         /// The identifier of the product related to the comment.

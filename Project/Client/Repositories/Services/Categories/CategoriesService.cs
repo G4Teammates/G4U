@@ -4,7 +4,6 @@ using Client.Models.CategorisDTO;
 using Client.Repositories.Interfaces;
 using Client.Repositories.Interfaces.Categories;
 using Client.Utility;
-using Microsoft.CodeAnalysis;
 
 namespace Client.Repositories.Services.Categories
 {
@@ -40,7 +39,7 @@ namespace Client.Repositories.Services.Categories
             });
         }
 
-		public async Task<ResponseModel> GetAllCategoryAsync(int pageNumber, int pageSize)
+        public async Task<ResponseModel> GetAllCategoryAsync(int pageNumber, int pageSize)
         {
             return await _baseService.SendAsync(new RequestModel()
             {
@@ -58,16 +57,7 @@ namespace Client.Repositories.Services.Categories
             });
         }
 
-		public async Task<ResponseModel?> SearchProductAsync(string searchString, int? pageNumber, int pageSize)
-		{
-			return await _baseService.SendAsync(new RequestModel()
-			{
-				ApiType = StaticTypeApi.ApiType.GET,
-				Url = $"{StaticTypeApi.APIGateWay}/Category/search={searchString}?page=" + pageNumber.ToString() + "&pageSize=" + pageSize.ToString()
-			});
-		}
-
-		public async Task<ResponseModel> UpdateCategoryAsync(CategoriesModel category)
+        public async Task<ResponseModel> UpdateCategoryAsync(CategoriesModel category)
         {
             var formData = new MultipartFormDataContent();
             formData.Add(new StringContent(category.Id), "Id");

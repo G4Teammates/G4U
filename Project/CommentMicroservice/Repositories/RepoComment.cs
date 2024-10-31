@@ -37,7 +37,7 @@ namespace CommentMicroservice.Repositories
                     Content = Comment.Content,
                     NumberOfLikes = 0,
                     NumberOfDisLikes = 0,
-                    UserName = Comment.UserName,
+                    UserId = Comment.UserId,
                     Status = Comment.Status,
                     ProductId = Comment.ProductId,
                     ParentId = Comment.ParentId,
@@ -59,7 +59,7 @@ namespace CommentMicroservice.Repositories
                 upComm.Content = Comment.Content;
                 upComm.NumberOfLikes = Comment.NumberOfLikes;
                 upComm.NumberOfDisLikes = Comment.NumberOfDisLikes;
-                upComm.UserName = Comment.UserName;
+                upComm.UserId = Comment.UserId;
                 upComm.Status = Comment.Status;
                 upComm.ProductId = Comment.ProductId;
                 upComm.ParentId = Comment.ParentId;
@@ -80,34 +80,6 @@ namespace CommentMicroservice.Repositories
                 _db.Comments.RemoveRange(comments);
                 await _db.SaveChangesAsync();
             }
-        }
-
-        public IEnumerable<Comment> Search(string searchstring)
-        {
-            var Products = _db.Comments.AsQueryable();
-
-
-            if (!string.IsNullOrEmpty(searchstring))
-            {
-                // Tìm kiếm theo username
-                var resultByName = Products.Where(x => x.UserName.Contains(searchstring));
-                if (resultByName.Any())
-                {
-                    return resultByName;
-                }
-                // Check if searchstring can be converted to DateTime
-                DateTime searchDate;
-                if (DateTime.TryParse(searchstring, out searchDate))
-                {
-                    var resultByDate = Products.Where(x => x.CreatedAt.Date == searchDate.Date);
-                    if (resultByDate.Any())
-                    {
-                        return resultByDate;
-                    }
-                }
-            }
-            // Nếu không có kết quả nào khớp với điều kiện tìm kiếm, trả về danh sách trống
-            return new List<Comment>();
         }
 
         #region method

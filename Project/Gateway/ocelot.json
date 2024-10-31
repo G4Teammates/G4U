@@ -292,20 +292,6 @@
       "UpstreamHttpMethod": [ "Put" ]
     },
 
-    //Update
-    {
-      "DownstreamPathTemplate": "/api/User/status/{id}",
-      "DownstreamScheme": "https",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 7107
-        }
-      ],
-      "UpstreamPathTemplate": "/User/status/{id}",
-      "UpstreamHttpMethod": [ "Put" ]
-    },
-
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //                                                                                                                    //
     //                                                Categories                                                          //
@@ -495,7 +481,7 @@
 
     //Get by id
     {
-      "DownstreamPathTemplate": "/api/Order/search/{id}",
+      "DownstreamPathTemplate": "/api/Order/{id}",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
@@ -503,27 +489,13 @@
           "Port": 7297
         }
       ],
-      "UpstreamPathTemplate": "/Order/search/{id}",
-      "UpstreamHttpMethod": [ "Get" ]
-    },
-    
-    //Get by payment id
-    {
-      "DownstreamPathTemplate": "/api/Order/search-payment/{id}",
-      "DownstreamScheme": "https",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 7297
-        }
-      ],
-      "UpstreamPathTemplate": "/Order/search-payment/{id}",
+      "UpstreamPathTemplate": "/Order/{id}",
       "UpstreamHttpMethod": [ "Get" ]
     },
 
     //Get order items
     {
-      "DownstreamPathTemplate": "/api/Order/{id}/items",
+      "DownstreamPathTemplate": "/api/Order/OrderItems/{id}",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
@@ -531,7 +503,7 @@
           "Port": 7297
         }
       ],
-      "UpstreamPathTemplate": "/Order/{id}/items",
+      "UpstreamPathTemplate": "/Order/OrderItems/{id}",
       "UpstreamHttpMethod": [ "Get" ]
     },
     //Update order status
@@ -550,7 +522,6 @@
 
   ],
   "GlobalConfiguration": {
-    "BaseUrl": "https://localhost:7260",
-    "RequestBodySizeLimit": 104857600
+    "BaseUrl": "https://localhost:7260"
   }
 }

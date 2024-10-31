@@ -11,20 +11,16 @@ namespace Client.Models.ProductDTO
         public string Id { get; set; } = ObjectId.GenerateNewId().ToString();
 
         [Required(ErrorMessage = "Name is required")]
-        [StringLength(256, MinimumLength = 2, ErrorMessage = "The Name must be at least {2} and at max {1} characters long.")]
-        [RegularExpression(@"^[a-zA-Z0-9\s]+$", ErrorMessage = "The Name cannot contain special characters.")]   /*Khong dc chua ky tu dac biet*/
+        [StringLength(256, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 2)]
         public required string Name { get; set; }
-
 
 
         [MaxLength(10000, ErrorMessage = "The {0} must be at max {1} characters long.")]
         public string? Description { get; set; }
 
-        [Range(0, int.MaxValue, ErrorMessage = "The {0} must be greater or equal than {1}.")]
-        [RegularExpression(@"^[0-9]+$", ErrorMessage = "The {0} must be a valid positive integer without any special characters or decimal points.")]
-        public required decimal Price { get; set; }
-
-
+        [Range(0, double.MaxValue, ErrorMessage = "The {0} must be greater or equal than {1}")]
+        [RegularExpression(@"^\d+(\.\d{1,2})?$", ErrorMessage = "The {0} must have no more than 2 decimal places")]
+        public decimal Price { get; set; }
 
         [Range(0, int.MaxValue, ErrorMessage = "The {0} must be greater or equal than {1}")]
         public int Sold { get; set; } = 0;
