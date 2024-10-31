@@ -82,6 +82,34 @@ namespace CommentMicroservice.Repositories
             }
         }
 
+        public IEnumerable<Comment> Search(string searchstring)
+        {
+            var Products = _db.Comments.AsQueryable();
+
+
+            if (!string.IsNullOrEmpty(searchstring))
+            {
+                // Tìm kiếm theo username
+                var resultByName = Products.Where(x => x.UserName.Contains(searchstring));
+                if (resultByName.Any())
+                {
+                    return resultByName;
+                }
+                // Check if searchstring can be converted to DateTime
+                DateTime searchDate;
+                if (DateTime.TryParse(searchstring, out searchDate))
+                {
+                    var resultByDate = Products.Where(x => x.CreatedAt.Date == searchDate.Date);
+                    if (resultByDate.Any())
+                    {
+                        return resultByDate;
+                    }
+                }
+            }
+            // Nếu không có kết quả nào khớp với điều kiện tìm kiếm, trả về danh sách trống
+            return new List<Comment>();
+        }
+
         #region method
 
         private readonly List<string> _bannedWords = new List<string>
