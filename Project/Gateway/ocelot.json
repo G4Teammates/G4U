@@ -550,6 +550,7 @@
 
   ],
   "GlobalConfiguration": {
-    "BaseUrl": "https://localhost:7260"
+    "BaseUrl": "https://localhost:7260",
+    "RequestBodySizeLimit": 104857600
   }
 }

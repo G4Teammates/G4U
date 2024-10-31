@@ -37,7 +37,7 @@ namespace CommentMicroservice.Repositories
                     Content = Comment.Content,
                     NumberOfLikes = 0,
                     NumberOfDisLikes = 0,
-                    UserId = Comment.UserId,
+                    UserName = Comment.UserName,
                     Status = Comment.Status,
                     ProductId = Comment.ProductId,
                     ParentId = Comment.ParentId,
@@ -59,7 +59,7 @@ namespace CommentMicroservice.Repositories
                 upComm.Content = Comment.Content;
                 upComm.NumberOfLikes = Comment.NumberOfLikes;
                 upComm.NumberOfDisLikes = Comment.NumberOfDisLikes;
-                upComm.UserId = Comment.UserId;
+                upComm.UserName = Comment.UserName;
                 upComm.Status = Comment.Status;
                 upComm.ProductId = Comment.ProductId;
                 upComm.ParentId = Comment.ParentId;
