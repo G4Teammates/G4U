@@ -14,6 +14,6 @@ namespace Client.Repositories.Interfaces.Comment
         Task<ResponseModel> CreateCommentAsync(CreateCommentDTOModel Comment);
         Task<ResponseModel> UpdateCommentAsync(CommentDTOModel Comment);
         Task<ResponseModel> DeleteCommentAsync(string id);
-
+        Task<ResponseModel?> SearchCmtAsync(string searchString, int? pageNumber, int pageSize);
     }
 }

@@ -74,6 +74,15 @@ namespace Client.Repositories.Services.Comment
             });
         }
 
+        public async Task<ResponseModel?> SearchCmtAsync(string searchString, int? pageNumber, int pageSize)
+        {
+            return await _baseService.SendAsync(new RequestModel()
+            {
+                ApiType = StaticTypeApi.ApiType.GET,
+                Url = $"{StaticTypeApi.APIGateWay}/Comment/search={searchString}?page=" + pageNumber.ToString() + "&pageSize=" + pageSize.ToString()
+            });
+        }
+
         public async Task<ResponseModel> UpdateCommentAsync(CommentDTOModel Comment)
         {
             var formData = new MultipartFormDataContent();

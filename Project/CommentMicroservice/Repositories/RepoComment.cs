@@ -37,7 +37,7 @@ namespace CommentMicroservice.Repositories
                     Content = Comment.Content,
                     NumberOfLikes = 0,
                     NumberOfDisLikes = 0,
-                    UserId = Comment.UserId,
+                    UserName = Comment.UserName,
                     Status = Comment.Status,
                     ProductId = Comment.ProductId,
                     ParentId = Comment.ParentId,
@@ -59,7 +59,7 @@ namespace CommentMicroservice.Repositories
                 upComm.Content = Comment.Content;
                 upComm.NumberOfLikes = Comment.NumberOfLikes;
                 upComm.NumberOfDisLikes = Comment.NumberOfDisLikes;
-                upComm.UserId = Comment.UserId;
+                upComm.UserName = Comment.UserName;
                 upComm.Status = Comment.Status;
                 upComm.ProductId = Comment.ProductId;
                 upComm.ParentId = Comment.ParentId;
@@ -80,6 +80,55 @@ namespace CommentMicroservice.Repositories
                 _db.Comments.RemoveRange(comments);
                 await _db.SaveChangesAsync();
             }
+        }
+
+        public IEnumerable<Comment> Search(string searchstring)
+        {
+            var Products = _db.Comments.AsQueryable();
+
+
+            if (!string.IsNullOrEmpty(searchstring))
+            {
+                // Tìm kiếm theo username
+                var resultByName = Products.Where(x => x.UserName.Contains(searchstring));
+                if (resultByName.Any())
+                {
+                    return resultByName;
+                }
+                // Kiểm tra nếu searchstring chỉ là năm
+                if (searchstring.Length == 4 && int.TryParse(searchstring, out int year))
+                {
+                    var resultByYear = Products.Where(x => x.CreatedAt.Year == year);
+                    if (resultByYear.Any())
+                    {
+                        return resultByYear;
+                    }
+                }
+                else
+                {
+                    // Kiểm tra nếu searchstring là ngày/tháng/năm
+                    DateTime searchDate;
+                    if (DateTime.TryParse(searchstring, out searchDate))
+                    {
+                        // Ngày, tháng, năm
+                        var resultByDate = Products.Where(x => x.CreatedAt.Year == searchDate.Year && x.CreatedAt.Month == searchDate.Month && x.CreatedAt.Day == searchDate.Day);
+                        if (resultByDate.Any())
+                        {
+                            return resultByDate;
+                        }
+                        // Tháng và năm
+                        var resultByMonthYear = Products.Where(x => x.CreatedAt.Year == searchDate.Year && x.CreatedAt.Month == searchDate.Month);
+                        if (resultByMonthYear.Any())
+                        {
+                            return resultByMonthYear;
+                        }
+
+
+                    }
+                }
+            }
+            // Nếu không có kết quả nào khớp với điều kiện tìm kiếm, trả về danh sách trống
+            return new List<Comment>();
         }
 
         #region method
