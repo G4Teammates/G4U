@@ -20,7 +20,7 @@ namespace Client.Repositories.Services.Comment
             var formData = new MultipartFormDataContent();
             formData.Add(new StringContent(Comment.Content), "content");
             formData.Add(new StringContent(Comment.Status.ToString()), "status");
-            formData.Add(new StringContent(Comment.UserId), "userId");
+            formData.Add(new StringContent(Comment.UserName), "userName");
             formData.Add(new StringContent(Comment.ProductId), "productId");
 
             // Chỉ thêm ParentId nếu nó không phải là null
@@ -81,7 +81,7 @@ namespace Client.Repositories.Services.Comment
             formData.Add(new StringContent(Comment.Content), "content");
             formData.Add(new StringContent(Comment.NumberOfLikes.ToString()), "numberoflikes");
             formData.Add(new StringContent(Comment.Status.ToString()), "status");
-            formData.Add(new StringContent(Comment.UserId), "userId");
+            formData.Add(new StringContent(Comment.UserName), "userName");
             formData.Add(new StringContent(Comment.ProductId), "productId");
             formData.Add(new StringContent(Comment.CreatedAt.ToString()), "createat");
             formData.Add(new StringContent(Comment.UpdatedAt.ToString()), "updateat");

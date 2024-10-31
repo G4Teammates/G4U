@@ -384,7 +384,9 @@ namespace Client.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> UpdateProduct(UpdateProductModel model)
+		[RequestSizeLimit(60 * 1024 * 1024)] // 50MB
+		[RequestFormLimits(MultipartBodyLengthLimit = 60 * 1024 * 1024)] // Đặt giới hạn cho form multipart
+		public async Task<IActionResult> UpdateProduct(UpdateProductModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -430,7 +432,9 @@ namespace Client.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> CreateProduct(CreateProductModel model)
+		[RequestSizeLimit(60 * 1024 * 1024)] // 50MB
+		[RequestFormLimits(MultipartBodyLengthLimit = 60 * 1024 * 1024)] // Đặt giới hạn cho form multipart
+		public async Task<IActionResult> CreateProduct(CreateProductModel model)
         {
             if (!ModelState.IsValid)
             {
