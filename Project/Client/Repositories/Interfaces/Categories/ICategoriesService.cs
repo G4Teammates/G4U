@@ -14,5 +14,7 @@ namespace Client.Repositories.Interfaces.Categories
 
         Task<ResponseModel> UpdateCategoryAsync(CategoriesModel category);
         Task<ResponseModel> DeleteCategoryAsync(string id);
-    }
+
+		Task<ResponseModel?> SearchProductAsync(string searchString, int? pageNumber, int pageSize);
+	}
 }

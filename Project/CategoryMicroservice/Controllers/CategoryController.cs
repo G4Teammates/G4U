@@ -107,5 +107,23 @@ namespace CategoryMicroService.Controllers
                 return StatusCode(500, _responseModel); // Trả về mã lỗi 500 với thông báo lỗi chi tiết
             }
         }
+
+        [HttpGet("search={searchString}")]
+        public IActionResult Search([FromRoute] string searchString, int? page, int pageSize)
+        {
+            try
+            {
+                int pageNumber = (page ?? 1);
+                var SanPhams = _categoryService.Search(searchString);
+                _responseModel.Result = SanPhams.ToPagedList(pageNumber, pageSize);
+                return Ok(_responseModel);
+            }
+            catch (Exception ex)
+            {
+                _responseModel.IsSuccess = false;
+                _responseModel.Message = "An error occurred while creating the Categrori: " + ex.Message;
+                return StatusCode(500, _responseModel); // Trả về mã lỗi 500 với thông báo lỗi chi tiết
+            }
+        }
     }
 }
