@@ -1,6 +1,7 @@
 ﻿using Client.Models;
 using Client.Models.UserDTO;
 using System.Threading.Tasks;
+using static Client.Models.Enum.UserEnum.User;
 
 namespace Client.Repositories.Interfaces.User
 {
@@ -12,5 +13,6 @@ namespace Client.Repositories.Interfaces.User
         Task<ResponseModel> UpdateUser(UpdateUser user);
         Task<ResponseModel> DeleteUser(string id);
         Task<ResponseModel>? FindUsers(string? query);
+        Task<ResponseModel> ChangeStatus(string id, UserStatus status);
     }
 }

@@ -292,6 +292,20 @@
       "UpstreamHttpMethod": [ "Put" ]
     },
 
+    //Update
+    {
+      "DownstreamPathTemplate": "/api/User/status/{id}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7107
+        }
+      ],
+      "UpstreamPathTemplate": "/User/status/{id}",
+      "UpstreamHttpMethod": [ "Put" ]
+    },
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //                                                                                                                    //
     //                                                Categories                                                          //
@@ -509,7 +523,7 @@
 
     //Get order items
     {
-      "DownstreamPathTemplate": "/api/Order/OrderItems/{id}",
+      "DownstreamPathTemplate": "/api/Order/{id}/items",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
@@ -517,7 +531,7 @@
           "Port": 7297
         }
       ],
-      "UpstreamPathTemplate": "/Order/OrderItems/{id}",
+      "UpstreamPathTemplate": "/Order/{id}/items",
       "UpstreamHttpMethod": [ "Get" ]
     },
     //Update order status
