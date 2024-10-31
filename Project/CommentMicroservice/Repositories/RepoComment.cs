@@ -95,14 +95,35 @@ namespace CommentMicroservice.Repositories
                 {
                     return resultByName;
                 }
-                // Check if searchstring can be converted to DateTime
-                DateTime searchDate;
-                if (DateTime.TryParse(searchstring, out searchDate))
+                // Kiểm tra nếu searchstring chỉ là năm
+                if (searchstring.Length == 4 && int.TryParse(searchstring, out int year))
                 {
-                    var resultByDate = Products.Where(x => x.CreatedAt.Date == searchDate.Date);
-                    if (resultByDate.Any())
+                    var resultByYear = Products.Where(x => x.CreatedAt.Year == year);
+                    if (resultByYear.Any())
                     {
-                        return resultByDate;
+                        return resultByYear;
+                    }
+                }
+                else
+                {
+                    // Kiểm tra nếu searchstring là ngày/tháng/năm
+                    DateTime searchDate;
+                    if (DateTime.TryParse(searchstring, out searchDate))
+                    {
+                        // Ngày, tháng, năm
+                        var resultByDate = Products.Where(x => x.CreatedAt.Year == searchDate.Year && x.CreatedAt.Month == searchDate.Month && x.CreatedAt.Day == searchDate.Day);
+                        if (resultByDate.Any())
+                        {
+                            return resultByDate;
+                        }
+                        // Tháng và năm
+                        var resultByMonthYear = Products.Where(x => x.CreatedAt.Year == searchDate.Year && x.CreatedAt.Month == searchDate.Month);
+                        if (resultByMonthYear.Any())
+                        {
+                            return resultByMonthYear;
+                        }
+
+
                     }
                 }
             }
