@@ -9,7 +9,8 @@ namespace Client.Models.ProductDTO
     public class CreateProductModel
     {
         [Required(ErrorMessage = "Name is required")]
-        [StringLength(256, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 2)]
+        [StringLength(256, MinimumLength = 2, ErrorMessage = "The Name must be at least {2} and at max {1} characters long.")]
+        [RegularExpression(@"^[a-zA-Z0-9\s]+$", ErrorMessage = "The Name cannot contain special characters.")]   /*Khong dc chua ky tu dac biet*/
         public string Name { get; set; }
 
         [MaxLength(10000, ErrorMessage = "The {0} must be at max {1} characters long.")]
@@ -32,6 +33,8 @@ namespace Client.Models.ProductDTO
         public List<IFormFile> imageFiles { get; set; } = new List<IFormFile>();
 
         public IFormFile gameFile { get; set; } // Giả sử bạn có model này cho game file
+
+
 
         public string Username { get; set; } // Tên người dùng
 

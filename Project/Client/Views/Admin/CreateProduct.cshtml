@@ -68,13 +68,8 @@
 
     <!-- Platform -->
     <div class="form-group">
-       @*  <label asp-for="@Model.Platform" class="control-label"></label>
-        <input asp-for="@Model.Platform" class="form-control" type="number" />
-        <span asp-validation-for="@Model.Platform" class="text-danger"></span> *@
-
-
-        <label asp-for="@Model.Status" class="form-label"></label>
-        <select asp-for="@Model.Status" class="form-select" aria-label="Status">
+        <label asp-for="@Model.Platform" class="form-label"></label>
+        <select asp-for="@Model.Platform" class="form-select" aria-label="Platform">
             <option value="0" selected>Unknown</option>
             <option value="1">Downloadable</option>
             <option value="2">HTML</option>
@@ -87,7 +82,7 @@
             <option value="9">Other</option>
 
         </select>
-        <span asp-validation-for="Status" class="text-danger"></span>
+        <span asp-validation-for="Platform" class="text-danger"></span>
     </div>
 
     <!-- Status -->
