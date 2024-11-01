@@ -47,6 +47,7 @@ namespace Client.Models.ProductDTO
 
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
+
         public required string UserName { get; set; }
 
 

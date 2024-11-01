@@ -132,9 +132,25 @@ namespace ProductMicroService.Controllers
                 }
             }
 
+            [HttpGet("detail={id}")]
+            public async Task< IActionResult> GetDetail([FromRoute] string id)
+            {
+                try
+                {
+                    var Product = await _repoProduct.GetDetail(id);
+                    _responseDTO.Result = Product;
+                    return Ok(_responseDTO);
+                }
+                catch (Exception ex)
+                {
+                    _responseDTO.IsSuccess = false;
+                    _responseDTO.Message = "An error occurred while getting the Products: " + ex.Message;
+                    return StatusCode(500, _responseDTO); // Trả về mã lỗi 500 với thông báo lỗi chi tiết
+                }
+            }
+
 
             [HttpGet]
-
             public IActionResult GetAll( int? page, int pageSize)
             {
                 try
@@ -151,6 +167,7 @@ namespace ProductMicroService.Controllers
                     return StatusCode(500, _responseDTO); // Trả về mã lỗi 500 với thông báo lỗi chi tiết
                 }
             }
+
 
 
             [HttpDelete("{id?}")]

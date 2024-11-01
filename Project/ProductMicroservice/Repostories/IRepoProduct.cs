@@ -8,6 +8,7 @@ namespace ProductMicroservice.Repostories
     {
         /*Products CreateProduct(CreateProductModel Product);*/
         Task<Products> GetById(string id);
+        Task<Products> GetDetail(string id);
         Task<Products> UpdateProduct(List<IFormFile>? imageFiles, UpdateProductModel Product, IFormFile? gameFiles);
         IEnumerable<Products> Products { get; }
         void DeleteProduct(string id);
