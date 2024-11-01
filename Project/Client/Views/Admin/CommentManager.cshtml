@@ -65,9 +65,10 @@
         <div class="d-flex justify-content-between mb-3">
             <form asp-action="SearchCmt" asp-controller="Admin" method="post" class="d-flex gap-2">
                 <input class="form-control" type="text" placeholder="Search by username..." name="searchString" />
-                <input class="form-control" type="date" name="searchDate" />
+                <input class="form-control" type="date" name="searchDate" id="searchDate" lang="en-CA" />
                 <button class="btn btn-primary" type="submit">Search</button>
             </form>
+
             <div class="w-100">
                 <div class="text-end">
                     <button class="btn btn-success" data-toggle="modal" data-target="#modalComment">+ Add</button>
@@ -88,16 +89,14 @@
         <thead class="table-light">
             <tr>
                 <th scope="col"><input type="checkbox" id="selectAll"></th>
-                <th scope="col">Commennt Id</th>
                 <th scope="col">Content</th>
-                <th scope="col">NumberOfLikes</th>
+                <th scope="col">Likes</th>
                 <th scope="col">Status</th>
-                <th scope="col">User Name</th>
+                <th scope="col">UserName</th>
                 <th scope="col">Product Id</th>
                 <th scope="col">Parent Id</th>
                 <th scope="col">CreatedAt</th>
-                <th scope="col">UpdatedAt</th>
-                <th scope="col">NumberOfDisLikes</th>
+                <th scope="col">DisLikes</th>
             </tr>
         </thead>
         <tbody>
@@ -107,7 +106,6 @@
                 {
                     <tr>
                         <td><input type="checkbox" class="user-checkbox" /></td>
-                        <td>@comment.Id</td>
                         <td>@comment.Content</td>
                         <td>@comment.NumberOfLikes</td>
                         <td>@comment.Status</td>
@@ -115,7 +113,6 @@
                         <td>@comment.ProductId</td>
                         <td>@comment.ParentId</td>
                         <td>@comment.CreatedAt</td>
-                        <td>@comment.UpdatedAt</td>
                         <td>@comment.NumberOfDisLikes</td>
                         @*Đây là nút Update*@
                         <td>
@@ -199,4 +196,4 @@
 
 
 
-    
+

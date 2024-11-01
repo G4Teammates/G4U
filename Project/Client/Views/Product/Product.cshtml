@@ -9,70 +9,74 @@
                 <h4 class="mt-3">Filters</h4>
                 <hr>
                 <!-- -------------------------------------------------------------------------------------------------------------------------------------------------- -->
-                <!-- Price Filter -->
-                <div class="mb-4">
-                    <h5>Price</h5>
-                    <input type="range" class="form-range" min="0" max="500" id="priceRange">
-                    <p>Price: <span id="priceValue">$0 - $500</span></p>
-                </div>
+                <form asp-action="FilterProducts" asp-controller="Product" method="post">
+                    <!-- Price Filter -->
+                    <div class="mb-4">
+                        <h5>Price</h5>
+                        <input type="text" class="form-range" name="minRange">
+                        <input type="text" class="form-range" name="maxRange">
+                    </div>
 
-                <!-- Category Filter -->
-                <div class="mb-4">
-                    <h5>Category</h5>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="Action" id="actionCheck">
-                        <label class="form-check-label" for="actionCheck">Action</label>
+                    <!-- Category Filter -->
+                    <div class="mb-4">
+                        <h5>Category</h5>
+                        <select class="form-select" name="category">
+                            @if (Model.CategoriesModel != null)
+                            {
+                                foreach (var cate in Model.CategoriesModel)
+                                {
+                                    <option value="@cate.Name">@cate.Name</option>
+                                }
+                            }
+                            else
+                            {
+                                <option disabled>Không có danh mục nào</option>
+                            }
+                        </select>
                     </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="Adventure" id="adventureCheck">
-                        <label class="form-check-label" for="adventureCheck">Adventure</label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="RPG" id="rpgCheck">
-                        <label class="form-check-label" for="rpgCheck">RPG</label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="Simulation" id="simulationCheck">
-                        <label class="form-check-label" for="simulationCheck">Simulation</label>
-                    </div>
-                </div>
 
-                <!-- Platform Filter -->
-                <div class="mb-4">
-                    <h5>Platform</h5>
-                    <select class="form-select">
-                        <option value="">Select Platform</option>
-                        <option value="PC">PC</option>
-                        <option value="PlayStation">PlayStation</option>
-                        <option value="Xbox">Xbox</option>
-                        <option value="Nintendo">Nintendo</option>
-                    </select>
-                </div>
-
-                <!-- Release Date Filter -->
-                <div class="mb-4">
-                    <h5>Release Date</h5>
-                    <input type="date" class="form-control">
-                </div>
-
-                <!-- Status Filter -->
-                <div class="mb-4">
-                    <h5>Status</h5>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="status" id="statusReleased" value="Released">
-                        <label class="form-check-label" for="statusReleased">Released</label>
+                    <!-- Platform Filter -->
+                    <div class="mb-4">
+                        <h5>Platform</h5>
+                        <select class="form-select" name="platform">
+                            @if (Model.Product != null)
+                            {
+                                foreach (Client.Models.Enum.ProductEnum.PlatformType platform in Enum.GetValues(typeof(Client.Models.Enum.ProductEnum.PlatformType)))
+                                {
+                                    <option value="@(platform)">@platform</option>
+                                }
+                            }
+                            else
+                            {
+                                <option disabled>Không có danh mục nào</option>
+                            }
+                        </select>
                     </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="status" id="statusUpcoming" value="Upcoming">
-                        <label class="form-check-label" for="statusUpcoming">Upcoming</label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="status" id="statusInDevelopment" value="In Development">
-                        <label class="form-check-label" for="statusInDevelopment">In Development</label>
-                    </div>
-                </div>
 
-                <button class="btn btn-primary w-100">Apply Filters</button>
+                    <!-- Discount Filter -->
+                    <div class="mb-4">
+                        <label for="discount" class="form-label">Discount</label>
+                        <select name="discount" class="form-select" aria-label="Type">
+                            <option value="True">True</option>
+                            <option value="False">False</option>
+                        </select>
+                    </div>
+
+                    <!-- Sold Filter -->
+                    <div class="mb-4">
+                        <label for="sold" class="form-label">Sort</label>
+                        <select name="sold" class="form-select" aria-label="Type">
+                            <option value="0">>0</option>
+                            <option value="100">>100</option>
+                            <option value="200">>200</option>
+                            <option value="500">>500</option>
+                            <option value="1000">>1000</option>
+                        </select>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn btn-primary w-100">Apply Filters</button>
+                </form>
             </div>
         </div>
         <div class="col-md-10">
@@ -106,62 +110,43 @@
 
             <div class="mt-2 me-1">
                 <div class="d-flex flex-wrap mt-3">
-                    <div class="col-12 col-sm-12 col-md-3 card_other mt-4" style="width: 12rem; height:230px;">
-                        <img src="~/Image/game.jpg" />
-                        <div class="info_other">
-                            <h4>Heading 2</h4>
-                            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
-                            <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
-                        </div>
-                    </div>
-                    <div class="col-12 col-sm-12 col-md-3 card_other mt-4" style="width: 12rem; height:230px;">
-                        <img src="~/Image/game.jpg" />
-                        <div class="info_other">
-                            <h4>Heading 2</h4>
-                            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
-                            <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
-                        </div>
-                    </div>
-                    <div class="col-12 col-sm-12 col-md-3 card_other mt-4" style="width: 12rem; height:230px;">
-                        <img src="~/Image/game.jpg" />
-                        <div class="info_other">
-                            <h4>Heading 2</h4>
-                            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
-                            <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
-                        </div>
-                    </div>
-                    <div class="col-12 col-sm-12 col-md-3 card_other mt-4" style="width: 12rem; height:230px;">
-                        <img src="~/Image/game.jpg" />
-                        <div class="info_other">
-                            <h4>Heading 2</h4>
-                            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
-                            <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
-                        </div>
-                    </div>
-                    <div class="col-12 col-sm-12 col-md-3 card_other mt-4" style="width: 12rem; height:230px;">
-                        <img src="~/Image/game.jpg" />
-                        <div class="info_other">
-                            <h4>Heading 2</h4>
-                            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
-                            <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
-                        </div>
-                    </div>
-                    <div class="col-12 col-sm-12 col-md-3 card_other mt-4" style="width: 12rem; height:230px;">
-                        <img src="~/Image/game.jpg" />
-                        <div class="info_other">
-                            <h4>Heading 2</h4>
-                            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
-                            <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
-                        </div>
-                    </div>
-                    <div class="col-12 col-sm-12 col-md-3 card_other mt-4" style="width: 12rem; height:230px;">
-                        <img src="~/Image/game.jpg" />
-                        <div class="info_other">
-                            <h4>Heading 2</h4>
-                            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit....</p>
-                            <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
-                        </div>
-                    </div>
+                    @if (Model.Product != null)
+                    {
+                        foreach (var product in Model.Product)
+                        {
+                            <div class="col-12 col-sm-12 col-md-3 card_other mt-4" style="width: 12rem; height:230px;">
+                                @if (product.Links != null)
+                                {
+                                    string firstImageUrl = null; // Biến để lưu URL hình ảnh đầu tiên
+
+                                    foreach (var link in product.Links) // Lặp qua từng đối tượng LinkModel
+                                    {
+                                        if (link.Url.Contains("cloudinary"))
+                                        {
+                                            firstImageUrl = link.Url; // Lưu URL hình ảnh đầu tiên
+                                            break; // Thoát khỏi vòng lặp khi đã tìm thấy
+                                        }
+                                    }
+
+                                    // Hiển thị hình ảnh đầu tiên nếu có
+                                    if (firstImageUrl != null)
+                                    {
+                                        <img src="@firstImageUrl" alt="Cloudinary Image" />
+                                    }
+
+
+                                }
+                                <div class="info_other">
+                                    <h4>@product.Name</h4>
+                                    <p>@product.Description</p>
+                                    <a asp-controller="Product" asp-action="ProductDetail" class="btn_orther">Read More</a>
+                                </div>
+                            </div>
+                        }
+                    }
+
+                    
+                    
 @*                     <div class=" card cardgamemonth m-1" style="width: 12rem; height:230px;">
                         <img src="~/image/game.jpg" class="card-img-top" alt="..." />
                         <div class="card-body">
@@ -172,5 +157,43 @@
                 </div>
             </div>
         </div>
+    </div>
+</div>
+
+<div class="d-flex justify-content-between mt-3">
+    <div>Total: @(Model.totalItem) items</div>
+    <div>
+        <form method="get" asp-controller="Product" asp-action="Product" class="d-inline">
+            <select name="pageSize" class="form-select form-select-sm w-auto d-inline-block" onchange="this.form.submit()">
+                <option>Select records per page</option>
+                <option value="3">3 records per page</option>
+                <option value="5">5 records per page</option>
+                <option value="10">10 records per page</option>
+            </select>
+            <input type="hidden" name="page" value="1" />
+        </form>
+
+        <nav aria-label="Page navigation example" class="d-inline-block">
+            <ul class="pagination pagination-sm mb-0">
+                <li class="page-item @(Model.pageNumber == 1 ? "disabled" : "")">
+                    <a class="page-link" asp-controller="Product" asp-action="Product" asp-route-page="@(Model.pageNumber - 1)" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
+                        Previous
+                    </a>
+                </li>
+                @for (var pg = 1; pg <= Model.pageCount; pg++)
+                {
+                    <li class="page-item @(pg == Model.pageNumber ? "active" : "")">
+                        <a class="page-link" asp-controller="Admin" asp-action="Product" asp-route-page="@pg" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
+                            @pg
+                        </a>
+                    </li>
+                }
+                <li class="page-item @(Model.pageNumber == Model.pageCount ? "disabled" : "")">
+                    <a class="page-link" asp-controller="Admin" asp-action="Product" asp-route-page="@(Model.pageNumber + 1)" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
+                        Next
+                    </a>
+                </li>
+            </ul>
+        </nav>
     </div>
 </div>
