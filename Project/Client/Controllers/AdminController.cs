@@ -22,9 +22,8 @@ using Client.Repositories.Interfaces.Comment;
 
 using Client.Repositories.Interfaces.Order;
 using Client.Models.OrderModel;
-
-using ProductMicroservice.DBContexts.Entities;
-using UserMicroservice.Models.UserManagerModel;
+using static Client.Models.Enum.UserEnum.User;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 
 namespace Client.Controllers
@@ -95,16 +94,32 @@ namespace Client.Controllers
         {
             if (TempData.ContainsKey("searchResult"))
             {
-                var orderJson = TempData["searchResult"] as string;
-                if (!string.IsNullOrEmpty(orderJson))
+                var userJson = TempData["searchResult"] as string;
+                if (userJson == "User not found")
+                {
+                    UserViewModel userViewModel = new()
+                    {
+                        CreateUser = new CreateUser(),
+                    };
+                    TempData["success"] = $"Not found any user";
+                    return View(userViewModel);
+                }
+                if (!string.IsNullOrEmpty(userJson))
                 {
                     // Convert JSON thành OrderModel
-                    var order = JsonConvert.DeserializeObject<ICollection<OrderModel>>(orderJson);
-                    OrderViewModel orderViewModel = new()
+                    var userSearch = JsonConvert.DeserializeObject<ICollection<UsersDTO>>(userJson);
+                    UserViewModel userViewModel = new()
                     {
-                        Orders = order
+                        CreateUser = new CreateUser(),
+                        Users = userSearch
                     };
-                    return View(orderViewModel);
+                    var data = userSearch;
+                    userViewModel.pageNumber = 1;
+                    userViewModel.totalItem = data.Count;
+                    userViewModel.pageSize = 99;
+                    userViewModel.pageCount = (int)Math.Ceiling(userSearch.Count / (double)pageSize);
+
+                    return View(userViewModel);
                 }
             }
 
@@ -128,6 +143,7 @@ namespace Client.Controllers
                     users.totalItem = data.Count;
                     users.pageSize = pageSize;
                     users.pageCount = (int)Math.Ceiling(total.Count / (double)pageSize);
+                    TempData["success"] = "Load user is success";
                 }
                 else
                 {
@@ -177,43 +193,6 @@ namespace Client.Controllers
             return RedirectToAction(nameof(UsersManager));
         }
 
-
-        public async Task<IActionResult> UserDelete(string id)
-        {
-            ResponseModel? response = await _userService.GetUserAsync(id);
-
-            if (response != null && response.IsSuccess)
-            {
-                UsersDTO? model = JsonConvert.DeserializeObject<UsersDTO>(Convert.ToString(response.Result));
-                return View(model);
-            }
-            else
-            {
-                TempData["error"] = response?.Message;
-            }
-            return NotFound();
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> UserDelete(UsersDTO user)
-        {
-            ResponseModel? response = await _userService.ChangeStatus(user.Id, Client.Models.Enum.UserEnum.User.UserStatus.Deleted);
-
-            if (response != null && response.IsSuccess)
-            {
-                UsersDTO? model = JsonConvert.DeserializeObject<UsersDTO>(Convert.ToString(response.Result));
-                return View(model);
-            }
-            else
-            {
-                TempData["error"] = response?.Message;
-            }
-            return NotFound();
-        }
-
-
-
-
         [HttpGet]
         public async Task<IActionResult> UserUpdate(string id)
         {
@@ -227,6 +206,7 @@ namespace Client.Controllers
                     UpdateUser = user
                 };
                 // Trả về model UsersDTO để sử dụng trong View
+                TempData["success"] = "Get user need update success";
                 return PartialView("UserUpdate", user);
             }
             else
@@ -235,6 +215,7 @@ namespace Client.Controllers
             }
             return NotFound();
         }
+
         [HttpPost]
         public async Task<IActionResult> UserUpdate(UpdateUser user)
         {
@@ -249,9 +230,23 @@ namespace Client.Controllers
                     DisplayName = user.DisplayName,
                     Email = user.Email,
                     Role = user.Role,
+                    Status = user.Status,
                     Avatar = user.Avatar
                     // Nếu bạn có thêm thuộc tính, hãy thêm vào đây
                 };
+
+                if (user.Role == Models.Enum.UserEnum.User.UserRole.Admin)
+                {
+                    TempData["error"] = "Can not change role admin";
+                    return View(user);
+                }
+
+                if (user.Role == Models.Enum.UserEnum.User.UserRole.Admin && user.Status == Models.Enum.UserEnum.User.UserStatus.Active)
+                {
+                    TempData["error"] = "Can not change status of role admin";
+                    return View(user);
+                }
+
 
                 ResponseModel? response = await _userService.UpdateUser(updateUser);
 
@@ -271,6 +266,46 @@ namespace Client.Controllers
 
         }
 
+        [HttpGet]
+        public async Task<IActionResult> UserDelete(string id)
+        {
+            ResponseModel? response = await _userService.GetUserAsync(id);
+
+            if (response != null && response.IsSuccess)
+            {
+                UsersDTO? model = JsonConvert.DeserializeObject<UsersDTO>(Convert.ToString(response.Result));
+                TempData["success"] = "Get user need delete success";
+                return View(model);
+            }
+            else
+            {
+                TempData["error"] = response?.Message;
+            }
+            return NotFound();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UserDelete(UsersDTO user)
+        {
+            if (user.Role != UserRole.Admin)
+            {
+                ResponseModel? response = await _userService.ChangeStatus(user.Id, UserStatus.Deleted);
+
+                if (response != null && response.IsSuccess)
+                {
+                    UsersDTO? model = JsonConvert.DeserializeObject<UsersDTO>(Convert.ToString(response.Result));
+                    TempData["success"] = "Delete user is success";
+                    return RedirectToAction(nameof(UsersManager));
+                }
+                else
+                {
+                    TempData["error"] = response?.Message;
+                }
+            }
+            TempData["error"] = "Can not deleted Admin";
+            return RedirectToAction(nameof(UsersManager));
+        }
+
 
         public async Task<IActionResult> SearchUsers(string query)
         {
@@ -280,16 +315,28 @@ namespace Client.Controllers
                 var response = await _userService.FindUsers(query);
 
                 // Kiểm tra xem tìm kiếm có thành công và trả về kết quả không
+                if (response.IsSuccess && response.Result == null)
+                {
+                    TempData["searchResult"] = "User not found";
+                    return RedirectToAction(nameof(UsersManager));
+                }
+
                 if (response.IsSuccess && response.Result != null)
                 {
                     var users = JsonConvert.DeserializeObject<ICollection<UsersDTO>>(response.Result.ToString());
                     TempData["searchResult"] = JsonConvert.SerializeObject(users);
 
+                    if (users.Count == 1)
+                        TempData["success"] = $"Was found 1 user";
+                    else
+                    {
+                        TempData["success"] = $"Was found {users.Count} users";
+                    }
                     return RedirectToAction(nameof(UsersManager));
                 }
                 else
                 {
-                    TempData["error"] = response.Message ?? "User not found";
+                    TempData["error"] = response.Message;
                 }
             }
             catch (Exception ex)
@@ -300,6 +347,48 @@ namespace Client.Controllers
             // Nếu có lỗi hoặc không tìm thấy người dùng, chuyển hướng đến trang quản lý người dùng
             return RedirectToAction(nameof(UsersManager));
         }
+
+
+        public async Task<IActionResult> FilterByUserStatus(UserStatus status)
+        {
+            return await FilterUsers(u => u.Status == status, $"User status '{status}' not found", $"User status '{status}'");
+        }
+
+        public async Task<IActionResult> FilterByEmailStatus(EmailStatus status)
+        {
+            return await FilterUsers(u => u.EmailConfirmation == status, $"Email status '{status}' not found", $"Email status '{status}'");
+        }
+
+
+        private async Task<IActionResult> FilterUsers(Func<UsersDTO, bool> predicate, string errorMessage, string statusDescription)
+        {
+            try
+            {
+                var response = await _userService.GetAllUserAsync(1, 99);
+
+                if (response.IsSuccess && response.Result != null)
+                {
+                    var users = JsonConvert.DeserializeObject<ICollection<UsersDTO>>(response.Result.ToString())
+                                   .Where(predicate)
+                                   .ToList();
+
+                    TempData["searchResult"] = JsonConvert.SerializeObject(users);
+                    TempData["success"] = $"Filter user with {statusDescription} is successful";
+                    return RedirectToAction(nameof(UsersManager));
+                }
+                else
+                {
+                    TempData["error"] = response.Message ?? errorMessage;
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = ex.Message;
+            }
+
+            return RedirectToAction(nameof(UsersManager));
+        }
+
 
 
         #endregion
@@ -384,9 +473,9 @@ namespace Client.Controllers
         }
 
         [HttpPost]
-		[RequestSizeLimit(60 * 1024 * 1024)] // 50MB
-		[RequestFormLimits(MultipartBodyLengthLimit = 60 * 1024 * 1024)] // Đặt giới hạn cho form multipart
-		public async Task<IActionResult> UpdateProduct(UpdateProductModel model)
+        [RequestSizeLimit(60 * 1024 * 1024)] // 50MB
+        [RequestFormLimits(MultipartBodyLengthLimit = 60 * 1024 * 1024)] // Đặt giới hạn cho form multipart
+        public async Task<IActionResult> UpdateProduct(UpdateProductModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -432,9 +521,9 @@ namespace Client.Controllers
 
 
         [HttpPost]
-		[RequestSizeLimit(60 * 1024 * 1024)] // 50MB
-		[RequestFormLimits(MultipartBodyLengthLimit = 60 * 1024 * 1024)] // Đặt giới hạn cho form multipart
-		public async Task<IActionResult> CreateProduct(CreateProductModel model)
+        [RequestSizeLimit(60 * 1024 * 1024)] // 50MB
+        [RequestFormLimits(MultipartBodyLengthLimit = 60 * 1024 * 1024)] // Đặt giới hạn cho form multipart
+        public async Task<IActionResult> CreateProduct(CreateProductModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -521,6 +610,124 @@ namespace Client.Controllers
             return View(product);
         }
 
+
+
+        [HttpPost]
+        public async Task<IActionResult> SearchProduct(string searchString, int? page, int pageSize = 5)
+        {
+            int pageNumber = (page ?? 1);
+            ProductViewModel productViewModel = new();
+
+            try
+            {
+                // Gọi API để tìm kiếm sản phẩm theo từ khóa
+                ResponseModel? response = await _productService.SearchProductAsync(searchString, page, pageSize);
+                ResponseModel? response2 = await _productService.GetAllProductAsync(1, 99);
+                var total = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response2.Result.ToString()!));
+
+                if (response != null && response.IsSuccess)
+                {
+                    productViewModel.Product = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response.Result.ToString()!));
+                    var data = productViewModel.Product;
+                    productViewModel.pageNumber = pageNumber;
+                    productViewModel.totalItem = data.Count;
+                    productViewModel.pageSize = pageSize;
+                    productViewModel.pageCount = (int)Math.Ceiling(total.Count / (double)pageSize);
+                }
+                else
+                {
+                    TempData["error"] = response?.Message;
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = ex.Message;
+            }
+
+            return View("ProductsManager", productViewModel); // Trả về view ProductsManager với danh sách sản phẩm đã tìm kiếm
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SortProducts(string sort, int? page, int pageSize = 5)
+        {
+            int pageNumber = (page ?? 1);
+            ProductViewModel productViewModel = new();
+
+            try
+            {
+                // Gọi API để lấy danh sách sản phẩm đã sắp xếp
+                ResponseModel? response = await _productService.SortProductAsync(sort, page, pageSize);
+                ResponseModel? response2 = await _productService.GetAllProductAsync(1, 99);
+                var total = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response2.Result.ToString()!));
+                if (response != null && response.IsSuccess)
+                {
+                    productViewModel.Product = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response.Result.ToString()!));
+                    var data = productViewModel.Product;
+                    productViewModel.pageNumber = pageNumber;
+                    productViewModel.totalItem = data.Count;
+                    productViewModel.pageSize = pageSize;
+                    productViewModel.pageCount = (int)Math.Ceiling(total.Count / (double)pageSize);
+                }
+                else
+                {
+                    TempData["error"] = response?.Message;
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = ex.Message;
+            }
+
+            return View("ProductsManager", productViewModel); // Trả về view ProductsManager với danh sách sản phẩm đã sắp xếp
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> FilterProducts(
+                                                        decimal? minRange,
+                                                        decimal? maxRange,
+                                                        int? sold,
+                                                        bool? discount,
+                                                        int? platform,
+                                                        string category,
+                                                        int? page,
+                                                        int pageSize = 5)
+        {
+            int pageNumber = (page ?? 1);
+            ProductViewModel productViewModel = new();
+
+            try
+            {
+                // Gọi API để lọc sản phẩm theo các điều kiện
+                ResponseModel? response = await _productService.FilterProductAsync(minRange, maxRange, sold, discount, platform, category, page, pageSize);
+                ResponseModel? response2 = await _productService.GetAllProductAsync(1, 99);
+                var total = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response2.Result.ToString()!));
+                if (response != null && response.IsSuccess)
+                {
+                    productViewModel.Product = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response.Result.ToString()!));
+                    var data = productViewModel.Product;
+                    productViewModel.pageNumber = pageNumber;
+                    productViewModel.totalItem = data.Count;
+                    productViewModel.pageSize = pageSize;
+                    productViewModel.pageCount = (int)Math.Ceiling(total.Count / (double)pageSize);
+                }
+                else
+                {
+                    TempData["error"] = response?.Message;
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = ex.Message;
+            }
+
+            return View("ProductsManager", productViewModel); // Trả về view ProductsManager với danh sách sản phẩm đã lọc
+        }
+
+
+        #endregion
+
+
+        #region Order 
         public async Task<IActionResult> OrdersManager()
         {
             try
@@ -671,125 +878,7 @@ namespace Client.Controllers
             return RedirectToAction(nameof(OrdersManager));
         }
 
-
-        [HttpPost]
-        public async Task<IActionResult> SearchProduct(string searchString, int? page, int pageSize = 5)
-        {
-            int pageNumber = (page ?? 1);
-            ProductViewModel productViewModel = new();
-
-            try
-            {
-                // Gọi API để tìm kiếm sản phẩm theo từ khóa
-                ResponseModel? response = await _productService.SearchProductAsync(searchString, page, pageSize);
-                ResponseModel? response2 = await _productService.GetAllProductAsync(1, 99);
-                var total = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response2.Result.ToString()!));
-
-                if (response != null && response.IsSuccess)
-                {
-                    productViewModel.Product = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response.Result.ToString()!));
-                    var data = productViewModel.Product;
-                    productViewModel.pageNumber = pageNumber;
-                    productViewModel.totalItem = data.Count;
-                    productViewModel.pageSize = pageSize;
-                    productViewModel.pageCount = (int)Math.Ceiling(total.Count / (double)pageSize);
-                }
-                else
-                {
-                    TempData["error"] = response?.Message;
-                }
-            }
-            catch (Exception ex)
-            {
-                TempData["error"] = ex.Message;
-            }
-
-            return View("ProductsManager", productViewModel); // Trả về view ProductsManager với danh sách sản phẩm đã tìm kiếm
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> SortProducts(string sort, int? page, int pageSize = 5)
-        {
-            int pageNumber = (page ?? 1);
-            ProductViewModel productViewModel = new();
-
-            try
-            {
-                // Gọi API để lấy danh sách sản phẩm đã sắp xếp
-                ResponseModel? response = await _productService.SortProductAsync(sort, page, pageSize);
-                ResponseModel? response2 = await _productService.GetAllProductAsync(1, 99);
-                var total = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response2.Result.ToString()!));
-                if (response != null && response.IsSuccess)
-                {
-                    productViewModel.Product = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response.Result.ToString()!));
-                    var data = productViewModel.Product;
-                    productViewModel.pageNumber = pageNumber;
-                    productViewModel.totalItem = data.Count;
-                    productViewModel.pageSize = pageSize;
-                    productViewModel.pageCount = (int)Math.Ceiling(total.Count / (double)pageSize);
-                }
-                else
-                {
-                    TempData["error"] = response?.Message;
-                }
-            }
-            catch (Exception ex)
-            {
-                TempData["error"] = ex.Message;
-            }
-
-            return View("ProductsManager", productViewModel); // Trả về view ProductsManager với danh sách sản phẩm đã sắp xếp
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> FilterProducts(
-                                                        decimal? minRange,
-                                                        decimal? maxRange,
-                                                        int? sold,
-                                                        bool? discount,
-                                                        int? platform,
-                                                        string category,
-                                                        int? page,
-                                                        int pageSize = 5)
-        {
-            int pageNumber = (page ?? 1);
-            ProductViewModel productViewModel = new();
-
-            try
-            {
-                // Gọi API để lọc sản phẩm theo các điều kiện
-                ResponseModel? response = await _productService.FilterProductAsync(minRange, maxRange, sold, discount, platform, category, page, pageSize);
-                ResponseModel? response2 = await _productService.GetAllProductAsync(1, 99);
-                var total = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response2.Result.ToString()!));
-                if (response != null && response.IsSuccess)
-                {
-                    productViewModel.Product = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response.Result.ToString()!));
-                    var data = productViewModel.Product;
-                    productViewModel.pageNumber = pageNumber;
-                    productViewModel.totalItem = data.Count;
-                    productViewModel.pageSize = pageSize;
-                    productViewModel.pageCount = (int)Math.Ceiling(total.Count / (double)pageSize);
-                }
-                else
-                {
-                    TempData["error"] = response?.Message;
-                }
-            }
-            catch (Exception ex)
-            {
-                TempData["error"] = ex.Message;
-            }
-
-            return View("ProductsManager", productViewModel); // Trả về view ProductsManager với danh sách sản phẩm đã lọc
-        }
-
         #endregion
-
-
-        //public IActionResult OrdersManager()
-        //{
-        //    return View();
-        //}
 
 
         #region Category
@@ -962,42 +1051,43 @@ namespace Client.Controllers
         }
 
 
-		[HttpPost]
-		public async Task<IActionResult> SearchCategory(string searchString, int? page, int pageSize = 5)
-		{
-			int pageNumber = (page ?? 1);
-			CategoriesViewModel categoryViewModel = new();
+        [HttpPost]
+        public async Task<IActionResult> SearchCategory(string searchString, int? page, int pageSize = 5)
+        {
+            int pageNumber = (page ?? 1);
+            CategoriesViewModel categoryViewModel = new();
 
-			try
-			{
-				// Gọi API để tìm kiếm sản phẩm theo từ khóa
-				ResponseModel? response = await _categoryService.SearchProductAsync(searchString, page, pageSize);
-				ResponseModel? response2 = await _categoryService.GetAllCategoryAsync(1, 99);
-				var total = JsonConvert.DeserializeObject<ICollection<CategoriesModel>>(Convert.ToString(response2.Result.ToString()!));
+            try
+            {
+                // Gọi API để tìm kiếm sản phẩm theo từ khóa
+                ResponseModel? response = await _categoryService.SearchProductAsync(searchString, page, pageSize);
+                ResponseModel? response2 = await _categoryService.GetAllCategoryAsync(1, 99);
+                var total = JsonConvert.DeserializeObject<ICollection<CategoriesModel>>(Convert.ToString(response2.Result.ToString()!));
 
-				if (response != null && response.IsSuccess)
-				{
-					categoryViewModel.Categories = JsonConvert.DeserializeObject<ICollection<CategoriesModel>>(Convert.ToString(response.Result.ToString()!));
-					var data = categoryViewModel.Categories;
-					categoryViewModel.pageNumber = pageNumber;
-					categoryViewModel.totalItem = data.Count;
-					categoryViewModel.pageSize = pageSize;
-					categoryViewModel.pageCount = (int)Math.Ceiling(total.Count / (double)pageSize);
-				}
-				else
-				{
-					TempData["error"] = response?.Message;
-				}
-			}
-			catch (Exception ex)
-			{
-				TempData["error"] = ex.Message;
-			}
+                if (response != null && response.IsSuccess)
+                {
+                    categoryViewModel.Categories = JsonConvert.DeserializeObject<ICollection<CategoriesModel>>(Convert.ToString(response.Result.ToString()!));
+                    var data = categoryViewModel.Categories;
+                    categoryViewModel.pageNumber = pageNumber;
+                    categoryViewModel.totalItem = data.Count;
+                    categoryViewModel.pageSize = pageSize;
+                    categoryViewModel.pageCount = (int)Math.Ceiling(total.Count / (double)pageSize);
+                }
+                else
+                {
+                    TempData["error"] = response?.Message;
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = ex.Message;
+            }
 
-			return View("CategoriesManager", categoryViewModel); // Trả về view ProductsManager với danh sách sản phẩm đã tìm kiếm
-		}
-		
+            return View("CategoriesManager", categoryViewModel); // Trả về view ProductsManager với danh sách sản phẩm đã tìm kiếm
+        }
+
         #endregion
+
 
         #region Comment
         public async Task<IActionResult> CommentManager(int? page, int pageSize = 5)

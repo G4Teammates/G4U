@@ -80,6 +80,9 @@ namespace UserMicroservice.Models.UserManagerModel
         /// </summary>
         public UserRole? Role { get; set; } = UserRole.User;
 
+        public UserStatus? Status { get; set; } = UserStatus.Inactive;
+
+        public EmailStatus? EmailConfirmation { get; set; } = EmailStatus.Unconfirmed;
 
         public DateTime UpdateAt { get; set; }
     }

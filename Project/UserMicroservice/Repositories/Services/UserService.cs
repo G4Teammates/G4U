@@ -110,7 +110,7 @@ namespace UserMicroservice.Repositories.Services
             ResponseModel response = new();
             try
             {
-                var users = await _context.Users.Where(u=>u.Status==UserStatus.Active).ToListAsync();
+                var users = await _context.Users.ToListAsync();
                 if (users != null)
                 {
                     response.Message = $"Found {users.Count} users";
@@ -193,7 +193,8 @@ namespace UserMicroservice.Repositories.Services
                     user.Email = updatedUserModel.Email ?? user.Email;
                     user.Avatar = updatedUserModel.Avatar ?? user.Avatar;
                     user.Role = updatedUserModel.Role ?? user.Role;
-
+                    user.Status = updatedUserModel.Status ?? user.Status;
+                    user.UpdatedAt = DateTime.UtcNow;
                     // Lưu các thay đổi vào cơ sở dữ liệu
                     _context.Users.Update(user);
                     await _context.SaveChangesAsync();
