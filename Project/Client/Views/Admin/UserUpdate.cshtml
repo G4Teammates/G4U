@@ -1,6 +1,5 @@
 ﻿@model Client.Models.UserDTO.UpdateUser
 
-
 <div class="modal fade" id="showUpdateModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
@@ -13,6 +12,9 @@
                         <div class="row">
                             <div class="col">
                                 <input type="hidden" asp-for="@Model.Id" />
+                                <input type="hidden" asp-for="@Model.Status" />
+                                <input type="hidden" asp-for="@Model.Role" />
+                                <input type="hidden" asp-for="@Model.EmailConfirmation" />
 
                                 <!-- Username (Hidden) -->
                                 <div class="form-group mb-3" style="display: none;">
@@ -50,6 +52,17 @@
                                         <option value="Admin">Admin</option>
                                     </select>
                                     <span asp-validation-for="Role" class="text-danger"></span>
+                                </div>
+                                
+                                <div class="form-group mb-3">
+                                    <label asp-for="@Model.Status" class="font-weight-bold">Status</label>
+                                    <select asp-for="@Model.Status" class="form-control form-control-sm">
+                                        <option value="Active">Active</option>
+                                        <option value="Inactive">Inactive</option>
+                                        <option value="Block">Block</option>
+                                        <option value="Deleted">Deleted</option>
+                                    </select>
+                                    <span asp-validation-for="Status" class="text-danger"></span>
                                 </div>
                             </div>
                             <!-- Avatar URL -->

@@ -32,6 +32,12 @@ namespace Client.Models.UserDTO
 
         public UserRole? Role { get; set; } = UserRole.User;
 
+        public UserStatus? Status { get; set; } = UserStatus.Inactive;
+
+        public EmailStatus? EmailConfirmation { get; set; } = EmailStatus.Unconfirmed;
+
+        //public DateTime CreateAt { get; set; }
+
         public DateTime UpdateAt { get; set; } = DateTime.UtcNow;
 
         [JsonIgnore]

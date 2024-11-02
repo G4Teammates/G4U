@@ -55,7 +55,7 @@ namespace UserMicroservice.Repositories.Services
 
                 // Generate random password for admin creation (future functionality: send via email)
                 userCreate.PasswordHash = BCrypt.Net.BCrypt.HashPassword("Abc123!");
-
+                userCreate.UpdatedAt = DateTime.UtcNow;
                 // Save the user to the database
                 await _context.Users.AddAsync(userCreate);
                 await _context.SaveChangesAsync();
@@ -110,7 +110,7 @@ namespace UserMicroservice.Repositories.Services
             ResponseModel response = new();
             try
             {
-                var users = await _context.Users.Where(u=>u.Status==UserStatus.Active).ToListAsync();
+                var users = await _context.Users.ToListAsync();
                 if (users != null)
                 {
                     response.Message = $"Found {users.Count} users";
@@ -155,6 +155,33 @@ namespace UserMicroservice.Repositories.Services
             return response;
         }
 
+
+        public async Task<ResponseModel> GetUserByEmail(string email)
+        {
+            ResponseModel response = new();
+            try
+            {
+                var user = await _context.Users.FindAsync(email);
+                if (user != null)
+                {
+                    response.Message = $"Found success user: {email} ";
+                    response.Result = _mapper.Map<UserModel>(user);
+                }
+                else
+                {
+                    response.Message = $"Not found user: {email}";
+                }
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+            }
+            return response;
+        }
+
+
+
         public async Task<ResponseModel> UpdateUser(UserUpdate updatedUserModel)
         {
             var response = new ResponseModel();
@@ -193,7 +220,8 @@ namespace UserMicroservice.Repositories.Services
                     user.Email = updatedUserModel.Email ?? user.Email;
                     user.Avatar = updatedUserModel.Avatar ?? user.Avatar;
                     user.Role = updatedUserModel.Role ?? user.Role;
-
+                    user.Status = updatedUserModel.Status ?? user.Status;
+                    user.UpdatedAt = DateTime.UtcNow;
                     // Lưu các thay đổi vào cơ sở dữ liệu
                     _context.Users.Update(user);
                     await _context.SaveChangesAsync();
