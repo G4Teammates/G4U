@@ -1,8 +1,45 @@
 ﻿@using Client.Models.UserDTO
+@using static Client.Models.Enum.UserEnum.User
 @{
     Layout = "_LayoutAdmin";
 }
 @model UserViewModel
+
+<style>
+    /* CSS cho tooltip */
+    .tooltip-custom {
+        position: relative;
+        cursor: pointer;
+    }
+
+        .tooltip-custom .tooltip-content {
+            opacity: 0;
+            position: absolute;
+            color: #312c2c;
+            padding: 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            white-space: nowrap;
+            background-color: rgba(165, 164, 164, 0.26); /* Nền trong suốt */
+            backdrop-filter: blur(15px);
+            /* Thiết lập hiệu ứng mượt */
+            transform: translateX(-50%) scale(0.8);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            /* Căn vị trí tooltip */
+            top: 100%; /* Hiển thị bên dưới phần tử */
+            left: 50%;
+        }
+
+        /* Hiển thị tooltip với hiệu ứng phóng to */
+        .tooltip-custom:hover .tooltip-content {
+            opacity: 1;
+            transform: translateX(-50%) scale(1); /* Phóng to trở lại kích thước gốc */
+        }
+
+</style>
+
 <div class="pt-3 pb-4">
     <span class="titleManager bg-success py-3 px-5 rounded-4 fw-bold text-white">Users Manager</span>
 </div>
@@ -11,39 +48,58 @@
     <!-- Thanh tìm kiếm và nút Thêm -->
     <div class="d-flex justify-content-between mb-3">
         <form asp-action="SearchUsers" method="get">
-            <div class="input-group mb-3">
+            <form method="get" asp-action="SearchUsers" class="input-group mb-3">
                 <input type="text" class="form-control" name="query" placeholder="Search users..." value="" />
                 @* <button class="btn btn-outline-success" type="submit">Search</button> *@
-            </div>
+            </form>
         </form>
         <div class="w-100">
             <div class="text-end">
+                <!-- Dropdown cho User Status -->
                 <span class="dropdown">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" style="width:100px">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" style="width:100px" id="statusDropdown" data-bs-toggle="dropdown">
                         Status
                     </button>
-                    <span class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item" href="#">Action</a>
-                        <a class="dropdown-item" href="#">Another action</a>
-                        <a class="dropdown-item" href="#">Something else here</a>
+                    <span class="dropdown-menu" aria-labelledby="statusDropdown">
+                        <a class="dropdown-item" href="@Url.Action("FilterByUserStatus", "Admin", new { status = UserStatus.Active })">Active</a>
+                        <a class="dropdown-item" href="@Url.Action("FilterByUserStatus", "Admin", new { status = UserStatus.Inactive })">Inactive</a>
+                        <a class="dropdown-item" href="@Url.Action("FilterByUserStatus", "Admin", new { status = UserStatus.Block })">Block</a>
+                        <a class="dropdown-item" href="@Url.Action("FilterByUserStatus", "Admin", new { status = UserStatus.Deleted })">Deleted</a>
                     </span>
                 </span>
 
+                <!-- Dropdown cho Email Status -->
                 <span class="dropdown">
-                    <button class="btn btn-secondary dropdown-toggle" type="button">
-                        email confirm
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="emailDropdown" data-bs-toggle="dropdown">
+                        Email confirm
                     </button>
-                    <span class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item" href="#">Action</a>
-                        <a class="dropdown-item" href="#">Another action</a>
-                        <a class="dropdown-item" href="#">Something else here</a>
+                    <span class="dropdown-menu" aria-labelledby="emailDropdown">
+                        <a class="dropdown-item" href="@Url.Action("FilterByEmailStatus", "Admin", new { status = EmailStatus.Confirmed })">Confirm</a>
+                        <a class="dropdown-item" href="@Url.Action("FilterByEmailStatus", "Admin", new { status = EmailStatus.Unconfirmed })">Not confirmed</a>
                     </span>
                 </span>
 
-                <button class="btn btn-success" data-toggle="modal" data-target="#modalUser">+ Add</button>
+                <!-- Button để thêm người dùng -->
+                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalUser">+ Add</button>
             </div>
         </div>
+
     </div>
+
+    @if (TempData["success"] != null)
+    {
+
+        <div class="alert alert-success">
+            @TempData["success"]
+        </div>
+    }
+    @if (TempData["error"] != null)
+    {
+        <div class="alert alert-danger">
+            @TempData["error"]
+        </div>
+    }
+
 
     <!-- Bảng thông tin -->
     <div id="checkBoxBar" style="display:none">
@@ -57,7 +113,9 @@
     <table class="table table-bordered table-hover align-middle">
         <thead class="table-light">
             <tr>
-                <th scope="col"><input type="checkbox" id="selectAll"></th>
+                <th scope="col">
+                    @*  <input type="checkbox" id="selectAll"> *@
+                </th>
                 <th scope="col">Avatar</th>
                 <th scope="col">User Name</th>
                 <th scope="col">Display Name</th>
@@ -74,61 +132,226 @@
             {
                 foreach (var user in Model.Users)
                 {
-                    <tr>
-                        <td title="@user.Id"><input type="checkbox" class="user-checkbox" value="@user.Id" /></td>
-                        <td title="@user.Avatar">
-                            @if (!string.IsNullOrEmpty(user.Avatar))
-                            {
-                                <img src="@user.Avatar" alt="Avatar" style="width: 80px; height: 80px;" />
-                            }
-                            else
-                            {
-                                <img src="~/Image/avatar.jpeg" alt="Avatar" style="width: 80px; height: 80px;" />
-                            }
-                        </td>
-                        <td class=" text-truncate" style="max-width: 50px;" title="@user.Username">@user.Username</td>
-                        <td class=" text-truncate" style="max-width: 50px;" title="@user.DisplayName">@(string.IsNullOrEmpty(user.DisplayName) ? "-" : user.DisplayName)</td>
-                        <td class=" text-truncate" style="max-width: 150px;" title="@user.Email">@user.Email</td>
-                        <td title="@user.PhoneNumber">
-                            <span class="text-success">@user.PhoneNumber</span>
-                        </td>
+                    if (user.Status == Client.Models.Enum.UserEnum.User.UserStatus.Inactive)
+                    {
+                        <tr class="bg-warning bg-opacity-25 tooltip-custom">
+                            <td title="@user.Id">
+                                <input type="checkbox" hidden class="user-checkbox" value="@user.Id" />
+                                <span class="tooltip-content">Id: @user.Id</span>
+                            </td>
+                            <td title="@user.Avatar">
+                                @if (!string.IsNullOrEmpty(user.Avatar))
+                                {
+                                    <img src="@user.Avatar" alt="Avatar" style="width: 80px; height: 80px;" />
+                                }
+                                else
+                                {
+                                    <img src="~/Image/avatar.jpeg" alt="Avatar" style="width: 80px; height: 80px;" />
+                                }
+                            </td>
+                            <td class=" text-truncate" style="max-width: 50px;" title="@user.Username">@user.Username</td>
+                            <td class=" text-truncate" style="max-width: 50px;" title="@user.DisplayName">@(string.IsNullOrEmpty(user.DisplayName) ? "-" : user.DisplayName)</td>
+                            <td class=" text-truncate" style="max-width: 150px;" title="@user.Email">@user.Email</td>
+                            <td title="@user.PhoneNumber">
+                                <span class="text-success">@user.PhoneNumber</span>
+                            </td>
 
-                        <td>
+                            <td>
+                                @if (user.Role == Client.Models.Enum.UserEnum.User.UserRole.Admin)
+                                {
+                                    <span class="text-primary">Admin</span>
+                                }
+                                else
+                                {
+                                    <span>User</span>
+                                }
+                            </td>
+                            <td>@DateTime.Now.ToString("dd/MM/yyyy")</td> <!-- Hiển thị ngày tham gia -->
+                            @*Đây là nút Update*@
+                            <td>
+                                <a href="javascript:void(0);" class="text-danger mx-2"
+                                   data-url="@Url.Action("UserUpdate", "Admin", new { id = user.Id })"
+                                   onclick="showUpdateModel(this)"
+                                   title="User Update">
+                                    <i class="fa-solid fa-pen-to-square" style="color:#0b3d0d"></i>
+                                </a>
+                            </td>
                             @if (user.Role == Client.Models.Enum.UserEnum.User.UserRole.Admin)
                             {
-                                <span class="text-primary">Admin</span>
+                                <td>
+                                    <p class="text-secondary mx-2"> <i class="fas fa-trash"></i></p>
+                                </td>
                             }
                             else
                             {
-                                <span>User</span>
+                                <td>
+                                    <a asp-action="UserDelete" asp-route-Id="@user.Id" class="text-danger mx-2"> <i class="fas fa-trash"></i></a>
+                                </td>
                             }
-                        </td>
-                        <td>@DateTime.Now.ToString("dd/MM/yyyy")</td> <!-- Hiển thị ngày tham gia -->
-                        @*Đây là nút Update*@
-                        <td>
-                            <a href="javascript:void(0);" class="text-danger mx-2"
-                               data-url="@Url.Action("UserUpdate", "Admin", new { id = user.Id })"
-                               onclick="showUpdateModel(this)"
-                               title="User Update">
-                                <i class="fa-solid fa-pen-to-square" style="color:#0b3d0d"></i>
-                            </a>
-                        </td>
-                        @*                         <td><button class="btn btn-success" data-toggle="modal" data-target="#modalUsers" asp-action="UserUpdate" asp-route-Id="@user.Id">+ Update</button></td>
-                *@
-                        <td>
-                            @* <form asp-action="UsersDelete" >
-                    <input type="submit" value="Delete" class="btn btn-danger" />
-                    </form> *@
-                            <a asp-action="UserDelete" asp-route-Id="@user.Id" class="text-danger mx-2"> <i class="fas fa-trash"></i></a>
-                            @* <a asp-action="UsersDelete" asp-route-Id="@user.Id"> <i class="fas fa-trash"></i></a> *@
-                        </td>
-                    </tr>
+                        </tr>
+                    }
+                    else if (user.Status == Client.Models.Enum.UserEnum.User.UserStatus.Active)
+                    {
+                        <tr class="bg-primary bg-opacity-25 tooltip-custom">
+                            <td title="@user.Id">
+                                <input type="checkbox" hidden class="user-checkbox" value="@user.Id" />
+                                <span class="tooltip-content">Id: @user.Id</span>
+                            </td>
+                            <td title="@user.Avatar">
+                                @if (!string.IsNullOrEmpty(user.Avatar))
+                                {
+                                    <img src="@user.Avatar" alt="Avatar" style="width: 80px; height: 80px;" />
+                                }
+                                else
+                                {
+                                    <img src="~/Image/avatar.jpeg" alt="Avatar" style="width: 80px; height: 80px;" />
+                                }
+                            </td>
+                            <td class=" text-truncate" style="max-width: 50px;" title="@user.Username">@user.Username</td>
+                            <td class=" text-truncate" style="max-width: 50px;" title="@user.DisplayName">@(string.IsNullOrEmpty(user.DisplayName) ? "-" : user.DisplayName)</td>
+                            <td class=" text-truncate" style="max-width: 150px;" title="@user.Email">@user.Email</td>
+                            <td title="@user.PhoneNumber">
+                                <span class="text-success">@user.PhoneNumber</span>
+                            </td>
+
+                            <td>
+                                @if (user.Role == Client.Models.Enum.UserEnum.User.UserRole.Admin)
+                                {
+                                    <span class="text-primary">Admin</span>
+                                }
+                                else
+                                {
+                                    <span>User</span>
+                                }
+                            </td>
+                            <td>@DateTime.Now.ToString("dd/MM/yyyy")</td> <!-- Hiển thị ngày tham gia -->
+                            @*Đây là nút Update*@
+                            <td>
+                                <a href="javascript:void(0);" class="text-danger mx-2"
+                                   data-url="@Url.Action("UserUpdate", "Admin", new { id = user.Id })"
+                                   onclick="showUpdateModel(this)"
+                                   title="User Update">
+                                    <i class="fa-solid fa-pen-to-square" style="color:#0b3d0d"></i>
+                                </a>
+                            </td>
+                            <td>
+                                <a asp-action="UserDelete" asp-route-Id="@user.Id" class="text-danger mx-2"> <i class="fas fa-trash"></i></a>
+                            </td>
+                        </tr>
+                    }
+                    else if (user.Status == Client.Models.Enum.UserEnum.User.UserStatus.Block)
+                    {
+                        <tr class="bg-secondary bg-opacity-25 tooltip-custom">
+                            <td title="@user.Id">
+                                <input type="checkbox" hidden class="user-checkbox" value="@user.Id" />
+                                <span class="tooltip-content">Id: @user.Id</span>
+                            </td>
+                            <td hidden title="@user.Id"><input type="checkbox" class="user-checkbox" value="@user.Id" /></td>
+                            <td title="@user.Avatar">
+                                @if (!string.IsNullOrEmpty(user.Avatar))
+                                {
+                                    <img src="@user.Avatar" alt="Avatar" style="width: 80px; height: 80px;" />
+                                }
+                                else
+                                {
+                                    <img src="~/Image/avatar.jpeg" alt="Avatar" style="width: 80px; height: 80px;" />
+                                }
+                            </td>
+                            <td class=" text-truncate" style="max-width: 50px;" title="@user.Username">@user.Username</td>
+                            <td class=" text-truncate" style="max-width: 50px;" title="@user.DisplayName">@(string.IsNullOrEmpty(user.DisplayName) ? "-" : user.DisplayName)</td>
+                            <td class=" text-truncate" style="max-width: 150px;" title="@user.Email">@user.Email</td>
+                            <td title="@user.PhoneNumber">
+                                <span class="text-success">@user.PhoneNumber</span>
+                            </td>
+
+                            <td>
+                                @if (user.Role == Client.Models.Enum.UserEnum.User.UserRole.Admin)
+                                {
+                                    <span class="text-primary">Admin</span>
+                                }
+                                else
+                                {
+                                    <span>User</span>
+                                }
+                            </td>
+                            <td>@DateTime.Now.ToString("dd/MM/yyyy")</td> <!-- Hiển thị ngày tham gia -->
+                            @*Đây là nút Update*@
+                            <td>
+                                <a href="javascript:void(0);" class="text-danger mx-2"
+                                   data-url="@Url.Action("UserUpdate", "Admin", new { id = user.Id })"
+                                   onclick="showUpdateModel(this)"
+                                   title="User Update">
+                                    <i class="fa-solid fa-pen-to-square" style="color:#0b3d0d"></i>
+                                </a>
+                            </td>
+                            <td>
+                                <a asp-action="UserDelete" asp-route-Id="@user.Id" class="text-danger mx-2"> <i class="fas fa-trash"></i></a>
+                            </td>
+                        </tr>
+                    }
+                    else if (user.Status == Client.Models.Enum.UserEnum.User.UserStatus.Deleted)
+                    {
+                        <tr class="bg-danger bg-opacity-25 tooltip-custom">
+                            <td title="@user.Id">
+                                <input type="checkbox" hidden class="user-checkbox" value="@user.Id" />
+                                <span class="tooltip-content">Id: @user.Id</span>
+                            </td>
+                            <td hidden title="@user.Id"><input type="checkbox" class="user-checkbox" value="@user.Id" /></td>
+                            <td title="@user.Avatar">
+                                @if (!string.IsNullOrEmpty(user.Avatar))
+                                {
+                                    <img src="@user.Avatar" alt="Avatar" style="width: 80px; height: 80px;" />
+                                }
+                                else
+                                {
+                                    <img src="~/Image/avatar.jpeg" alt="Avatar" style="width: 80px; height: 80px;" />
+                                }
+                            </td>
+                            <td class=" text-truncate" style="max-width: 50px;" title="@user.Username">@user.Username</td>
+                            <td class=" text-truncate" style="max-width: 50px;" title="@user.DisplayName">@(string.IsNullOrEmpty(user.DisplayName) ? "-" : user.DisplayName)</td>
+                            <td class=" text-truncate" style="max-width: 150px;" title="@user.Email">@user.Email</td>
+                            <td title="@user.PhoneNumber">
+                                <span class="text-success">@user.PhoneNumber</span>
+                            </td>
+
+                            <td>
+                                @if (user.Role == Client.Models.Enum.UserEnum.User.UserRole.Admin)
+                                {
+                                    <span class="text-primary">Admin</span>
+                                }
+                                else
+                                {
+                                    <span>User</span>
+                                }
+                            </td>
+                            <td>@DateTime.Now.ToString("dd/MM/yyyy")</td> <!-- Hiển thị ngày tham gia -->
+                            @*Đây là nút Update*@
+                            <td>
+                                <a href="javascript:void(0);" class="text-danger mx-2"
+                                   data-url="@Url.Action("UserUpdate", "Admin", new { id = user.Id })"
+                                   onclick="showUpdateModel(this)"
+                                   title="User Update">
+                                    <i class="fa-solid fa-pen-to-square" style="color:#0b3d0d"></i>
+                                </a>
+                            </td>
+                            <td>
+                                <a asp-action="UserDelete" asp-route-Id="@user.Id" class="text-danger mx-2"> <i class="fas fa-trash"></i></a>
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        <tr class="bg-success">
+                            <td colspan="10">Không có thông tin của người dùng này</td>
+                        </tr>
+                    }
+
                 }
             }
             else
             {
                 <tr>
-                    <td colspan="9" class="text-center">Không có người dùng nào để hiển thị.</td>
+                    <td colspan="10" class="text-center">Không có người dùng nào để hiển thị.</td>
                 </tr>
             }
         </tbody>
@@ -153,7 +376,7 @@
 
             <nav aria-label="Page navigation example" class="d-inline-block">
                 <ul class="pagination pagination-sm mb-0">
-                    <li class="page-item @(Model.pageNumber == 1 ? "disabled" : "")">
+                    <li class="page-item @(Model.pageNumber == 1 || Model.Users==null ? "disabled" : "")">
                         <a class="page-link" asp-controller="Admin" asp-action="UsersManager" asp-route-page="@(Model.pageNumber - 1)" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
                             Previous
                         </a>
@@ -220,4 +443,14 @@
             }
         });
     }
+
+    function showSuccessToast() {
+        $('#successToast').toast('show');
+    }
+
+    function showErrorToast() {
+        $('#errorToast').toast('show');
+    }
+
+
 </script>
