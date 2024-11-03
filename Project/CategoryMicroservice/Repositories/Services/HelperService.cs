@@ -12,11 +12,12 @@ namespace CategoryMicroservice.Repositories.Services
         public async Task<ResponseModel> IsCategoryNotExist(string name)
         {
             var response = new ResponseModel();
-            response.Message = "Name are not exist in database. Ready to create new";
+            response.Message = "Category are not exist in database. Ready to create new";
+            response.Message = "Category are not exist in database. Ready to create new";
             if (await _context.Categories.AnyAsync(x => x.Name == name))
             {
                 response.IsSuccess = false;
-                response.Message = "Username or email already exist";
+                response.Message = "Category already exist";
             }
             return response;
         }
