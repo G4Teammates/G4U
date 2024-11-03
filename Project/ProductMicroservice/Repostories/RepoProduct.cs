@@ -712,7 +712,7 @@ namespace ProductMicroservice.Repostories
             {
                 var products = await _db.Products.Where(p => p.UserName == userName).ToListAsync();
 
-                if (products == null)
+                if (products.Count == 0)
                 {
                     throw new Exception("This user doesn't have any product");
                 }
