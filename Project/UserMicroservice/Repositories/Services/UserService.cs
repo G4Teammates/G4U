@@ -55,7 +55,7 @@ namespace UserMicroservice.Repositories.Services
 
                 // Generate random password for admin creation (future functionality: send via email)
                 userCreate.PasswordHash = BCrypt.Net.BCrypt.HashPassword("Abc123!");
-
+                userCreate.UpdatedAt = DateTime.UtcNow;
                 // Save the user to the database
                 await _context.Users.AddAsync(userCreate);
                 await _context.SaveChangesAsync();
@@ -193,7 +193,8 @@ namespace UserMicroservice.Repositories.Services
                     user.Email = updatedUserModel.Email ?? user.Email;
                     user.Avatar = updatedUserModel.Avatar ?? user.Avatar;
                     user.Role = updatedUserModel.Role ?? user.Role;
-
+                    user.Status = updatedUserModel.Status ?? user.Status;
+                    user.UpdatedAt = DateTime.UtcNow;
                     // Lưu các thay đổi vào cơ sở dữ liệu
                     _context.Users.Update(user);
                     await _context.SaveChangesAsync();

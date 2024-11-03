@@ -16,14 +16,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddAzureKeyVault(new Uri("https://duantotnghiep.vault.azure.net/"),
     new DefaultAzureCredential());
 
-//builder.Configuration.AddAzureKeyVault(new Uri("https://duantotnghiep.vault.azure.net/"),
-//    new DefaultAzureCredential());
-
-
 JwtOptions.Secret = builder.Configuration["9"]!;
 JwtOptions.Issuer = builder.Configuration["10"]!;
 JwtOptions.Audience = builder.Configuration["11"]!;
-
 
 builder.Services.AddAuthentication(options =>
 {

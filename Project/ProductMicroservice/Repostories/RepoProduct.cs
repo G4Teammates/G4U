@@ -165,6 +165,14 @@ namespace ProductMicroservice.Repostories
 
         public IEnumerable<Products> Products => _db.Products.ToList();
         public async Task<Products> GetById(string id) => _db.Products.Find(id);
+        public async Task<Products> GetDetail(string id)
+        {
+            var product= await GetById(id);
+            product.Interactions.NumberOfViews++;
+            _db.Products.Update(product);
+            _db.SaveChanges();
+            return product;
+        }
         public async void DeleteProduct(string id)
         {
             var Product = await GetById(id);
