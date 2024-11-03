@@ -1,15 +1,13 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Identity.Client;
-using ProductMicroservice.DBContexts.Entities;
-using ProductMicroservice.DBContexts;
 using Microsoft.EntityFrameworkCore;
 using Azure.Identity;
 using MongoDB.Driver;
 using MongoDB.Bson;
-using ProductMicroservice.Models.Initialization;
+using StatisticalMicroservice.DBContexts;
 
-namespace ProductMicroservice.Configure
+namespace StatisticalMicroservice.Configure
 {
     public static class Startup
     {
@@ -37,8 +35,8 @@ namespace ProductMicroservice.Configure
             //Connect MongoDb by connection string
             var client = new MongoClient(config["1"]!);
             //Create or get if database exists
-            var database = client.GetDatabase("ProductDb");
-            services.AddDbContext<ProductDbContext>(option => option
+            var database = client.GetDatabase("StatisticalDb");
+            services.AddDbContext<StatisticalDbcontext>(option => option
                 .UseMongoDB(client, database.DatabaseNamespace.DatabaseName)
             );
 
@@ -56,15 +54,6 @@ namespace ProductMicroservice.Configure
 
             _ = services.AddDependencyInjection();
 
-            #endregion
-
-            #region declaration and initialization
-            initializationModel.apiKeyCloudinary = config["5"]!;
-            initializationModel.apiSecretCloudinary = config["6"]!;
-            initializationModel.EndpointContentSafety = config["10022002"]!;
-            initializationModel.ApiKeyContentSafety = config["19102001"]!;
-            initializationModel.VirusTotalApiKey = config["4"]!;
-            initializationModel.serviceAccountJsonContent = config["7"];
             #endregion
 
             return services;
