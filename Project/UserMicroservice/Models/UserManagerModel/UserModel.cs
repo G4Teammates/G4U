@@ -88,6 +88,13 @@ namespace UserMicroservice.Models.UserManagerModel
         public UserRole Role { get; set; } = UserRole.User;
 
         /// <summary>
+        /// The email confirmation status (e.g., not confirmed (0), confirmed (1)).
+        /// <br/>
+        /// Trạng thái xác nhận email (ví dụ: chưa xác nhận (0), đã xác nhận (1)).
+        /// </summary>
+        public EmailStatus EmailConfirmation { get; set; }
+
+        /// <summary>
         /// The total profit earned by the user from selling games. 
         /// <br/>
         /// Tổng số tiền lời cuối cùng mà người dùng kiếm được từ việc bán game.
