@@ -574,11 +574,13 @@ namespace ProductMicroservice.Repostories
                 .ToListAsync();
         }
 
+
         public async Task<ResponseDTO> TotalRequest()
         {
             ResponseDTO response = new();
             try
             {
+
                 var Pros = await _db.Products.ToListAsync();
                 if (Pros != null)
                 {   
@@ -600,6 +602,29 @@ namespace ProductMicroservice.Repostories
                     response.IsSuccess = false;
                     response.Message = "Not found any Product";
                 }
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+            }
+            return response;
+        }
+
+        public async Task<ResponseDTO> GetAllProductsByUserName(string userName)
+        {
+            ResponseDTO response = new();
+            try
+            {
+                var products = await _db.Products.Where(p => p.UserName == userName).ToListAsync();
+
+                if (products.Count == 0)
+                {
+                    throw new Exception("This user doesn't have any product");
+                }
+
+                response.Message = "Get All Products Success";
+                response.Result = products;
             }
             catch (Exception ex)
             {

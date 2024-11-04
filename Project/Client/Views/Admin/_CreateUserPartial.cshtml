@@ -33,6 +33,7 @@
                     </div>
                     <input type="file" id="avatarInput" asp-for="@Model.AvatarFile" class="form-control mt-2" style="display: none;" accept=".png, .jpg" />
                     <a id="changeAvatarBtn" class="btn btn-outline-dark text-center mt-2">Change Avatar</a>
+                    <span asp-validation-for="@Model.Avatar" class="text-danger"></span>
 
                 }
                 else
@@ -42,6 +43,7 @@
                     </div>
                     <input type="file" id="avatarInput" asp-for="@Model.Avatar" class="form-control mt-2" style="display: none;" accept=".png, .jpg" />
                     <a id="changeAvatarBtn" class="btn btn-outline-dark text-center mt-2">Change Avatar</a>
+                    <span asp-validation-for="@Model.Avatar" class="text-danger"></span>
 
                 }
             </div>

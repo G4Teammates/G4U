@@ -181,7 +181,8 @@ namespace CommentMicroService.Controllers
             }
         }
 
-        [HttpGet("{productId?}")]
+
+        [HttpGet("get={productId}")]
         public async Task<IActionResult> GetByproductId([FromRoute] string productId, int? page, int pageSize)
         {
             try

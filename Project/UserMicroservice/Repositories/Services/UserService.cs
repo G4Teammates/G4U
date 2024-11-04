@@ -166,6 +166,33 @@ namespace UserMicroservice.Repositories.Services
             return response;
         }
 
+
+        public async Task<ResponseModel> GetUserByEmail(string email)
+        {
+            ResponseModel response = new();
+            try
+            {
+                var user = await _context.Users.SingleOrDefaultAsync(u=>u.Email == email);
+                if (user != null)
+                {
+                    response.Message = $"Found success user: {email} ";
+                    response.Result = _mapper.Map<UserModel>(user);
+                }
+                else
+                {
+                    response.Message = $"Not found user: {email}";
+                }
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+            }
+            return response;
+        }
+
+
+
         public async Task<ResponseModel> UpdateUser(UserUpdate updatedUserModel)
         {
             var response = new ResponseModel();
@@ -319,6 +346,36 @@ namespace UserMicroservice.Repositories.Services
             return response;
         }
 
+        public async Task<ResponseModel> GetAllProductsInWishList(string id)
+        {
+            var response = new ResponseModel();
+
+            try
+            {
+                var user = await _context.Users.FindAsync(id);
+
+                if (user == null)
+                {
+                    throw new Exception($"User with ID {id} not found.");
+                }
+
+                if (user.Wishlist == null)
+                {
+                    throw new Exception($"User with ID {id} doesn't have any product in wishlist.");
+                }
+                var wishList = user.Wishlist.ToList();
+
+                response.IsSuccess = true;
+                response.Result = wishList;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+            }
+            return response;
+        }
+
 
         public async Task<ResponseModel> TotalRequest()
         {
@@ -348,8 +405,10 @@ namespace UserMicroservice.Repositories.Services
                 response.IsSuccess = false;
                 response.Message = ex.Message;
             }
+
             return response;
         }
+
 
 
         //public async Task<ICollection<UserModel>> FindUsers(SearchCriteria criteria)
