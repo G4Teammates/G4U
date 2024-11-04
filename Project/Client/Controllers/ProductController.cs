@@ -1,8 +1,10 @@
 ﻿using Client.Models;
 using Client.Models.CategorisDTO;
+using Client.Models.ComentDTO;
 using Client.Models.ProductDTO;
 using Client.Repositories.Interfaces;
 using Client.Repositories.Interfaces.Categories;
+using Client.Repositories.Interfaces.Comment;
 using Client.Repositories.Interfaces.Product;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -12,12 +14,13 @@ using System.IdentityModel.Tokens.Jwt;
 
 namespace Client.Controllers
 {
-    public class ProductController(IHelperService helperService, IRepoProduct repoProduct, ICategoriesService categoryService) : Controller
+    public class ProductController(IHelperService helperService, IRepoProduct repoProduct, ICategoriesService categoryService, ICommentService commentService) : Controller
     {
 
         private readonly IHelperService _helperService = helperService;
         public readonly IRepoProduct _productService = repoProduct;
         public readonly ICategoriesService _categoryService = categoryService;
+        public readonly ICommentService _commentService = commentService;
         public async Task<IActionResult> ProductIndex()
         {
             return View();
@@ -118,28 +121,40 @@ namespace Client.Controllers
             return View("Product", productViewModel); // Trả về view ProductsManager với danh sách sản phẩm đã lọc
         }
 
-
+     
         public async Task<IActionResult> ProductDetail(string id)
         {
-            ResponseModel? response = await _productService.GetProductByIdAsync(id);
+            ProductViewModel productViewModel = new ProductViewModel();
+            ResponseModel? response = await _productService.GetDetailByIdAsync(id);
+            ResponseModel? response1 = await _commentService.GetByproductId(id, 1, 9);
 
             if (response != null && response.IsSuccess)
             {
                 // Deserialize vào lớp trung gian với kiểu ProductModel
-                ResponseResultModel<ProductModel>? data =
-                    JsonConvert.DeserializeObject<ResponseResultModel<ProductModel>>(Convert.ToString(response.Result));
+                ProductModel? model = JsonConvert.DeserializeObject<ProductModel>(Convert.ToString(response.Result));
 
-                // Lấy dữ liệu từ trường "result" và gán vào model
-                ProductModel? model = data?.result;
+                // Deserialize response1.Result thành danh sách CommentDTOModel
+                List<CommentDTOModel>? comments = JsonConvert.DeserializeObject<List<CommentDTOModel>>(Convert.ToString(response1.Result));
 
-                return View(model);
+                if (model != null)
+                {
+                    // Gán model vào ProductViewModel
+                    productViewModel.Product = new List<ProductModel> { model };
+
+                    // Gán danh sách comments vào ProductViewModel
+                    productViewModel.CommentDTOModels = comments ?? new List<CommentDTOModel>();
+                }
             }
             else
             {
-                TempData["error"] = response?.Message;
+                TempData["error"] = response?.Message ?? "Đã có lỗi xảy ra khi lấy thông tin sản phẩm.";
+                return NotFound();
             }
-            return NotFound();
+
+            // Trả về View với ProductViewModel
+            return View(productViewModel);
         }
+
 
 
 
