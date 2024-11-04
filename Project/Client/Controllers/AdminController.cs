@@ -456,6 +456,7 @@ namespace Client.Controllers
 
             if (response != null && response.IsSuccess)
             {
+
                 ProductModel? model = JsonConvert.DeserializeObject<ProductModel>(Convert.ToString(response.Result));
 
                 // Trả về model UsersDTO để sử dụng trong View

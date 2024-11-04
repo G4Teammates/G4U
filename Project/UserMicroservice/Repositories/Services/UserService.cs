@@ -15,14 +15,16 @@ using UserMicroservice.Repositories.Interfaces;
 using UserMicroservice.DBContexts.Enum;
 using static Google.Apis.Requests.BatchRequest;
 using X.PagedList.Extensions;
+using UserMicroservice.Models.Message;
 
 namespace UserMicroservice.Repositories.Services
 {
-    public class UserService(UserDbContext context, IMapper mapper, IHelperService helper) : IUserService
+    public class UserService(UserDbContext context, IMapper mapper, IHelperService helper, IMessage message) : IUserService
     {
         private readonly UserDbContext _context = context;
         private readonly IMapper _mapper = mapper;
         private readonly IHelperService _helper = helper;
+        private readonly IMessage _message = message;
 
         /// <summary>
         /// Adds a user to the database. If it's an admin, the system generates a password and skips password input. 
@@ -60,6 +62,9 @@ namespace UserMicroservice.Repositories.Services
                 await _context.Users.AddAsync(userCreate);
                 await _context.SaveChangesAsync();
 
+                var totalRequest = await TotalRequest();
+                _message.SendingMessageStatistiscal(totalRequest.Result);
+
                 response.Message = "User created successfully";
                 response.Result = userMapper;
             }
@@ -93,6 +98,9 @@ namespace UserMicroservice.Repositories.Services
                 _context.Users.Remove(user);
                 await _context.SaveChangesAsync();
 
+                var totalRequest = await TotalRequest();
+                _message.SendingMessageStatistiscal(totalRequest.Result);
+
                 response.IsSuccess = true;
                 response.Message = "User deleted successfully.";
             }
@@ -115,6 +123,9 @@ namespace UserMicroservice.Repositories.Services
                 {
                     response.Message = $"Found {users.Count} users";
                     response.Result = _mapper.Map<ICollection<UserModel>>(users).ToPagedList(pageNumber, pageSize);
+
+                    var totalRequest = await TotalRequest();
+                    _message.SendingMessageStatistiscal(totalRequest.Result);
                 }
                 else
                 {
@@ -352,11 +363,42 @@ namespace UserMicroservice.Repositories.Services
                 {
                     throw new Exception($"User with ID {id} doesn't have any product in wishlist.");
                 }
-
                 var wishList = user.Wishlist.ToList();
 
                 response.IsSuccess = true;
                 response.Result = wishList;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+            }
+            return response;
+        }
+
+
+        public async Task<ResponseModel> TotalRequest()
+        {
+            ResponseModel response = new();
+            try
+            {
+                var Pros = await _context.Users.ToListAsync();
+                if (Pros != null)
+                {
+                    var totalUser = Pros.Count;
+                    var totalRequest = new TotalRequest()
+                    {
+                        totalUsers = totalUser,
+                        updateAt = DateTime.Now,
+                    };
+                    response.Result = totalRequest;
+                    return response;
+                }
+                else
+                {
+                    response.IsSuccess = false;
+                    response.Message = "Not found any User";
+                }
             }
             catch (Exception ex)
             {

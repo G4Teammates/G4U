@@ -17,6 +17,7 @@ namespace OrderMicroservice.Configure
 
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IPaymentService, PaymentService>();
+            services.AddScoped<IMessage, Message>();
             //Register DI here ⬆️
 
             return services;

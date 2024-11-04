@@ -26,6 +26,8 @@ using Microsoft.EntityFrameworkCore;
 using ProductMicroservice.Models.Initialization;
 using ProductMicroservice.Repostories.Helper;
 using X.PagedList.Extensions;
+using ProductMicroservice.Models.Message;
+using ProductMicroservice.Repostories.Messages;
 
 namespace ProductMicroservice.Repostories
 {
@@ -37,10 +39,12 @@ namespace ProductMicroservice.Repostories
         private readonly IConfiguration _configuration;
         private readonly Cloudinary _cloudinary;
         private readonly IHelper _helper;
+        private readonly IMessage _message;
         
 
-        public RepoProduct(IConfiguration configuration, ProductDbContext db, IMapper mapper, IHelper helper)
+        public RepoProduct(IConfiguration configuration, ProductDbContext db, IMapper mapper, IHelper helper, IMessage message)
         {
+            _message = message;
             _helper = helper;
             _configuration = configuration;
             _db = db;
@@ -114,6 +118,7 @@ namespace ProductMicroservice.Repostories
                                         Status = CensorshipStatus.Access
                                     }
                                 });
+
                             }
                             catch (RequestFailedException)
                             {
@@ -161,6 +166,9 @@ namespace ProductMicroservice.Repostories
                     Product.Links = linkModel;
                     var proHaveFile = await _helper.UpdateProduct(Product);
                     response.Result = _mapper.Map<Products>(proHaveFile);// Thực hiện cập nhật sản phẩm
+
+                    var totalRequest = await TotalRequest();
+                    _message.SendingMessageStatistiscal(totalRequest.Result);
                 }
                 else
                 {
@@ -186,6 +194,8 @@ namespace ProductMicroservice.Repostories
                 if (Pros != null)
                 {
                     response.Result = _mapper.Map<ICollection<Products>>(Pros).ToPagedList(page, pageSize);
+                    var totalRequest = await TotalRequest();
+                    _message.SendingMessageStatistiscal(totalRequest.Result);
                 }
                 else
                 {
@@ -235,6 +245,9 @@ namespace ProductMicroservice.Repostories
                     _db.Products.Update(product);
                     _db.SaveChanges();
                     response.Result = _mapper.Map<Products>(product);
+
+                    var totalRequest = await TotalRequest();
+                    _message.SendingMessageStatistiscal(totalRequest.Result);
                 }
                 else
                 {
@@ -259,6 +272,9 @@ namespace ProductMicroservice.Repostories
                 {
                     _db.Products.Remove(Product);
                     await _db.SaveChangesAsync();
+
+                    var totalRequest = await TotalRequest();
+                    _message.SendingMessageStatistiscal(totalRequest.Result);
                     response.Message = "Delete successfully";
                 }
                 else
@@ -533,6 +549,9 @@ namespace ProductMicroservice.Repostories
 
                     productEntity = await _helper.CreateProduct(Product, linkModel, username);
                     response.Result = _mapper.Map<Products>(productEntity);// Thực hiện cập nhật sản phẩm
+
+                    var totalRequest = await TotalRequest();
+                    _message.SendingMessageStatistiscal(totalRequest.Result);
                 }
                 else
                 {
@@ -555,6 +574,43 @@ namespace ProductMicroservice.Repostories
                 .ToListAsync();
         }
 
+
+        public async Task<ResponseDTO> TotalRequest()
+        {
+            ResponseDTO response = new();
+            try
+            {
+
+                var Pros = await _db.Products.ToListAsync();
+                if (Pros != null)
+                {   
+                    var totalPro = Pros.Count;
+                    var totalSold = Pros.Sum(pro => pro.Sold);
+                    var totalView = Pros.Sum(pro => pro.Interactions.NumberOfViews);
+                    var totalRequest = new TotalRequest()
+                    {
+                        totalProducts = totalPro,
+                        totalSolds = totalSold,
+                        totalViews = totalView,
+                        updateAt = DateTime.Now,
+                    };
+                    response.Result = totalRequest;
+                    return response;
+                }
+                else
+                {
+                    response.IsSuccess = false;
+                    response.Message = "Not found any Product";
+                }
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+            }
+            return response;
+        }
+
         public async Task<ResponseDTO> GetAllProductsByUserName(string userName)
         {
             ResponseDTO response = new();
@@ -575,7 +631,6 @@ namespace ProductMicroservice.Repostories
                 response.IsSuccess = false;
                 response.Message = ex.Message;
             }
-
             return response;
         }
     }
