@@ -456,13 +456,10 @@ namespace Client.Controllers
 
             if (response != null && response.IsSuccess)
             {
-                // Deserialize vào lớp trung gian với kiểu ProductModel
-                ResponseResultModel<ProductModel>? data =
-                    JsonConvert.DeserializeObject<ResponseResultModel<ProductModel>>(Convert.ToString(response.Result));
 
-                // Lấy dữ liệu từ trường "result" và gán vào model
-                ProductModel? model = data?.result;
+                ProductModel? model = JsonConvert.DeserializeObject<ProductModel>(Convert.ToString(response.Result));
 
+                // Trả về model UsersDTO để sử dụng trong View
                 return View(model);
             }
             else
@@ -578,13 +575,9 @@ namespace Client.Controllers
 
             if (response != null && response.IsSuccess)
             {
-                // Deserialize vào lớp trung gian với kiểu ProductModel
-                ResponseResultModel<ProductModel>? data =
-                    JsonConvert.DeserializeObject<ResponseResultModel<ProductModel>>(Convert.ToString(response.Result));
+                ProductModel? model = JsonConvert.DeserializeObject<ProductModel>(Convert.ToString(response.Result));
 
-                // Lấy dữ liệu từ trường "result" và gán vào model
-                ProductModel? model = data?.result;
-
+                // Trả về model UsersDTO để sử dụng trong View
                 return View(model);
             }
             else
@@ -1214,8 +1207,10 @@ namespace Client.Controllers
             ResponseModel? response = await _commentService.GetListByIdAsync(id);
             if (response != null && response.IsSuccess)
             {
-                var comments = JsonConvert.DeserializeObject<List<CommentDTOModel>>(Convert.ToString(response.Result));
-                return View(comments); // Trả về danh sách bình luận
+                ProductModel? model = JsonConvert.DeserializeObject<ProductModel>(Convert.ToString(response.Result));
+
+                // Trả về model UsersDTO để sử dụng trong View
+                return View(model);
             }
             else
             {

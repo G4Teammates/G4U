@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ProductMicroservice.DBContexts.Entities;
 using ProductMicroservice.Models.DTO;
+using ProductMicroservice.Models.Message;
 
 namespace ProductMicroservice.Repostories
 {
@@ -18,5 +19,9 @@ namespace ProductMicroservice.Repostories
 
         Task<ResponseDTO> Moderate(List<IFormFile> imageFiles, CreateProductModel Product, IFormFile gameFiles, string username);
         Task<List<Products>> GetProductsByCategoryNameAsync(string categoryName);
+
+        Task<ResponseDTO> TotalRequest();
+
+        Task<ResponseDTO> GetAllProductsByUserName(string userName);
     }
 }

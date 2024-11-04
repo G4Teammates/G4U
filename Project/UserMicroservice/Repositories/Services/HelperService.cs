@@ -5,6 +5,8 @@ using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using System.Data;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net.Mail;
+using System.Net;
 using System.Security.Claims;
 using System.Text;
 using UserMicroservice.DBContexts;
@@ -13,12 +15,19 @@ using UserMicroservice.Models;
 using UserMicroservice.Models.AuthModel;
 using UserMicroservice.Models.UserManagerModel;
 using UserMicroservice.Repositories.Interfaces;
+using Amazon.Runtime.Internal.Endpoints.StandardLibrary;
+using Azure.Core;
+using static System.Net.WebRequestMethods;
+using System;
+using Amazon.SecurityToken.Model;
 
 namespace UserMicroservice.Repositories.Services
 {
-    public class HelperService(UserDbContext context) : IHelperService
+    public class HelperService(UserDbContext context, IHttpContextAccessor httpContextAccessor) : IHelperService
     {
         private readonly UserDbContext _context = context;
+        private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
+
 
         public string GenerateJwtAsync(UserModel user)
         {
@@ -44,7 +53,49 @@ namespace UserMicroservice.Repositories.Services
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
+        public ResponseModel CheckAndReadToken(string token)
+        {
+            // Khởi tạo đối tượng ResponseModel mặc định
+            if (string.IsNullOrEmpty(token))
+            {
+                return new ResponseModel
+                {
+                    IsSuccess = false,
+                    Message = "Token is null"
+                };
+            }
 
+            var handler = new JwtSecurityTokenHandler();
+
+            // Kiểm tra nếu token không hợp lệ hoặc không thể đọc
+            if (!handler.CanReadToken(token))
+            {
+                return new ResponseModel
+                {
+                    IsSuccess = false,
+                    Message = "Invalid token format"
+                };
+            }
+
+            // Đọc token
+            var jsonToken = handler.ReadToken(token) as JwtSecurityToken;
+            if (jsonToken == null)
+            {
+                return new ResponseModel
+                {
+                    IsSuccess = false,
+                    Message = "Unable to analyze token"
+                };
+            }
+
+            // Trường hợp token hợp lệ
+            return new ResponseModel
+            {
+                IsSuccess = true,
+                Message = "Token is valid",
+                Result = jsonToken
+            };
+        }
 
         public async Task<ResponseModel> IsUserNotExist(string username, string? email = null, string? phoneNumber = null)
         {
@@ -52,7 +103,7 @@ namespace UserMicroservice.Repositories.Services
             var count = new CountModel();
 
             try
-            {  
+            {
                 // Kiểm tra số lượng username trùng khớp
                 if (!string.IsNullOrEmpty(username))
                 {
@@ -155,5 +206,129 @@ namespace UserMicroservice.Repositories.Services
             }
             return response;
         }
+
+        public async Task<ResponseModel> SendEmailAsync(string email, string subject, string htmlMessage)
+        {
+            ResponseModel response = new();
+            try
+            {
+                using var smtpClient = new SmtpClient("smtp.gmail.com")
+                {
+                    Port = 587,
+                    Credentials = new NetworkCredential("kiet43012@gmail.com", "fjrq yuus fmaf ugbt"),
+                    EnableSsl = true
+                };
+
+                using var mailMessage = new MailMessage
+                {
+                    From = new MailAddress("kiet43012@gmail.com"),
+                    Subject = subject,
+                    Body = htmlMessage,
+                    IsBodyHtml = true
+                };
+
+                mailMessage.To.Add(email);
+
+                await smtpClient.SendMailAsync(mailMessage);
+                response.Message = "Email sent successfully";
+                response.IsSuccess = true; 
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                response.IsSuccess = false;
+            }
+            return response;
+        }
+
+        public string GetAppBaseUrl()
+        {
+            var request = _httpContextAccessor.HttpContext?.Request;
+            return request != null ? $"{request.Scheme}://{request.Host}" : "http://defaultUrl";
+        }
+
+
+
+        public string GeneratePasswordResetToken(UserModel model)
+        {
+            // Tạo token bảo mật và mã hóa
+            var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("0123456789_0123456789_0123456789"));
+            var signingCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
+
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, model.Id.ToString()),
+                new Claim(ClaimTypes.Email, model.Email),
+                new Claim(ClaimTypes.Name, model.Username),
+                new Claim(ClaimTypes.GivenName, model.DisplayName),
+                new Claim("Avatar", model.Avatar),
+            };
+
+            var token = new JwtSecurityToken(
+                issuer: JwtOptionModel.Issuer,
+                audience: JwtOptionModel.Audience,
+                claims,
+                expires: DateTime.Now.AddMinutes(15),
+                signingCredentials: signingCredentials
+            );
+            return new JwtSecurityTokenHandler().WriteToken(token);
+
+        }
+
+
+        public ResponseModel DecodeToken(string token)
+        {
+            // Khởi tạo đối tượng ResponseModel mặc định
+            if (string.IsNullOrEmpty(token))
+            {
+                return new ResponseModel
+                {
+                    IsSuccess = false,
+                    Message = "Token is null"
+                };
+            }
+
+            var handler = new JwtSecurityTokenHandler();
+
+            // Kiểm tra nếu token không hợp lệ hoặc không thể đọc
+            if (!handler.CanReadToken(token))
+            {
+                return new ResponseModel
+                {
+                    IsSuccess = false,
+                    Message = "Invalid token format"
+                };
+            }
+
+            // Đọc token
+            var jsonToken = handler.ReadToken(token) as JwtSecurityToken;
+            if (jsonToken == null)
+            {
+                return new ResponseModel
+                {
+                    IsSuccess = false,
+                    Message = "Unable to analyze token"
+                };
+            }
+
+            // Trường hợp token hợp lệ
+            return new ResponseModel
+            {
+                IsSuccess = true,
+                Message = "Token is valid",
+                Result = jsonToken
+            };
+        }
+
+        public User GetUserIdFromToken(JwtSecurityToken token)
+        {
+            return new User
+            {
+                Id = token?.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier)?.Value,
+                Email = token?.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.Email)?.Value,
+                Username = token?.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.Name)?.Value
+            };
+        }
+
     }
 }

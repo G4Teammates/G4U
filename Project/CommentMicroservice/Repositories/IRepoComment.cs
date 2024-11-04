@@ -13,5 +13,6 @@ namespace CommentMicroservice.Repositories
         Task<ResponseModel> UpdateComment(CommentModel Comment);
         Task<ResponseModel> DeleteComment(string id);
         Task<ResponseModel> Search(string searchstring, int page, int pageSize);
+        Task<ResponseModel> GetByproductId(string productId, int page, int pageSize);
     }
 }

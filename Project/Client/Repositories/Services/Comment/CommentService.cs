@@ -65,6 +65,15 @@ namespace Client.Repositories.Services.Comment
             });
         }
 
+        public async Task<ResponseModel> GetByproductId(string productId, int page, int pageSize)
+        {
+            return await _baseService.SendAsync(new RequestModel()
+            {
+                ApiType = StaticTypeApi.ApiType.GET,
+                Url = $"{StaticTypeApi.APIGateWay}/Comment/get={productId}?page=" + page.ToString() + "&pageSize=" + pageSize.ToString()
+            });
+        }
+
         public async Task<ResponseModel> GetListByIdAsync(string id)
         {
             return await _baseService.SendAsync(new RequestModel()

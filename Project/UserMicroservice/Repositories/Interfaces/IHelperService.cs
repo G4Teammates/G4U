@@ -13,5 +13,10 @@ namespace UserMicroservice.Repositories.Interfaces
         public ResponseModel IsUserNotNull(AddUserModel user);
         public ResponseModel NomalizeQuery(string? query);
         public string GenerateJwtAsync(UserModel user);
+        public Task<ResponseModel> SendEmailAsync(string email, string subject, string htmlMessage);
+        public string GetAppBaseUrl();
+        public string GeneratePasswordResetToken(UserModel model);
+        public ResponseModel DecodeToken(string token);
+        public User GetUserIdFromToken(JwtSecurityToken token);
     }
 }

@@ -2,7 +2,7 @@
 {
     public class UserInfoModel
     {
-        public string UserId { get; set; }
+        public string UserName { get; set; }
 
         public int Revenue { get; set; }
 

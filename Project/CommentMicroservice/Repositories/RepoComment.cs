@@ -244,7 +244,29 @@ namespace CommentMicroservice.Repositories
             }
             return response;
         }
-
+        public async Task<ResponseModel> GetByproductId(string productId, int page, int pageSize)
+        {
+            ResponseModel response = new();
+            try
+            {
+                var Comm = await _db.Comments.Where(c => c.ProductId == productId).ToListAsync();
+                if (Comm != null)
+                {
+                    response.Result = _mapper.Map<ICollection<Comment>>(Comm).ToPagedList(page, pageSize);
+                }
+                else
+                {
+                    response.IsSuccess = false;
+                    response.Message = "Not found any Commemt";
+                }
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+            }
+            return response;
+        }
         #region method
 
         private readonly List<string> _bannedWords = new List<string>
@@ -315,6 +337,32 @@ namespace CommentMicroservice.Repositories
             }
             return true; // Nội dung phù hợp
         }
+
+
         #endregion
+
+        public async Task<ResponseModel> GetByproductId(string productId, int page, int pageSize)
+        {
+            ResponseModel response = new();
+            try
+            {
+                var Comm = await _db.Comments.Where(c => c.ProductId == productId).ToListAsync();
+                if (Comm != null)
+                {
+                    response.Result = _mapper.Map<ICollection<Comment>>(Comm).ToPagedList(page, pageSize);
+                }
+                else
+                {
+                    response.IsSuccess = false;
+                    response.Message = "Not found any Commemt";
+                }
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+            }
+            return response;
+        }
     }
 }

@@ -14,6 +14,10 @@ namespace StatisticalMicroservice.Configure
             //Register DI here ⬇️
             services.AddScoped<IRepo, Repo>();
 
+            // Register the BackgroundService
+            services.AddHostedService<Backgroud>();
+            services.AddSingleton<IMessage, Message>();
+
             //Register DI here ⬆️
 
             return services;

@@ -9,5 +9,6 @@
         public int TotalProducts { get; set; }
 
         public int TotalSolds { get; set; }
+        public int TotalUsers { get; set; }
     }
 }
