@@ -207,6 +207,66 @@
       "UpstreamHttpMethod": [ "Post" ]
     },
 
+    //GetAll
+    {
+      "DownstreamPathTemplate": "/api/User",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7107
+        }
+      ],
+      "UpstreamPathTemplate": "/User",
+      "UpstreamHttpMethod": [ "Get" ]
+    },
+
+    //Delete
+    {
+      "DownstreamPathTemplate": "/api/User/delete/{id}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7107
+        }
+      ],
+      "UpstreamPathTemplate": "/User/delete/{id}",
+      "UpstreamHttpMethod": [ "Delete" ]
+    },
+
+    //Update user
+    {
+      "DownstreamPathTemplate": "/api/User",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7107
+        }
+      ],
+      "UpstreamPathTemplate": "/User",
+      "UpstreamHttpMethod": [ "Put" ]
+    },
+
+    //Update status
+    {
+      "DownstreamPathTemplate": "/api/User/status/{id}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7107
+        }
+      ],
+      "UpstreamPathTemplate": "/User/status/{id}",
+      "UpstreamHttpMethod": [ "Put" ]
+    },
+
+    ///////////////////////Auth
+
+
+
     //register
     {
       "DownstreamPathTemplate": "/api/Auth/register",
@@ -235,7 +295,7 @@
       "UpstreamHttpMethod": [ "Post" ]
     },
 
-    //signin-google
+    //login-google
     {
       "DownstreamPathTemplate": "/api/Auth/login-google",
       "DownstreamScheme": "https",
@@ -276,9 +336,10 @@
       "UpstreamHttpMethod": [ "Get" ]
     },
 
-    //GetAll
+
+    //Forgot password
     {
-      "DownstreamPathTemplate": "/api/User",
+      "DownstreamPathTemplate": "/api/Auth/forgot-password",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
@@ -286,51 +347,41 @@
           "Port": 7107
         }
       ],
-      "UpstreamPathTemplate": "/User",
-      "UpstreamHttpMethod": [ "Get" ]
+      "UpstreamPathTemplate": "/Auth/forgot-password",
+      "UpstreamHttpMethod": [ "Post" ]
+    },
+    //Reset Password
+    {
+      "DownstreamPathTemplate": "/api/Auth/reset-password",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7107
+        }
+      ],
+      "UpstreamPathTemplate": "/Auth/reset-password",
+      "UpstreamHttpMethod": [ "Post" ]
+    },
+    //Change password
+    {
+      "DownstreamPathTemplate": "/api/Auth/change-password",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7107
+        }
+      ],
+      "UpstreamPathTemplate": "/Auth/change-password",
+      "UpstreamHttpMethod": [ "Post" ]
     },
 
-    //Delete
-    {
-      "DownstreamPathTemplate": "/api/User/delete/{id}",
-      "DownstreamScheme": "https",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 7107
-        }
-      ],
-      "UpstreamPathTemplate": "/User/delete/{id}",
-      "UpstreamHttpMethod": [ "Delete" ]
-    },
 
-    //Update
-    {
-      "DownstreamPathTemplate": "/api/User",
-      "DownstreamScheme": "https",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 7107
-        }
-      ],
-      "UpstreamPathTemplate": "/User",
-      "UpstreamHttpMethod": [ "Put" ]
-    },
 
-    //Update
-    {
-      "DownstreamPathTemplate": "/api/User/status/{id}",
-      "DownstreamScheme": "https",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 7107
-        }
-      ],
-      "UpstreamPathTemplate": "/User/status/{id}",
-      "UpstreamHttpMethod": [ "Put" ]
-    },
+
+
+
 
     //WishList
     {

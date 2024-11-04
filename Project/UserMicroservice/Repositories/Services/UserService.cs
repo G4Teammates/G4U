@@ -155,6 +155,33 @@ namespace UserMicroservice.Repositories.Services
             return response;
         }
 
+
+        public async Task<ResponseModel> GetUserByEmail(string email)
+        {
+            ResponseModel response = new();
+            try
+            {
+                var user = await _context.Users.SingleOrDefaultAsync(u=>u.Email == email);
+                if (user != null)
+                {
+                    response.Message = $"Found success user: {email} ";
+                    response.Result = _mapper.Map<UserModel>(user);
+                }
+                else
+                {
+                    response.Message = $"Not found user: {email}";
+                }
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+            }
+            return response;
+        }
+
+
+
         public async Task<ResponseModel> UpdateUser(UserUpdate updatedUserModel)
         {
             var response = new ResponseModel();
