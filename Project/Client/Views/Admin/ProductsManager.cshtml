@@ -12,24 +12,43 @@
     <span class="titleManager bg-success py-3 px-5 rounded-4 fw-bold text-white">Products Manager</span>
 </div>
 
-<!-- Nút mở sidebar -->
-<button class="btn btn-primary mt-4" onclick="openSidebar()">Filter</button>
+@* <div class="row pt-3 pb-4 d-flex align-items-center" style="margin-left:20%;">
+    <!-- Div chứa nút Filter -->
+    <div class="col-md-3 filter-form m-3 p-4 shadow-sm rounded d-flex align-items-center" >
+        <button class="btn btn-primary w-100" onclick="openSidebar()">Filter</button>
+    </div>
+
+    <!-- Form sắp xếp sản phẩm -->
+    <form class="col-md-9 form-group sort-form m-3 p-4 shadow-sm rounded d-flex align-items-center" style="max-width: 500px;" asp-action="SortProducts" asp-controller="Admin" method="post">
+        <select name="sort" class="form-select me-3" aria-label="Type">
+            <option value="ascPrice">Giá tăng dần</option>
+            <option value="descPrice">Giá giảm dần</option>
+            <option value="ascView">View tăng dần</option>
+            <option value="descView">View giảm dần</option>
+            <option value="ascLike">Like tăng dần</option>
+            <option value="descLike">Like giảm dần</option>
+            <option value="ascSold">Lượt mua tăng dần</option>
+            <option value="descSold">Lượt mua giảm dần</option>
+        </select>
+        <button type="submit" class="btn btn-primary">Sort</button>
+    </form>
+</div> *@
 
 <!-- Sidebar cho bộ lọc -->
 <div id="filterSidebar">
     <a href="javascript:void(0)" class="closebtn" onclick="closeSidebar()">&times;</a>
 
-    <form asp-action="FilterProducts" asp-controller="Admin" method="post">
+    <form asp-action="FilterProducts" asp-controller="Admin" method="post" style="width:95%;margin:auto;">
         <!-- Price Filter -->
-        <div class="mb-4">
-            <h5>Price</h5>
-            <input type="text" class="form-range" name="minRange">
-            <input type="text" class="form-range" name="maxRange">
+        <div class="filter-section mb-4">
+            <h5 class="filter-title">Price</h5>
+            <input type="number" class="form-range form-control price-input" name="minRange" placeholder="Min price">
+            <input type="number" class="form-range form-control price-input mt-2" name="maxRange" placeholder="Max price">
         </div>
 
         <!-- Category Filter -->
-        <div class="mb-4">
-            <h5>Category</h5>
+        <div class="filter-section mb-4">
+            <h5 class="filter-title">Category</h5>
             <select class="form-select" name="category">
                 @if (Model.CategoriesModel != null)
                 {
@@ -46,8 +65,8 @@
         </div>
 
         <!-- Platform Filter -->
-        <div class="mb-4">
-            <h5>Platform</h5>
+        <div class="filter-section mb-4">
+            <h5 class="filter-title">Platform</h5>
             <select class="form-select" name="platform">
                 @if (Model.Product != null)
                 {
@@ -64,17 +83,17 @@
         </div>
 
         <!-- Discount Filter -->
-        <div class="mb-4">
-            <label for="discount" class="form-label">Discount</label>
-            <select name="discount" class="form-select" aria-label="Type">
+        <div class="filter-section mb-4">
+            <h5 class="filter-title">Discount</h5>
+            <select name="discount" class="form-select">
                 <option value="True">True</option>
                 <option value="False">False</option>
             </select>
         </div>
 
         <!-- Sold Filter -->
-        <div class="mb-4">
-            <label for="sold" class="form-label">Sort</label>
+        <div class="filter-section mb-4">
+            <h5 class="filter-title">Sort by Sold</h5>
             <select name="sold" class="form-select" aria-label="Type">
                 <option value="0">>0</option>
                 <option value="100">>100</option>
@@ -91,32 +110,37 @@
 
 
 
-
-<form class="form-group" asp-action="SortProducts" asp-controller="Admin" method="post">
-    <label for="sort" class="form-label">Sort</label>
-    <select name="sort" class="form-select" aria-label="Type">
-        <option value="ascPrice">Giá tăng dần</option>
-        <option value="descPrice">Giá giảm dần</option>
-        <option value="ascView">View tăng dần</option>
-        <option value="descView">View giảm dần</option>
-        <option value="ascLike">Like tăng dần</option>
-        <option value="descLike">Like giảm dần</option>
-        <option value="ascSold">Lượt mua tăng dần</option>
-        <option value="descSold">Lượt mua giảm dần</option>
-    </select>
-    <button type="submit" class="btn btn-primary mt-2">Sort</button>
-</form>
-
-
-
 <div class="container mt-4">
     <!-- Thanh tìm kiếm và nút Thêm -->
-    <div class="d-flex justify-content-between mb-3">
-        <form asp-action="SearchProduct" asp-controller="Admin" method="post">
-            <input class="form-control" type="text" placeholder="Search by..." name="searchString" />
+    <div class="row d-flex justify-content-between align-items-center mb-3 text-center">
+        <!-- Form tìm kiếm sản phẩm -->
+        <form class="col-md-3 d-flex justify-content-center" asp-action="SearchProduct" asp-controller="Admin" method="post">
+            <input class="form-control w-75" type="text" placeholder="Search by..." name="searchString" />
         </form>
-        <div>   
-            <button class="btn btn-success" data-toggle="modal" data-target="#modalProduct">+ Add</button>
+
+        <!-- Nút Filter -->
+        <div class="col-md-2 filter-form d-flex justify-content-center align-items-center">
+            <button class="btn btn-primary filter-btn" onclick="openSidebar()">Filter</button>
+        </div>
+
+        <!-- Form sắp xếp sản phẩm với viền border -->
+        <form class="col-md-4 sort-form d-flex justify-content-center align-items-center" asp-action="SortProducts" asp-controller="Admin" method="post">
+            <select name="sort" class="form-select me-2 w-75" aria-label="Type">
+                <option value="ascPrice">Giá tăng dần</option>
+                <option value="descPrice">Giá giảm dần</option>
+                <option value="ascView">View tăng dần</option>
+                <option value="descView">View giảm dần</option>
+                <option value="ascLike">Like tăng dần</option>
+                <option value="descLike">Like giảm dần</option>
+                <option value="ascSold">Lượt mua tăng dần</option>
+                <option value="descSold">Lượt mua giảm dần</option>
+            </select>
+            <button type="submit" class="btn btn-primary">Sort</button>
+        </form>
+
+        <!-- Nút Thêm sản phẩm -->
+        <div class="col-md-2 d-flex justify-content-center">
+            <button class="btn btn-success w-75" data-toggle="modal" data-target="#modalProduct">+ Add</button>
         </div>
     </div>
 
@@ -132,12 +156,12 @@
     <table class="table table-bordered table-hover align-middle">
         <thead class="table-light">
             <tr>
-                <th scope="col"><input type="checkbox" id="selectAll"></th>
+                @* <th scope="col"><input type="checkbox" id="selectAll"></th> *@
                 <th scope="col">Qr Code</th>
                @*  <th scope="col">Bar Code</th> *@
 
                 <th scope="col">Name</th>
-                <th scope="col">Description</th>
+                @* <th scope="col">Description</th> *@
 
                 <th scope="col">Price</th>
                 <th scope="col">Sold</th>
@@ -148,8 +172,8 @@
                 <th scope="col">Categories</th>
                 <th scope="col">Status</th>
 
-                <th scope="col">CreatedAt</th>
-                <th scope="col">UpdatedAt</th>
+                @* <th scope="col">CreatedAt</th> *@
+                @* <th scope="col">UpdatedAt</th> *@
                 <th scope="col">UserName</th>
 
                 <th scope="col"></th>
@@ -159,7 +183,7 @@
             @foreach (var product in Model.Product) // Giả sử 'Products' là danh sách các sản phẩm
             {
                 <tr>
-                    <td><input type="checkbox" class="product-checkbox"></td>
+                    @* <td><input type="checkbox" class="product-checkbox"></td> *@
                     <td>
                         <img src="@product.QrCode" alt="QR Code" width="100" height="100" />
                     </td>
@@ -167,7 +191,7 @@
                         <img src="@product.BarCode" alt="Bar Code" width="100" height="100" />
                     </td> *@
                     <td>@product.Name</td>
-                    <td>@product.Description</td>
+                    @* <td>@product.Description</td> *@
                     <td>@product.Price.ToString("C")</td>
                     <td>@product.Sold</td>
                     <td>
@@ -213,8 +237,8 @@
                     </td>
 
                     <td>@product.Status</td>
-                    <td>@product.CreatedAt.ToString("dd/MM/yyyy")</td>
-                    <td>@product.UpdatedAt.ToString("dd/MM/yyyy")</td>
+                    @* <td>@product.CreatedAt.ToString("dd/MM/yyyy")</td> *@
+                    @* <td>@product.UpdatedAt.ToString("dd/MM/yyyy")</td> *@
                     <td>@product.UserName</td>
 
                    
