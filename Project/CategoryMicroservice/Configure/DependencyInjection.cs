@@ -1,8 +1,4 @@
 ﻿using AutoMapper;
-using CategoryMicroservice.Models.DTO;
-using CategoryMicroservice.Repositories;
-using CategoryMicroservice.Repositories.Interfaces;
-using CategoryMicroservice.Repositories.Services;
 
 namespace CategoryMicroservice.Configure
 {
@@ -17,13 +13,9 @@ namespace CategoryMicroservice.Configure
         {
             //Register DI here ⬇️
 
-            services.AddScoped<ICategoryService, CategoryService>();
-
-            // Register the BackgroundService
-            services.AddHostedService<Background>();
-            services.AddSingleton<IMessage, Message>();
-            services.AddScoped<CategoryDeleteResponse>();
-            services.AddScoped<IHelperService, HelperService>();
+            //services.AddScoped<IUserService, UserService>();
+            //services.AddScoped<IUserRepository, UserRepository>();
+            //services.AddScoped<IUserMapper, UserMapper>();
 
             //Register DI here ⬆️
 

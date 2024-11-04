@@ -12,7 +12,7 @@ namespace CategoryMicroservice.Models.DTO
         /// Tên danh mục.
         /// </summary>
         [Required(ErrorMessage = "The {0} field is required.")]
-        [StringLength(32, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 2)]
+        [StringLength(32, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 4)]
         public required string Name { get; set; }
         /// <summary>
         /// The Type of the category.

@@ -1,8 +1,4 @@
-﻿using ProductMicroservice.Repostories;
-using ProductMicroservice.Repostories.Helper;
-using ProductMicroservice.Repostories.Messages;
-
-namespace ProductMicroservice.Configure
+﻿namespace ProductMicroservice.Configure
 {
     public static class DependencyInjection
     {
@@ -15,13 +11,9 @@ namespace ProductMicroservice.Configure
         {
             //Register DI here ⬇️
 
-            services.AddHttpClient<IRepoProduct, RepoProduct>();
-            services.AddScoped<IRepoProduct, RepoProduct>();
-            services.AddScoped<IHelper, Helper>();
-
-            // Register the BackgroundService
-            services.AddHostedService<Background>();
-            services.AddSingleton<IMessage, Message>();
+            //services.AddScoped<IUserService, UserService>();
+            //services.AddScoped<IUserRepository, UserRepository>();
+            //services.AddScoped<IUserMapper, UserMapper>();
 
             //Register DI here ⬆️
 

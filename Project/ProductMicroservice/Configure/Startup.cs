@@ -7,7 +7,6 @@ using Microsoft.EntityFrameworkCore;
 using Azure.Identity;
 using MongoDB.Driver;
 using MongoDB.Bson;
-using ProductMicroservice.Models.Initialization;
 
 namespace ProductMicroservice.Configure
 {
@@ -56,15 +55,6 @@ namespace ProductMicroservice.Configure
 
             _ = services.AddDependencyInjection();
 
-            #endregion
-
-            #region declaration and initialization
-            initializationModel.apiKeyCloudinary = config["5"]!;
-            initializationModel.apiSecretCloudinary = config["6"]!;
-            initializationModel.EndpointContentSafety = config["10022002"]!;
-            initializationModel.ApiKeyContentSafety = config["19102001"]!;
-            initializationModel.VirusTotalApiKey = config["4"]!;
-            initializationModel.serviceAccountJsonContent = config["7"];
             #endregion
 
             return services;

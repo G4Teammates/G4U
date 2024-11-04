@@ -1,4 +1,4 @@
-﻿namespace ProductMicroservice.Repostories.Messages
+﻿namespace ProductMicroservice.Repostories
 {
     public class Background : BackgroundService
     {

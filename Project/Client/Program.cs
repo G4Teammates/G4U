@@ -22,7 +22,6 @@ builder.Services.AddControllers()
     .AddJsonOptions(options =>
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 builder.Services.AddStartupService(builder.Configuration);
-
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorComponents();
 builder.Services.AddHttpContextAccessor();

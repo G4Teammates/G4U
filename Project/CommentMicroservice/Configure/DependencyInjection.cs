@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using CommentMicroservice.Repositories;
 
 namespace CommentMicroservice.Configure
 {
@@ -14,7 +13,9 @@ namespace CommentMicroservice.Configure
         {
             //Register DI here ⬇️
 
-            services.AddScoped<IRepoComment, RepoComment>();
+            //services.AddScoped<IUserService, UserService>();
+            //services.AddScoped<IUserRepository, UserRepository>();
+            //services.AddScoped<IUserMapper, UserMapper>();
 
             //Register DI here ⬆️
 

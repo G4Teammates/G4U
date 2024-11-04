@@ -284,15 +284,6 @@ namespace Client.Repositories.Services.Product
 			return string.Empty;
 		}
 
-        public async Task<ResponseModel?> GetDetailByIdAsync(string Id)
-        {
-            return await _baseService.SendAsync(new RequestModel()
-            {
-                ApiType = StaticTypeApi.ApiType.GET,
-                Url = $"{StaticTypeApi.APIGateWay}/Product/detail={Id}"
-            });
-        }
-
         /*public string GenerateBarCode(long barCodeUrl)
         {
             if (barCodeUrl != null)
@@ -315,7 +306,7 @@ namespace Client.Repositories.Services.Product
             }
             return string.Empty;
         }*/
-    }
+	}
 }
 
 

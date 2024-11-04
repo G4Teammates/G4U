@@ -127,23 +127,6 @@
       "UpstreamHttpMethod": [ "Get" ]
     },
 
-    //Detail
-    {
-      "DownstreamPathTemplate": "/api/Product/detail={Id}",
-
-
-
-      "DownstreamScheme": "https",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 7159
-        }
-      ],
-      "UpstreamPathTemplate": "/Product/detail={Id}",
-      "UpstreamHttpMethod": [ "Get" ]
-    },
-    
     //getAllProductByUserName/{userName}
     {
       "DownstreamPathTemplate": "/api/Product/getAllProductByUserName/{userName}",
