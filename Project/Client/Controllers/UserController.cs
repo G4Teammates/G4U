@@ -19,15 +19,20 @@ using UserMicroservice.DBContexts.Entities;
 using LoginRequestModel = Client.Models.AuthenModel.LoginRequestModel;
 using ResponseModel = Client.Models.ResponseModel;
 using IAuthenticationService = Client.Repositories.Interfaces.Authentication.IAuthenticationService;
+using Client.Models.ProductDTO;
+using Client.Repositories.Interfaces.Categories;
+using Client.Models.CategorisDTO;
+using System.Collections.Generic;
 
 namespace Client.Controllers
 {
-    public class UserController(IAuthenticationService authenService, IUserService userService, ITokenProvider tokenProvider, IHelperService helperService) : Controller
+    public class UserController(IAuthenticationService authenService, IUserService userService, ITokenProvider tokenProvider, IHelperService helperService, ICategoriesService categoriesService) : Controller
     {
         private readonly IAuthenticationService _authenService = authenService;
         public readonly IUserService _userService = userService;
         public readonly ITokenProvider _tokenProvider = tokenProvider;
         public readonly IHelperService _helperService = helperService;
+        public readonly ICategoriesService _categoriesService = categoriesService;
 
 
 
@@ -342,9 +347,34 @@ namespace Client.Controllers
             return View();
         }
 
-        public IActionResult UploadProduct()
+        [HttpGet]
+        public async Task<IActionResult> UploadProduct()
         {
-            return View();
+            CreateProductModel createProductModel = new CreateProductModel();
+            var response = await _categoriesService.GetAllCategoryAsync(1, 99);
+            //createProductModel.Categories = (List<string>)response.Result;
+            ICollection<CategoriesModel>? haha = JsonConvert.DeserializeObject<ICollection<CategoriesModel>>(Convert.ToString(response.Result.ToString()!));
+            if (haha == null)
+            {
+                TempData["error"] = "Category Không có dữ liệu";
+            }
+            else
+            {
+                foreach (var hi in haha)
+                {
+                    createProductModel.Categories.Add(hi.Name);
+                }
+            }
+
+            return View(createProductModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UploadProductPost(CreateProductModel createProductModel)
+        {
+            var haha = createProductModel.imageFiles;
+            
+            return View("UserDashboard");
         }
 
         public IActionResult UserDashboard()
