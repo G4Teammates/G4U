@@ -364,6 +364,106 @@ header {
 
 
 /*MAIN*/
+/*Carousel*/
+.carousel-image-container {
+    width: 100%;
+    height: 600px; /* Chiều cao tối đa mặc định */
+    overflow: hidden; /* Ẩn phần ảnh thừa nếu có */
+    border-radius: 5px;
+    position: relative; /* Để định vị cho hình ảnh */
+}
+.carousel-image {
+    position: absolute; /* Định vị hình ảnh */
+    top: 50%; /* Giữa theo chiều dọc */
+    left: 50%; /* Giữa theo chiều ngang */
+    width: auto; /* Để chiều rộng tự động */
+    height: 100%; /* Để chiều cao bằng 100% của khung */
+    min-width: 100%; /* Đảm bảo chiều rộng không nhỏ hơn 100% */
+    min-height: 100%; /* Đảm bảo chiều cao không nhỏ hơn 100% */
+    transform: translate(-50%, -50%); /* Để căn giữa hình ảnh */
+}
+
+/* Điều chỉnh chiều cao khung chứa ảnh khi thu nhỏ màn hình */
+@media (max-width: 1200px) {
+    .carousel-image-container {
+        height: 400px;
+    }
+}
+
+@media (max-width: 992px) {
+    .carousel-image-container {
+        height: 300px;
+    }
+}
+
+@media (max-width: 768px) {
+    .carousel-image-container {
+        height: 250px;
+    }
+}
+
+@media (max-width: 576px) {
+    .carousel-image-container {
+        height: 200px;
+    }
+}
+
+/*Filter*/
+.filter-container {
+    background-color: #f8f9fa;
+    border: 1px solid #e0e0e0;
+    width: 100%; /* Mở rộng khung bộ lọc theo chiều ngang */
+}
+
+.filter-title {
+    font-size: 1rem;
+    color: #333;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.price-input {
+    outline: none; /* Loại bỏ outline mặc định khi nhấn vào */
+}
+
+    .price-input:focus {
+        border-color: #007bff; /* Tùy chỉnh màu viền khi nhấn vào nếu muốn */
+        box-shadow: none; /* Loại bỏ hiệu ứng đổ bóng mặc định của Bootstrap */
+        outline: none;
+    }
+
+.filter-section input,
+.filter-section select {
+    border-radius: 4px;
+    height: 38px;
+    border: 1px solid #ced4da;
+}
+
+    .filter-section input::placeholder {
+        color: #888;
+    }
+
+.form-select {
+    padding: 5px 10px;
+    border-radius: 4px;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    border: none;
+}
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+    }
+
+hr {
+    border-top: 1px solid #ddd;
+}
+
+
+
+
 .Image_Gallery{
     width:95%;
     display:flex;

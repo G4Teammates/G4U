@@ -21,7 +21,7 @@
      data-login_uri='/google-response'
      data-auto_prompt='false'>
 </div>
-<div id="carouselExampleInterval" class="carousel slide mt-4 w-100 h-100" data-bs-ride="carousel" style="border-radius:5px; margin: 0 3%;">
+<div id="carouselExampleInterval" class="carousel slide mt-4 w-100 h-100" data-bs-ride="carousel" style="border-radius:5px; margin: 0 auto; width: 80%;">
     <div class="carousel-inner">
         @if (Model.Product != null)
         {
@@ -52,7 +52,9 @@
                         // Hiển thị hình ảnh đầu tiên nếu có
                         if (firstImageUrl != null)
                         {
-                            <img src="@firstImageUrl" alt="Cloudinary Image" class="d-block w-100" style="border-radius:5px;" />
+                            <div class="carousel-image-container">
+                                <img src="@firstImageUrl" alt="Cloudinary Image" class="d-block w-100 carousel-image" />
+                            </div>
                         }
                     }
                 </div>
@@ -356,7 +358,7 @@
     </section>
 </div>
 <div class="best-seller_most-player_top-upcoming-wishlisted row mt-5">
-    <div class="col-12 col-sm-12 col-md-4" style="border-right:1px solid black;border-left:1px solid black;">
+    <div class="col-12 col-sm-12 col-md-4 mt-3" style="border-right:1px solid black;border-left:1px solid black;">
         <h2>
             <a href="" style="text-decoration:none;color:black;">Top Sellers <i class="fa-solid fa-angle-right"></i></a>
         </h2>
@@ -376,7 +378,11 @@
                             string firstImageUrl = product.Links.FirstOrDefault(link => link.Url.Contains("cloudinary"))?.Url;
                             if (firstImageUrl != null)
                             {
-                                <img src="@firstImageUrl" alt="Cloudinary Image" class="img-fluid" />
+                                <div style="width: 100%;height: 70px;overflow: hidden;display: flex;align-items: center;justify-content: center;">
+                                    <img src="@firstImageUrl" alt="Cloudinary Image" style=" width: 100%;height: 100%;object-fit: cover;" />
+                                </div>
+
+                                
                             }
                         }
                     </div>
@@ -388,7 +394,7 @@
         </div>
     </div>
 
-    <div class="col-12 col-sm-12 col-md-4" style="border-right:1px solid black;border-left:1px solid black;">
+    <div class="col-12 col-sm-12 col-md-4 mt-3" style="border-right:1px solid black;border-left:1px solid black;">
         <h2>
             <a href="" style="text-decoration:none;color:black;">Most Played<i class="fa-solid fa-angle-right"></i></a>
         </h2>
@@ -409,7 +415,9 @@
                             string firstImageUrl = product.Links.FirstOrDefault(link => link.Url.Contains("cloudinary"))?.Url;
                             if (firstImageUrl != null)
                             {
-                                <img src="@firstImageUrl" alt="Cloudinary Image" class="img-fluid" />
+                                <div style="width: 100%;height: 70px;overflow: hidden;display: flex;align-items: center;justify-content: center;">
+                                    <img src="@firstImageUrl" alt="Cloudinary Image" class="img-fluid img-thumbnail" style=" width: 100%;height: 100%;object-fit: cover;" />
+                                </div>
                             }
                         }
                     </div>
@@ -421,7 +429,7 @@
         </div>
     </div>
 
-    <div class="col-12 col-sm-12 col-md-4" style="border-right:1px solid black;border-left:1px solid black;">
+    <div class="col-12 col-sm-12 col-md-4 mt-3" style="border-right:1px solid black;border-left:1px solid black;">
         <h2>
             <a href="" style="text-decoration:none;color:black;">Top Upcoming Wishlisted <i class="fa-solid fa-angle-right"></i></a>
         </h2>
@@ -447,7 +455,10 @@
                             // Hiển thị hình ảnh đầu tiên nếu có
                             if (firstImageUrl != null)
                             {
-                                <img src="@firstImageUrl" alt="Cloudinary Image" class="img-fluid" />
+                                <div style="width: 100%;height: 70px;overflow: hidden;display: flex;align-items: center;justify-content: center;">
+                                    <img src="@firstImageUrl" alt="Cloudinary Image" style=" width: 100%;height: 100%;object-fit: cover;" />
+                                </div>
+
                             }
 
 
