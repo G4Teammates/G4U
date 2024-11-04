@@ -147,7 +147,21 @@ namespace UserMicroService.Controllers
         }
 
 
-
+        [HttpGet("getAllProductsInWishList/{id}")]
+        public async Task<ActionResult> GetAllProductsInWishList(string id)
+        {
+            try
+            {
+                ResponseModel response = await _userService.GetAllProductsInWishList(id);
+                if (response.IsSuccess)
+                    return Ok(response);
+                return BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An unexpected error occurred. Detail: " + ex.Message });
+            }
+        }
 
 
 

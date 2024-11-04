@@ -1,116 +1,4 @@
-﻿@* Sử dụng Model của bạn *@
-@* @model CreateProductModel
-@{
-    ViewData["Title"] = "Create Product";
-} *@
-
-@* <div class="container mt-5">
-    <h2 class="text-center fw-bold">Create a New Product</h2>
-    <form asp-action="ProductCreate" asp-controller="Product" method="post" class="row">
-        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-        <!-- Phần bên trái chứa các input chính -->
-        <div class="col-md-8">
-            <div class="mb-3">
-                <label class="form-label fw-bold fs-5">Title</label>
-                <input class="form-control" />
-                <span class="text-danger"></span>
-            </div>
-            <div class="mb-3">
-                <label class="form-label fw-bold fs-5">Price</label>
-                <input class="form-control" />
-                <span class="text-danger"></span>
-            </div>
-
-            <!-- Phần Donate/Free Pricing Tabs -->
-            <div class="mb-3">
-                <label class="form-label fw-bold fs-5">Pricing Options</label>
-                <div class="tab-content" id="pricingTabsContent">
-                    <div class="tab-pane fade show active" id="free" role="tabpanel">
-                        <p>Someone downloading your project will be asked for a donation before getting access. They can skip to download for free.</p>
-                        <label for="suggestedDonation" class="form-label">Suggested donation</label>
-                        <input type="text" class="form-control" id="suggestedDonation" value="$2.00">
-                    </div>
-                </div>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label fw-bold fs-5">Discount</label>
-                <input class="form-control" />
-                <span class="text-danger"></span>
-            </div>
-            <div class="mb-3">
-                <label class="form-label fw-bold fs-5">Uploads</label>
-                <div class="border p-2 mb-2">
-                    <p id="fileInfo">No file uploaded</p>
-                </div>
-                <input type="file" name="gameFile" id="fileInput" class="d-none" accept=".rar, .zip" onchange="displayFileInfo()" />
-                <button type="button" class="btn btn-danger" onclick="document.getElementById('fileInput').click()">Upload</button>
-                <span class="m-2">File size limit: 1 GB</span>
-            </div>
-            <div class="mb-3">
-                <label class="form-label fw-bold fs-5">Details</label>
-                <div class="mb-2">
-                    <label class="form-label fw-bold fs-6">Description</label>
-                    <textarea class="form-control"></textarea>
-                    <span class="text-danger"></span>
-                </div>
-                <div class="mb-2">
-                    <label class="form-label fw-bold fs-6">Category</label>
-                    <select class="form-select">
-                        <option value="default">Please choose an option</option>
-                        @* Loop danh mục của bạn
-                    </select>
-                    <span class="text-danger"></span>
-                </div>
-                <div class="mb-2">
-                    <label class="form-label fw-bold fs-6">Status</label>
-                    <select class="form-select">
-                        <option value="0">Inactive</option>
-                        <option value="1">Active</option>
-                        <option value="2">Block</option>
-                        <option value="3">Deleted</option>
-                    </select>
-                    <span class="text-danger"></span>
-                </div>
-                <div class="mb-2">
-                    <label class="form-label fw-bold fs-6">Platform</label>
-                    <select class="form-select">
-                        <option value="0">Unknown</option>
-                        <option value="1">Downloadable</option>
-                        <option value="2">HTML</option>
-                        <option value="3">WebGL</option>
-                        <option value="4">Window</option>
-                        <option value="5">Android</option>
-                        <option value="6">iOS</option>
-                        <option value="7">MacOS</option>
-                        <option value="8">Linux</option>
-                        <option value="9">Other</option>
-                    </select>
-                    <span class="text-danger"></span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Phần bên phải cho hình ảnh cover -->
-        <div class="col-md-4">
-            <div class="text-center">
-                <img src="~/image/avatar.jpeg" alt="Cover Image" class="border mb-3" style="width:200px; height:200px;" />
-                <input type="file" name="coverImage" class="d-none" id="coverImageInput" accept="image/*" />
-                <button type="button" class="btn btn-outline-dark mt-2 w-100" onclick="document.getElementById('coverImageInput').click()">Upload Cover Image</button>
-            </div>
-        </div>
-
-        <!-- Nút tạo sản phẩm -->
-        <div class="col-12 text-center mt-4">
-            <input type="submit" value="Create" class="btn btn-danger w-50" />
-            <div class="m-2"><a asp-controller="Product" asp-action="ProductDetail">View Page</a></div>
-        </div>
-    </form>
-</div> *@
-
-
-@using Client.Models.ProductDTO
+﻿@using Client.Models.ProductDTO
 @model CreateProductModel
 
 <style>
@@ -136,22 +24,37 @@
 </style>
 
 <h4 class="container mt-3 container-custom bg-success text-white p-3 align-content-center">Create a new project</h4>
-<div class="container container-custom">
-    <form asp-action="ProductCreate" asp-controller="Product" method="post" class="row mt-2">
+
+@* @if (TempData["success"] != null)
+{
+        <div class="alert alert-success">
+        @TempData["success"]
+        </div>
+}
+
+@if (TempData["error"] != null)
+{
+        <div class="alert alert-danger">
+        @TempData["error"]
+        </div>
+} *@
+
+<div class="container container-custom px-5">
+    <form asp-action="UploadProductPost" asp-controller="User" class="row mt-2" enctype="multipart/form-data">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
         <!-- Phần bên trái chứa các input chính -->
-        <div class="col-md-8">
-            @* <div class="mb-3">
-                <label class="form-label fw-bold fs-5">Title</label>
-                <input class="form-control" />
-                <span class="text-danger"></span>
-            </div> *@
+        <div class="col-md-8 pe-5">
             <div class="mb-3">
-                <label asp-for="@Model.Price" class="control-label"></label>
-                <input asp-for="@Model.Price" class="form-control" type="number" step="0.01" />
-                <span asp-validation-for="@Model.Price" class="text-danger"></span>
+                <label class="form-label fw-bold fs-5">Title</label>
+                <input asp-for="@Model.Name" class="form-control" />
+                <span asp-validation-for="@Model.Name" class="text-danger"></span>
             </div>
+            @*             <div class="mb-3">
+            <label class="form-label fw-bold fs-5">Price</label>
+            <input class="form-control" />
+            <span class="text-danger"></span>
+            </div> *@
 
             <!-- Phần Donate/Free Pricing Tabs -->
             <div class="mb-3">
@@ -159,32 +62,42 @@
                 <div class="tab-content" id="pricingTabsContent">
                     <div class="tab-pane fade show active" id="free" role="tabpanel">
                         <p>Someone downloading your project will be asked for a donation before getting access. They can skip to download for free.</p>
-                        <label for="suggestedDonation" class="form-label">Suggested donation</label>
-                        <input type="text" class="form-control" id="suggestedDonation" value="$2.00">
+                        <label for="suggestedDonation" class="mb-1">Suggested donation</label>
+                        <input asp-for="@Model.Price" type="number" class="form-control" id="suggestedDonation" placeholder="10.000" step="1000">
+                        <span asp-validation-for="@Model.Price" class="text-danger"></span>
                     </div>
                 </div>
             </div>
 
+            <!-- Discount -->
             <div class="mb-3">
-                <label asp-for="@Model.Discount" class="control-label"></label>
-                <input asp-for="@Model.Discount" class="form-control" type="number" step="0.01" />
-                <span asp-validation-for="@Model.Discount" class="text-danger"></span>
+                <label class="form-label fw-bold fs-5">Discount</label>
+                <input asp-for="@Model.Discount" class="form-control" />
+                <span asp-validation-for="@Model.Price" class="text-danger"></span>
             </div>
+
+            <!-- Upload -->
             <div class="mb-3">
                 <label class="form-label fw-bold fs-5">Uploads</label>
                 <div class="border p-2 mb-2">
                     <p id="fileInfo">No file uploaded</p>
                 </div>
-                @* <input type="file" name="gameFile" id="fileInput" class="d-none" accept=".rar, .zip" onchange="displayFileInfo()" /> *@
-                <input type="file" name="gameFile" multiple class="form-control" asp-for="@Model.gameFile" />
-                <span asp-validation-for="@Model.gameFile" class="text-danger"></span>
+                <input asp-for="@Model.gameFile" type="file" name="gameFile" id="fileInput" class="d-none" accept=".rar, .zip" onchange="displayFileInfo()" />
                 <button type="button" class="btn btn-danger" onclick="document.getElementById('fileInput').click()">Upload</button>
-                <span class="m-2">File size limit: 1 GB</span>
+                <span asp-validation-for="@Model.gameFile" class="m-2">File size limit: 1 GB</span>
             </div>
+            @*             <!-- Game File (Upload game file) -->
+            <div class="form-group">
+            <label class="control-label" asp-for="@Model.gameFile">Upload Game File</label>
+            <input type="file" name="gameFile" multiple class="form-control" asp-for="@Model.gameFile" />
+            <span asp-validation-for="@Model.gameFile" class="text-danger"></span>
+            </div> *@
+
+            <!-- Details -->
             <div class="mb-3">
                 <label class="form-label fw-bold fs-5">Details</label>
                 <div class="mb-2">
-                    <label asp-for="@Model.Description" class="control-label"></label>
+                    <label class="form-label fw-bold fs-6">Description</label>
                     <textarea asp-for="@Model.Description" class="form-control"></textarea>
                     <span asp-validation-for="@Model.Description" class="text-danger"></span>
                 </div>
@@ -192,20 +105,17 @@
                     <div class="form-group">
                         <label class="form-label fw-bold fs-6">Category</label>
                         <div id="category-container">
-                            <select class="form-select category-select">
-                                <option value="0">Unknown</option>
-                                <option value="1">Downloadable</option>
-                                <option value="2">HTML</option>
-                                <option value="3">WebGL</option>
-                                <option value="4">Window</option>
-                                <option value="5">Android</option>
-                                <option value="6">iOS</option>
-                                <option value="7">MacOS</option>
-                                <option value="8">Linux</option>
-                                <option value="9">Other</option>
+                            <select class="form-select category-select mb-2">
+                                @if (Model.Categories != null)
+                                {
+                                    @foreach (string cate in Model.Categories)
+                                    {
+                                        <option value="@cate">@cate</option>
+                                    }
+                                }
                             </select>
                         </div>
-                        <span class="text-danger"></span>
+                        <span asp-validation-for="@Model.Categories" class="text-danger"></span>
                         <div>
                             <a href="javascript:void(0)" id="add-category" class="m-2"><i class="fa-solid fa-plus"></i></a>
                             <a href="javascript:void(0)" id="remove-category" class="m-2"><i class="fa-solid fa-minus"></i></a>
@@ -214,27 +124,19 @@
                     </div>
                 </div>
 
-                <!-- ImageFiles (Upload multiple images) -->
-                <div class="mb-2">
-                    <div class="form-group">
-                        <label class="form-label fw-bold fs-6">Image</label>
-                        <input type="file" name="imageFiles" multiple class="form-control" />
-                        <span class="text-danger"></span>
-                    </div>
-                </div>
-
                 <div class="mb-2">
                     <label class="form-label fw-bold fs-6">Status</label>
-                    <select class="form-select">
+                    <select asp-for="@Model.Status" class="form-select">
                         <option value="0">Inactive</option>
                         <option value="1">Active</option>
                         <option value="2">Block</option>
                         <option value="3">Deleted</option>
                     </select>
-                    <span class="text-danger"></span>
+                    <span asp-validation-for="@Model.Status" class="text-danger"></span>
                 </div>
+
                 <div class="mb-2">
-                    <label class="form-label fw-bold fs-6">Platform</label>
+                    <label asp-validation-for="@Model.Platform" class="form-label fw-bold fs-6">Platform</label>
                     <select class="form-select">
                         <option value="0">Unknown</option>
                         <option value="1">Downloadable</option>
@@ -247,56 +149,149 @@
                         <option value="8">Linux</option>
                         <option value="9">Other</option>
                     </select>
-                    <span class="text-danger"></span>
+                    <span asp-validation-for="@Model.Platform" class="text-danger"></span>
                 </div>
             </div>
         </div>
 
         <!-- Phần bên phải cho hình ảnh cover -->
         <div class="col-md-4">
-            <div class="text-center">
-                <img src="~/image/avatar.jpeg" alt="Cover Image" class="border mb-3" style="width:200px; height:200px;" />
-                <input type="file" name="coverImage" class="d-none" id="coverImageInput" accept="image/*" />
-                <button type="button" class="btn btn-outline-dark mt-2 w-100" onclick="document.getElementById('coverImageInput').click()">Upload Cover Image</button>
+            @*             <div class="text-center">
+            <!-- Hình ảnh hiển thị -->
+            <img id="coverImagePreview" src="~/Image/avatar.jpeg" alt="Cover Image" class="border mb-3" style="width:200px; height:200px;" />
+            <!-- Input file ẩn -->
+            <input type="file" name="coverImage" class="d-none" id="coverImageInput" accept="image/*" />
+
+            <!-- Nút để kích hoạt chọn file -->
+            <button type="button" class="btn btn-outline-dark mt-2 w-100" onclick="document.getElementById('coverImageInput').click()">Upload Cover Image</button>
+            </div> *@
+            <!-- ImageFiles (Upload multiple images) -->
+            @*             <div class="mt-3">
+            <div class="form-group">
+            <label class="form-label fw-bold fs-6">Image</label>
+            <div id="image-container">
+            <input type="file" multiple class="form-control mb-2" />
+            </div>
+            <span class="text-danger"></span>
+            <div>
+            <a href="javascript:void(0)" id="add-image" class="m-2"><i class="fa-solid fa-plus"></i></a>
+            <a href="javascript:void(0)" id="remove-image" class="m-2"><i class="fa-solid fa-minus"></i></a>
+            </div>
+            <small class="form-text text-muted">You can add multiple images by clicking the "+" button.</small>
+            </div>
+            </div> *@
+            <!-- ImageFiles (Upload multiple images) -->
+            <div class="form-group">
+                <label class="control-label">Upload Images</label>
+                <input type="file" class="form-control" />
+                <span class="text-danger"></span>
             </div>
         </div>
 
         <!-- Nút tạo sản phẩm -->
-        <div class="col-12 text-center mt-4">
-            <input type="submit" value="Create" class="btn btn-danger w-50" />
-            <div class="m-2"><a asp-controller="Product" asp-action="ProductDetail">View Page</a></div>
+        <div class="col-12 text-end m-4">
+            <a asp-controller="Product" asp-action="ProductDetail" class="mx-3 text-secondary">View Page</a>
+            <input type="submit" value="Public" class="btn btn-danger" />
         </div>
     </form>
 </div>
 
 <script type="text/javascript">
-    // Sự kiện khi nhấn vào nút "+" để thêm select mới
-    document.getElementById('add-category').addEventListener('click', function () {
-        // Lấy select đầu tiên hiện có để clone
-        var selectElement = document.querySelector('.category-select');
+    // // Sự kiện khi nhấn vào nút "+" để thêm select mới
+    // document.getElementById('add-category').addEventListener('click', function () {
+    //     // Lấy select đầu tiên hiện có để clone
+    //     var selectElement = document.querySelector('.category-select');
 
-        // Tạo bản sao của select hiện tại
-        var newSelect = selectElement.cloneNode(true);  // True để sao chép cả các option
+    //     // Tạo bản sao của select hiện tại
+    //     var newSelect = selectElement.cloneNode(true);  // True để sao chép cả các option
 
-        // Đặt lại giá trị mặc định
-        newSelect.selectedIndex = 0;
+    //     // Đặt lại giá trị mặc định
+    //     newSelect.selectedIndex = 0;
 
-        // Thêm select mới vào container
-        var container = document.getElementById('category-container');
-        container.appendChild(newSelect);
-    });
+    //     // Thêm select mới vào container
+    //     var container = document.getElementById('category-container');
+    //     container.appendChild(newSelect);
+    // });
 
-    // Sự kiện khi nhấn vào nút "-" để xóa select cuối cùng
-    document.getElementById('remove-category').addEventListener('click', function () {
-        var container = document.getElementById('category-container');
-        var selects = container.getElementsByTagName('select');
+    // // Sự kiện khi nhấn vào nút "-" để xóa select cuối cùng
+    // document.getElementById('remove-category').addEventListener('click', function () {
+    //     var container = document.getElementById('category-container');
+    //     var selects = container.getElementsByTagName('select');
 
-        // Chỉ xóa nếu còn nhiều hơn 1 select
-        if (selects.length > 1) {
-            container.removeChild(selects[selects.length - 1]);
-        }
-    });
+    //     // Chỉ xóa nếu còn nhiều hơn 1 select
+    //     if (selects.length > 1) {
+    //         container.removeChild(selects[selects.length - 1]);
+    //     }
+    // });
 
+    // // Sự kiện khi nhấn vào nút "+" để thêm ô input mới
+    // document.getElementById('add-image').addEventListener('click', function () {
+    //     // Tạo phần tử input file mới
+    //     var newInput = document.createElement('input');
+    //     newInput.type = 'file';
+    //     newInput.name = 'imageFiles[]';  // Để name là dạng mảng để có thể upload nhiều file
+    //     newInput.multiple = true;  // Cho phép chọn nhiều file cùng lúc
+    //     newInput.classList.add('form-control', 'mb-2');  // Thêm class để form đẹp hơn
+
+    //     // Thêm input file mới vào container
+    //     var container = document.getElementById('image-container');
+    //     container.appendChild(newInput);
+    // });
+
+    // // Sự kiện khi nhấn vào nút "-" để xóa ô input cuối cùng
+    // document.getElementById('remove-image').addEventListener('click', function () {
+    //     var container = document.getElementById('image-container');
+    //     var inputs = container.getElementsByTagName('input');
+
+    //     // Chỉ xóa nếu còn nhiều hơn 1 input
+    //     if (inputs.length > 1) {
+    //         container.removeChild(inputs[inputs.length - 1]);
+    //     }
+    // });
+
+    // function displayFileInfo() {
+    //     const input = document.getElementById('fileInput');
+    //     const file = input.files[0]; // Lấy file đầu tiên (vì người dùng có thể chọn nhiều file)
+    //     if (file) {
+    //         // Kiểm tra kích thước file (ví dụ 1GB = 1073741824 bytes)
+    //         if (file.size > 1073741824) {
+    //             alert('File quá lớn, hãy chọn file dưới 1 GB.');
+    //             return;
+    //         }
+
+    //         // Hiển thị thông tin file
+    //         const fileInfo = `
+    //                             <strong>File Name:</strong> ${file.name} <br>
+    //                             <strong>File Size:</strong> ${(file.size / 1024 / 1024).toFixed(2)} MB <br>
+    //                             <strong>File Type:</strong> ${file.type}
+    //                             <div class="m-2">
+    //                                 <label class="p-2 border border-1">
+    //                                     <input type="radio" value="Windows" name="Platforms" /> Windows
+    //                                 </label>
+    //                                 <label class="p-2 border border-1">
+    //                                     <input type="radio" value="MacOS" name="Platforms" /> MacOS
+    //                                 </label>
+    //                                 <label class="p-2 border border-1">
+    //                                     <input type="radio" value="Linux" name="Platforms" /> Linux
+    //                                 </label>
+    //                             </div>
+    //                         `;
+    //         document.getElementById('fileInfo').innerHTML = fileInfo;
+    //     }
+    // }
+
+    // // Sự kiện khi người dùng chọn tệp mới
+    // document.getElementById('coverImageInput').addEventListener('change', function(event) {
+    //     const file = event.target.files[0];
+    //     if (file) {
+    //         const reader = new FileReader();
+    //         reader.onload = function(e) {
+    //             // Thay đổi src của hình ảnh để hiển thị ảnh đã chọn
+    //             document.getElementById('coverImagePreview').src = e.target.result;
+    //         }
+    //         reader.readAsDataURL(file); // Đọc file ảnh dưới dạng URL
+    //     }
+    // });
 </script>
 
 @section Scripts {

@@ -554,5 +554,29 @@ namespace ProductMicroservice.Repostories
                 .Where(x => x.Categories.Any(c => c.CategoryName.Contains(categoryName)))
                 .ToListAsync();
         }
+
+        public async Task<ResponseDTO> GetAllProductsByUserName(string userName)
+        {
+            ResponseDTO response = new();
+            try
+            {
+                var products = await _db.Products.Where(p => p.UserName == userName).ToListAsync();
+
+                if (products.Count == 0)
+                {
+                    throw new Exception("This user doesn't have any product");
+                }
+
+                response.Message = "Get All Products Success";
+                response.Result = products;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+            }
+
+            return response;
+        }
     }
 }

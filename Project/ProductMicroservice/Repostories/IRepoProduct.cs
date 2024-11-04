@@ -18,5 +18,6 @@ namespace ProductMicroservice.Repostories
 
         Task<ResponseDTO> Moderate(List<IFormFile> imageFiles, CreateProductModel Product, IFormFile gameFiles, string username);
         Task<List<Products>> GetProductsByCategoryNameAsync(string categoryName);
+        Task<ResponseDTO> GetAllProductsByUserName(string userName);
     }
 }

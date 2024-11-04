@@ -141,7 +141,19 @@
       "UpstreamHttpMethod": [ "Get" ]
     },
 
-
+    //getAllProductByUserName/{userName}
+    {
+      "DownstreamPathTemplate": "/api/Product/getAllProductByUserName/{userName}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7159
+        }
+      ],
+      "UpstreamPathTemplate": "/Product/getAllProductByUserName/{userName}",
+      "UpstreamHttpMethod": [ "Get" ]
+    },
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //                                                                                                                    //
@@ -319,6 +331,21 @@
       "UpstreamPathTemplate": "/User/status/{id}",
       "UpstreamHttpMethod": [ "Put" ]
     },
+
+    //WishList
+    {
+      "DownstreamPathTemplate": "/api/User/getAllProductsInWishList/{id}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7107
+        }
+      ],
+      "UpstreamPathTemplate": "/User/getAllProductsInWishList/{id}",
+      "UpstreamHttpMethod": [ "Get" ]
+    },
+
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //                                                                                                                    //
