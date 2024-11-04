@@ -5,7 +5,7 @@ using System.Text;
 using System.Text.Json;
 using ProductMicroservice.DBContexts.Entities;
 
-namespace ProductMicroservice.Repostories
+namespace ProductMicroservice.Repostories.Messages
 {
     public class Message : IMessage
     {
@@ -74,7 +74,7 @@ namespace ProductMicroservice.Repostories
                                 CateName = message,
                                 CanDelete = canDelete
                             };
-                            
+
                             SendingMessage(response);
                             var jsonString = JsonSerializer.Serialize(response);
                             Console.WriteLine("Product sending message: " + jsonString); // Log raw message

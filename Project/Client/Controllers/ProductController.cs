@@ -142,6 +142,8 @@ namespace Client.Controllers
         }
 
 
+
+
         public IActionResult Collection()
         {
             return View();

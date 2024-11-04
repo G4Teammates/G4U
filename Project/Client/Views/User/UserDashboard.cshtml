@@ -1,0 +1,160 @@
+﻿<style>
+    body {
+        background-color: #f8f9fa;
+    }
+
+    .dashboard-container {
+        display: flex;
+        max-width: 1200px;
+        margin: 20px auto;
+    }
+
+    .projects-section {
+        width: 35%;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        margin-right: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .summary-section {
+        width: 65%;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .project-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 15px;
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        background-color: #f4f4f4;
+    }
+
+        .project-item img {
+            width: 100px;
+            height: 65px;
+            margin-right: 5px;
+            border-radius: 4px;
+        }
+
+    .summary-charts {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+    }
+
+    .chart {
+        width: 48%;
+        height: 200px;
+        background-color: #e9ecef;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        color: #6c757d;
+    }
+
+    .btn-create-project {
+        background-color: #007bff;
+        color: #fff;
+        width: 100%;
+        margin-top: 15px;
+        padding: 10px;
+        border-radius: 8px;
+    }
+
+    /* Simplified hover effect for navbar */
+    .navbar-custom .nav-link {
+        color: #fff;
+        transition: color 0.3s ease-in-out, background-color 0.3s ease-in-out;
+        padding: 10px;
+        border-radius: 5px;
+    }
+
+        .navbar-custom .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: #fff;
+        }
+</style>
+
+<nav class="navbar navbar-expand-lg bg-success navbar-custom">
+    <div class="container">
+        <a class="navbar-brand text-white" href="#">My Dashboard</a>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link text-white" href="#">Projects</a></li>
+                <li class="nav-item"><a class="nav-link text-white" href="#">Analytics</a></li>
+                <li class="nav-item"><a class="nav-link text-white" href="#">Earnings</a></li>
+                <li class="nav-item"><a class="nav-link text-white" href="#">Promotions</a></li>
+                <li class="nav-item"><a class="nav-link text-white" href="#">Posts</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="dashboard-container">
+    <!-- Projects Section -->
+    <div class="projects-section">
+        <h4>Projects</h4>
+        <div class="project-item">
+            <img src="~/Image/game.jpg" alt="Project">
+            <div class="project-info">
+                <strong class="d-inline-block text-truncate" style="max-width: 150px;">Meow Battle Battle Battle</strong>
+                <div><small style="min-width: 150px"><a href="">Edit</a> | <a href="">Analytics</a> | <a href="">Widget</a> | <a href="">More</a></small></div>
+            </div>
+            <span class="badge bg-secondary">DRAFT</span>
+        </div>
+        <div class="project-item">
+            <img src="https://via.placeholder.com/50" alt="Project">
+            <div class="project-info">
+                <strong>Project 2</strong>
+                <div><small>Edit | Analytics | Widget | More</small></div>
+            </div>
+            <span class="badge bg-secondary">DRAFT</span>
+        </div>
+        <div class="project-item">
+            <img src="https://via.placeholder.com/50" alt="Project">
+            <div class="project-info">
+                <strong>Project 2</strong>
+                <div><small>Edit | Analytics | Widget | More</small></div>
+            </div>
+            <span class="badge bg-secondary">DRAFT</span>
+        </div>
+        <div class="project-item">
+            <img src="https://via.placeholder.com/50" alt="Project">
+            <div class="project-info">
+                <strong>Project 2</strong>
+                <div><small>Edit | Analytics | Widget | More</small></div>
+            </div>
+            <span class="badge bg-secondary">DRAFT</span>
+        </div>
+        <div class="project-item">
+            <img src="https://via.placeholder.com/50" alt="Project">
+            <div class="project-info">
+                <strong>Project 2</strong>
+                <div><small>Edit | Analytics | Widget | More</small></div>
+            </div>
+            <span class="badge bg-secondary">DRAFT</span>
+        </div>
+        <a asp-controller="User" asp-action="UploadProduct" class="btn btn-danger w-100">Create New Project</a>
+    </div>
+
+    <!-- Summary Section -->
+    <div class="summary-section">
+        <h4>Summary</h4>
+        <p>View more →</p>
+        <div class="summary-charts">
+            <div class="chart">Views Chart</div>
+            <div class="chart">Downloads Chart</div>
+        </div>
+    </div>
+</div>
+

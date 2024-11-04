@@ -12,11 +12,12 @@ namespace CategoryMicroservice.Repositories.Interfaces
         Task<ResponseModel> UpdateCategory(CategoryModel category);
         Task<ResponseModel> DeleteCategory(string id);*/
 
-        IEnumerable<Category> Categories { get; }
-        Task<Category> GetById(string id);
-        Category CreateCategory(CreateCategoryModel Category);
-        Task<Category> UpdateCategrori(CategoryModel Categrori);
+        /*IEnumerable<Category> Categories { get; }*/
+        Task<ResponseModel> GetAll(int page, int pageSize);
+        Task<ResponseModel> GetById(string id);
+        Task<ResponseModel> CreateCategory(CreateCategoryModel Category);
+        Task<ResponseModel> UpdateCategrori(CategoryModel Categrori);
         Task<string> DeleteCategory(string id);
-        IEnumerable<Category> Search(string searchstring);
+        Task<ResponseModel> Search(string searchstring, int page, int pageSize);
     }
 }

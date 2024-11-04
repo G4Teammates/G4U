@@ -19,15 +19,18 @@ using UserMicroservice.DBContexts.Entities;
 using LoginRequestModel = Client.Models.AuthenModel.LoginRequestModel;
 using ResponseModel = Client.Models.ResponseModel;
 using IAuthenticationService = Client.Repositories.Interfaces.Authentication.IAuthenticationService;
+using Client.Models.ProductDTO;
+using Client.Repositories.Interfaces.Product;
 
 namespace Client.Controllers
 {
-    public class UserController(IAuthenticationService authenService, IUserService userService, ITokenProvider tokenProvider, IHelperService helperService) : Controller
+    public class UserController(IAuthenticationService authenService, IUserService userService, ITokenProvider tokenProvider, IHelperService helperService, IRepoProduct repoProduct) : Controller
     {
         private readonly IAuthenticationService _authenService = authenService;
         public readonly IUserService _userService = userService;
         public readonly ITokenProvider _tokenProvider = tokenProvider;
         public readonly IHelperService _helperService = helperService;
+        public readonly IRepoProduct _productService = repoProduct;
 
 
 
@@ -338,6 +341,16 @@ namespace Client.Controllers
         }
 
         public IActionResult PasswordSecurity()
+        {
+            return View();
+        }
+
+        public IActionResult UploadProduct()
+        {
+            return View();
+        }
+       
+        public IActionResult UserDashboard()
         {
             return View();
         }
