@@ -132,7 +132,7 @@ namespace UserMicroservice.Controllers
             return Ok(response);
         }
 
-        [HttpPost]
+        //[HttpPost]
 
     }
 }
