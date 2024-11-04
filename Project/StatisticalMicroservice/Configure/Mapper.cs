@@ -17,9 +17,9 @@ namespace StatisticalMicroservice.Configure
             {
                 //Register mapper here⬇️
 
-                cfg.CreateMap<Statistical, StatisticalModel>();
-                cfg.CreateMap<TotalWebsiteInfo, TotalWebsiteInfoModel>();
-                cfg.CreateMap<UserInfo, UserInfoModel>();
+                cfg.CreateMap<Statistical, StatisticalModel>().ReverseMap(); ;
+                cfg.CreateMap<TotalWebsiteInfo, TotalWebsiteInfoModel>().ReverseMap(); ;
+               /* cfg.CreateMap<UserInfo, UserInfoModel>().ReverseMap(); ;*/
                
                 //Register mapper here⬆️
             });

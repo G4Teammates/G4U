@@ -4,6 +4,7 @@ using MongoDB.Driver.Linq;
 using OrderMicroservice.DBContexts;
 using OrderMicroservice.DBContexts.Entities;
 using OrderMicroservice.Models;
+using OrderMicroservice.Models.Message;
 using OrderMicroservice.Models.OrderModel;
 using OrderMicroservice.Models.PaymentModel;
 using OrderMicroservice.Models.UserModel;
@@ -11,11 +12,12 @@ using OrderMicroservice.Repositories.Interfaces;
 
 namespace OrderMicroservice.Repositories.Services
 {
-    public class OrderService(OrderDbContext context, IMapper mapper, IPaymentService paymentService) : IOrderService
+    public class OrderService(OrderDbContext context, IMapper mapper, IPaymentService paymentService,IMessage message) : IOrderService
     {
         OrderDbContext _context = context;
         IMapper _mapper = mapper;
         IPaymentService _paymentService = paymentService;
+        IMessage _message=message;
 
         public async Task<ResponseModel> Create(OrderModel orderModel)
         {
@@ -28,6 +30,10 @@ namespace OrderMicroservice.Repositories.Services
                 Order orderEntity = _mapper.Map<Order>(orderModel);
                 _context.Orders.Add(orderEntity);
                 await _context.SaveChangesAsync();
+
+
+                var totalRequest = await TotalRequest();
+                _message.SendingMessageStatistiscal(totalRequest.Result);
 
                 response.Result = orderModel;
                 response.Message = $"Create order success";
@@ -50,6 +56,9 @@ namespace OrderMicroservice.Repositories.Services
                 response.Result = _mapper.Map<ICollection<OrderModel>>(orders); ;
                 response.IsSuccess = true;
                 response.Message = "Retrieved all orders successfully.";
+
+                var totalRequest = await TotalRequest();
+                _message.SendingMessageStatistiscal(totalRequest.Result);
             }
             catch (Exception ex)
             {
@@ -232,6 +241,35 @@ namespace OrderMicroservice.Repositories.Services
             return response;
         }
 
-
+        public async Task<ResponseModel> TotalRequest()
+        {
+            ResponseModel response = new();
+            try
+            {
+                var Pros = await _context.Orders.ToListAsync();
+                if (Pros != null)
+                {
+                    var totalRevenue = Pros.Sum(pro => pro.TotalPrice);
+                    var totalRequest = new TotalRequest()
+                    {
+                        totalRevenue = totalRevenue,
+                        updateAt = DateTime.Now,
+                    };
+                    response.Result = totalRequest;
+                    return response;
+                }
+                else
+                {
+                    response.IsSuccess = false;
+                    response.Message = "Not found any Product";
+                }
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+            }
+            return response;
+        }
     }
 }

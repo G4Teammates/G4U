@@ -457,11 +457,13 @@ namespace Client.Controllers
             if (response != null && response.IsSuccess)
             {
                 // Deserialize vào lớp trung gian với kiểu ProductModel
-                ResponseResultModel<ProductModel>? data =
-                    JsonConvert.DeserializeObject<ResponseResultModel<ProductModel>>(Convert.ToString(response.Result));
+                /*ResponseResultModel<ProductModel>? data =
+                    JsonConvert.DeserializeObject<ResponseResultModel<ProductModel>>(Convert.ToString(response.Result));*/
 
-                // Lấy dữ liệu từ trường "result" và gán vào model
-                ProductModel? model = data?.result;
+                ProductModel? model = JsonConvert.DeserializeObject<ProductModel>(Convert.ToString(response.Result));
+
+                /*// Lấy dữ liệu từ trường "result" và gán vào model
+                ProductModel? model = data?.result;*/
 
                 return View(model);
             }

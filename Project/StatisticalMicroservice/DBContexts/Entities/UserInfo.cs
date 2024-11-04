@@ -4,8 +4,8 @@ namespace StatisticalMicroservice.DBContexts.Entities
 {
     public class UserInfo
     {
-        [BsonElement("userId")]
-        public string UserId { get; set; }
+        [BsonElement("userName")]   
+        public string UserName { get; set; }
         [BsonElement("revenue")]
         public int Revenue { get; set; }
         [BsonElement("views")]
