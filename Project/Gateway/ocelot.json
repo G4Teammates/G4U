@@ -318,6 +318,20 @@
       "UpstreamHttpMethod": [ "Put" ]
     },
 
+    //WishList
+    {
+      "DownstreamPathTemplate": "/api/User/getAllProductsInWishList/{id}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7107
+        }
+      ],
+      "UpstreamPathTemplate": "/User/getAllProductsInWishList/{id}",
+      "UpstreamHttpMethod": [ "Get" ]
+    },
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //                                                                                                                    //
     //                                                Categories                                                          //
