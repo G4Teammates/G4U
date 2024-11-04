@@ -6,12 +6,13 @@ namespace CommentMicroservice.Repositories
 {
     public interface IRepoComment
     {
-        IEnumerable<Comment> Comments { get; }
-        Task<Comment> GetById(string id);
-        Task<List<Comment>> GetListById(string id);
-        Comment CreateComment(CreateCommentDTO Comment);
-        Task<Comment> UpdateComment(CommentModel Comment);
-        Task DeleteComment(string id);
-        IEnumerable<Comment> Search(string searchstring);
+        Task<ResponseModel> GetAll(int page, int pageSize);
+        Task<ResponseModel> GetById(string id);
+        Task<ResponseModel> GetListById(string id, int page, int pageSize);
+        Task<ResponseModel> CreateComment(CreateCommentDTO Comment);
+        Task<ResponseModel> UpdateComment(CommentModel Comment);
+        Task<ResponseModel> DeleteComment(string id);
+        Task<ResponseModel> Search(string searchstring, int page, int pageSize);
+        Task<ResponseModel> GetByproductId(string productId, int page, int pageSize);
     }
 }

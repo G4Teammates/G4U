@@ -137,9 +137,24 @@
           "Port": 7159
         }
       ],
+
       "UpstreamPathTemplate": "/Product/getAllProductByUserName/{userName}",
       "UpstreamHttpMethod": [ "Get" ]
     },
+
+//Detail
+{
+  "DownstreamPathTemplate": "/api/Product/detail={id}",
+  "DownstreamScheme": "https",
+  "DownstreamHostAndPorts": [
+    {
+      "Host": "localhost",
+      "Port": 7159
+    }
+  ],
+  "UpstreamPathTemplate": "/Product/detail={id}",
+  "UpstreamHttpMethod": [ "Get" ]
+},
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //                                                                                                                    //
@@ -442,6 +457,19 @@
         }
       ],
       "UpstreamPathTemplate": "/Comment/{id}",
+      "UpstreamHttpMethod": [ "Get" ]
+    },
+    //get product by id
+    {
+      "DownstreamPathTemplate": "/api/Comment/get={productId}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7250
+        }
+      ],
+      "UpstreamPathTemplate": "/Comment/get={productId}",
       "UpstreamHttpMethod": [ "Get" ]
     },
     //get list by id
