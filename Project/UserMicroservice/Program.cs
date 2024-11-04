@@ -1,4 +1,4 @@
-using Azure.Identity;
+﻿using Azure.Identity;
 using Microsoft.OpenApi.Models;
 using System.Text.Json.Serialization;
 using UserMicroService.Configure;
@@ -57,7 +57,7 @@ builder.Services.AddCors(options =>
                    .AllowAnyHeader();
         });
 });
-
+builder.Services.AddHttpContextAccessor(); // Đăng ký IHttpContextAccessor
 
 var app = builder.Build();
 

@@ -9,6 +9,7 @@ namespace UserMicroservice.Repositories.Interfaces
     {
         Task<ResponseModel> GetAll(int pageNumber, int pageSize);
         Task<ResponseModel> GetUser(string id);
+        Task<ResponseModel> GetUserByEmail(string email);
         Task<ResponseModel> AddUserAsync(AddUserModel user);
         Task<ResponseModel> UpdateUser(UserUpdate user);
         Task<ResponseModel> DeleteUser(string id);
