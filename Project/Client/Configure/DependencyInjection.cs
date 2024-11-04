@@ -22,11 +22,6 @@ namespace Client.Configure
             services.AddScoped<ITokenProvider, TokenProvider>();
             services.AddScoped<IHelperService, HelperService>();
             services.AddScoped<IOrderService, OrderService>();
-
-
-
-
-
             //Register DI here ⬆️
 
             return services;

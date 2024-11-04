@@ -15,7 +15,6 @@ namespace CategoryMicroService.Controllers
     {
         private readonly ICategoryService _categoryService;
         private ResponseModel _responseModel;
-
         public CategoryController(ICategoryService categoryService)
         {
             _categoryService = categoryService;
@@ -28,13 +27,8 @@ namespace CategoryMicroService.Controllers
             try
             {
                 var Cates = await _categoryService.GetById(id);
-                if (Cates.IsSuccess)
-                {
-                    _responseModel.Result = Cates.Result;
-                    return Ok(_responseModel);
-                }
-                _responseModel.Message = Cates.Message;
-                return BadRequest(_responseModel.Message);
+                _responseModel.Result = Cates;
+                return Ok(_responseModel);
             }
             catch (Exception ex)
             {
@@ -44,40 +38,31 @@ namespace CategoryMicroService.Controllers
             }
         }
         [HttpGet]
-        public async Task<IActionResult> GetAll( int? page, int pageSize)
+        public IActionResult GetAll( int? page, int pageSize)
         {
             try
             {
                 int pageNumber = (page ?? 1);
-                var Cates = await _categoryService.GetAll(pageNumber,pageSize);
-                if (Cates.IsSuccess)
-                {
-                    _responseModel.Result = Cates.Result;
-                    return Ok(_responseModel);
-                }
-                _responseModel.Message = Cates.Message;
-                return BadRequest(_responseModel.Message);
+                var Cates = _categoryService.Categories;
+                _responseModel.Result = Cates.ToPagedList(pageNumber,pageSize);
+                return Ok(_responseModel);
             }
             catch (Exception ex)
             {
                 _responseModel.IsSuccess = false;
                 _responseModel.Message = "An error occurred while getting the Category: " + ex.Message;
                 return StatusCode(500, _responseModel); // Trả về mã lỗi 500 với thông báo lỗi chi tiết
-            }         
+            }
+            
         }
         [HttpPost]
-        public async Task<IActionResult> CreateCategory([FromForm] CreateCategoryModel model)
+        public IActionResult CreateCategory([FromForm] CreateCategoryModel model)
         {
             try
             {
-                var Cates = await _categoryService.CreateCategory(model);
-                if(Cates.IsSuccess)
-                {
-                    _responseModel.Result = Cates.Result;
-                    return Ok(_responseModel);
-                }
-                _responseModel.Message = Cates.Message;
-                return BadRequest(_responseModel.Message);
+                var Cates = _categoryService.CreateCategory(model);
+                _responseModel.Result = Cates;
+                return Ok(_responseModel);
             }
             catch (Exception ex)
             {
@@ -94,13 +79,8 @@ namespace CategoryMicroService.Controllers
             {
                 var Cates = await _categoryService.UpdateCategrori(model);
 
-                if (Cates.IsSuccess)
-                {
-                    _responseModel.Result = Cates.Result;
-                    return Ok(_responseModel);
-                }
-                _responseModel.Message = Cates.Message;
-                return BadRequest(_responseModel.Message);
+                _responseModel.Result = Cates;
+                return Ok(_responseModel);
             }
             catch (Exception ex)
             {
@@ -129,19 +109,14 @@ namespace CategoryMicroService.Controllers
         }
 
         [HttpGet("search={searchString}")]
-        public async Task<IActionResult> Search([FromRoute] string searchString, int? page, int pageSize)
+        public IActionResult Search([FromRoute] string searchString, int? page, int pageSize)
         {
             try
             {
                 int pageNumber = (page ?? 1);
-                var Cate = await _categoryService.Search(searchString, pageNumber, pageSize);
-                if (Cate.IsSuccess)
-                {
-                    _responseModel.Result = Cate.Result;
-                    return Ok(_responseModel);
-                }
-                _responseModel.Message = Cate.Message;
-                return BadRequest(_responseModel.Message);
+                var SanPhams = _categoryService.Search(searchString);
+                _responseModel.Result = SanPhams.ToPagedList(pageNumber, pageSize);
+                return Ok(_responseModel);
             }
             catch (Exception ex)
             {

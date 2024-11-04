@@ -132,51 +132,7 @@ namespace UserMicroservice.Controllers
             return Ok(response);
         }
 
+        //[HttpPost]
 
-
-
-
-        //[Route("google-response")]
-        //public async Task<ActionResult> GoogleResponse()
-        //{
-        //    var google_csrf_name = "g_csrf_token";
-        //    try
-        //    {
-
-        //        var cookie = Request.Cookies[google_csrf_name];
-
-        //        if (cookie == null)
-        //        {
-        //            return StatusCode((int)HttpStatusCode.BadRequest);
-        //        }
-        //        var requestbody = Request.Form[google_csrf_name];
-        //        if (requestbody != cookie)
-        //        {
-        //            return StatusCode((int)HttpStatusCode.BadRequest);
-        //        }
-        //        var idtoken = Request.Form["credential"];
-        //        GoogleJsonWebSignature.Payload payload = await GoogleJsonWebSignature.ValidateAsync(idtoken).ConfigureAwait(false);
-        //        LoginGoogleRequestModel loginGoogleRequestModel = new LoginGoogleRequestModel
-        //        {
-        //            Email = payload.Email,
-        //            Username = payload.Email,
-        //            DisplayName = payload.Name,
-        //            EmailConfirmation = (EmailStatus)(payload.EmailVerified ? 1 : 0),
-        //            Picture = payload.Picture
-        //        };
-        //        var response = await _authService.LoginGoogleAsync(loginGoogleRequestModel);
-        //        if (response.IsSuccess)
-        //        {
-        //            HttpContext.Response.Cookies.Append("Login", loginGoogleRequestModel.DisplayName);
-        //            return RedirectToAction("Index", "Home");
-        //        }
-        //        return response;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        TempData["Error"] = ex.Message;
-        //    }
-        //    return RedirectToAction("Index");
-        //}
     }
 }

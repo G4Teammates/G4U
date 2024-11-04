@@ -21,7 +21,12 @@ builder.Configuration.AddAzureKeyVault(new Uri("https://duantotnghiep.vault.azur
 builder.Services.AddStartupService(builder.Configuration);
 
 
+builder.Services.AddScoped<ICategoryService, CategoryService>();
 
+// Register the BackgroundService
+builder.Services.AddHostedService<Background>();
+builder.Services.AddSingleton<IMessage, Message>();
+builder.Services.AddScoped<CategoryDeleteResponse>();
 
 
 var app = builder.Build();

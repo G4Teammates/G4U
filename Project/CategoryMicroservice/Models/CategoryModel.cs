@@ -19,7 +19,7 @@ namespace CategoryMicroservice.Models
         /// Tên danh mục.
         /// </summary>
         [Required(ErrorMessage = "Category name is required.")]
-        [StringLength(32, ErrorMessage = "Category name must be at least {2} and at most {1} characters long.", MinimumLength = 2)]
+        [StringLength(32, ErrorMessage = "Category name must be at least {2} and at most {1} characters long.", MinimumLength = 4)]
         [RegularExpression(@"^[a-zA-Z\s]+$", ErrorMessage = "Category name cannot contain numbers or special characters.")]
         public required string Name { get; set; }
         /// <summary>

@@ -1,4 +1,4 @@
-﻿namespace ProductMicroservice.Repostories.Messages
+﻿namespace ProductMicroservice.Repostories
 {
     public interface IMessage
     {

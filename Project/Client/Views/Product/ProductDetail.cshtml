@@ -1,8 +1,10 @@
+
 ﻿@using Client.Models.ProductDTO
 @model ProductViewModel
 
-<style>
-    /* CSS như cũ */
+
+﻿<style>
+
     #anh-bia img {
         width: 100%;
         height: 500px;
@@ -104,6 +106,7 @@
     <div class="row">
         <div class="col-12">
             <div id="anh-bia">
+
                 @if (Model.Product != null && Model.Product.Any())
                 {
                     var product = Model.Product.First();
@@ -122,6 +125,7 @@
                 {
                     <p>Không có hình ảnh để hiển thị.</p>
                 }
+
             </div>
         </div>
     </div>
@@ -129,6 +133,7 @@
     <!-- Phần thông tin game -->
     <div class="row mt-4">
         <div class="col-md-8 game-info">
+
             @if (Model.Product != null && Model.Product.Any())
             {
                 var product = Model.Product.First();
@@ -180,7 +185,6 @@
                     <p>Không có bình luận nào để hiển thị.</p>
                 }
 
-
                 <!-- Form nhập bình luận -->
                 <h4>Thêm bình luận</h4>
                 <form asp-action="AddComment" method="post">
@@ -199,6 +203,7 @@
 
         <!-- Game Detail Section -->
         <div class="col-md-4 game-detail border border-secondary">
+
             @if (Model.Product != null && Model.Product.Any())
             {
                 var product = Model.Product.First();
@@ -216,6 +221,8 @@
                             <span class="text-white">,</span>
                         }
                     </div>
+
+
                 </div>
 
                 <div class="mt-3">
@@ -231,6 +238,7 @@
                         <source src="" type="video/mp4">
                         Trình duyệt của bạn không hỗ trợ video.
                     </video>
+
 
                     <!-- Hình ảnh -->
                     @foreach (var link in product.Links)

@@ -1,13 +1,9 @@
 ﻿using AutoMapper;
-using Azure;
 using CategoryMicroservice.DBContexts;
 using CategoryMicroservice.DBContexts.Entities;
 using CategoryMicroservice.Models;
 using CategoryMicroservice.Models.DTO;
 using CategoryMicroservice.Repositories.Interfaces;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
-using X.PagedList.Extensions;
 
 namespace CategoryMicroservice.Repositories.Services
 {
@@ -17,56 +13,33 @@ namespace CategoryMicroservice.Repositories.Services
         private readonly IMapper _mapper;
 
         private readonly IMessage _message;
-        private readonly IHelperService _helperService;
-        public CategoryService(CategoryDbContext db, IMapper mapper, IMessage message, IHelperService helperService)
+        public CategoryService(CategoryDbContext db, IMapper mapper, IMessage message)
         {
             _db = db;
             _mapper = mapper;
             _message = message;
-            _helperService = helperService;
         }
 
-        /*public IEnumerable<Category> Categories => _db.Categories.ToList();*/
+        public IEnumerable<Category> Categories => _db.Categories.ToList();
 
-        public async Task<ResponseModel> CreateCategory(CreateCategoryModel Category)
+        public Category CreateCategory(CreateCategoryModel Category)
         {
-            ResponseModel response = new();
-            try
+            var newCate = new CategoryModel
             {
-                // Kiểm tra xem danh mục đã tồn tại chưa
-                var checkExist = await _db.Categories.AnyAsync(x => x.Name == Category.Name);
-                
-                if (checkExist)
-                {
-                    response.IsSuccess = false;
-                    response.Message = "The Category already exists";
-                }
-                else
-                {
-                    var newCate = new CategoryModel
-                    {
-                        Name = Category.Name,
-                        Type = Category.Type,
-                        Description = Category.Description,
-                        Status = Category.Status
-                    };
-                    var CateEnti = _mapper.Map<Category>(newCate);
-                    _db.AddAsync(CateEnti);
-                    _db.SaveChangesAsync();
-                    response.Result = CateEnti;
-                }
-            }
-            catch (Exception ex)
-            {
-                response.IsSuccess = false;
-                response.Message = ex.Message;
-            }
-            return response;
+                Name = Category.Name,
+                Type = Category.Type,
+                Description = Category.Description,
+                Status = Category.Status
+            };
+            var CateEnti = _mapper.Map<Category>(newCate);
+            _db.Add(CateEnti);
+            _db.SaveChanges();
+            return CateEnti;
         }
 
         public async Task<string> DeleteCategory(string id)
         {
-            var cate = await _db.Categories.FindAsync(id);
+            var cate = await GetById(id);
             string name = cate.Name;
             if (cate != null)
             {
@@ -138,114 +111,40 @@ namespace CategoryMicroservice.Repositories.Services
             return "Unknown error occurred during deletion.";
         }
 
-        public async Task<ResponseModel> GetAll(int page, int pageSize)
+
+        public async Task<Category> GetById(string id) => _db.Categories.Find(id);
+
+        public IEnumerable<Category> Search(string searchstring)
         {
-            ResponseModel response = new();
-            try
+            var Category = _db.Categories.AsQueryable();
+            if (!string.IsNullOrEmpty(searchstring))
             {
-                var Cate = await _db.Categories.ToListAsync();
-                if (Cate != null)
+                // Tìm kiếm theo tên sản phẩm
+                var resultByName = Category.Where(x => x.Name.Contains(searchstring));
+                if (resultByName.Any())
                 {
-                    response.Result = _mapper.Map<ICollection<Category>>(Cate).ToPagedList(page, pageSize);
-                }
-                else
-                {
-                    response.IsSuccess = false;
-                    response.Message = "Not found any Category";
+                    return resultByName;
                 }
             }
-            catch (Exception ex)
-            {
-                response.IsSuccess = false;
-                response.Message = ex.Message;
-            }
-            return response;
+
+            // Nếu không có kết quả nào khớp với điều kiện tìm kiếm, trả về danh sách trống
+            return new List<Category>();
         }
 
-        public async Task<ResponseModel> GetById(string id)
+        public async Task<Category> UpdateCategrori(CategoryModel Categrori)
         {
-            ResponseModel response = new();
-            try
+            var upCate  = await GetById(Categrori.Id);    
+             if(upCate != null)
             {
-                var Cate = await _db.Categories.FindAsync(id);
-                if (Cate != null)
-                {
-                    response.Result = _mapper.Map<Category>(Cate);
-                }
-                else
-                {
-                    response.IsSuccess = false;
-                    response.Message = "Not found any Category";
-                }
+                upCate.Name = Categrori.Name;
+                upCate.Status = Categrori.Status;
+                upCate.Description = Categrori.Description; 
+                upCate.Type = Categrori.Type;
             }
-            catch (Exception ex)
-            {
-                response.IsSuccess = false;
-                response.Message = ex.Message;
-            }
-            return response;
-        }
-
-        public async Task<ResponseModel> Search(string searchstring, int page, int pageSize)
-        {
-            ResponseModel response = new();
-            try
-            {
-                var Category = _db.Categories.AsQueryable();
-                if (!string.IsNullOrEmpty(searchstring))
-                {
-                    var resultByName = Category.Where(x => x.Name.Contains(searchstring)).ToPagedList(page, pageSize);
-                    response.Result = _mapper.Map<Category>(resultByName);
-                }
-                else
-                {
-                    response.IsSuccess = false;
-                    response.Message = "Search string is null";
-                }
-            }
-            catch (Exception ex)
-            {
-                response.IsSuccess = false;
-                response.Message = ex.Message;
-            }
-            return response;
-        }
-
-        public async Task<ResponseModel> UpdateCategrori(CategoryModel Categrori)
-        {
-            ResponseModel response = new();
-            try
-            {
-                var upCate = await _db.Categories.FindAsync(Categrori.Id);
-                if (upCate != null)
-                {
-                    // Kiểm tra xem danh mục đã tồn tại chưa
-                    var checkExist = await _db.Categories.AnyAsync(x => x.Name == Categrori.Name);
-                    if (checkExist)
-                    {
-                        response.IsSuccess = false;
-                        response.Message = "The Category already exists";
-                    }
-                    else
-                    {
-                        upCate.Name = Categrori.Name;
-                        upCate.Status = Categrori.Status;
-                        upCate.Description = Categrori.Description;
-                        upCate.Type = Categrori.Type;
-
-                        var CateEnti = _mapper.Map<Category>(upCate);
-                        _db.Update(CateEnti);
-                        await _db.SaveChangesAsync();
-                        response.Result = CateEnti;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                response.IsSuccess = false;
-                response.Message = ex.Message;
-            }
-            return response;
+             var cateEnti = _mapper.Map<Category>(upCate);
+            _db.Update(cateEnti);
+            await _db.SaveChangesAsync();
+            return cateEnti;
         }
     }
 }

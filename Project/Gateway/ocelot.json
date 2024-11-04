@@ -127,9 +127,9 @@
       "UpstreamHttpMethod": [ "Get" ]
     },
 
-    //Detail
+    //getAllProductByUserName/{userName}
     {
-      "DownstreamPathTemplate": "/api/Product/detail={id}",
+      "DownstreamPathTemplate": "/api/Product/getAllProductByUserName/{userName}",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
@@ -137,11 +137,24 @@
           "Port": 7159
         }
       ],
-      "UpstreamPathTemplate": "/Product/detail={id}",
+
+      "UpstreamPathTemplate": "/Product/getAllProductByUserName/{userName}",
       "UpstreamHttpMethod": [ "Get" ]
     },
 
-
+//Detail
+{
+  "DownstreamPathTemplate": "/api/Product/detail={id}",
+  "DownstreamScheme": "https",
+  "DownstreamHostAndPorts": [
+    {
+      "Host": "localhost",
+      "Port": 7159
+    }
+  ],
+  "UpstreamPathTemplate": "/Product/detail={id}",
+  "UpstreamHttpMethod": [ "Get" ]
+},
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //                                                                                                                    //
@@ -318,6 +331,20 @@
       ],
       "UpstreamPathTemplate": "/User/status/{id}",
       "UpstreamHttpMethod": [ "Put" ]
+    },
+
+    //WishList
+    {
+      "DownstreamPathTemplate": "/api/User/getAllProductsInWishList/{id}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7107
+        }
+      ],
+      "UpstreamPathTemplate": "/User/getAllProductsInWishList/{id}",
+      "UpstreamHttpMethod": [ "Get" ]
     },
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
