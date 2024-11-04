@@ -1,9 +1,5 @@
 using Azure.Identity;
-using Microsoft.EntityFrameworkCore;
-using ProductMicroservice.Configure;
-using ProductMicroservice.DBContexts;
-using ProductMicroservice.Repostories;
-
+using StatisticalMicroservice.Configure;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -16,7 +12,6 @@ builder.Services.AddSwaggerGen();
 builder.Configuration.AddAzureKeyVault(new Uri("https://duantotnghiep.vault.azure.net/"),
     new DefaultAzureCredential());
 builder.Services.AddStartupService(builder.Configuration);
-
 
 
 var app = builder.Build();

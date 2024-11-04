@@ -1,7 +1,6 @@
-﻿using AutoMapper;
-using CommentMicroservice.Repositories;
+﻿using StatisticalMicroservice.Repostories;
 
-namespace CommentMicroservice.Configure
+namespace StatisticalMicroservice.Configure
 {
     public static class DependencyInjection
     {
@@ -13,8 +12,7 @@ namespace CommentMicroservice.Configure
         public static IServiceCollection AddDependencyInjection(this IServiceCollection services)
         {
             //Register DI here ⬇️
-
-            services.AddScoped<IRepoComment, RepoComment>();
+            services.AddScoped<IRepo, Repo>();
 
             //Register DI here ⬆️
 
