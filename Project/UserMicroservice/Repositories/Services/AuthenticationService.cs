@@ -308,9 +308,9 @@ namespace UserMicroservice.Repositories.Services
             return response;
         }
 
-
-
-
-
+        public Task<ResponseModel> ForgotPasswordAsync(string email)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
