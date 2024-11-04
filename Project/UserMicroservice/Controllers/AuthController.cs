@@ -19,6 +19,8 @@ using Newtonsoft.Json;
 using UserMicroservice.DBContexts.Enum;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Identity.Client;
+using System.Collections;
+using Newtonsoft.Json.Linq;
 namespace UserMicroservice.Controllers
 {
     [ApiController]
@@ -132,7 +134,57 @@ namespace UserMicroservice.Controllers
             return Ok(response);
         }
 
-        //[HttpPost]
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPassword(string email, string urlSuccess)
+        {
+            try
+            {
+                ResponseModel response = await _authService.ForgotPasswordAsync(email, urlSuccess);
+                if (response.IsSuccess)
+                    return Ok(response);
+                return BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                // Trả về lỗi 500 cho các lỗi chưa dự đoán
+                return StatusCode(500, new { message = "An unexpected error occurred. Detail" + ex.Message });
+            }
+
+        }
+
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword(string token, string newPassword)
+        {
+            try
+            {
+                ResponseModel response = await _authService.ResetPassword(token, newPassword);
+                if (response.IsSuccess)
+                    return Ok(response);
+                return BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                // Trả về lỗi 500 cho các lỗi chưa dự đoán
+                return StatusCode(500, new { message = "An unexpected error occurred. Detail" + ex.Message });
+            }
+        }
+
+        [HttpPost("change-password")]
+        public async Task<IActionResult> ChangePassword(string id, string oldPassword, string newPassword)
+        {
+            try
+            {
+                ResponseModel response = await _authService.ChangePassword(id, oldPassword, newPassword);
+                if (response.IsSuccess)
+                    return Ok(response);
+                return BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                // Trả về lỗi 500 cho các lỗi chưa dự đoán
+                return StatusCode(500, new { message = "An unexpected error occurred. Detail" + ex.Message });
+            }
+        }
 
     }
 }

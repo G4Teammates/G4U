@@ -161,7 +161,7 @@ namespace UserMicroservice.Repositories.Services
             ResponseModel response = new();
             try
             {
-                var user = await _context.Users.FindAsync(email);
+                var user = await _context.Users.SingleOrDefaultAsync(u=>u.Email == email);
                 if (user != null)
                 {
                     response.Message = $"Found success user: {email} ";

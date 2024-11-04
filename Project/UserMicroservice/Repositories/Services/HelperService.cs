@@ -53,7 +53,49 @@ namespace UserMicroservice.Repositories.Services
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
+        public ResponseModel CheckAndReadToken(string token)
+        {
+            // Khởi tạo đối tượng ResponseModel mặc định
+            if (string.IsNullOrEmpty(token))
+            {
+                return new ResponseModel
+                {
+                    IsSuccess = false,
+                    Message = "Token is null"
+                };
+            }
 
+            var handler = new JwtSecurityTokenHandler();
+
+            // Kiểm tra nếu token không hợp lệ hoặc không thể đọc
+            if (!handler.CanReadToken(token))
+            {
+                return new ResponseModel
+                {
+                    IsSuccess = false,
+                    Message = "Invalid token format"
+                };
+            }
+
+            // Đọc token
+            var jsonToken = handler.ReadToken(token) as JwtSecurityToken;
+            if (jsonToken == null)
+            {
+                return new ResponseModel
+                {
+                    IsSuccess = false,
+                    Message = "Unable to analyze token"
+                };
+            }
+
+            // Trường hợp token hợp lệ
+            return new ResponseModel
+            {
+                IsSuccess = true,
+                Message = "Token is valid",
+                Result = jsonToken
+            };
+        }
 
         public async Task<ResponseModel> IsUserNotExist(string username, string? email = null, string? phoneNumber = null)
         {
@@ -210,7 +252,7 @@ namespace UserMicroservice.Repositories.Services
         public string GeneratePasswordResetToken(UserModel model)
         {
             // Tạo token bảo mật và mã hóa
-            var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("your_secret_key_here"));
+            var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("0123456789_0123456789_0123456789"));
             var signingCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
 
             var claims = new List<Claim>
@@ -220,7 +262,6 @@ namespace UserMicroservice.Repositories.Services
                 new Claim(ClaimTypes.Name, model.Username),
                 new Claim(ClaimTypes.GivenName, model.DisplayName),
                 new Claim("Avatar", model.Avatar),
-                new Claim("TokenType", "PasswordReset")
             };
 
             var token = new JwtSecurityToken(
@@ -234,6 +275,60 @@ namespace UserMicroservice.Repositories.Services
 
         }
 
+
+        public ResponseModel DecodeToken(string token)
+        {
+            // Khởi tạo đối tượng ResponseModel mặc định
+            if (string.IsNullOrEmpty(token))
+            {
+                return new ResponseModel
+                {
+                    IsSuccess = false,
+                    Message = "Token is null"
+                };
+            }
+
+            var handler = new JwtSecurityTokenHandler();
+
+            // Kiểm tra nếu token không hợp lệ hoặc không thể đọc
+            if (!handler.CanReadToken(token))
+            {
+                return new ResponseModel
+                {
+                    IsSuccess = false,
+                    Message = "Invalid token format"
+                };
+            }
+
+            // Đọc token
+            var jsonToken = handler.ReadToken(token) as JwtSecurityToken;
+            if (jsonToken == null)
+            {
+                return new ResponseModel
+                {
+                    IsSuccess = false,
+                    Message = "Unable to analyze token"
+                };
+            }
+
+            // Trường hợp token hợp lệ
+            return new ResponseModel
+            {
+                IsSuccess = true,
+                Message = "Token is valid",
+                Result = jsonToken
+            };
+        }
+
+        public User GetUserIdFromToken(JwtSecurityToken token)
+        {
+            return new User
+            {
+                Id = token?.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier)?.Value,
+                Email = token?.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.Email)?.Value,
+                Username = token?.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.Name)?.Value
+            };
+        }
 
     }
 }

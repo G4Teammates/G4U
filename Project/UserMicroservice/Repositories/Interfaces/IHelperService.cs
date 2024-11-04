@@ -16,5 +16,7 @@ namespace UserMicroservice.Repositories.Interfaces
         public Task<ResponseModel> SendEmailAsync(string email, string subject, string htmlMessage);
         public string GetAppBaseUrl();
         public string GeneratePasswordResetToken(UserModel model);
+        public ResponseModel DecodeToken(string token);
+        public User GetUserIdFromToken(JwtSecurityToken token);
     }
 }
