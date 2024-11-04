@@ -4,6 +4,8 @@ using CommentMicroservice.DBContexts.Entities;
 using CommentMicroservice.Models;
 using CommentMicroservice.Models.DTO;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using X.PagedList.Extensions;
 
 namespace CommentMicroservice.Repositories
 {
@@ -17,118 +19,230 @@ namespace CommentMicroservice.Repositories
             _db = db;
             _mapper = mapper;
         }
-        public IEnumerable<Comment> Comments => _db.Comments.ToList();
-        public async Task<Comment> GetById(string id) => _db.Comments.Find(id);
-        public async Task<List<Comment>> GetListById(string id) =>
-        await _db.Comments
-                  .Where(c => c.Id == id || c.ParentId == id)
-                  .ToListAsync();
-        public Comment CreateComment(CreateCommentDTO Comment)
+        public async Task<ResponseModel> GetAll(int page, int pageSize)
         {
-            // Kiểm duyệt nội dung
-            if (!IsContentAppropriate(Comment.Content))
+            ResponseModel response = new();
+            try
             {
-                throw new ArgumentException("Nội dung bình luận không phù hợp với cộng đồng.");
-            }
-            else
-            {
-                var newComm = new CommentModel
+                var Comm = await _db.Comments.ToListAsync();
+                if (Comm != null)
                 {
-                    Content = Comment.Content,
-                    NumberOfLikes = 0,
-                    NumberOfDisLikes = 0,
-                    UserName = Comment.UserName,
-                    Status = Comment.Status,
-                    ProductId = Comment.ProductId,
-                    ParentId = Comment.ParentId,
-                    CreatedAt = DateTime.Now,
-                    UpdatedAt = DateTime.Now
-                };
-                var CommEnti = _mapper.Map<Comment>(newComm);
-                _db.Add(CommEnti);
-                _db.SaveChanges();
-                return CommEnti;
-            }
-        }
-
-        public async Task<Comment> UpdateComment(CommentModel Comment)
-        {
-            var upComm = await GetById(Comment.Id);
-            if (upComm != null)
-            {
-                upComm.Content = Comment.Content;
-                upComm.NumberOfLikes = Comment.NumberOfLikes;
-                upComm.NumberOfDisLikes = Comment.NumberOfDisLikes;
-                upComm.UserName = Comment.UserName;
-                upComm.Status = Comment.Status;
-                upComm.ProductId = Comment.ProductId;
-                upComm.ParentId = Comment.ParentId;
-                upComm.CreatedAt = Comment.CreatedAt;
-                upComm.UpdatedAt = Comment.UpdatedAt;
-            }
-            var CommEnti = _mapper.Map<Comment>(upComm);
-            _db.Update(CommEnti);
-            await _db.SaveChangesAsync();
-            return CommEnti;
-        }
-
-        public async Task DeleteComment(string id)
-        {
-            var comments = await GetListById(id);
-            if (comments != null && comments.Count > 0)
-            {
-                _db.Comments.RemoveRange(comments);
-                await _db.SaveChangesAsync();
-            }
-        }
-
-        public IEnumerable<Comment> Search(string searchstring)
-        {
-            var Products = _db.Comments.AsQueryable();
-
-
-            if (!string.IsNullOrEmpty(searchstring))
-            {
-                // Tìm kiếm theo username
-                var resultByName = Products.Where(x => x.UserName.Contains(searchstring));
-                if (resultByName.Any())
-                {
-                    return resultByName;
+                    response.Result = _mapper.Map<ICollection<Comment>>(Comm).ToPagedList(page, pageSize);
                 }
-                // Kiểm tra nếu searchstring chỉ là năm
-                if (searchstring.Length == 4 && int.TryParse(searchstring, out int year))
+                else
                 {
-                    var resultByYear = Products.Where(x => x.CreatedAt.Year == year);
-                    if (resultByYear.Any())
+                    response.IsSuccess = false;
+                    response.Message = "Not found any Comment";
+                }
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+            }
+            return response;
+        }
+        public async Task<ResponseModel> GetById(string id)
+        {
+            ResponseModel response = new();
+            try
+            {
+                var Comm = await _db.Comments.FindAsync(id);
+                if (Comm != null)
+                {
+                    response.Result = _mapper.Map<Comment>(Comm);
+                }
+                else
+                {
+                    response.IsSuccess = false;
+                    response.Message = "Not found any Commemt";
+                }
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+            }
+            return response;
+        }
+        public async Task<ResponseModel> GetListById(string id, int page, int pageSize) 
+        {
+            ResponseModel response = new();
+            try
+            {
+                var Comm = await _db.Comments.Where(c => c.Id == id || c.ParentId == id).ToListAsync();
+                if (Comm != null)
+                {
+                    response.Result = _mapper.Map<ICollection<Comment>>(Comm).ToPagedList(page, pageSize);
+                }
+                else
+                {
+                    response.IsSuccess = false;
+                    response.Message = "Not found any Commemt";
+                }
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+            }
+            return response;
+        }
+
+        public async Task<ResponseModel> CreateComment(CreateCommentDTO Comment)
+        {
+            ResponseModel response = new();
+            try
+            {
+                // Kiểm duyệt nội dung
+                if (!IsContentAppropriate(Comment.Content))
+                {
+                    response.IsSuccess = false;
+                    response.Message = "The Content is not for community";
+                }
+                else
+                {
+                    var newComm = new CommentModel
                     {
-                        return resultByYear;
+                        Content = Comment.Content,
+                        NumberOfLikes = 0,
+                        NumberOfDisLikes = 0,
+                        UserName = Comment.UserName,
+                        Status = Comment.Status,
+                        ProductId = Comment.ProductId,
+                        ParentId = Comment.ParentId,
+                        CreatedAt = DateTime.Now,
+                        UpdatedAt = DateTime.Now
+                    };
+                    var CommEnti = _mapper.Map<Comment>(newComm);
+                    _db.AddAsync(CommEnti);
+                    _db.SaveChangesAsync();
+                    response.Result = CommEnti;
+                }                 
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+            }
+            return response;
+        }
+
+        public async Task<ResponseModel> UpdateComment(CommentModel Comment)
+        {
+            ResponseModel response = new();
+            try
+            {
+                var upComm = await _db.Comments.FindAsync(Comment.Id);
+                if (upComm != null)
+                {
+
+                    upComm.Content = Comment.Content;
+                    upComm.NumberOfLikes = Comment.NumberOfLikes;
+                    upComm.NumberOfDisLikes = Comment.NumberOfDisLikes;
+                    upComm.UserName = Comment.UserName;
+                    upComm.Status = Comment.Status;
+                    upComm.ProductId = Comment.ProductId;
+                    upComm.ParentId = Comment.ParentId;
+                    upComm.CreatedAt = Comment.CreatedAt;
+                    upComm.UpdatedAt = Comment.UpdatedAt;
+
+                    var CommEnti = _mapper.Map<Comment>(upComm);
+                    _db.Update(CommEnti);
+                    await _db.SaveChangesAsync();
+                    response.Result = CommEnti;               
+                }
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+            }
+            return response;
+        }
+
+        public async Task<ResponseModel> DeleteComment(string id)
+        {
+            ResponseModel response = new();
+            try
+            {
+                var comments = await GetListById(id,1,9999);
+                var list = _mapper.Map<ICollection<Comment>>(comments.Result);
+                if (comments.Result != null)
+                {
+                    _db.Comments.RemoveRange(list);
+                    await _db.SaveChangesAsync();
+                    response.Message = "Delete successfully";
+                }
+                else
+                {
+                    response.IsSuccess = false;
+                    response.Message = "Not found any Comment";
+                }
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+            }
+            return response;
+        }
+
+        public async Task<ResponseModel> Search(string searchstring, int page, int pageSize)
+        {
+            ResponseModel response = new();
+            try
+            {
+                var Products = _db.Comments.AsQueryable();
+                if (!string.IsNullOrEmpty(searchstring))
+                {
+                    var resultByName = Products.Where(x => x.UserName.Contains(searchstring));                 
+                    if (resultByName.Any())
+                    {
+                        response.Result = _mapper.Map<ICollection<Comment>>(resultByName).ToPagedList(page, pageSize);
+                    }
+                    // Kiểm tra nếu searchstring chỉ là năm
+                    if (searchstring.Length == 4 && int.TryParse(searchstring, out int year))
+                    {
+                        var resultByYear = Products.Where(x => x.CreatedAt.Year == year);
+                        if (resultByYear.Any())
+                        {
+                            response.Result = _mapper.Map<ICollection<Comment>>(resultByYear).ToPagedList(page,pageSize);
+                        }
+                    }
+                    else
+                    {
+                        // Kiểm tra nếu searchstring là ngày/tháng/năm
+                        DateTime searchDate;
+                        if (DateTime.TryParse(searchstring, out searchDate))
+                        {
+                            // Ngày, tháng, năm
+                            var resultByDate = Products.Where(x => x.CreatedAt.Year == searchDate.Year && x.CreatedAt.Month == searchDate.Month && x.CreatedAt.Day == searchDate.Day);
+                            if (resultByDate.Any())
+                            {
+                                response.Result = _mapper.Map<ICollection<Comment>>(resultByDate).ToPagedList(page, pageSize);
+                            }
+                            // Tháng và năm
+                            var resultByMonthYear = Products.Where(x => x.CreatedAt.Year == searchDate.Year && x.CreatedAt.Month == searchDate.Month);
+                            if (resultByMonthYear.Any())
+                            {
+                                response.Result = _mapper.Map<ICollection<Comment>>(resultByMonthYear).ToPagedList(page, pageSize);
+                            }
+                        }
                     }
                 }
                 else
                 {
-                    // Kiểm tra nếu searchstring là ngày/tháng/năm
-                    DateTime searchDate;
-                    if (DateTime.TryParse(searchstring, out searchDate))
-                    {
-                        // Ngày, tháng, năm
-                        var resultByDate = Products.Where(x => x.CreatedAt.Year == searchDate.Year && x.CreatedAt.Month == searchDate.Month && x.CreatedAt.Day == searchDate.Day);
-                        if (resultByDate.Any())
-                        {
-                            return resultByDate;
-                        }
-                        // Tháng và năm
-                        var resultByMonthYear = Products.Where(x => x.CreatedAt.Year == searchDate.Year && x.CreatedAt.Month == searchDate.Month);
-                        if (resultByMonthYear.Any())
-                        {
-                            return resultByMonthYear;
-                        }
-
-
-                    }
+                    response.IsSuccess = false;
+                    response.Message = "Search string is null";
                 }
             }
-            // Nếu không có kết quả nào khớp với điều kiện tìm kiếm, trả về danh sách trống
-            return new List<Comment>();
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+            }
+            return response;
         }
 
         #region method

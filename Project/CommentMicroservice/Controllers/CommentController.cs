@@ -27,9 +27,14 @@ namespace CommentMicroService.Controllers
         {
             try
             {
-                var Cates = await _db.GetById(id);
-                _responseModel.Result = Cates;
-                return Ok(_responseModel);
+                var Comm = await _db.GetById(id);
+                if (Comm.IsSuccess)
+                {
+                    _responseModel.Result = Comm.Result;
+                    return Ok(_responseModel);
+                }
+                _responseModel.Message = Comm.Message;
+                return BadRequest(_responseModel.Message);
             }
             catch (Exception ex)
             {
@@ -40,14 +45,19 @@ namespace CommentMicroService.Controllers
         }
 
         [HttpGet("List/{id?}")]
-        public async Task<IActionResult> GetListById([FromRoute] string id, int? page,int pageSize)
+        public async Task<IActionResult> GetListById([FromRoute] string id, int? page, int pageSize)
         {
             try
             {
                 int pageNumber = (page ?? 1);
-                var Cates = await _db.GetListById(id);
-                _responseModel.Result = Cates.ToPagedList(pageNumber,pageSize);
-                return Ok(_responseModel);
+                var Comm = await _db.GetListById(id, pageNumber, pageSize);
+                if (Comm.IsSuccess)
+                {
+                    _responseModel.Result = Comm.Result;
+                    return Ok(_responseModel);
+                }
+                _responseModel.Message = Comm.Message;
+                return BadRequest(_responseModel.Message);
             }
             catch (Exception ex)
             {
@@ -58,14 +68,19 @@ namespace CommentMicroService.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAll(int? page, int pageSize)
+        public async Task<IActionResult> GetAll(int? page, int pageSize)
         {
             try
             {
                 int pageNumber = (page ?? 1);
-                var Comm = _db.Comments;
-                _responseModel.Result = Comm.ToPagedList(pageNumber,pageSize);
-                return Ok(_responseModel);
+                var Comm = await _db.GetAll(pageNumber,pageSize);
+                if (Comm.IsSuccess)
+                {
+                    _responseModel.Result = Comm.Result;
+                    return Ok(_responseModel);
+                }
+                _responseModel.Message = Comm.Message;
+                return BadRequest(_responseModel.Message);
             }
             catch (Exception ex)
             {
@@ -76,13 +91,18 @@ namespace CommentMicroService.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateComment([FromForm] CreateCommentDTO model)
+        public async Task<IActionResult> CreateComment([FromForm] CreateCommentDTO model)
         {
             try
             {
-                var Comm = _db.CreateComment(model);
-                _responseModel.Result = Comm;
-                return Ok(_responseModel);
+                var Comm = await _db.CreateComment(model);
+                if (Comm.IsSuccess)
+                {
+                    _responseModel.Result = Comm.Result;
+                    return Ok(_responseModel);
+                }
+                _responseModel.Message = Comm.Message;
+                return BadRequest(_responseModel.Message);
             }
             catch (Exception ex)
             {
@@ -98,8 +118,13 @@ namespace CommentMicroService.Controllers
             try
             {
                 var Comm = await _db.UpdateComment(model);
-                _responseModel.Result = Comm;
-                return Ok(_responseModel);
+                if (Comm.IsSuccess)
+                {
+                    _responseModel.Result = Comm.Result;
+                    return Ok(_responseModel);
+                }
+                _responseModel.Message = Comm.Message;
+                return BadRequest(_responseModel.Message);
             }
             catch (Exception ex)
             {
@@ -115,9 +140,15 @@ namespace CommentMicroService.Controllers
         {
             try
             {
-                _db.DeleteComment(id);
-                _responseModel.Result = null;
-                return Ok(_responseModel);
+                var Comm = await _db.DeleteComment(id);
+                if (Comm.IsSuccess)
+                {
+                    _responseModel.Result = Comm.Result;
+                    _responseModel.Message = Comm.Message;
+                    return Ok(_responseModel);
+                }
+                _responseModel.Message = Comm.Message;
+                return BadRequest(_responseModel.Message);
             }
             catch (Exception ex)
             {
@@ -128,14 +159,19 @@ namespace CommentMicroService.Controllers
         }
 
         [HttpGet("search={searchString}")]
-        public IActionResult Search([FromRoute] string searchString, int? page, int pageSize)
+        public async Task<IActionResult> Search([FromRoute] string searchString, int? page, int pageSize)
         {
             try
             {
                 int pageNumber = (page ?? 1);
-                var SanPhams = _db.Search(searchString);
-                _responseModel.Result = SanPhams.ToPagedList(pageNumber, pageSize);
-                return Ok(_responseModel);
+                var Comm = await _db.Search(searchString,pageNumber, pageSize);
+                if (Comm.IsSuccess)
+                {
+                    _responseModel.Result = Comm.Result;
+                    return Ok(_responseModel);
+                }
+                _responseModel.Message = Comm.Message;
+                return BadRequest(_responseModel.Message);
             }
             catch (Exception ex)
             {

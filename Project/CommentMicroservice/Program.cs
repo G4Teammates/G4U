@@ -17,7 +17,6 @@ builder.Configuration.AddAzureKeyVault(new Uri("https://duantotnghiep.vault.azur
     new DefaultAzureCredential());
 builder.Services.AddStartupService(builder.Configuration);
 
-builder.Services.AddScoped<IRepoComment, RepoComment>();
 
 
 var app = builder.Build();
