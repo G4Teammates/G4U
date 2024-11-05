@@ -67,3 +67,46 @@ table tr td:first-child {
 table tr th:first-child {
     border: none;
 }
+
+
+
+.row.d-flex.justify-content-between {
+    gap: 15px;
+}
+
+.filter-form, .sort-form {
+    display: flex;
+    align-items: center;
+    background-color: #f8f9fa;
+    padding: 8px;
+    border-radius: 8px;
+}
+
+.form-select, .form-control {
+    max-width: 250px;
+    border-radius: 4px;
+    height: 38px;
+}
+
+.btn-primary, .btn-success {
+    max-width: 150px;
+    padding: 6px 12px;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    border: none;
+}
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+    }
+
+.btn-success {
+    background-color: #28a745;
+}
+
+    .btn-success:hover {
+        background-color: #218838;
+    }
+
