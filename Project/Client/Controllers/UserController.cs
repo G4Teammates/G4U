@@ -21,6 +21,8 @@ using ResponseModel = Client.Models.ResponseModel;
 using IAuthenticationService = Client.Repositories.Interfaces.Authentication.IAuthenticationService;
 using Client.Models.ProductDTO;
 using Client.Repositories.Interfaces.Product;
+using Client.Models.CategorisDTO;
+using ProductMicroservice.DBContexts.Entities;
 
 namespace Client.Controllers
 {
@@ -349,10 +351,30 @@ namespace Client.Controllers
         {
             return View();
         }
-       
-        public IActionResult UserDashboard()
+
+        public async Task<IActionResult> UserDashboard(string userName)
         {
-            return View();
+            ProductViewModel pro = new();
+            try
+            {
+                ResponseModel? response = await _productService.GetAllProductsByUserName(userName);
+
+
+                if (response != null && response.IsSuccess)
+                {
+                    pro.Product = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response.Result.ToString()!));
+                }
+                else
+                {
+                    TempData["error"] = response?.Message;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = ex.Message;
+            }
+            return View(pro);
         }
     }
 }
