@@ -97,7 +97,7 @@ namespace ProductMicroservice.Repostories
                                 var result = response.Value;
 
                                 // Kiểm tra kết quả kiểm duyệt
-                                if (result.CategoriesAnalysis.Any(c => c.Severity > 0))
+                                if (result.CategoriesAnalysis.Any(c => c.Severity > 4))
                                 {
                                     listUnsafe.Add(true);
                                     return; // Nếu hình ảnh không đạt, ngừng xử lý
@@ -489,7 +489,7 @@ namespace ProductMicroservice.Repostories
                             var result = response.Value;
 
                             // Kiểm tra kết quả kiểm duyệt
-                            if (result.CategoriesAnalysis.Any(c => c.Severity > 0))
+                            if (result.CategoriesAnalysis.Any(c => c.Severity > 4))
                             {
                                 listUnsafe.Add(true);
                                 return; // Nếu hình ảnh không đạt, ngừng xử lý
