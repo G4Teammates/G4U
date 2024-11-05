@@ -11,6 +11,8 @@ namespace UserMicroservice.Repositories.Interfaces
         ResponseModel GetUserInfoByClaim(IEnumerable<Claim> claimsPrincipal);
         Task<ResponseModel> GoogleCallback(LoginGoogleRequestModel loginGoogleRequestModel);
         Task<ResponseModel> RegisterAsync(RegisterRequestModel registerRequestModel);
-        Task<ResponseModel> ForgotPasswordAsync();
+        Task<ResponseModel> ForgotPasswordAsync(string email, string urlSuccess);
+        Task<ResponseModel> ResetPassword(string token, string newPassword);
+        Task<ResponseModel> ChangePassword(string id, string oldPassword, string newPassword);
     }
 }

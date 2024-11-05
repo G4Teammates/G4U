@@ -431,7 +431,27 @@ namespace Client.Controllers
 
         public IActionResult UserDashboard()
         {
-            return View();
+            ProductViewModel pro = new();
+            try
+            {
+                ResponseModel? response = await _productService.GetAllProductsByUserName(userName);
+
+
+                if (response != null && response.IsSuccess)
+                {
+                    pro.Product = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response.Result.ToString()!));
+                }
+                else
+                {
+                    TempData["error"] = response?.Message;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = ex.Message;
+            }
+            return View(pro);
         }
     }
 }

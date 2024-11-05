@@ -142,7 +142,7 @@ namespace Client.Controllers
                     productViewModel.Product = new List<ProductModel> { model };
 
                     // Gán danh sách comments vào ProductViewModel
-                    productViewModel.CommentDTOModels = comments ?? new List<CommentDTOModel>();
+                    productViewModel.CommentDTOModels = comments ?? new List<CommentDTOModel>();    
                 }
             }
             else

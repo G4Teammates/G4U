@@ -21,7 +21,7 @@
      data-login_uri='/google-response'
      data-auto_prompt='false'>
 </div>
-<div id="carouselExampleInterval" class="carousel slide mt-4 w-100 h-100" data-bs-ride="carousel" style="border-radius:5px; margin: 0 3%;">
+<div id="carouselExampleInterval" class="carousel slide mt-4 w-100 h-100" data-bs-ride="carousel" style="border-radius:5px;  margin: 0 auto; width: 80%;">
     <div class="carousel-inner">
         @if (Model.Product != null)
         {
@@ -52,7 +52,9 @@
                         // Hiển thị hình ảnh đầu tiên nếu có
                         if (firstImageUrl != null)
                         {
-                            <img src="@firstImageUrl" alt="Cloudinary Image" class="d-block w-100" style="border-radius:5px;" />
+                            <div class="carousel-image-container">
+                                <img src="@firstImageUrl" alt="Cloudinary Image" class="d-block w-100 carousel-image" />
+                            </div>
                         }
                     }
                 </div>
@@ -105,7 +107,7 @@
                             </div>
                             <div class="footeer_card">
                                 <div class="btn_card">
-                                    <button>Read more...</button>
+                                    <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@product.Id" class="btn_orther">Read More</a>
                                 </div>
                             </div>
                         </div>
@@ -169,7 +171,7 @@
                     <div class="info_other">
                         <h1>@product.Name</h1>
                         <p>@product.Description</p>
-                        <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
+                        <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@product.Id" class="btn_orther">Read More</a>
                     </div>
                 </div>
             }
@@ -225,7 +227,7 @@
                         <div class="info_other">
                             <h1>@product.Name</h1>
                             <p>@product.Description</p>
-                            <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
+                            <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@product.Id" class="btn_orther">Read More</a>
                         </div>
                     </div>
                 }
@@ -265,7 +267,7 @@
                         <div class="info_other">
                             <h1>@product.Name</h1>
                             <p>@product.Description</p>
-                            <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
+                            <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@product.Id" class="btn_orther">Read More</a>
                         </div>
                     </div>
                 }
@@ -303,7 +305,7 @@
                         <div class="info_other">
                             <h1>@product.Name</h1>
                             <p>@product.Description</p>
-                            <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
+                            <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@product.Id" class="btn_orther">Read More</a>
                         </div>
                     </div>
                 }
@@ -347,7 +349,7 @@
                         <div class="info_other">
                             <h1>@product.Name</h1>
                             <p>@product.Description</p>
-                            <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
+                            <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@product.Id" class="btn_orther">Read More</a>
                         </div>
                     </div>
                 }
@@ -376,7 +378,9 @@
                             string firstImageUrl = product.Links.FirstOrDefault(link => link.Url.Contains("cloudinary"))?.Url;
                             if (firstImageUrl != null)
                             {
-                                <img src="@firstImageUrl" alt="Cloudinary Image" class="img-fluid" />
+                                <div style="width: 100%;height: 70px;overflow: hidden;display: flex;align-items: center;justify-content: center;">
+                                    <img src="@firstImageUrl" alt="Cloudinary Image" style=" width: 100%;height: 100%;object-fit: cover;" />
+                                </div>
                             }
                         }
                     </div>
@@ -409,7 +413,9 @@
                             string firstImageUrl = product.Links.FirstOrDefault(link => link.Url.Contains("cloudinary"))?.Url;
                             if (firstImageUrl != null)
                             {
-                                <img src="@firstImageUrl" alt="Cloudinary Image" class="img-fluid" />
+                                <div style="width: 100%;height: 70px;overflow: hidden;display: flex;align-items: center;justify-content: center;">
+                                    <img src="@firstImageUrl" alt="Cloudinary Image" style=" width: 100%;height: 100%;object-fit: cover;" />
+                                </div>
                             }
                         }
                     </div>
@@ -447,7 +453,9 @@
                             // Hiển thị hình ảnh đầu tiên nếu có
                             if (firstImageUrl != null)
                             {
-                                <img src="@firstImageUrl" alt="Cloudinary Image" class="img-fluid" />
+                                <div style="width: 100%;height: 70px;overflow: hidden;display: flex;align-items: center;justify-content: center;">
+                                    <img src="@firstImageUrl" alt="Cloudinary Image" style=" width: 100%;height: 100%;object-fit: cover;" />
+                                </div>
                             }
 
 

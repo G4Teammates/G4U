@@ -12,5 +12,7 @@ namespace StatisticalMicroservice.DBContexts.Entities
         public int TotalProducts { get; set; }
         [BsonElement("totalSolds")]
         public int TotalSolds { get; set; }
+        [BsonElement("totalUsers")]
+        public int TotalUsers { get; set; }
     }
 }

@@ -16,7 +16,7 @@ namespace Client.Repositories.Interfaces.Product
         Task<ResponseModel?> SearchProductAsync(string searchString, int? pageNumber, int pageSize);
         Task<ResponseModel> SortProductAsync(string sort, int? pageNumber, int pageSize);
         Task<ResponseModel> FilterProductAsync(decimal? minrange, decimal? maxrange, int? sold, bool? Discount, int? Platform, string Category, int? pageNumber, int pageSize);
-
+        Task<ResponseModel> GetAllProductsByUserName(string userName);
         Task<ResponseModel?> GetAllProductAsync(int? pageNumber, int pageSize);
 
         Task<ResponseModel> UpdateProductAsync(string id,
