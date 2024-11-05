@@ -1,4 +1,7 @@
-﻿<style>
+﻿@using Client.Models.ProductDTO
+@model ProductViewModel
+
+<style>
     body {
         background-color: #f8f9fa;
     }
@@ -104,6 +107,40 @@
     <!-- Projects Section -->
     <div class="projects-section">
         <h4>Projects</h4>
+        @if (Model.Product != null)
+        {
+            foreach (var product in Model.Product)
+            {
+                <div class="project-item">
+                    @if (product.Links != null)
+                    {
+                        string firstImageUrl = null; // Biến để lưu URL hình ảnh đầu tiên
+
+                        foreach (var link in product.Links) // Lặp qua từng đối tượng LinkModel
+                        {
+                            if (link.Url.Contains("cloudinary"))
+                            {
+                                firstImageUrl = link.Url; // Lưu URL hình ảnh đầu tiên
+                                break; // Thoát khỏi vòng lặp khi đã tìm thấy
+                            }
+                        }
+
+                        // Hiển thị hình ảnh đầu tiên nếu có
+                        if (firstImageUrl != null)
+                        {
+                            <img src="@firstImageUrl" alt="Cloudinary Image" />
+                        }
+
+
+                    }
+                    <div class="project-info">
+                        <strong class="d-inline-block text-truncate" style="max-width: 150px;">@product.Name</strong>
+                        <div><small style="min-width: 150px"><a href="">Edit</a> | <a href="">Analytics</a> | <a href="">Widget</a> | <a href="">More</a></small></div>
+                    </div>
+                    <span class="badge bg-secondary">DRAFT</span>
+                </div>
+            }
+        }
         <div class="project-item">
             <img src="~/Image/game.jpg" alt="Project">
             <div class="project-info">

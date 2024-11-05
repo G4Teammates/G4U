@@ -107,7 +107,7 @@
                             </div>
                             <div class="footeer_card">
                                 <div class="btn_card">
-                                    <button>Read more...</button>
+                                    <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@product.Id" class="btn_orther">Read More</a>
                                 </div>
                             </div>
                         </div>
@@ -171,7 +171,7 @@
                     <div class="info_other">
                         <h1>@product.Name</h1>
                         <p>@product.Description</p>
-                        <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
+                        <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@product.Id" class="btn_orther">Read More</a>
                     </div>
                 </div>
             }
@@ -227,7 +227,7 @@
                         <div class="info_other">
                             <h1>@product.Name</h1>
                             <p>@product.Description</p>
-                            <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
+                            <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@product.Id" class="btn_orther">Read More</a>
                         </div>
                     </div>
                 }
@@ -267,7 +267,7 @@
                         <div class="info_other">
                             <h1>@product.Name</h1>
                             <p>@product.Description</p>
-                            <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
+                            <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@product.Id" class="btn_orther">Read More</a>
                         </div>
                     </div>
                 }
@@ -305,7 +305,7 @@
                         <div class="info_other">
                             <h1>@product.Name</h1>
                             <p>@product.Description</p>
-                            <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
+                            <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@product.Id" class="btn_orther">Read More</a>
                         </div>
                     </div>
                 }
@@ -349,7 +349,7 @@
                         <div class="info_other">
                             <h1>@product.Name</h1>
                             <p>@product.Description</p>
-                            <a asp-controller="" asp-action="" class="btn_orther">Read More</a>
+                            <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@product.Id" class="btn_orther">Read More</a>
                         </div>
                     </div>
                 }
