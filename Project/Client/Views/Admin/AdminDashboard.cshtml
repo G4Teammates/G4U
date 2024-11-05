@@ -1,4 +1,8 @@
-﻿@{
+﻿@using Client.Models
+@using System.Text.Json
+@model AllModel
+
+@{
     Layout = "_LayoutAdmin";
 }
 
@@ -34,65 +38,128 @@
         </div>
     </div>
     <div class="row">
-        <div class="col">
+        @{
+            var latestStat = Model.statis.LastOrDefault();
+            var previousStat = Model.statis.ElementAtOrDefault(Model.statis.Count - 2);
+
+            decimal CalculateGrowth(decimal? latestValue, decimal? previousValue)
+            {
+                if (latestValue != null && previousValue != null && previousValue > 0)
+                {
+                    return Math.Round(((latestValue.Value - previousValue.Value) / previousValue.Value) * 100, 3);
+                }
+                return 0;
+            }
+
+            string GetGrowthClass(decimal growth) => growth >= 0 ? "text-success" : "text-danger";
+            string GetGrowthSymbol(decimal growth) => growth >= 0 ? "▲" : "▼";
+        }
+
+        <div class="col-6">
             <div class="card p-3">
                 <div class="stat-card">
                     <div class="stat-header">
                         <h6>Total Revenue</h6>
-                        <h3>$12099</h3>
-                        <span class="stat-growth text-success">▲ 5.86%</span>
+                        <h3>$@latestStat.TotalWebsite.TotalRevenue</h3>
+                        <span class="stat-growth @(GetGrowthClass(CalculateGrowth(latestStat.TotalWebsite.TotalRevenue, previousStat.TotalWebsite.TotalRevenue)))">
+                            @(GetGrowthSymbol(CalculateGrowth(latestStat.TotalWebsite.TotalRevenue, previousStat.TotalWebsite.TotalRevenue)))
+                            @CalculateGrowth(latestStat.TotalWebsite.TotalRevenue, previousStat.TotalWebsite.TotalRevenue)%
+                        </span>
                     </div>
                     <canvas id="revenueChart"></canvas>
                 </div>
             </div>
         </div>
-        <div class="col">
+
+        <div class="col-6">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title">Top Performing Campaigns</h5>
+                    <h5 class="card-title">Product Statistics</h5>
                     <table class="table table-striped">
                         <thead>
                             <tr>
-                                <th scope="col">#</th>
-                                <th scope="col">Campaign</th>
-                                <th scope="col">Visits</th>
+                                <th scope="col">CreateAt</th>
                                 <th scope="col">Revenue</th>
+                                <th scope="col">Views</th>
+                                <th scope="col">Products</th>
+                                <th scope="col">Solds</th>
+                                <th scope="col">Users</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr style="background-color:rgb(173, 216, 230)">
-                                <td>1</td>
-                                <td>Campaign#1</td>
-                                <td>98,789</td>
-                                <td>$4563</td>
-                            </tr>
-                            <tr style="background-color:rgb(198, 239, 206)">
-                                <td>2</td>
-                                <td>Campaign#2</td>
-                                <td>2,789</td>
-                                <td>$325</td>
-                            </tr>
-                            <tr style="background-color:rgb(211, 211, 211)">
-                                <td>3</td>
-                                <td>Campaign#3</td>
-                                <td>1,459</td>
-                                <td>$225</td>
-                            </tr>
-                            <tr>
-                                <td>4</td>
-                                <td>Campaign#4</td>
-                                <td>5,035</td>
-                                <td>$856</td>
-                            </tr>
-                            <tr>
-                                <td>5</td>
-                                <td>Campaign#5</td>
-                                <td>10,000</td>
-                                <td>$1000</td>
-                            </tr>
+                            @foreach (var product in Model.statis)
+                            {
+                                <tr style="background-color:@(product.TotalWebsite?.TotalRevenue > 5000 ? "rgb(198, 239, 206)" : "rgb(211, 211, 211)")">
+                                    <td>@product.CreateAt.ToString("dd/MM/yyyy")</td>
+                                    <td>@product.TotalWebsite?.TotalRevenue</td>
+                                    <td>@product.TotalWebsite?.TotalViews</td>
+                                    <td>@product.TotalWebsite?.TotalProducts</td>
+                                    <td>@product.TotalWebsite?.TotalSolds</td>
+                                    <td>@product.TotalWebsite?.TotalUsers</td>
+                                </tr>
+                            }
                         </tbody>
                     </table>
-                    <button class="btn btn-outline-primary">Details</button>
+                    @* <button class="btn btn-outline-primary">Details</button> *@
+                </div>
+            </div>
+        </div>
+        <!-- Views Chart -->
+        <div class="col-6">
+            <div class="card p-3">
+                <div class="stat-card">
+                    <h6>Total Views</h6>
+                    <h3>@latestStat.TotalWebsite.TotalViews</h3>
+                    <span class="stat-growth @(GetGrowthClass(CalculateGrowth(latestStat.TotalWebsite.TotalViews, previousStat.TotalWebsite.TotalViews)))">
+                        @(GetGrowthSymbol(CalculateGrowth(latestStat.TotalWebsite.TotalViews, previousStat.TotalWebsite.TotalViews)))
+                        @CalculateGrowth(latestStat.TotalWebsite.TotalViews, previousStat.TotalWebsite.TotalViews)%
+                    </span>
+                    <canvas id="viewsChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Products Chart -->
+        <div class="col-6">
+            <div class="card p-3">
+                <div class="stat-card">
+                    <h6>Total Products</h6>
+                    <h3>@latestStat.TotalWebsite.TotalProducts</h3>
+                    <span class="stat-growth @(GetGrowthClass(CalculateGrowth(latestStat.TotalWebsite.TotalProducts, previousStat.TotalWebsite.TotalProducts)))">
+                        @(GetGrowthSymbol(CalculateGrowth(latestStat.TotalWebsite.TotalProducts, previousStat.TotalWebsite.TotalProducts)))
+                        @CalculateGrowth(latestStat.TotalWebsite.TotalProducts, previousStat.TotalWebsite.TotalProducts)%
+                    </span>
+                    <canvas id="productsChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Solds Chart -->
+        <div class="col-6">
+            <div class="card p-3">
+                <div class="stat-card">
+                    <h6>Total Solds</h6>
+                    <h3>@latestStat.TotalWebsite.TotalSolds</h3>
+                    <span class="stat-growth @(GetGrowthClass(CalculateGrowth(latestStat.TotalWebsite.TotalSolds, previousStat.TotalWebsite.TotalSolds)))">
+                        @(GetGrowthSymbol(CalculateGrowth(latestStat.TotalWebsite.TotalSolds, previousStat.TotalWebsite.TotalSolds)))
+                        @CalculateGrowth(latestStat.TotalWebsite.TotalSolds, previousStat.TotalWebsite.TotalSolds)%
+                    </span>
+                    <canvas id="soldsChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Users Chart -->
+        <div class="col-6">
+            <div class="card p-3">
+                <div class="stat-card">
+                    <h6>Total Users</h6>
+                    <h3>@latestStat.TotalWebsite.TotalUsers</h3>
+                    <span class="stat-growth @(GetGrowthClass(CalculateGrowth(latestStat.TotalWebsite.TotalUsers, previousStat.TotalWebsite.TotalUsers)))">
+                        @(GetGrowthSymbol(CalculateGrowth(latestStat.TotalWebsite.TotalUsers, previousStat.TotalWebsite.TotalUsers)))
+                        @CalculateGrowth(latestStat.TotalWebsite.TotalUsers, previousStat.TotalWebsite.TotalUsers)%
+                    </span>
+                    <canvas id="usersChart"></canvas>
                 </div>
             </div>
         </div>
@@ -101,39 +168,57 @@
 
 
 
-
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    var ctx = document.getElementById('revenueChart').getContext('2d');
-    var revenueChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: ['January', 'February', 'March', 'April', 'May', 'June'], // Dữ liệu trục X
-            datasets: [{
-                label: 'Revenue',
-                data: [10000, 10500, 11000, 11500, 12000, 12099], // Dữ liệu trục Y
-                backgroundColor: 'rgba(85, 85, 255, 0.1)', // Màu nền của biểu đồ
-                borderColor: '#5555ff', // Màu đường của biểu đồ
-                fill: true, // Tạo nền bên dưới đường
-                tension: 0.4, // Độ mượt của đường
-                pointBackgroundColor: '#ff9900', // Màu của các điểm trên đường
-                pointBorderColor: '#ff9900', // Màu viền các điểm
-            }]
-        },
-        options: {
-            responsive: true,
-            scales: {
-                y: {
-                    beginAtZero: false
-                }
+
+    // Dữ liệu cho từng biểu đồ
+    var labels = @Html.Raw(JsonSerializer.Serialize(Model.statis.Select(x => x.CreateAt.ToString("dd MMMM"))));
+
+    var revenueData = @Html.Raw(JsonSerializer.Serialize(Model.statis.Select(x => x.TotalWebsite.TotalRevenue)));
+    var viewsData = @Html.Raw(JsonSerializer.Serialize(Model.statis.Select(x => x.TotalWebsite.TotalViews)));
+    var productsData = @Html.Raw(JsonSerializer.Serialize(Model.statis.Select(x => x.TotalWebsite.TotalProducts)));
+    var soldsData = @Html.Raw(JsonSerializer.Serialize(Model.statis.Select(x => x.TotalWebsite.TotalSolds)));
+    var usersData = @Html.Raw(JsonSerializer.Serialize(Model.statis.Select(x => x.TotalWebsite.TotalUsers)));
+
+    // Tạo hàm để tạo biểu đồ
+    function createChart(ctx, label, data, backgroundColor, borderColor) {
+        return new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: label,
+                    data: data,
+                    backgroundColor: backgroundColor,
+                    borderColor: borderColor,
+                    fill: true,
+                    tension: 0.4,
+                    pointBackgroundColor: borderColor,
+                    pointBorderColor: borderColor,
+                }]
             },
-            plugins: {
-                legend: {
-                    display: false // Ẩn chú thích
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: false
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: true
+                    }
                 }
             }
-        }
-    });
+        });
+    }
+
+    // Khởi tạo từng biểu đồ với id tương ứng
+    createChart(document.getElementById('revenueChart').getContext('2d'), 'Revenue', revenueData, 'rgba(85, 85, 255, 0.1)', '#5555ff');
+    createChart(document.getElementById('viewsChart').getContext('2d'), 'Views', viewsData, 'rgba(255, 99, 132, 0.1)', '#ff6384');
+    createChart(document.getElementById('productsChart').getContext('2d'), 'Products', productsData, 'rgba(75, 192, 192, 0.1)', '#4bc0c0');
+    createChart(document.getElementById('soldsChart').getContext('2d'), 'Solds', soldsData, 'rgba(255, 205, 86, 0.1)', '#ffcd56');
+    createChart(document.getElementById('usersChart').getContext('2d'), 'Users', usersData, 'rgba(153, 102, 255, 0.1)', '#9966ff');
 </script>
 
 

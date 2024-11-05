@@ -13,6 +13,15 @@ using UserMicroservice.Models.UserManagerModel;
 using UserMicroservice.Repositories.Interfaces;
 using UserMicroservice.DBContexts.Enum;
 using System.Security.Claims;
+using Amazon.Runtime.Internal.Endpoints.StandardLibrary;
+using Azure.Core;
+using Microsoft.AspNetCore.Mvc;
+using System.Net.Mail;
+using System.Net;
+using System.IdentityModel.Tokens.Jwt;
+using System.Text;
+using System;
+using Newtonsoft.Json;
 
 namespace UserMicroservice.Repositories.Services
 {
@@ -33,11 +42,11 @@ namespace UserMicroservice.Repositories.Services
             _userService = userService;
             _helper = helper;
             _mapper = mapper;
+            _httpContextAccessor = new HttpContextAccessor();
         }
-        public Task<ResponseModel> ForgotPasswordAsync()
-        {
-            throw new NotImplementedException();
-        }
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+
 
         public ResponseModel GetUserInfoByClaim(IEnumerable<Claim> claims)
         {
@@ -137,7 +146,7 @@ namespace UserMicroservice.Repositories.Services
         }
 
 
-       
+
 
         public async Task<ResponseModel> LoginGoogleAsync(LoginGoogleRequestModel loginGoogleRequestModel)
         {
@@ -184,7 +193,7 @@ namespace UserMicroservice.Repositories.Services
                     Role = user.Role.ToString()
                 };
                 response.Message = "Login successful";
-                
+
             }
             catch (Exception ex)
             {
@@ -235,6 +244,134 @@ namespace UserMicroservice.Repositories.Services
                 response.IsSuccess = false;
                 response.Message = ex.Message;
             }
+            return response;
+        }
+
+        public async Task<ResponseModel> ForgotPasswordAsync(string email, string urlSuccess)
+        {
+            ResponseModel response = new();
+            try
+            {
+
+                // Kiểm tra xem email có tồn tại không
+                ResponseModel findUser = await _userService.GetUserByEmail(email);
+                if (findUser == null)
+                {
+                    response.IsSuccess = false;
+                    response.Message = "Email does not exist";
+                    return response;
+                }
+                UserModel user = (UserModel)findUser.Result;
+                response = await SendPasswordResetEmailAsync(user);
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+            }
+            return response;
+        }
+
+
+        private async Task<ResponseModel> SendPasswordResetEmailAsync(UserModel model)
+        {
+            ResponseModel response = new();
+            try
+            {
+                // Tạo token đặt lại mật khẩu
+                var token = _helper.GeneratePasswordResetToken(model);
+
+                // Tạo URL thủ công nếu không có ngữ cảnh HttpRequest
+                string confirmationLink = $"{_helper.GetAppBaseUrl()}/User/ResetPassword?userId={model.Id}&token={token}";
+
+                var emailSubject = "Đặt lại mật khẩu của bạn";
+                var emailBody = $"Nhấp vào liên kết sau để đặt lại mật khẩu: <a href='{confirmationLink}'>Đặt lại mật khẩu</a>";
+
+                // Kiểm tra và gửi email
+                if (model.Email != null)
+                {
+                    response = await _helper.SendEmailAsync(model.Email, emailSubject, emailBody);
+                    response.Result = token;
+                }
+                else
+                {
+                    response.IsSuccess = false;
+                    response.Message = "Email is null";
+                }
+
+            }
+            catch (Exception ex)
+            {
+                response.Message = $"Error: {ex.Message}";
+                response.IsSuccess = false;
+            }
+            return response;
+        }
+
+        public async Task<ResponseModel> ResetPassword(string token, string newPassword)
+        {
+            ResponseModel response = new();
+            try
+            {
+                if (token.IsNullOrEmpty())
+                {
+                    response.IsSuccess = false;
+                    response.Message = "Token is null";
+                    return response;
+                }
+                ResponseModel jsonToken = _helper.DecodeToken(token);
+                User user = _helper.GetUserIdFromToken((JwtSecurityToken)jsonToken.Result);
+                user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
+                _context.Users.Attach(user);     // Đính kèm vào context nhưng không theo dõi tất cả trường
+                _context.Entry(user).Property(u => u.PasswordHash).IsModified = true; // Chỉ cập nhật trường cần thiết
+                await _context.SaveChangesAsync();
+
+                response.Message = "Reset password is success";
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                response.IsSuccess = false;
+            }
+
+            return response;
+        }
+
+        public async Task<ResponseModel> ChangePassword(string id,string oldPass, string newPassword)
+        {
+            ResponseModel response = new();
+            try
+            {
+                User? user = await _context.Users.FindAsync(id);
+                if (user == null)
+                {
+                    response.IsSuccess = false;
+                    response.Message = "User need change password is null";
+                    return response;
+                }
+                else
+                {
+                    bool isPasswordCorrect = BCrypt.Net.BCrypt.Verify(oldPass, user.PasswordHash);
+                    if (isPasswordCorrect)
+                    {
+                        user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
+                        _context.Users.Attach(user);     // Đính kèm vào context nhưng không theo dõi tất cả trường
+                        _context.Entry(user).Property(u => u.PasswordHash).IsModified = true; // Chỉ cập nhật trường cần thiết
+                        await _context.SaveChangesAsync();
+                        response.Message = "Change password is success";
+                        return response;
+                    }
+                    response.IsSuccess = false;
+                    response.Message = "Password is not correct";
+
+                }
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+            }
+
             return response;
         }
     }

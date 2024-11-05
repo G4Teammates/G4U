@@ -157,6 +157,61 @@ namespace ProductMicroservice.Repostories.Messages
             };
         }
 
+        public void SendingMessageStatistiscal<T>(T message)
+        {
+            // tên cổng
+            const string ExchangeName = "Stastistical";
+            // tên queue
+            const string QueueName = "totalSold_totalProduct_for_stastistical";
+
+            ConnectionFactory factory = new()
+            {
+                UserName = "guest",
+                Password = "guest",
+                VirtualHost = "/",
+                Port = 5672,
+                HostName = "localhost"
+            };
+            using var conn = factory.CreateConnection();
+            using (var channel = conn.CreateModel())
+            {
+                channel.ExchangeDeclare(
+                                      exchange: ExchangeName,
+                                      type: ExchangeType.Direct, // Lựa chọn loại cổng (ExchangeType)
+                                      durable: true              // Khi khởi động lại có bị mất dữ liệu hay không( true là không ) 
+                                    );
+
+                // Khai báo hàng chờ
+                var queue = channel.QueueDeclare(
+                                        queue: QueueName, // tên hàng chờ
+                                        durable: false, // khi khởi động lại có mất không
+                                                        // hàng đợi của bạn sẽ trở thành riêng tư và chỉ ứng dụng của
+                                                        // bạn mới có thể sử dụng. Điều này rất hữu ích khi bạn cần giới
+                                                        // hạn hàng đợi chỉ cho một người tiêu dùng.
+                                        exclusive: false,
+                                        autoDelete: false, // có tự động xóa không
+                                        arguments: ImmutableDictionary<string, object>.Empty);
+
+
+
+                // Liên kết hàng đợi với tên cổng bằng rounting key
+                channel.QueueBind(
+                    queue: QueueName,
+                    exchange: ExchangeName,
+                    routingKey: QueueName); // Routing Key phải khớp với tên hàng chờ
+
+                var jsonString = JsonSerializer.Serialize(message);
+
+                var Body = Encoding.UTF8.GetBytes(jsonString);
+
+                channel.BasicPublish(
+                    exchange: ExchangeName,
+                    routingKey: QueueName,
+                    mandatory: true,
+                    basicProperties: null,
+                    body: Body);
+            };
+        }
 
         #region method and private model
         private async Task<bool> CanDeleteCategoryAsync(IRepoProduct repo, string categoryName)

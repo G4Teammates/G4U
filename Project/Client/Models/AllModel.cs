@@ -2,6 +2,7 @@
 using Client.Models.CategorisDTO;
 using Client.Models.ComentDTO;
 using Client.Models.ProductDTO;
+using Client.Models.Statistical;
 
 namespace Client.Models
 {
@@ -11,6 +12,8 @@ namespace Client.Models
 		public ICollection<ProductModel>? Product { get; set; }
 		public LoginResponseModel? User { get; set; }
 		public ICollection<CommentDTOModel>? comment { get; set; }
+
+        public ICollection<StatisticalModel>? statis { get; set; }
 
         public int pageNumber { get; set; }
         public int pageSize { get; set; }

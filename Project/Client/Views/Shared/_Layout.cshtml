@@ -29,12 +29,12 @@
         <header>
             <!-- Navbar -->
             <nav class="navbaradmin navbar navbar-expand-lg navbar-light bg-white">
-                <div class="container-fluid">
+                <div class="container-fluid d-flex">
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
                     </button>
                     <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
-                        <div class="d-flex align-items-center">
+                        <div class="d-flex align-items-center" style="width:30vw">
                             <div>
                                 <a asp-controller="Home" asp-action="Index">
                                     <img src="~/Image/logo.png" alt="Logo" style="max-height: 60px;">
@@ -54,7 +54,7 @@
                                     Products
                                 </a>
                             </li>
-                            <li class="nav-item dropdown">
+                         @*    <li class="nav-item dropdown">
                                 <a class="nav-link btn fw-bold" id="navbarDropdown2" role="button">
                                     Game 2D/3D
                                 </a>
@@ -68,7 +68,7 @@
                                 <a class="nav-link btn fw-bold" id="navbarDropdown2" role="button">
                                     Asset 2D/3D
                                 </a>
-                            </li>
+                            </li> *@
                             <li class="nav-item dropdown">
                                 <a class="nav-link btn fw-bold" id="navbarDropdown2" role="button">
                                     Help
@@ -100,14 +100,14 @@
                             <li class="nav-item mx-2">
                                 <a class="nav-link"><i class="fa-solid fa-bell"></i></a>
                             </li>
-                            <li class="nav-item">
+                            <li class="nav-item" style="max-width:160px">
                                 @if (User.Identity.IsAuthenticated)
                                 {
                                     var displayName = User.FindFirst(ClaimTypes.GivenName)?.Value;
                                     var avatarUrl = User.FindFirst("Avatar")?.Value;
                                     <a class="nav-link d-flex" asp-controller="User" asp-action="Information">
                                         <img id="avatar" src="@avatarUrl" alt="Profile" class="rounded-circle" width="30" height="30">
-                                        <span class="align-content-center px-1">@displayName</span>
+                                        <span class="align-content-center px-1 text-truncate" style="max-width: 150px;">@displayName</span>
                                     </a>
                                 }
                                 else

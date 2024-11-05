@@ -24,12 +24,14 @@ using Client.Repositories.Interfaces.Order;
 using Client.Models.OrderModel;
 using static Client.Models.Enum.UserEnum.User;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using Client.Repositories.Interfaces.Stastistical;
+using Client.Models.Statistical;
 
 
 namespace Client.Controllers
 {
 
-    public class AdminController(IUserService userService, IHelperService helperService, IRepoProduct repoProduct, ITokenProvider tokenProvider, ICategoriesService categoryService, IOrderService orderService, ICommentService commentService) : Controller
+    public class AdminController(IUserService userService, IHelperService helperService, IRepoProduct repoProduct, ITokenProvider tokenProvider, ICategoriesService categoryService, IOrderService orderService, ICommentService commentService, IRepoStastistical repoStatistical) : Controller
     {
         #region declaration and initialization
         public readonly IUserService _userService = userService;
@@ -40,6 +42,7 @@ namespace Client.Controllers
         public readonly ICommentService _commentService = commentService;
 
         private readonly IOrderService _orderService = orderService;
+        private readonly IRepoStastistical _statisticalService = repoStatistical;
 
         #endregion
         public IActionResult Index()
@@ -49,41 +52,108 @@ namespace Client.Controllers
         }
 
 
-        public IActionResult AdminDashboard()
+        //public IActionResult AdminDashboard()
+        //{
+        //    try
+        //    {
+        //        #region Check IsLogin Cookie
+        //        var isLogin = HttpContext.Request.Cookies["IsLogin"];
+        //        if (string.IsNullOrEmpty(isLogin))
+        //        {
+        //            // Trường hợp cookie không tồn tại
+        //            ViewData["IsLogin"] = false;
+        //        }
+        //        else
+        //        {
+        //            ViewData["IsLogin"] = isLogin;
+        //        }
+        //        #endregion
+
+                
+        //        var token = _tokenProvider.GetToken();
+        //        ResponseModel response = _helperService.CheckAndReadToken(token);
+        //        if (!response.IsSuccess)
+        //        {
+        //            ViewData["IsLogin"] = false;
+        //            return View();
+        //        }
+        //        LoginResponseModel user = _helperService.GetUserFromJwtToken((JwtSecurityToken)response.Result);
+
+        //        ViewBag.User = user;
+
+
+        //        return View();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        TempData["Error"] = ex.Message;
+        //    }
+        //    return View();
+        //}
+
+        public async Task<IActionResult> AdminDashboard(int? page, int pageSize = 5)
         {
+            int pageNumber = page ?? 1;
+            AllModel statistical = new();
+
             try
             {
-                #region Check IsLogin Cookie
+                #region Check IsLogin Cookie and Token
                 var isLogin = HttpContext.Request.Cookies["IsLogin"];
+
                 if (string.IsNullOrEmpty(isLogin))
                 {
-                    // Trường hợp cookie không tồn tại
                     ViewData["IsLogin"] = false;
                 }
                 else
                 {
                     ViewData["IsLogin"] = isLogin;
                 }
-                #endregion
 
-                // Lấy token từ provider
+                // Lấy token và kiểm tra tính hợp lệ, nhưng luôn tiếp tục để lấy sản phẩm
                 var token = _tokenProvider.GetToken();
-                ResponseModel response = _helperService.CheckAndReadToken(token);
-                if (!response.IsSuccess)
+                var response = _helperService.CheckAndReadToken(token);
+                if (response.IsSuccess)
+                {
+                    var user = _helperService.GetUserFromJwtToken((JwtSecurityToken)response.Result);
+                    ViewBag.User = user;
+                    ViewData["IsLogin"] = true;
+                }
+                else
                 {
                     ViewData["IsLogin"] = false;
-                    return View();
                 }
-                LoginResponseModel user = _helperService.GetUserFromJwtToken((JwtSecurityToken)response.Result);
+                #endregion
 
-                ViewBag.User = user;
-                return View();
+                #region Lấy dữ liệu sản phẩm
+                // Gọi API để lấy danh sách sản phẩm dựa trên phân trang
+                var responseModel = await _statisticalService.GetAll(pageNumber, pageSize);
+                // Gọi API một lần nữa để lấy tổng số sản phẩm (không phân trang)
+                var totalProductsResponse = await _statisticalService.GetAll(1, 99);
+
+                if (responseModel != null && responseModel.IsSuccess)
+                {
+                    // Đọc và gán dữ liệu sản phẩm cho model
+                    statistical.statis = JsonConvert.DeserializeObject<ICollection<StatisticalModel>>(responseModel.Result.ToString()!);
+                    var totalProducts = JsonConvert.DeserializeObject<ICollection<StatisticalModel>>(totalProductsResponse.Result.ToString()!);
+
+                    statistical.pageNumber = pageNumber;
+                    statistical.totalItem = totalProducts.Count;
+                    statistical.pageSize = pageSize;
+                    statistical.pageCount = (int)Math.Ceiling(totalProducts.Count / (double)pageSize);
+                }
+                else
+                {
+                    TempData["error"] = responseModel?.Message;
+                }
+                #endregion
             }
             catch (Exception ex)
             {
-                TempData["Error"] = ex.Message;
+                TempData["error"] = ex.Message;
             }
-            return View();
+
+            return View(statistical);
         }
 
 
@@ -456,6 +526,7 @@ namespace Client.Controllers
 
             if (response != null && response.IsSuccess)
             {
+
                 ProductModel? model = JsonConvert.DeserializeObject<ProductModel>(Convert.ToString(response.Result));
 
                 // Trả về model UsersDTO để sử dụng trong View
