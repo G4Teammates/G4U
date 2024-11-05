@@ -293,6 +293,15 @@ namespace Client.Repositories.Services.Product
             });
         }
 
+        public async Task<ResponseModel> GetAllProductsByUserName(string userName)
+        {
+            return await _baseService.SendAsync(new RequestModel()
+            {
+                ApiType = StaticTypeApi.ApiType.GET,
+                Url = $"{StaticTypeApi.APIGateWay}/Product/getAllProductByUserName/{userName}"
+            });
+        }
+
         /*public string GenerateBarCode(long barCodeUrl)
         {
             if (barCodeUrl != null)
