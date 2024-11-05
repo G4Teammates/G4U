@@ -685,8 +685,28 @@
       ],
       "UpstreamPathTemplate": "/Order",
       "UpstreamHttpMethod": [ "Put" ]
-    }
+    },
 
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //                                                                                                                    //
+    //                                                Statistical                                                         //
+    //                                                                                                                    //
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    //Get all
+    {
+      "DownstreamPathTemplate": "/api/Statistical",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7019
+        }
+      ],
+      "UpstreamPathTemplate": "/Statistical",
+      "UpstreamHttpMethod": [ "Get" ]
+    }
   ],
   "GlobalConfiguration": {
     "BaseUrl": "https://localhost:7260",
