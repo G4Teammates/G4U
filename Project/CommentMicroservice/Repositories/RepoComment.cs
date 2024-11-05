@@ -341,7 +341,7 @@ namespace CommentMicroservice.Repositories
 
         #endregion
 
-        public async Task<ResponseModel> GetByproductId(string productId, int page, int pageSize)
+        /*public async Task<ResponseModel> GetByproductId(string productId, int page, int pageSize)
         {
             ResponseModel response = new();
             try
@@ -363,6 +363,6 @@ namespace CommentMicroservice.Repositories
                 response.Message = ex.Message;
             }
             return response;
-        }
+        }*/
     }
 }
