@@ -1,6 +1,5 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson;
-using CommentMicroservice.DBContexts.Enum;
 using System.ComponentModel.DataAnnotations;
 
 namespace Client.Models.ComentDTO

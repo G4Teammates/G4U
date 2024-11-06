@@ -1,7 +1,6 @@
 ﻿using Client.Models;
 using Client.Models.ProductDTO;
 using Microsoft.AspNetCore.Http;
-using ProductMicroservice.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using CategoryModel = Client.Models.ProductDTO.CategoryModel;

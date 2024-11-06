@@ -6,7 +6,6 @@ using Client.Repositories.Interfaces;
 using Client.Repositories.Interfaces.Authentication;
 using Client.Repositories.Interfaces.User;
 using Google.Apis.Auth;
-using Google.Apis.Drive.v3.Data;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
@@ -15,14 +14,12 @@ using Newtonsoft.Json;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Security.Claims;
-using UserMicroservice.DBContexts.Entities;
 using LoginRequestModel = Client.Models.AuthenModel.LoginRequestModel;
 using ResponseModel = Client.Models.ResponseModel;
 using IAuthenticationService = Client.Repositories.Interfaces.Authentication.IAuthenticationService;
 using Client.Models.ProductDTO;
 using Client.Repositories.Interfaces.Product;
 using Client.Models.CategorisDTO;
-using ProductMicroservice.DBContexts.Entities;
 
 namespace Client.Controllers
 {

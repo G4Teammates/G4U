@@ -1,5 +1,4 @@
-﻿using CategoryMicroservice.DBContexts.Entities;
-using Client.Models;
+﻿using Client.Models;
 using Client.Models.ComentDTO;
 using Client.Repositories.Interfaces;
 using Client.Repositories.Interfaces.Comment;

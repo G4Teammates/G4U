@@ -1,4 +1,4 @@
-﻿using CategoryMicroservice.Repositories.Services;
+﻿using Client.Repositories.Services;
 using Client.Models;
 using Client.Models.CategorisDTO;
 using Client.Models.ProductDTO;
@@ -69,7 +69,7 @@ namespace Client.Controllers
         //        }
         //        #endregion
 
-                
+
         //        var token = _tokenProvider.GetToken();
         //        ResponseModel response = _helperService.CheckAndReadToken(token);
         //        if (!response.IsSuccess)
@@ -90,7 +90,7 @@ namespace Client.Controllers
         //    }
         //    return View();
         //}
-
+        #region Admindasboard
         public async Task<IActionResult> AdminDashboard(int? page, int pageSize = 5)
         {
             int pageNumber = page ?? 1;
@@ -125,10 +125,10 @@ namespace Client.Controllers
                 }
                 #endregion
 
-                #region Lấy dữ liệu sản phẩm
-                // Gọi API để lấy danh sách sản phẩm dựa trên phân trang
+                #region Lấy dữ liệu Order
+                // Gọi API để lấy danh sách Order dựa trên phân trang
                 var responseModel = await _statisticalService.GetAll(pageNumber, pageSize);
-                // Gọi API một lần nữa để lấy tổng số sản phẩm (không phân trang)
+                // Gọi API một lần nữa để lấy tổng số Order (không phân trang)
                 var totalProductsResponse = await _statisticalService.GetAll(1, 99);
 
                 if (responseModel != null && responseModel.IsSuccess)
@@ -156,6 +156,25 @@ namespace Client.Controllers
             return View(statistical);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetLatestStats()
+        {
+            AllModel statistical = new();
+            var responseModel = await _statisticalService.GetAll(1, 99);  // Hàm này nên trả về dữ liệu thống kê mới
+
+            if (responseModel != null && responseModel.IsSuccess)
+            {
+                // Đọc và gán dữ liệu sản phẩm cho model
+                statistical.statis = JsonConvert.DeserializeObject<ICollection<StatisticalModel>>(responseModel.Result.ToString()!);
+
+            }
+            else
+            {
+                TempData["error"] = responseModel?.Message;
+            }
+            return Json(statistical);
+        }
+        #endregion
 
         #region User
 

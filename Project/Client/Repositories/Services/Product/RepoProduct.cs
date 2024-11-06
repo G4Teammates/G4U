@@ -4,7 +4,6 @@ using Client.Repositories.Interfaces.Product; // Đảm bảo không gian tên n
 using Client.Utility;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using ProductMicroservice.Repostories; // Giữ lại không gian tên này nếu cần
 using System.ComponentModel.DataAnnotations;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -14,10 +13,8 @@ using Client.Repositories.Interfaces;
 using IRepoProduct = Client.Repositories.Interfaces.Product.IRepoProduct;
 
 using Microsoft.SqlServer.Server;
-using CategoryMicroservice.DBContexts.Entities;
 using Microsoft.CodeAnalysis;
 
-using ProductMicroservice.Models;
 using LinkModel = Client.Models.ProductDTO.LinkModel;
 using CategoryModel = Client.Models.ProductDTO.CategoryModel;
 
