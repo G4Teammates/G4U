@@ -1,7 +1,8 @@
 ﻿@using Client.Models.ProductDTO
 @model ProductViewModel
 
-<div class="container-fluid mt-5" style="min-height:1100px;">
+
+<div class="container-fluid-a mt-5" style="min-height:1100px;">
     <h1 class="text-center" style="font-family: 'Roboto', 'Segoe UI', sans-serif;">Orther Product</h1>
     <div class="row mt-3">
         <div class="col-md-3 mt-4">
@@ -188,13 +189,13 @@
                 @for (var pg = 1; pg <= Model.pageCount; pg++)
                 {
                     <li class="page-item @(pg == Model.pageNumber ? "active" : "")">
-                        <a class="page-link" asp-controller="Admin" asp-action="Product" asp-route-page="@pg" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
+                        <a class="page-link" asp-controller="Product" asp-action="Product" asp-route-page="@pg" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
                             @pg
                         </a>
                     </li>
                 }
                 <li class="page-item @(Model.pageNumber == Model.pageCount ? "disabled" : "")">
-                    <a class="page-link" asp-controller="Admin" asp-action="Product" asp-route-page="@(Model.pageNumber + 1)" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
+                    <a class="page-link" asp-controller="Product" asp-action="Product" asp-route-page="@(Model.pageNumber + 1)" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
                         Next
                     </a>
                 </li>

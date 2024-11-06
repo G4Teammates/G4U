@@ -9,95 +9,34 @@
         object-fit: cover;
         border-radius: 20px;
     }
-    /* Hình ảnh và video bên trái (xếp ngang) */
-    .media-container-left {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        margin: 10px 0;
+
+    .product-details {
+        margin-top: 20px;
     }
 
-        .media-container-left img, .media-container-left video {
-            width: 100%;
-            max-width: 250px;
-            height: auto;
-            object-fit: cover;
-            border-radius: 20px;
-        }
-
-    /* Hình ảnh và video bên phải (xếp dọc và căn giữa) */
-    .media-container-right {
+    .product-detail-item {
+        margin-bottom: 12px;
+        font-size: 16px;
         display: flex;
-        flex-direction: column;
         align-items: center;
-        gap: 10px;
     }
 
-        .media-container-right img, .media-container-right video {
-            width: 100%;
-            max-width: 250px;
-            height: auto;
-            object-fit: cover;
-            border-radius: 10px;
+        .product-detail-item i {
+            font-size: 18px; /* Điều chỉnh kích thước biểu tượng */
+            color: #00A97F;
+            width: 10px;
+            height: 10px;
         }
 
-    .game-info, .game-detail {
-        padding: 20px;
-        border-radius: 20px;
-    }
-
-    .game-detail {
-        border-radius: 20px;
-    }
-
-        /* Chỉnh màu sắc cho các thẻ strong và a trong phần Game Detail */
-        .game-detail strong {
-            color: #f182d9;
+        .product-detail-item strong {
+            font-weight: bold;
         }
 
-        .game-detail a {
-            color: #00ffff;
+        .product-detail-item .col {
+            font-weight: normal;
+            display: flex;
+            align-items: center;
         }
-
-        /* Thêm nền xám cho phần Game Detail */
-        .game-detail .list-group {
-            background-color: #1a051e;
-            padding: 10px;
-        }
-
-        /* Danh sách không sử dụng thẻ li */
-        .game-detail .list-group-item {
-            background-color: #1a051e;
-            border: none;
-            padding: 0;
-        }
-
-            .game-detail .list-group-item:not(:last-child) {
-                margin-bottom: 10px;
-            }
-
-    /* Tags nằm cùng với thông tin game */
-    .tags {
-        margin-top: 10px;
-    }
-
-    /* Nút Add to Collection */
-    .btn-add-to-collection {
-        font-size: 1.25rem;
-        padding: 0.75rem 1.25rem;
-        border-radius: 0.375rem;
-        display: block;
-        width: 100%;
-        background-color: #e0e0e0;
-        color: black;
-        border: 1px solid #ccc;
-    }
-
-        .btn-add-to-collection:hover {
-            color: #f182d9;
-            background-color: #1a051e;
-        }
-
 
 
     /*Comment*/
@@ -144,17 +83,19 @@
     <div class="row">
         <div class="col-12">
             <div id="anh-bia">
-                @if (Model.Product != null && Model.Product.Any())
+                @if (Model.Prod != null )
                 {
-                    var product = Model.Product.First();
-                    var secondImageUrl = product.Links?
+                    var Prod = Model.Prod;
+                    var secondImageUrl = Prod.Links?
                     .Where(link => link.Url.Contains("cloudinary"))
                     .Skip(1) // Bỏ qua hình ảnh đầu tiên
                     .FirstOrDefault()?.Url; // Lấy hình ảnh thứ hai
 
                     if (!string.IsNullOrEmpty(secondImageUrl))
                     {
-                        <img src="@secondImageUrl" alt="Image Cover" />
+                        <div class="carousel-image-container">
+                            <img src="@secondImageUrl" alt="Image Cover" class="d-block w-100 h-100" style="border-radius: 5px; object-fit: cover; width: 80%; height: auto; margin: 0 auto;" />
+                        </div>
                     }
                     else
                     {
@@ -167,37 +108,104 @@
                 }
             </div>
         </div>
-
     </div>
+
 
     <!-- Phần thông tin game -->
     <div class="row mt-4">
         <div class="col-md-8 game-info">
-            @if (Model.Product != null && Model.Product.Any())
+            @if (Model.Prod != null)
             {
-                var product = Model.Product.First();
+                var product = Model.Prod;
                 <h1 class="fw-bold">@product.Name</h1>
-                <p>by @product.Platform</p>
+
+                <div class="product-details">
+                    <div class="product-detail-item row">
+                        <div class="col-auto">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        <div class="col">
+                            <strong>Sold: </strong>
+                            <span>
+                                @(product.Sold == 0 ? "None" : product.Sold.ToString())
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="product-detail-item row">
+                        <div class="col-auto">
+                            <i class="fas fa-percent"></i>
+                        </div>
+                        <div class="col">
+                            <strong>Discount: </strong>
+                            <span>
+                                @(product.Discount == 0 ? "None" : product.Discount.ToString() + "%")
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="product-detail-item row">
+                        <div class="col-auto">
+                            <i class="fas fa-thumbs-up"></i>
+                        </div>
+                        <div class="col">
+                            <strong>Likes: </strong>
+                            <span>
+                                @(product.Interactions.NumberOfLikes == 0 ? "None" : product.Interactions.NumberOfLikes.ToString())
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="product-detail-item row">
+                        <div class="col-auto">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                        <div class="col">
+                            <strong>Price: </strong>
+                            <span>
+                                @(product.Price == 0 ? "Free" : product.Price.ToString("C"))
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="product-detail-item row">
+                        <div class="col-auto">
+                            <i class="fas fa-tags"></i>
+                        </div>
+                        <div class="col">
+                            <strong>Tags: </strong>
+                            @if (product.Categories.Any())
+                            {
+                                var categoryNames = string.Join(", ", product.Categories.Select(c => c.CategoryName));
+                                <span>@categoryNames</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <br />
                 <a href="" class="btn btn-success">Download Now</a>
                 <p class="mt-3">Click download now to get access to the following files:</p>
                 <a href="#">e</a> <span> MB <i class="bi bi-android2"></i></span>
 
-                <!-- Hiển thị video và hình ảnh bên trái (xếp ngang) -->
-                <div class="media-container-left mt-4">
-                    <!-- Video -->
-                    @* <video controls>
-                        <source src="" type="video/mp4">
-                        Trình duyệt của bạn không hỗ trợ video.
-                    </video> *@
-
-                    <!-- Hình ảnh -->
-                    @foreach (var link in product.Links)
-                    {
-                        if (link.Url.Contains("cloudinary"))
+                <div class="row">
+                    <!-- Hiển thị video và hình ảnh bên trái (xếp ngang) -->
+                    <!-- Hình ảnh đầu tiên nằm bên trái -->
+                    <div class="col-md-4 mb-3">
+                        @if (product.Links.Any())
                         {
-                            <img src="@link.Url" />
+                            <img src="@product.Links.FirstOrDefault(link => link.Url.Contains("cloudinary"))?.Url" alt="First Image" class="img-fluid" />
                         }
-                    }
+                    </div>
+
+                    <!-- Hiển thị các hình ảnh còn lại ở bên phải -->
+                    <div class="col-md-8 mb-3 row">
+                        @foreach (var link in product.Links.Where(link => link.Url.Contains("cloudinary")).Skip(1)) // Lọc trước rồi bỏ qua hình đầu tiên
+                        {
+                            <div class="col-md-6 mb-1">
+                                <img src="@link.Url" alt="Image" class="img-fluid" />
+                            </div>
+                        }
+                    </div>
                 </div>
 
                 <h3 class="mt-4">Description</h3>
@@ -243,7 +251,7 @@
                                         </p>
                                     </div>
                                 </div>
-                                
+
 
                                 <!-- Phần chứa comment con -->
                                 <div id="commentContent-@comment.Id" style="display: none;">
@@ -287,7 +295,6 @@
                     <p>Không có bình luận nào để hiển thị.</p>
                 }
 
-
                 <!-- Form nhập bình luận -->
                 <h4>Thêm bình luận</h4>
                 <form asp-action="AddComment" method="post">
@@ -298,63 +305,72 @@
                     <input type="hidden" name="ProductId" value="@product.Id" /> <!-- Thêm ProductId để liên kết với sản phẩm -->
                     <button type="submit" class="btn btn-primary">Gửi bình luận</button>
                 </form>
-
-                
-                
             }
         </div>
 
         <!-- Game Detail Section -->
-        <div class="col-md-4 game-detail border border-secondary">
-            @if (Model.Product != null && Model.Product.Any())
+        <div class="col-md-4">
+            @if (Model.Prod != null)
             {
-                var product = Model.Product.First();
-                <h4 class="fw-bold">Game Detail</h4>
-                <div class="list-group">
-                    <div class="list-group-item"><strong>Status:</strong> <a href="#">@product.Status</a></div>
-                    <div class="list-group-item"><strong>Author:</strong> <a href="#">Author</a></div>
-                    <div class="list-group-item"><strong>Genre:</strong> <a href="#">Genre</a></div>
-                    <div class="list-group-item">
-                        <strong>Tags:</strong>
-                        @foreach (var tag in product.Categories)
-                        {
-                            <a href="#">@tag.CategoryName, </a>
-
-                            <span class="text-white">,</span>
-                        }
-                    </div>
-                </div>
-
+                var product = Model.Prod;
                 <div class="mt-3">
-                    <button class="btn-add-to-collection fw-bold">
-                        <i class="fas fa-plus"></i> Add to Collection
-                    </button>
-                </div>
+                    <section id="popular">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <h3>Same category</h3>
+                            <a href="">View More</a>
+                        </div>
+                        <div class="wrapper_other">
+                            @if (Model.Product != null)
+                            {
+                                // Lấy danh sách các danh mục của sản phẩm hiện tại
+                                var currentProductCategories = product.Categories.Select(c => c.CategoryName).ToList();
 
-                <!-- Hiển thị video và hình ảnh bên phải (xếp dọc và căn giữa) -->
-                <div class="media-container-right mt-4">
-                    <!-- Video -->
-                    @* <video controls>
-                        <source src="" type="video/mp4">
-                        Trình duyệt của bạn không hỗ trợ video.
-                    </video> *@
+                                // Lọc ra những sản phẩm thuộc cùng danh mục với sản phẩm hiện tại
+                                var filteredProducts = Model.Product
+                                .Where(p => p.Categories.Any(c => currentProductCategories.Contains(c.CategoryName))) // Kiểm tra danh mục trùng
+                                .ToList();
 
-                    <!-- Hình ảnh -->
-                    @foreach (var link in product.Links)
-                    {
-                        if (link.Url != null)
-                        {
-                            <img src="@link.Url" />
-                        }
-                        else
-                        {
-                            <p>Không có hình ảnh để hiển thị.</p>
-                        }
-                    }
+                                // Lấy ngẫu nhiên 3 sản phẩm
+                                var randomTopViewedProducts = filteredProducts
+                                .OrderBy(_ => Guid.NewGuid()) // Sắp xếp ngẫu nhiên
+                                .Take(3); // Lấy 3 sản phẩm
+
+                                <div class="row">
+                                    @foreach (var products in randomTopViewedProducts)
+                                    {
+                                        <div class="col-12">
+                                            <!-- Đảm bảo mỗi sản phẩm đứng trên một hàng riêng biệt -->
+                                            <div class="card_other mt-4" style="width: 100%; height: 450px;">
+                                                @if (products.Links != null)
+                                                {
+                                                    string firstImageUrl = products.Links.FirstOrDefault(link => link.Url.Contains("cloudinary"))?.Url;
+                                                    if (firstImageUrl != null)
+                                                    {
+                                                        <img src="@firstImageUrl" alt="Cloudinary Image" class="img-fluid" style="width: 100%;" />
+                                                    }
+                                                }
+                                                <div class="info_other">
+                                                    <h1>@products.Name</h1>
+                                                    <p>
+                                                        @(products.Description.Length > 100
+                                                            ? products.Description.Substring(0, 100) + "..."
+                                                            : products.Description)
+                                                    </p>
+                                                    <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@products.Id" class="btn_orther">Read More</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    </section>
                 </div>
             }
         </div>
+
     </div>
+
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
