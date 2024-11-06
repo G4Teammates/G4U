@@ -17,6 +17,16 @@ namespace StatisticalMicroservice.Configure
             // Register the BackgroundService
             services.AddHostedService<Backgroud>();
             services.AddSingleton<IMessage, Message>();
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll",
+                    builder =>
+                    {
+                        builder.AllowAnyOrigin()
+                               .AllowAnyMethod()
+                               .AllowAnyHeader();
+                    });
+            });
 
             //Register DI here ⬆️
 

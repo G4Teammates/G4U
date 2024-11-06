@@ -1,7 +1,5 @@
-﻿
-using Client.Models.Enum.ProductEnum;
+﻿using Client.Models.Enum.ProductEnum;
 using Client.Models.ProductDTO;
-using ProductMicroservice.Models;
 using System.ComponentModel.DataAnnotations;
 
 namespace Client.Models.ProductDTO

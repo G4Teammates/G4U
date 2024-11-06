@@ -1,5 +1,4 @@
-﻿using CategoryMicroservice.DBContexts.Enum;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Client.Models.CategorisDTO
 {

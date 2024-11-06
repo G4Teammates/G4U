@@ -1,7 +1,6 @@
 ﻿using Client.Models;
 using Client.Models.ComentDTO;
-using CommentMicroservice.Models;
-using CommentMicroservice.Models.DTO;
+using Client.Models;
 using ResponseModel = Client.Models.ResponseModel;
 
 namespace Client.Repositories.Interfaces.Comment
