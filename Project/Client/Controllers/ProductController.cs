@@ -25,7 +25,7 @@ namespace Client.Controllers
         {
             return View();
         }
-        public async Task<IActionResult> Product(int? page, int pageSize = 5)
+        public async Task<IActionResult> Product(int? page, int pageSize = 99)
         {
             int pageNumber = (page ?? 1);
             ProductViewModel product = new();
