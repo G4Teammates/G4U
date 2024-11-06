@@ -19,5 +19,6 @@ namespace CategoryMicroservice.Repositories.Interfaces
         Task<ResponseModel> UpdateCategrori(CategoryModel Categrori);
         Task<string> DeleteCategory(string id);
         Task<ResponseModel> Search(string searchstring, int page, int pageSize);
+        Task<bool> CheckCategorysByCategoryNameAsync(ICollection<CategoryNameModel> categories);
     }
 }
