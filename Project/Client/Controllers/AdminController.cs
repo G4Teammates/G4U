@@ -701,11 +701,13 @@ namespace Client.Controllers
                 // Gọi API để tìm kiếm sản phẩm theo từ khóa
                 ResponseModel? response = await _productService.SearchProductAsync(searchString, page, pageSize);
                 ResponseModel? response2 = await _productService.GetAllProductAsync(1, 99);
+                ResponseModel? response3 = await _categoryService.GetAllCategoryAsync(1, 99);
                 var total = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response2.Result.ToString()!));
 
                 if (response != null && response.IsSuccess)
                 {
                     productViewModel.Product = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response.Result.ToString()!));
+                    productViewModel.CategoriesModel = JsonConvert.DeserializeObject<ICollection<CategoriesModel>>(Convert.ToString(response3.Result.ToString()!));
                     var data = productViewModel.Product;
                     productViewModel.pageNumber = pageNumber;
                     productViewModel.totalItem = data.Count;
@@ -736,10 +738,12 @@ namespace Client.Controllers
                 // Gọi API để lấy danh sách sản phẩm đã sắp xếp
                 ResponseModel? response = await _productService.SortProductAsync(sort, page, pageSize);
                 ResponseModel? response2 = await _productService.GetAllProductAsync(1, 99);
+                ResponseModel? response3 = await _categoryService.GetAllCategoryAsync(1, 99);
                 var total = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response2.Result.ToString()!));
                 if (response != null && response.IsSuccess)
                 {
                     productViewModel.Product = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response.Result.ToString()!));
+                    productViewModel.CategoriesModel = JsonConvert.DeserializeObject<ICollection<CategoriesModel>>(Convert.ToString(response.Result.ToString()!));
                     var data = productViewModel.Product;
                     productViewModel.pageNumber = pageNumber;
                     productViewModel.totalItem = data.Count;
@@ -778,10 +782,12 @@ namespace Client.Controllers
                 // Gọi API để lọc sản phẩm theo các điều kiện
                 ResponseModel? response = await _productService.FilterProductAsync(minRange, maxRange, sold, discount, platform, category, page, pageSize);
                 ResponseModel? response2 = await _productService.GetAllProductAsync(1, 99);
+                ResponseModel? response3 = await _categoryService.GetAllCategoryAsync(1, 99);
                 var total = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response2.Result.ToString()!));
                 if (response != null && response.IsSuccess)
                 {
                     productViewModel.Product = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response.Result.ToString()!));
+                    productViewModel.CategoriesModel = JsonConvert.DeserializeObject<ICollection<CategoriesModel>>(Convert.ToString(response.Result.ToString()!));
                     var data = productViewModel.Product;
                     productViewModel.pageNumber = pageNumber;
                     productViewModel.totalItem = data.Count;
