@@ -409,6 +409,13 @@ namespace UserMicroservice.Repositories.Services
             return response;
         }
 
+        public async Task<bool> CheckUserByUserNameAsync(string userName)
+        {
+            bool userExists = await _context.Users
+            .AnyAsync(u => u.Username.Equals(userName, StringComparison.OrdinalIgnoreCase));
+            return userExists;
+        }
+
 
 
         //public async Task<ICollection<UserModel>> FindUsers(SearchCriteria criteria)

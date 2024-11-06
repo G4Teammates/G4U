@@ -26,6 +26,23 @@ namespace CategoryMicroservice.Repositories.Services
             _helperService = helperService;
         }
 
+        public async Task<bool> CheckCategorysByCategoryNameAsync(ICollection<CategoryNameModel> categories)
+        {
+            // Lấy danh sách tên các danh mục cần kiểm tra
+            var categoryNames = categories.Select(c => c.CategoryName.ToLower()).ToList();
+
+            // Lấy danh sách các tên danh mục có trong cơ sở dữ liệu (không phân biệt chữ hoa, chữ thường)
+            var existingCategoryNames = await _db.Categories
+                .Where(c => categoryNames.Contains(c.Name.ToLower()))
+                .Select(c => c.Name.ToLower())
+                .ToListAsync();
+
+            // Kiểm tra xem tất cả tên danh mục có tồn tại trong cơ sở dữ liệu không
+            bool allCategoriesExist = categoryNames.All(name => existingCategoryNames.Contains(name));
+
+            return allCategoriesExist;
+        }
+
         /*public IEnumerable<Category> Categories => _db.Categories.ToList();*/
 
         public async Task<ResponseModel> CreateCategory(CreateCategoryModel Category)
@@ -185,6 +202,7 @@ namespace CategoryMicroservice.Repositories.Services
             }
             return response;
         }
+
 
         public async Task<ResponseModel> Search(string searchstring, int page, int pageSize)
         {

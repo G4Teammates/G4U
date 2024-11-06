@@ -12,10 +12,10 @@
         {
             // Chạy ReceiveMessage trong một tác vụ nền
             await Task.WhenAll(
-        Task.Run(() => _messageComsumer.ReceiveMessageProduct(), stoppingToken),
-        Task.Run(() => _messageComsumer.ReceiveMessageUser(), stoppingToken),
-        Task.Run(() => _messageComsumer.ReceiveMessageOrder(), stoppingToken)
-    );
+                Task.Run(() => _messageComsumer.ReceiveMessageProduct(), stoppingToken),
+                Task.Run(() => _messageComsumer.ReceiveMessageUser(), stoppingToken),
+                Task.Run(() => _messageComsumer.ReceiveMessageOrder(), stoppingToken)
+            );
 
             // Giữ cho dịch vụ chạy liên tục
             while (!stoppingToken.IsCancellationRequested)
