@@ -137,6 +137,53 @@
         color: gray;
     }
 
+    .product-price-container {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    /* Enhanced Discount Section */
+    .discount-section {
+        display: flex;
+        background: linear-gradient(135deg, #198754, #1f9b6c); /* Subtle gradient for depth */
+        padding: 10px 15px;
+        border: 2px solid #146c43; /* Darker green for border */
+        border-radius: 8px;
+        color: white;
+        font-weight: bold;
+        font-size: 22px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .discount-rate {
+        font-size: 26px;
+        margin-right: 15px;
+    }
+
+    .price-section {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .original-price {
+        text-decoration: line-through;
+        color: #b0b0b0;
+        font-size: 16px;
+    }
+
+    .discounted-price {
+        color: white;
+        font-size: 20px;
+        font-weight: bold;
+    }
+
+    /* Discount Section Hover Effect */
+    .discount-section:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* More shadow on hover */
+    }
 </style>
 
 <div class="container mt-4">
@@ -178,7 +225,17 @@
                 var product = Model.Product.First();
                 <h1 class="fw-bold">@product.Name</h1>
                 <p>by @product.Platform</p>
-                <a href="" class="btn btn-success">Download Now</a>
+
+                <div class="product-price-container">
+                    <div class="discount-section">
+                        <div class="price-section">
+                            <span class="discounted-price">Owner</span>
+                        </div>
+                    </div>
+                    <a href="#" class="btn btn-success align-content-center w-25 fw-bold">Play</a>
+                </div>
+
+
                 <p class="mt-3">Click download now to get access to the following files:</p>
                 <a href="#">e</a> <span> MB <i class="bi bi-android2"></i></span>
 
