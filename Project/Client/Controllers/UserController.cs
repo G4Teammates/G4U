@@ -451,5 +451,10 @@ namespace Client.Controllers
             }
             return View(pro);
         }
+
+        public IActionResult DownloadProduct()
+        {
+            return View();
+        }
     }
 }

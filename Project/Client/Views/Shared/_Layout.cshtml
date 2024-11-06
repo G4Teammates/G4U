@@ -34,15 +34,16 @@
                         <span class="navbar-toggler-icon"></span>
                     </button>
                     <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
-                        <div class="d-flex align-items-center" style="width:30vw">
+                        <div class="d-flex align-items-center">
                             <div>
                                 <a asp-controller="Home" asp-action="Index">
                                     <img src="~/Image/logo.png" alt="Logo" style="max-height: 60px;">
                                 </a>
                             </div>
                             <div class="mx-3">
-                                <form>
-                                    <input class="form-control me-2" type="search" placeholder="Search.." aria-label="Search">
+                                <form asp-action="SearchProduct" asp-controller="Home" method="post">
+                                    
+                                    <input class="form-control me-2" type="text" placeholder="Search.." aria-label="Search" name="searchString">
                                 </form>
                             </div>
                         </div>
@@ -52,6 +53,26 @@
                             <li class="nav-item dropdown">
                                 <a class="nav-link btn fw-bold" id="navbarDropdown1" asp-controller="Product" asp-action="Product" role="button">
                                     Products
+                                </a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link btn fw-bold" id="navbarDropdown1" asp-controller="G4T" asp-action="ContactUs" role="button">
+                                    Contact Us
+                                </a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link btn fw-bold" id="navbarDropdown1" asp-controller="G4T" asp-action="Blog" role="button">
+                                    Blog
+                                </a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link btn fw-bold" id="navbarDropdown1" role="button">
+                                    Help
+                                </a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link btn fw-bold" id="navbarDropdown2" role="button">
+                                    Play
                                 </a>
                             </li>
                          @*    <li class="nav-item dropdown">
@@ -69,11 +90,8 @@
                                     Asset 2D/3D
                                 </a>
                             </li> *@
-                            <li class="nav-item dropdown">
-                                <a class="nav-link btn fw-bold" id="navbarDropdown2" role="button">
-                                    Help
-                                </a>
-                            </li>
+                            
+                           
                         </ul>
 
                         <!-- Phần ngôn ngữ và thông tin người dùng -->

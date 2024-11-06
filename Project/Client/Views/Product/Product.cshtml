@@ -1,10 +1,12 @@
 ﻿@using Client.Models.ProductDTO
 @model ProductViewModel
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
 
 <div class="container-fluid mt-5" style="min-height:1100px;">
-    <h1 class="text-center" style="font-family: 'Roboto', 'Segoe UI', sans-serif;">Orther Product</h1>
-    <div class="row mt-3">
-        <div class="col-md-3 mt-4">
+    <h1 class="modern-heading ms-3">Orther Product</h1>
+
+    <div class="row mt-2">
+        <div class="col-md-3">
             <!-- Tăng độ rộng của cột chứa -->
             <div class="filter-container m-3 p-3 shadow-sm rounded">
                 <h4 class="mt-3 text-center">Filters</h4>
@@ -80,7 +82,7 @@
                 </form>
             </div>
         </div>
-        <div class="col-md-9">
+        <div class="col-md-9 mt-2">
             @* <div class="ortherproduct">
                 <div class="radio-inputs">
                     <label class="radio">
@@ -108,9 +110,67 @@
                 </div>
             </div> *@
 
+            @* <form method="get" asp-controller="Product" asp-action="Product" class="d-inline">
+                <select name="pageSize" class="form-select form-select-sm w-auto d-inline-block" onchange="this.form.submit()">
+                    <option>Select records per page</option>
+                    <option value="3">3 records per page</option>
+                    <option value="5">5 records per page</option>
+                    <option value="10">10 records per page</option>
+                </select>
+                <input type="hidden" name="page" value="1" />
+            </form> *@
+            <div class="d-flex align-items-center justify-content-end" style="margin-right: 1vw; flex-wrap: wrap;">
+                <form method="get" asp-controller="Product" asp-action="Product" class="col-md-1 col-4 d-inline ms-2 mb-2">
+                    <div class="dropdown">
+                        <a href="#" type="button" class="d-flex align-items-center justify-content-around dropdown-toggle text-white" style="height: 2em; background-color: black; border-radius: 5px" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fa-regular fa-rectangle-list"></i>
+                        </a>
+                        <ul class="dropdown-menu p-0" style="min-width: auto; width: auto;">
+                            <li><button class="dropdown-item" style="background-color: white; color:black" type="button" onclick="document.querySelector('[name=\'pageSize\']').value='3'; this.form.submit()">3 bản ghi mỗi trang</button></li>
+                            <li><button class="dropdown-item" style="background-color: white; color:black" type="button" onclick="document.querySelector('[name=\'pageSize\']').value='5'; this.form.submit()">5 bản ghi mỗi trang</button></li>
+                            <li><button class="dropdown-item" style="background-color: white; color:black" type="button" onclick="document.querySelector('[name=\'pageSize\']').value='10'; this.form.submit()">10 bản ghi mỗi trang</button></li>
+                        </ul>
+                        <input type="hidden" name="pageSize" value="" />
+                        <input type="hidden" name="page" value="1" />
+                    </div>
+                </form>
 
+                <!-- Sort -->
+                <form class="col-md-1 col-4 d-inline ms-2 mb-2">
+                    <div class="dropdown">
+                        <!-- Button Sort -->
+                        <a href="#" type="button" class="d-flex align-items-center justify-content-around dropdown-toggle text-white" style="height: 2em; background-color: black; border-radius: 5px" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fa-solid fa-arrow-up-z-a"></i>
+                        </a>
+
+                        <!-- Menu Sort -->
+                        <ul class="dropdown-menu p-0" style="min-width: auto; width: auto; border-radius: 5px; overflow: hidden;">
+                            <li><button class="dropdown-item" style="background-color: white; color:black" type="button">Giá tăng dần</button></li>
+                            <li><button class="dropdown-item" style="background-color: white; color:black" type="button">Giá giảm dần</button></li>
+                            <li><button class="dropdown-item" style="background-color: white; color:black" type="button">View tăng dần</button></li>
+                            <li><button class="dropdown-item" style="background-color: white; color:black" type="button">View giảm dần</button></li>
+                            <li><button class="dropdown-item" style="background-color: white; color:black" type="button">Like tăng dần</button></li>
+                            <li><button class="dropdown-item" style="background-color: white; color:black" type="button">Like giảm dần</button></li>
+                            <li><button class="dropdown-item" style="background-color: white; color:black" type="button">Lượt mua tăng dần</button></li>
+                            <li><button class="dropdown-item" style="background-color: white; color:black" type="button">Lượt mua giảm dần</button></li>
+                        </ul>
+                    </div>
+                </form>
+
+                <!-- Free or Paid Toggle -->
+                <label class="switch ms-2 mb-2">
+                    <input type="checkbox">
+                    <span class="slider"></span>
+                </label>
+                <p class="ms-2 mt-3">Free</p>
+            </div>
+
+
+
+            
+            
             <div class="mt-2 me-1">
-                <div class="d-flex flex-wrap mt-3">
+                <div class="d-flex flex-wrap">
                     @if (Model.Product != null)
                     {
                         foreach (var product in Model.Product)
@@ -144,7 +204,34 @@
                                             ? product.Description.Substring(0, 100) + "..."
                                             : product.Description)
                                     </p>
-                                    <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@product.Id" class="btn_orther">Read More</a>
+                                    <div class="row d-flex align-items-center justify-content-between">
+                                        <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@product.Id" class="col-md-6 btn_orther">Read More</a>
+                                        <div class="col-md-3"></div>
+                                        @* Day la trai tym ne *@
+                                        <div title="Wishlist" class="col-md-3 heart-container">
+                                            <input id="Give-It-An-Id" class="checkbox" type="checkbox">
+                                            <div class="svg-container">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="svg-outline" viewBox="0 0 24 24">
+                                                    <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Zm-3.585,18.4a2.973,2.973,0,0,1-3.83,0C4.947,16.006,2,11.87,2,8.967a4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,11,8.967a1,1,0,0,0,2,0,4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,22,8.967C22,11.87,19.053,16.006,13.915,20.313Z">
+                                                    </path>
+                                                </svg>
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="svg-filled" viewBox="0 0 24 24">
+                                                    <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Z">
+                                                    </path>
+                                                </svg>
+                                                <svg xmlns="http://www.w3.org/2000/svg" height="100" width="100" class="svg-celebrate">
+                                                    <polygon points="10,10 20,20"></polygon>
+                                                    <polygon points="10,50 20,50"></polygon>
+                                                    <polygon points="20,80 30,70"></polygon>
+                                                    <polygon points="90,10 80,20"></polygon>
+                                                    <polygon points="90,50 80,50"></polygon>
+                                                    <polygon points="80,80 70,70"></polygon>
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+
                                 </div>
                             </div>
                         }
@@ -168,15 +255,7 @@
 <div class="d-flex justify-content-between mt-3">
     <div>Total: @(Model.totalItem) items</div>
     <div>
-        <form method="get" asp-controller="Product" asp-action="Product" class="d-inline">
-            <select name="pageSize" class="form-select form-select-sm w-auto d-inline-block" onchange="this.form.submit()">
-                <option>Select records per page</option>
-                <option value="3">3 records per page</option>
-                <option value="5">5 records per page</option>
-                <option value="10">10 records per page</option>
-            </select>
-            <input type="hidden" name="page" value="1" />
-        </form>
+        
 
         <nav aria-label="Page navigation example" class="d-inline-block">
             <ul class="pagination pagination-sm mb-0">
@@ -188,13 +267,13 @@
                 @for (var pg = 1; pg <= Model.pageCount; pg++)
                 {
                     <li class="page-item @(pg == Model.pageNumber ? "active" : "")">
-                        <a class="page-link" asp-controller="Admin" asp-action="Product" asp-route-page="@pg" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
+                        <a class="page-link" asp-controller="Product" asp-action="Product" asp-route-page="@pg" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
                             @pg
                         </a>
                     </li>
                 }
                 <li class="page-item @(Model.pageNumber == Model.pageCount ? "disabled" : "")">
-                    <a class="page-link" asp-controller="Admin" asp-action="Product" asp-route-page="@(Model.pageNumber + 1)" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
+                    <a class="page-link" asp-controller="Product" asp-action="Product" asp-route-page="@(Model.pageNumber + 1)" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
                         Next
                     </a>
                 </li>
@@ -202,3 +281,5 @@
         </nav>
     </div>
 </div>
+
+
