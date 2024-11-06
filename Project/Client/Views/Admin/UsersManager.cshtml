@@ -124,7 +124,7 @@
                 <th scope="col">Role</th>
                 <th scope="col">CreateAt</th>
                 <th scope="col"></th>
-                <th scope="col"></th>
+                @* <th scope="col"></th> *@
             </tr>
         </thead>
         <tbody>
@@ -184,9 +184,9 @@
                             }
                             else
                             {
-                                <td>
+                               @*  <td>
                                     <a asp-action="UserDelete" asp-route-Id="@user.Id" class="text-danger mx-2"> <i class="fas fa-trash"></i></a>
-                                </td>
+                                </td> *@
                             }
                         </tr>
                     }
@@ -234,9 +234,9 @@
                                     <i class="fa-solid fa-pen-to-square" style="color:#0b3d0d"></i>
                                 </a>
                             </td>
-                            <td>
+                           @*  <td>
                                 <a asp-action="UserDelete" asp-route-Id="@user.Id" class="text-danger mx-2"> <i class="fas fa-trash"></i></a>
-                            </td>
+                            </td> *@
                         </tr>
                     }
                     else if (user.Status == Client.Models.Enum.UserEnum.User.UserStatus.Block)
@@ -284,9 +284,9 @@
                                     <i class="fa-solid fa-pen-to-square" style="color:#0b3d0d"></i>
                                 </a>
                             </td>
-                            <td>
+                           @*  <td>
                                 <a asp-action="UserDelete" asp-route-Id="@user.Id" class="text-danger mx-2"> <i class="fas fa-trash"></i></a>
-                            </td>
+                            </td> *@
                         </tr>
                     }
                     else if (user.Status == Client.Models.Enum.UserEnum.User.UserStatus.Deleted)
@@ -334,9 +334,9 @@
                                     <i class="fa-solid fa-pen-to-square" style="color:#0b3d0d"></i>
                                 </a>
                             </td>
-                            <td>
+                           @*  <td>
                                 <a asp-action="UserDelete" asp-route-Id="@user.Id" class="text-danger mx-2"> <i class="fas fa-trash"></i></a>
-                            </td>
+                            </td> *@
                         </tr>
                     }
                     else

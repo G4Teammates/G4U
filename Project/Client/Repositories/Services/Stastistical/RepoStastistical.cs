@@ -17,12 +17,12 @@ namespace Client.Repositories.Services.Stastistical
         }
         public async Task<ResponseModel?> GetAll(int page, int pageSize)
         {
-                return await _baseService.SendAsync(new RequestModel()
+            Console.WriteLine("stastistical getall is running");
+            return await _baseService.SendAsync(new RequestModel()
                 {
                     ApiType = StaticTypeApi.ApiType.GET,
                     Url = StaticTypeApi.APIGateWay + "/Statistical?page=" + page.ToString() + "&pageSize=" + pageSize.ToString()
-                });
-        
+                });              
         }
     }
 }

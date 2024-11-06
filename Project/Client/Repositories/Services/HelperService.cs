@@ -11,7 +11,6 @@ using Client.Models.Enum.ProductEnum;
 using Client.Models.ProductDTO;
 using System.IO;
 using Client.Models.UserDTO;
-using SharpCompress.Compressors.Xz;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
 

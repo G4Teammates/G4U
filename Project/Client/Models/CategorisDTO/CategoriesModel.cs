@@ -1,4 +1,4 @@
-﻿using CategoryMicroservice.DBContexts.Enum;
+﻿
 using MongoDB.Bson;
 using System.ComponentModel.DataAnnotations;
 

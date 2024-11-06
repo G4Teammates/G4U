@@ -8,7 +8,6 @@ using Client.Repositories.Interfaces.Comment;
 using Client.Repositories.Interfaces.Product;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using Ocelot.Responses;
 
 using System.IdentityModel.Tokens.Jwt;
 

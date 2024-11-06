@@ -1,5 +1,4 @@
-﻿using CategoryMicroservice.DBContexts.Entities;
-using Client.Models;
+﻿using Client.Models;
 using Client.Models.CategorisDTO;
 using Client.Repositories.Interfaces;
 using Client.Repositories.Interfaces.Categories;
