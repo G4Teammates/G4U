@@ -10,110 +10,124 @@
 <form asp-action="UpdateProduct" method="post" enctype="multipart/form-data">
     <input type="hidden" name="_method" value="PUT" /> <!-- Giả lập PUT method -->
     <!-- Các trường cơ bản của sản phẩm -->
-    <div class="form-group">
-        <label for="id">Product ID</label>
-        <input type="text" class="form-control" asp-for="Id" readonly />
-        <span asp-validation-for="Id" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label for="name">Product Name</label>
-        <input type="text" class="form-control" asp-for="Name" required />
-        <span asp-validation-for="Name" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label for="description">Description</label>
-        <textarea class="form-control" asp-for="Description" rows="4" required></textarea>
-        <span asp-validation-for="Description" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label for="price">Price</label>
-        <input type="number" class="form-control" asp-for="Price" required />
-        <span asp-validation-for="Price" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label for="sold">Sold</label>
-        <input type="number" class="form-control" asp-for="Sold" required />
-        <span asp-validation-for="Sold" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label for="numOfView">Number of Views</label>
-        <input type="number" class="form-control" asp-for="Interactions.NumberOfViews" required />
-        <span asp-validation-for="Interactions.NumberOfViews" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label for="numOfLike">Number of Likes</label>
-        <input type="number" class="form-control" asp-for="Interactions.NumberOfLikes" required />
-        <span asp-validation-for="Interactions.NumberOfLikes" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label for="discount">Discount (%)</label>
-        <input type="number" class="form-control" asp-for="Discount" step="0.01" required />
-        <span asp-validation-for="Discount" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label for="platform">Platform</label>
-        @foreach (Client.Models.Enum.ProductEnum.PlatformType platform in Enum.GetValues(typeof(Client.Models.Enum.ProductEnum.PlatformType)))
-        {
-            <div class="form-check">
-                <input type="radio" class="form-check-input" id="platform_@(platform.ToString())" name="Platform" value="@(platform)" @(platform == Model.Platform ? "checked" : "") />
-                <label class="form-check-label" for="platform_@(platform.ToString())">@platform</label>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group mt-2">
+                <label class="fw-bold" for="id">Product ID</label>
+                <input type="text" class="form-control" asp-for="Id" readonly />
+                <span asp-validation-for="Id" class="text-danger"></span>
             </div>
-        }
+
+            <div class="form-group mt-2">
+                <label class="fw-bold" for="name">Product Name</label>
+                <input type="text" class="form-control" asp-for="Name" required />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group mt-2">
+                <label class="fw-bold" for="price">Price</label>
+                <input type="number" class="form-control" asp-for="Price" required />
+                <span asp-validation-for="Price" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mt-2">
+                <label class="fw-bold" for="sold">Sold</label>
+                <input type="number" class="form-control" asp-for="Sold" required />
+                <span asp-validation-for="Sold" class="text-danger"></span>
+            </div>
+            <div class="form-group mt-2">
+                <label for="numOfView">Number of Views</label>
+                <input type="number" class="form-control" asp-for="Interactions.NumberOfViews" required />
+                <span asp-validation-for="Interactions.NumberOfViews" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mt-2">
+                <label class="fw-bold" for="numOfLike">Number of Likes</label>
+                <input type="number" class="form-control" asp-for="Interactions.NumberOfLikes" required />
+                <span asp-validation-for="Interactions.NumberOfLikes" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mt-2">
+                <label class="fw-bold" for="discount">Discount (%)</label>
+                <input type="number" class="form-control" asp-for="Discount" step="0.01" required />
+                <span asp-validation-for="Discount" class="text-danger"></span>
+            </div>
+            <div class="form-group mt-2">
+                <label class="fw-bold" for="createAt">Created At</label>
+                <input type="datetime-local" class="form-control" asp-for="CreatedAt" required />
+                <span asp-validation-for="CreatedAt" class="text-danger"></span>
+            </div>
+            <!-- Cập nhật các danh mục sản phẩm -->
+            <div class="form-group mt-2">
+                <label class="fw-bold">Categories</label>
+                <div id="categories-list">
+                    @if (Model.Categories != null && Model.Categories.Any())
+                    {
+                        int i = 0;
+                        @foreach (var category in Model.Categories)
+                        {
+                            <div class="input-group mb-2 category-item" data-index="@i">
+                                <input type="text" name="Categories[@i]" value="@category.CategoryName" class="form-control" placeholder="Enter category" />
+                                <div class="input-group-append">
+                                    <button type="button" class="btn btn-danger remove-category">Remove</button>
+                                </div>
+                            </div>
+                            i++;
+                        }
+                    }
+                </div>
+                <span asp-validation-for="Categories" class="text-danger"></span>
+                <button type="button" class="btn btn-success mt-2 add-category">Add Category</button>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group mt-2">
+                <label class="fw-bold" for="description">Description</label>
+                <textarea class="form-control" asp-for="Description" rows="4" required></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group mt-3">
+                <label class="fw-bold" for="platform">Platform</label>
+                @foreach (Client.Models.Enum.ProductEnum.PlatformType platform in Enum.GetValues(typeof(Client.Models.Enum.ProductEnum.PlatformType)))
+                {
+                    <div class="form-check">
+                        <input type="radio" class="form-check-input" id="platform_@(platform.ToString())" name="Platform" value="@(platform)" @(platform == Model.Platform ? "checked" : "") />
+                        <label class="form-check-label" for="platform_@(platform.ToString())">@platform</label>
+                    </div>
+                }
+
+            </div>
+
+            <div class="form-group mt-3">
+                <label class="fw-bold" for="status">Status</label>
+                @foreach (Client.Models.Enum.ProductEnum.ProductStatus status in Enum.GetValues(typeof(Client.Models.Enum.ProductEnum.ProductStatus)))
+                {
+                    <div class="form-check">
+                        <input type="radio" class="form-check-input" id="status_@(status.ToString())" name="Status" value="@(status)" @(status == Model.Status ? "checked" : "") />
+                        <label class="form-check-label" for="status_@(status.ToString())">@status</label>
+                    </div>
+                }
+            </div>
+        </div>
         
     </div>
+    
 
-    <div class="form-group">
-        <label for="status">Status</label>
-        @foreach (Client.Models.Enum.ProductEnum.ProductStatus status in Enum.GetValues(typeof(Client.Models.Enum.ProductEnum.ProductStatus)))
-        {
-            <div class="form-check">
-                <input type="radio" class="form-check-input" id="status_@(status.ToString())" name="Status" value="@(status)" @(status == Model.Status ? "checked" : "") />
-                <label class="form-check-label" for="status_@(status.ToString())">@status</label>
-            </div>
-        }
-    </div>
+    
 
-    <div class="form-group">
-        <label for="createAt">Created At</label>
-        <input type="datetime-local" class="form-control" asp-for="CreatedAt" required />
-        <span asp-validation-for="CreatedAt" class="text-danger"></span>
-    </div>
+    
 
-   <!-- Cập nhật các danh mục sản phẩm -->
-    <div class="form-group">
-        <label>Categories</label>
-        <div id="categories-list">
-            @if (Model.Categories != null && Model.Categories.Any())
-            {
-                int i = 0;
-                @foreach (var category in Model.Categories)
-                {
-                    <div class="input-group mb-2 category-item" data-index="@i">
-                        <input type="text" name="Categories[@i]" value="@category.CategoryName" class="form-control" placeholder="Enter category" />
-                        <div class="input-group-append">
-                            <button type="button" class="btn btn-danger remove-category">Remove</button>
-                        </div>
-                    </div>
-                    i++;
-                }
-            }
-        </div>
-        <span asp-validation-for="Categories" class="text-danger"></span>
-        <button type="button" class="btn btn-success mt-2 add-category">Add Category</button>
-    </div>
+    
+
+    
+
+    
+
+   
 
 
     <!-- Cập nhật các đường dẫn (Links) -->
-    <div class="form-group">
-        <label>Images and Game</label>
+    <div class="form-group mt-2">
+        <label class="fw-bold">Images and Game</label>
         <div id="links-list">
             @if (Model.Links != null)
             {
