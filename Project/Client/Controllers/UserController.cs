@@ -19,17 +19,19 @@ using ResponseModel = Client.Models.ResponseModel;
 using IAuthenticationService = Client.Repositories.Interfaces.Authentication.IAuthenticationService;
 using Client.Models.ProductDTO;
 using Client.Repositories.Interfaces.Product;
+using Client.Repositories.Interfaces.Categories;
 using Client.Models.CategorisDTO;
 
 namespace Client.Controllers
 {
-    public class UserController(IAuthenticationService authenService, IUserService userService, ITokenProvider tokenProvider, IHelperService helperService, IRepoProduct repoProduct) : Controller
+    public class UserController(IAuthenticationService authenService, IUserService userService, ITokenProvider tokenProvider, IHelperService helperService, IRepoProduct repoProduct, ICategoriesService categoriesService) : Controller
     {
         private readonly IAuthenticationService _authenService = authenService;
         public readonly IUserService _userService = userService;
         public readonly ITokenProvider _tokenProvider = tokenProvider;
         public readonly IHelperService _helperService = helperService;
         public readonly IRepoProduct _productService = repoProduct;
+        public readonly ICategoriesService _categoriesService = categoriesService;
 
 
 
@@ -344,9 +346,85 @@ namespace Client.Controllers
             return View();
         }
 
-        public IActionResult UploadProduct()
+        [HttpGet]
+        public async Task<IActionResult> UploadProduct(CreateProductModel model)
         {
-            return View();
+            CreateProductModel createProductModel = new CreateProductModel();
+
+            var response = await _categoriesService.GetAllCategoryAsync(1, 99);
+            //createProductModel.Categories = (List<string>)response.Result;
+            ICollection<CategoriesModel>? haha = JsonConvert.DeserializeObject<ICollection<CategoriesModel>>(Convert.ToString(response.Result.ToString()!));
+            List<string> kha = new List<string>();
+            if (haha == null)
+            {
+                TempData["error"] = "Category Không có dữ liệu";
+            }
+            else
+            {
+                foreach (var hi in haha)
+                {
+                    kha.Add(hi.Name);
+                }
+            }
+
+            createProductModel.Categories.Add(kha[0]);
+            ViewBag.Categories = kha;
+
+            return View(createProductModel);
+        }
+
+        [HttpPost]
+        [RequestSizeLimit(60 * 1024 * 1024)] // 50MB
+        [RequestFormLimits(MultipartBodyLengthLimit = 60 * 1024 * 1024)] // Đặt giới hạn cho form multipart
+        public async Task<IActionResult> UploadProductPost(CreateProductModel createProductModel)
+        {
+            try
+            {
+                IEnumerable<Claim> claim = HttpContext.User.Claims;
+                UserClaimModel userClaim = new UserClaimModel
+                {
+                    Id = claim.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value!,
+                    Username = claim.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value!,
+                    Email = claim.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value!,
+                    Role = claim.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value!,
+                };
+
+                createProductModel.Username = userClaim.Username;
+                // Tạo đối tượng ScanFileRequest
+                var request = new ScanFileRequest
+                {
+                    gameFile = createProductModel.gameFile
+                };
+
+                // Gọi API CreateProductAsync
+                var response = await _productService.CreateProductAsync(
+                    createProductModel.Name,
+                    createProductModel.Description,
+                    createProductModel.Price,
+                    createProductModel.Discount,
+                    createProductModel.Categories,
+                    createProductModel.Platform,
+                    createProductModel.Status,
+                    createProductModel.imageFiles,
+                    request,
+                    createProductModel.Username);
+
+                if (response != null && response.IsSuccess)
+                {
+                    TempData["success"] = "Product created successfully";
+                    return View("UserDashboard");
+                }
+                else
+                {
+                    TempData["error"] = response?.Message ?? "An unknown error occurred.";
+                    return View("UploadProduct");
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = $"An error occurred: {ex.Message}";
+                return View("Register");
+            }
         }
 
         public async Task<IActionResult> UserDashboard(string userName)

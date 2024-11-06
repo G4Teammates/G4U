@@ -464,6 +464,7 @@ namespace Client.Controllers
                     TempData["searchResult"] = JsonConvert.SerializeObject(users);
                     TempData["success"] = $"Filter user with {statusDescription} is successful";
                     return RedirectToAction(nameof(UsersManager));
+                    //return View(nameof(UsersManager));
                 }
                 else
                 {
@@ -492,19 +493,16 @@ namespace Client.Controllers
             ProductViewModel product = new();
             try
             {
-
                 ResponseModel? response1 = await _categoryService.GetAllCategoryAsync(1, 99);
 
                 ResponseModel? response = await _productService.GetAllProductAsync(pageNumber, pageSize);
 
                 ResponseModel? response2 = await _productService.GetAllProductAsync(1, 99);
 
-
                 var total = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response2.Result.ToString()!));
 
                 if (response != null && response.IsSuccess)
                 {
-
                     product.Product = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response.Result.ToString()!));
 
                     product.CategoriesModel = JsonConvert.DeserializeObject<ICollection<CategoriesModel>>(Convert.ToString(response1.Result.ToString()!));
@@ -514,13 +512,11 @@ namespace Client.Controllers
                     product.totalItem = data.Count;
                     product.pageSize = pageSize;
                     product.pageCount = (int)Math.Ceiling(total.Count / (double)pageSize);
-
                 }
                 else
                 {
                     TempData["error"] = response?.Message;
                 }
-
             }
             catch (Exception ex)
             {

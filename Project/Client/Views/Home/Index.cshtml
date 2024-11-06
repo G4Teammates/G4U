@@ -21,7 +21,7 @@
      data-login_uri='/google-response'
      data-auto_prompt='false'>
 </div>
-<div id="carouselExampleInterval" class="carousel slide mt-4 w-100 h-100" data-bs-ride="carousel" style="border-radius:5px;  margin: 0 auto; width: 80%;">
+<div id="carouselExampleInterval" class="carousel slide mt-4 w-100 h-100" data-bs-ride="carousel" style="border-radius:5px; margin: 0 auto; width: 80%;">
     <div class="carousel-inner">
         @if (Model.Product != null)
         {
@@ -38,22 +38,28 @@
                 <div class="carousel-item @(isFirstItem ? "active" : "")" data-bs-interval="3000" style="border-radius:5px;">
                     @if (product.Links != null)
                     {
-                        string firstImageUrl = null; // Biến để lưu URL hình ảnh đầu tiên
+                        string secondImageUrl = null; // Biến để lưu URL hình ảnh thứ hai
 
-                        foreach (var link in product.Links) // Lặp qua từng đối tượng LinkModel
+                        // Tìm hình ảnh thứ hai
+                        int imageCount = 0; // Biến đếm số lượng hình ảnh đã tìm thấy
+                        foreach (var link in product.Links)
                         {
                             if (link.Url.Contains("cloudinary"))
                             {
-                                firstImageUrl = link.Url; // Lưu URL hình ảnh đầu tiên
-                                break; // Thoát khỏi vòng lặp khi đã tìm thấy
+                                imageCount++;
+                                if (imageCount == 2)
+                                {
+                                    secondImageUrl = link.Url; // Lưu URL hình ảnh thứ hai
+                                    break; // Thoát khỏi vòng lặp khi đã tìm thấy
+                                }
                             }
                         }
 
-                        // Hiển thị hình ảnh đầu tiên nếu có
-                        if (firstImageUrl != null)
+                        // Hiển thị hình ảnh thứ hai nếu có
+                        if (secondImageUrl != null)
                         {
                             <div class="carousel-image-container">
-                                <img src="@firstImageUrl" alt="Cloudinary Image" class="d-block w-100 carousel-image" />
+                                <img src="@secondImageUrl" alt="Cloudinary Image" class="d-block w-100 carousel-image" />
                             </div>
                         }
                     }
@@ -75,6 +81,8 @@
 </div>
 
 
+
+
 <div class="gamemonth">
     <section class="header_section">
         <h1>Game Of The Month</h1>
@@ -87,23 +95,43 @@
                     int count = 0;
                     foreach (var product in Model.Product.Where(p => p.CreatedAt.Year == DateTime.UtcNow.Year && p.CreatedAt.Month == DateTime.UtcNow.Month))
                     {
-                        if (count >= 6) break; // Giới hạn hiển thị 5 sản phẩm đầu tiên
+                        if (count >= 6) break; // Giới hạn hiển thị 6 sản phẩm đầu tiên
                         count++;
 
                         <div class="card_gamemonth item">
                             <div class="img_gamemonth">
                                 @if (product.Links != null)
                                 {
-                                    string firstImageUrl = product.Links.FirstOrDefault(link => link.Url.Contains("cloudinary"))?.Url;
-                                    if (firstImageUrl != null)
+                                    // Tìm hình ảnh thứ hai
+                                    string secondImageUrl = null;
+                                    int imageCount = 0;
+
+                                    foreach (var link in product.Links)
                                     {
-                                        <img src="@firstImageUrl" alt="Cloudinary Image" />
+                                        if (link.Url.Contains("cloudinary"))
+                                        {
+                                            imageCount++;
+                                            if (imageCount == 2) // Lấy hình ảnh thứ hai
+                                            {
+                                                secondImageUrl = link.Url;
+                                                break; // Thoát khỏi vòng lặp khi đã tìm thấy
+                                            }
+                                        }
+                                    }
+
+                                    if (secondImageUrl != null)
+                                    {
+                                        <img src="@secondImageUrl" alt="Cloudinary Image" />
                                     }
                                 }
                             </div>
                             <div class="info">
                                 <span class="name">@product.Name</span>
-                                <p class="about">@product.Description</p>
+                                <p class="about">
+                                    @(product.Description.Length > 100
+                                        ? product.Description.Substring(0, 100) + "..."
+                                        : product.Description)
+                                </p>
                             </div>
                             <div class="footeer_card">
                                 <div class="btn_card">
@@ -136,6 +164,7 @@
 </div>
 
 
+
 <div class="gamefree row">
     <div class="row">
         <div class="col-9 col-sm-9 col-md-9 free-games-section">
@@ -155,30 +184,38 @@
             var topDiscountProducts = Model.Product
             .Where(p => p.Discount > 0)
             .OrderByDescending(p => p.Discount)
-            .Take(4);
+            .Take(3);
 
             foreach (var product in topDiscountProducts)
             {
                 <div class="col-12 col-sm-12 col-md-3 card_other mt-4">
-                    @if (product.Links != null)
-                    {
-                        string firstImageUrl = product.Links.FirstOrDefault(link => link.Url.Contains("cloudinary"))?.Url;
-                        if (firstImageUrl != null)
+                    <div class="image-container d-flex justify-content-center align-items-center" style="height: 200px;">
+                        @if (product.Links != null)
                         {
-                            <img src="@firstImageUrl" alt="Cloudinary Image" />
+                            string firstImageUrl = product.Links.FirstOrDefault(link => link.Url.Contains("cloudinary"))?.Url;
+                            if (firstImageUrl != null)
+                            {
+                                <img src="@firstImageUrl" alt="Cloudinary Image" class="img-fluid" style="height: 100%; width: auto; object-fit: cover;" />
+                            }
                         }
-                    }
+                    </div>
                     <div class="info_other">
                         <h1>@product.Name</h1>
-                        <p>@product.Description</p>
+                        <p>
+                            @(product.Description.Length > 100
+                                ? product.Description.Substring(0, 100) + "..."
+                                : product.Description)
+                        </p>
                         <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@product.Id" class="btn_orther">Read More</a>
                     </div>
                 </div>
+
             }
         }
     </div>
     <p>Discounts Now - Dec 10</p>
 </div>
+
 
 <div class="ortherproduct">
     <section class="header_section">
@@ -221,12 +258,16 @@
                             string firstImageUrl = product.Links.FirstOrDefault(link => link.Url.Contains("cloudinary"))?.Url;
                             if (firstImageUrl != null)
                             {
-                                <img src="@firstImageUrl" alt="Cloudinary Image" />
+                                <img src="@firstImageUrl" alt="Cloudinary Image" class="img-fluid" />
                             }
                         }
                         <div class="info_other">
                             <h1>@product.Name</h1>
-                            <p>@product.Description</p>
+                            <p>
+                                @(product.Description.Length > 100
+                                    ? product.Description.Substring(0, 100) + "..."
+                                    : product.Description)
+                            </p>
                             <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@product.Id" class="btn_orther">Read More</a>
                         </div>
                     </div>
@@ -261,12 +302,16 @@
                             // Hiển thị ảnh đầu tiên nếu tồn tại
                             if (firstImageUrl != null)
                             {
-                                <img src="@firstImageUrl" alt="Cloudinary Image" />
+                                <img src="@firstImageUrl" alt="Cloudinary Image" class="img-fluid" />
                             }
                         }
                         <div class="info_other">
                             <h1>@product.Name</h1>
-                            <p>@product.Description</p>
+                            <p>
+                                @(product.Description.Length > 100
+                                    ? product.Description.Substring(0, 100) + "..."
+                                    : product.Description)
+                            </p>
                             <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@product.Id" class="btn_orther">Read More</a>
                         </div>
                     </div>
@@ -299,12 +344,16 @@
                             // Hiển thị hình ảnh đầu tiên nếu có
                             if (firstImageUrl != null)
                             {
-                                <img src="@firstImageUrl" alt="Cloudinary Image" />
+                                <img src="@firstImageUrl" alt="Cloudinary Image" class="img-fluid" />
                             }
                         }
                         <div class="info_other">
                             <h1>@product.Name</h1>
-                            <p>@product.Description</p>
+                            <p>
+                                @(product.Description.Length > 100
+                                    ? product.Description.Substring(0, 100) + "..."
+                                    : product.Description)
+                            </p>
                             <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@product.Id" class="btn_orther">Read More</a>
                         </div>
                     </div>
@@ -341,14 +390,18 @@
                             // Hiển thị hình ảnh đầu tiên nếu có
                             if (firstImageUrl != null)
                             {
-                                <img src="@firstImageUrl" alt="Cloudinary Image" />
+                                <img src="@firstImageUrl" alt="Cloudinary Image" class="img-fluid" />
                             }
 
 
                         }
                         <div class="info_other">
                             <h1>@product.Name</h1>
-                            <p>@product.Description</p>
+                            <p>
+                                @(product.Description.Length > 100
+                                    ? product.Description.Substring(0, 100) + "..."
+                                    : product.Description)
+                            </p>
                             <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@product.Id" class="btn_orther">Read More</a>
                         </div>
                     </div>
@@ -365,21 +418,39 @@
         <div class="row">
             @if (Model.Product != null)
             {
-                // Lọc sản phẩm, sắp xếp giảm dần theo số lượng đã bán và lấy 4 sản phẩm đầu tiên
+                // Lọc sản phẩm, sắp xếp giảm dần theo số lượng đã bán và lấy 5 sản phẩm đầu tiên
                 var topSoldProducts = Model.Product
                 .OrderByDescending(p => p.Sold)
-                .Take(4);
+                .Take(5);
 
                 foreach (var product in topSoldProducts)
                 {
                     <div class="col-4 col-sm-4 col-md-4 mt-3">
                         @if (product.Links != null)
                         {
-                            string firstImageUrl = product.Links.FirstOrDefault(link => link.Url.Contains("cloudinary"))?.Url;
-                            if (firstImageUrl != null)
+                            string secondImageUrl = null; // Biến để lưu URL hình ảnh thứ hai
+                            int imageCount = 0; // Biến đếm số lượng hình ảnh đã tìm thấy
+
+                            foreach (var link in product.Links) // Lặp qua từng đối tượng LinkModel
+                            {
+                                if (link.Url.Contains("cloudinary"))
+                                {
+                                    imageCount++; // Tăng biến đếm hình ảnh
+
+                                    // Nếu là hình ảnh thứ hai
+                                    if (imageCount == 2)
+                                    {
+                                        secondImageUrl = link.Url; // Lưu URL hình ảnh thứ hai
+                                        break; // Thoát khỏi vòng lặp khi đã tìm thấy
+                                    }
+                                }
+                            }
+
+                            // Hiển thị hình ảnh thứ hai nếu có
+                            if (secondImageUrl != null)
                             {
                                 <div style="width: 100%;height: 70px;overflow: hidden;display: flex;align-items: center;justify-content: center;">
-                                    <img src="@firstImageUrl" alt="Cloudinary Image" style=" width: 100%;height: 100%;object-fit: cover;" />
+                                    <img src="@secondImageUrl" alt="Cloudinary Image" style="width: 100%;height: 100%;object-fit: cover;" />
                                 </div>
                             }
                         }
@@ -399,22 +470,40 @@
         <div class="row">
             @if (Model.Product != null)
             {
-                // Lọc sản phẩm có InteractionModel và sắp xếp theo NumberOfLikes, lấy 4 sản phẩm đầu tiên
+                // Lọc sản phẩm có InteractionModel và sắp xếp theo NumberOfLikes, lấy 5 sản phẩm đầu tiên
                 var topLikedProducts = Model.Product
                 .Where(p => p.Interactions != null) // Đảm bảo InteractionModel không null
                 .OrderByDescending(p => p.Interactions.NumberOfLikes)
-                .Take(4);
+                .Take(5);
 
                 foreach (var product in topLikedProducts)
                 {
                     <div class="col-4 col-sm-4 col-md-4 mt-3">
                         @if (product.Links != null)
                         {
-                            string firstImageUrl = product.Links.FirstOrDefault(link => link.Url.Contains("cloudinary"))?.Url;
-                            if (firstImageUrl != null)
+                            string secondImageUrl = null; // Biến để lưu URL hình ảnh thứ hai
+                            int imageCount = 0; // Biến đếm số lượng hình ảnh đã tìm thấy
+
+                            foreach (var link in product.Links) // Lặp qua từng đối tượng LinkModel
+                            {
+                                if (link.Url.Contains("cloudinary"))
+                                {
+                                    imageCount++; // Tăng biến đếm hình ảnh
+
+                                    // Nếu là hình ảnh thứ hai
+                                    if (imageCount == 2)
+                                    {
+                                        secondImageUrl = link.Url; // Lưu URL hình ảnh thứ hai
+                                        break; // Thoát khỏi vòng lặp khi đã tìm thấy
+                                    }
+                                }
+                            }
+
+                            // Hiển thị hình ảnh thứ hai nếu có
+                            if (secondImageUrl != null)
                             {
                                 <div style="width: 100%;height: 70px;overflow: hidden;display: flex;align-items: center;justify-content: center;">
-                                    <img src="@firstImageUrl" alt="Cloudinary Image" style=" width: 100%;height: 100%;object-fit: cover;" />
+                                    <img src="@secondImageUrl" alt="Cloudinary Image" style="width: 100%;height: 100%;object-fit: cover;" />
                                 </div>
                             }
                         }
@@ -434,31 +523,39 @@
         <div class="row">
             @if (Model.Product != null)
             {
-                foreach (var product in Model.Product)
+                // Giới hạn lấy 5 sản phẩm cho danh sách Top Upcoming Wishlisted
+                var upcomingWishlistedProducts = Model.Product.Take(5);
+
+                foreach (var product in upcomingWishlistedProducts)
                 {
                     <div class="col-4 col-sm-4 col-md-4 mt-3">
                         @if (product.Links != null)
                         {
-                            string firstImageUrl = null; // Biến để lưu URL hình ảnh đầu tiên
+                            string secondImageUrl = null; // Biến để lưu URL hình ảnh thứ hai
+                            int imageCount = 0; // Biến đếm số lượng hình ảnh đã tìm thấy
 
                             foreach (var link in product.Links) // Lặp qua từng đối tượng LinkModel
                             {
                                 if (link.Url.Contains("cloudinary"))
                                 {
-                                    firstImageUrl = link.Url; // Lưu URL hình ảnh đầu tiên
-                                    break; // Thoát khỏi vòng lặp khi đã tìm thấy
+                                    imageCount++; // Tăng biến đếm hình ảnh
+
+                                    // Nếu là hình ảnh thứ hai
+                                    if (imageCount == 2)
+                                    {
+                                        secondImageUrl = link.Url; // Lưu URL hình ảnh thứ hai
+                                        break; // Thoát khỏi vòng lặp khi đã tìm thấy
+                                    }
                                 }
                             }
 
-                            // Hiển thị hình ảnh đầu tiên nếu có
-                            if (firstImageUrl != null)
+                            // Hiển thị hình ảnh thứ hai nếu có
+                            if (secondImageUrl != null)
                             {
                                 <div style="width: 100%;height: 70px;overflow: hidden;display: flex;align-items: center;justify-content: center;">
-                                    <img src="@firstImageUrl" alt="Cloudinary Image" style=" width: 100%;height: 100%;object-fit: cover;" />
+                                    <img src="@secondImageUrl" alt="Cloudinary Image" style="width: 100%;height: 100%;object-fit: cover;" />
                                 </div>
                             }
-
-
                         }
                     </div>
                     <div class="col-8 col-sm-8 col-md-8 mt-3">
@@ -466,11 +563,12 @@
                     </div>
                 }
             }
-
-
         </div>
-
     </div>
+</div>
+
+</div>
+
 </div>
 
 

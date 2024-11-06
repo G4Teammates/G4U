@@ -201,24 +201,28 @@
                     <td>@product.Discount %</td>
                     <td>@product.Platform</td>
                     <td>
-                        @if (product.Links != null)
-
+                         @if (product.Links != null)
                         {
-                            <ul>
-                                @foreach (var link in product.Links)
+                            string firstImageUrl = null; // Biến để lưu URL hình ảnh đầu tiên
+
+                            foreach (var link in product.Links) // Lặp qua từng đối tượng LinkModel
+                            {
+                                if (link.Url.Contains("cloudinary"))
                                 {
-                                    if (link.ProviderName == "Google Drive")
-                                    {
-                                        <a href="@link.Url">
-                                            File game
-                                        </a>
-                                    }
-                                    else
-                                    {
-                                        <img src="@link.Url" width="50px" height="50px"/>
-                                    }                                  
+                                    firstImageUrl = link.Url; // Lưu URL hình ảnh đầu tiên
+                                    break; // Thoát khỏi vòng lặp khi đã tìm thấy
                                 }
-                            </ul>
+                            }
+
+                            // Hiển thị hình ảnh đầu tiên nếu có
+                            if (firstImageUrl != null)
+                            {
+                                <div style="width=" 50px" height="50px">
+                                    <img src="@firstImageUrl" alt="Cloudinary Image" style="width=" 50px" height="50px" />
+                                </div>
+                            }
+
+
                         }
 
                     </td>

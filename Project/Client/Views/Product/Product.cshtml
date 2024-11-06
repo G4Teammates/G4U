@@ -139,7 +139,11 @@
                                 }
                                 <div class="info_other">
                                     <h4>@product.Name</h4>
-                                    <p>@product.Description</p>
+                                    <p>
+                                        @(product.Description.Length > 100
+                                            ? product.Description.Substring(0, 100) + "..."
+                                            : product.Description)
+                                    </p>
                                     <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@product.Id" class="btn_orther">Read More</a>
                                 </div>
                             </div>

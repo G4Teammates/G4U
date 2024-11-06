@@ -147,11 +147,14 @@
                 @if (Model.Product != null && Model.Product.Any())
                 {
                     var product = Model.Product.First();
-                    var firstImageUrl = product.Links?.FirstOrDefault(link => link.Url.Contains("cloudinary"))?.Url;
+                    var secondImageUrl = product.Links?
+                    .Where(link => link.Url.Contains("cloudinary"))
+                    .Skip(1) // Bỏ qua hình ảnh đầu tiên
+                    .FirstOrDefault()?.Url; // Lấy hình ảnh thứ hai
 
-                    if (!string.IsNullOrEmpty(firstImageUrl))
+                    if (!string.IsNullOrEmpty(secondImageUrl))
                     {
-                        <img src="@firstImageUrl" alt="Image Cover" />
+                        <img src="@secondImageUrl" alt="Image Cover" />
                     }
                     else
                     {
@@ -164,6 +167,7 @@
                 }
             </div>
         </div>
+
     </div>
 
     <!-- Phần thông tin game -->
@@ -172,8 +176,8 @@
             @if (Model.Product != null && Model.Product.Any())
             {
                 var product = Model.Product.First();
-                <h1 class="fw-bold">Jum jun rog</h1>
-                <p>by YourDevPortal</p>
+                <h1 class="fw-bold">@product.Name</h1>
+                <p>by @product.Platform</p>
                 <a href="" class="btn btn-success">Download Now</a>
                 <p class="mt-3">Click download now to get access to the following files:</p>
                 <a href="#">e</a> <span> MB <i class="bi bi-android2"></i></span>
@@ -181,10 +185,10 @@
                 <!-- Hiển thị video và hình ảnh bên trái (xếp ngang) -->
                 <div class="media-container-left mt-4">
                     <!-- Video -->
-                    <video controls>
+                    @* <video controls>
                         <source src="" type="video/mp4">
                         Trình duyệt của bạn không hỗ trợ video.
-                    </video>
+                    </video> *@
 
                     <!-- Hình ảnh -->
                     @foreach (var link in product.Links)
@@ -314,7 +318,7 @@
                         <strong>Tags:</strong>
                         @foreach (var tag in product.Categories)
                         {
-                            <a href="#">@tag</a>
+                            <a href="#">@tag.CategoryName, </a>
 
                             <span class="text-white">,</span>
                         }
@@ -330,10 +334,10 @@
                 <!-- Hiển thị video và hình ảnh bên phải (xếp dọc và căn giữa) -->
                 <div class="media-container-right mt-4">
                     <!-- Video -->
-                    <video controls>
+                    @* <video controls>
                         <source src="" type="video/mp4">
                         Trình duyệt của bạn không hỗ trợ video.
-                    </video>
+                    </video> *@
 
                     <!-- Hình ảnh -->
                     @foreach (var link in product.Links)

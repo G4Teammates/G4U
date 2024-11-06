@@ -59,7 +59,7 @@ namespace Client.Controllers
         //    }
         //    return View();
         //}
-        public async Task<IActionResult> Index(int? page, int pageSize = 5)
+        public async Task<IActionResult> Index(int? page, int pageSize = 99)
         {
             int pageNumber = page ?? 1;
             AllModel product = new();
