@@ -168,13 +168,12 @@
                 <th scope="col">Interactions</th>
                 <th scope="col">Discount</th>
                 <th scope="col">Platform</th>
-                <th scope="col">Links</th>
+                <th scope="col">Image Product</th>
                 <th scope="col">Categories</th>
                 <th scope="col">Status</th>
 
                 @* <th scope="col">CreatedAt</th> *@
                 @* <th scope="col">UpdatedAt</th> *@
-                <th scope="col">UserName</th>
 
                 <th scope="col"></th>
             </tr>
@@ -201,31 +200,39 @@
                     <td>@product.Discount %</td>
                     <td>@product.Platform</td>
                     <td>
-                         @if (product.Links != null)
+                        @if (product.Links != null)
                         {
-                            string firstImageUrl = null; // Biến để lưu URL hình ảnh đầu tiên
+                            string secondImageUrl = null; // Biến để lưu URL hình ảnh thứ hai
+                            int cloudinaryImageCount = 0; // Đếm số lượng hình ảnh từ cloudinary đã tìm thấy
 
                             foreach (var link in product.Links) // Lặp qua từng đối tượng LinkModel
                             {
                                 if (link.Url.Contains("cloudinary"))
                                 {
-                                    firstImageUrl = link.Url; // Lưu URL hình ảnh đầu tiên
-                                    break; // Thoát khỏi vòng lặp khi đã tìm thấy
+                                    cloudinaryImageCount++; // Tăng đếm mỗi khi tìm thấy ảnh từ cloudinary
+
+                                    if (cloudinaryImageCount == 2) // Chọn hình ảnh thứ hai
+                                    {
+                                        secondImageUrl = link.Url;
+                                        break; // Thoát khỏi vòng lặp khi đã tìm thấy ảnh thứ hai
+                                    }
                                 }
                             }
 
-                            // Hiển thị hình ảnh đầu tiên nếu có
-                            if (firstImageUrl != null)
+                            // Hiển thị hình ảnh thứ hai nếu có
+                            if (secondImageUrl != null)
                             {
-                                <div style="width=" 50px" height="50px">
-                                    <img src="@firstImageUrl" alt="Cloudinary Image" style="width=" 50px" height="50px" />
+                                <div style="width: 50px; height: 50px;">
+                                    <img src="@secondImageUrl" alt="Cloudinary Image" style="width: 70px; height: 50px;" />
                                 </div>
                             }
-
-
+                            else
+                            {
+                                <p>Không có hình ảnh thứ hai</p>
+                            }
                         }
-
                     </td>
+
                     <td>
                         @if (product.Categories != null)
 
@@ -243,7 +250,6 @@
                     <td>@product.Status</td>
                     @* <td>@product.CreatedAt.ToString("dd/MM/yyyy")</td> *@
                     @* <td>@product.UpdatedAt.ToString("dd/MM/yyyy")</td> *@
-                    <td>@product.UserName</td>
 
                    
 

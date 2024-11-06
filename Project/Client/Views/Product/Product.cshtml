@@ -267,13 +267,13 @@
                 @for (var pg = 1; pg <= Model.pageCount; pg++)
                 {
                     <li class="page-item @(pg == Model.pageNumber ? "active" : "")">
-                        <a class="page-link" asp-controller="Admin" asp-action="Product" asp-route-page="@pg" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
+                        <a class="page-link" asp-controller="Product" asp-action="Product" asp-route-page="@pg" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
                             @pg
                         </a>
                     </li>
                 }
                 <li class="page-item @(Model.pageNumber == Model.pageCount ? "disabled" : "")">
-                    <a class="page-link" asp-controller="Admin" asp-action="Product" asp-route-page="@(Model.pageNumber + 1)" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
+                    <a class="page-link" asp-controller="Product" asp-action="Product" asp-route-page="@(Model.pageNumber + 1)" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
                         Next
                     </a>
                 </li>
