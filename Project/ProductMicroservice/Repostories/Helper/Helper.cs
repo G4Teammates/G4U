@@ -227,7 +227,6 @@ namespace ProductMicroservice.Repostories.Helper
         }
         public async Task<Products> CreateProduct(CreateProductModel Product, List<LinkModel> linkModel, string username)
         {
-
             var newProduct = new ProductModel()
             {
                 Interactions = new InteractionModel(),
@@ -240,7 +239,6 @@ namespace ProductMicroservice.Repostories.Helper
                 Status = Product.Status,
                 Links = linkModel,
                 UserName = username
-
             };
             var productEntity = _mapper.Map<Products>(newProduct);
             await _db.AddAsync(productEntity);

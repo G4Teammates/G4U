@@ -11,10 +11,12 @@
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             // Chạy ReceiveMessage trong một tác vụ nền
-            await Task.Run(() =>
-            {
-                _messageComsumer.ReceiveMessage();
-            }, stoppingToken);
+            await Task.WhenAll(
+                Task.Run(() => _messageComsumer.ReceiveMessage(), stoppingToken),
+                Task.Run(() => _messageComsumer.ReceiveMessageCheckExistCategory(), stoppingToken),
+                Task.Run(() => _messageComsumer.ReceiveMessageCheckExistUserName(), stoppingToken)
+            );
+
 
             // Giữ cho dịch vụ chạy liên tục
             while (!stoppingToken.IsCancellationRequested)
