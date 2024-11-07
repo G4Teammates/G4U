@@ -14,20 +14,23 @@
 document.addEventListener('DOMContentLoaded', function () {
     const header = document.querySelector('header');
     const stickyClass = 'sticky';
-    const scrollOffset = 50; // Số pixel cuộn xuống để kích hoạt sticky
+    const scrollOffset = 0;
+    let isSticky = false;
 
     window.addEventListener('scroll', function () {
-        if (window.scrollY > scrollOffset) {
-            if (!header.classList.contains(stickyClass)) {
+        // Sử dụng requestAnimationFrame để tối ưu hóa hiệu ứng mượt mà khi cuộn
+        requestAnimationFrame(() => {
+            if (window.scrollY > scrollOffset && !isSticky) {
                 header.classList.add(stickyClass);
-            }
-        } else {
-            if (header.classList.contains(stickyClass)) {
+                isSticky = true;
+            } else if (window.scrollY <= scrollOffset && isSticky) {
                 header.classList.remove(stickyClass);
+                isSticky = false;
             }
-        }
+        });
     });
 });
+
 
 /*Header*/
 

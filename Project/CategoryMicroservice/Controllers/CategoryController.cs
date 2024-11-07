@@ -118,7 +118,7 @@ namespace CategoryMicroService.Controllers
             {
                 var result = await _categoryService.DeleteCategory(id);
                 _responseModel.Result = result;
-                return Ok(_responseModel);
+                return Ok(_responseModel.Result);
             }
             catch (Exception ex)
             {

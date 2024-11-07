@@ -247,7 +247,7 @@ namespace UserMicroservice.Repositories.Services
             return response;
         }
 
-        public async Task<ResponseModel> ForgotPasswordAsync(string email, string urlSuccess)
+        public async Task<ResponseModel> ForgotPasswordAsync(string email)
         {
             ResponseModel response = new();
             try
@@ -280,9 +280,9 @@ namespace UserMicroservice.Repositories.Services
             {
                 // Tạo token đặt lại mật khẩu
                 var token = _helper.GeneratePasswordResetToken(model);
-
+                var gateway = "https://localhost:7296";
                 // Tạo URL thủ công nếu không có ngữ cảnh HttpRequest
-                string confirmationLink = $"{_helper.GetAppBaseUrl()}/User/ResetPassword?userId={model.Id}&token={token}";
+                string confirmationLink = $"{gateway}/User/ResetPassword?userId={model.Id}&token={token}";
 
                 var emailSubject = "Đặt lại mật khẩu của bạn";
                 var emailBody = $"Nhấp vào liên kết sau để đặt lại mật khẩu: <a href='{confirmationLink}'>Đặt lại mật khẩu</a>";
@@ -301,27 +301,27 @@ namespace UserMicroservice.Repositories.Services
 
             }
             catch (Exception ex)
-            {
+            { 
                 response.Message = $"Error: {ex.Message}";
                 response.IsSuccess = false;
             }
             return response;
         }
 
-        public async Task<ResponseModel> ResetPassword(string token, string newPassword)
+        public async Task<ResponseModel> ResetPassword(ResetPasswordModel model)
         {
             ResponseModel response = new();
             try
             {
-                if (token.IsNullOrEmpty())
+                if (model.Token.IsNullOrEmpty())
                 {
                     response.IsSuccess = false;
                     response.Message = "Token is null";
                     return response;
                 }
-                ResponseModel jsonToken = _helper.DecodeToken(token);
+                ResponseModel jsonToken = _helper.DecodeToken(model.Token);
                 User user = _helper.GetUserIdFromToken((JwtSecurityToken)jsonToken.Result);
-                user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
+                user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.NewPassword);
                 _context.Users.Attach(user);     // Đính kèm vào context nhưng không theo dõi tất cả trường
                 _context.Entry(user).Property(u => u.PasswordHash).IsModified = true; // Chỉ cập nhật trường cần thiết
                 await _context.SaveChangesAsync();
@@ -337,12 +337,12 @@ namespace UserMicroservice.Repositories.Services
             return response;
         }
 
-        public async Task<ResponseModel> ChangePassword(string id,string oldPass, string newPassword)
+        public async Task<ResponseModel> ChangePassword(ChangePasswordModel model)
         {
             ResponseModel response = new();
             try
             {
-                User? user = await _context.Users.FindAsync(id);
+                User? user = await _context.Users.FindAsync(model.Id);
                 if (user == null)
                 {
                     response.IsSuccess = false;
@@ -351,10 +351,10 @@ namespace UserMicroservice.Repositories.Services
                 }
                 else
                 {
-                    bool isPasswordCorrect = BCrypt.Net.BCrypt.Verify(oldPass, user.PasswordHash);
+                    bool isPasswordCorrect = BCrypt.Net.BCrypt.Verify(model.OldPassword, user.PasswordHash);
                     if (isPasswordCorrect)
                     {
-                        user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
+                        user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.NewPassword);
                         _context.Users.Attach(user);     // Đính kèm vào context nhưng không theo dõi tất cả trường
                         _context.Entry(user).Property(u => u.PasswordHash).IsModified = true; // Chỉ cập nhật trường cần thiết
                         await _context.SaveChangesAsync();

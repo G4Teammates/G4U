@@ -100,6 +100,7 @@ namespace Client.Repositories.Services
 						var apiResponseModel = JsonConvert.DeserializeObject<ResponseModel>(apiContent);
 
 						// Kiểm tra xem phản hồi có hợp lệ không
+						
 						if (apiResponseModel == null)
 						{
 							return new ResponseModel { IsSuccess = false, Message = "Phản hồi từ API không hợp lệ." };
