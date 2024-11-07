@@ -1,4 +1,5 @@
 ﻿using Client.Models;
+using Client.Models.AuthenModel;
 using Client.Models.CategorisDTO;
 using Client.Models.ComentDTO;
 using Client.Models.ProductDTO;
@@ -10,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace Client.Controllers
 {
@@ -125,6 +127,14 @@ namespace Client.Controllers
      
         public async Task<IActionResult> ProductDetail(string id)
         {
+            IEnumerable<Claim> claim = HttpContext.User.Claims;
+            /*UserClaimModel userClaim = new UserClaimModel
+            {
+                Id = claim.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value!,
+                Username = claim.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value!,
+                Email = claim.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value!,
+                Role = claim.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value!,
+            };*/
             ProductViewModel productViewModel = new ProductViewModel();
             ResponseModel? response = await _productService.GetDetailByIdAsync(id);
             ResponseModel? response1 = await _commentService.GetByproductId(id, 1, 9);
@@ -145,7 +155,8 @@ namespace Client.Controllers
 
                     productViewModel.Product = model2 ?? new List<ProductModel>();
                     // Gán danh sách comments vào ProductViewModel
-                    productViewModel.CommentDTOModels = comments ?? new List<CommentDTOModel>();    
+                    productViewModel.CommentDTOModels = comments ?? new List<CommentDTOModel>();
+                    productViewModel.userName = claim.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value!;
                 }
             }
             else
@@ -193,6 +204,41 @@ namespace Client.Controllers
             }
 
             return View("Product", productViewModel); // Trả về view ProductsManager với danh sách sản phẩm đã sắp xếp
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> CreateComment(CreateCommentDTOModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors)
+                                              .Select(e => e.ErrorMessage);
+                return BadRequest(new { Errors = errors });
+            }
+
+            try
+            {
+                // Gọi service CreateCommentAsync
+                var response = await _commentService.CreateCommentAsync(model);
+
+                if (response != null && response.IsSuccess)
+                {
+                    TempData["success"] = "Category created successfully";
+                    return RedirectToAction("ProductDetail", new { id = model.ProductId });
+                }
+                else
+                {
+                    TempData["error"] = response?.Message ?? "An unknown error occurred.";
+                    return RedirectToAction("ProductDetail", new { id = model.ProductId });
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = $"An error occurred: {ex.Message}";
+                return RedirectToAction("ProductDetail", new { id = model.ProductId });
+            }
+
         }
         public IActionResult Collection()
         {

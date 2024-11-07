@@ -293,6 +293,8 @@ namespace Client.Controllers
 
 
 
+
+
         //[HttpPost]
         //public async Task<IActionResult> Information(ListUser user)
         //{
