@@ -23,7 +23,9 @@ html, body {
     box-sizing: border-box;
 }
 
-
+header {
+    transition: all 0.3s ease-in-out;
+}
 
 .container-fluid {
     width: 100%;
@@ -37,6 +39,7 @@ header {
     transition: background-color 0.3s ease, box-shadow 0.3s ease;
     position: relative; /* Đảm bảo header nằm trong luồng tài liệu */
     z-index: 1000; /* Đảm bảo header nằm trên các phần tử khác */
+    font-family: 'Poppins', sans-serif;
 }
 
     /* Kiểu khi header trở thành sticky */
@@ -221,11 +224,13 @@ header {
     z-index: 2;
     font-weight: 300;
     font-size: 17px;
-    font-family: 'Roboto', 'Segoe UI', sans-serif;
+    font-family: 'Poppins', sans-serif;
     text-transform: uppercase;
+    color: #000; /* Màu chữ mặc định */
 }
 
-    .btn::after, .btn::before {
+    .btn::after,
+    .btn::before {
         content: '';
         display: block;
         height: 100%;
@@ -237,29 +242,43 @@ header {
         z-index: -1;
         transition: .5s ease-out;
         background-color: #00A97F;
+        color: white;
     }
 
     .btn::before {
         top: -50%;
         left: -25%;
         transform: skew(90deg) rotate(180deg) translate(-50%, -50%);
+        color: white;
     }
 
     .btn:hover::before {
         transform: skew(45deg) rotate(180deg) translate(-50%, -50%);
+        color: white;
     }
 
     .btn:hover::after {
         transform: skew(45deg) translate(-50%, -50%);
+        color: white;
     }
 
     .btn:hover {
-        color: white;
+        color: white !important; /* Màu chữ khi hover */
     }
 
     .btn:active {
         filter: brightness(.7);
         transform: scale(.98);
+        color: white;
+    }
+
+.navbar-nav .nav-link {
+    color: #000; /* Màu chữ mặc định */
+    transition: color 0.3s ease;
+}
+
+    .navbar-nav .nav-link:hover {
+        color: #fff ;  /* Màu chữ khi hover */
     }
 
 /* Định dạng cho dropdown-menu */
@@ -275,6 +294,9 @@ header {
     width: 100%;
 }
 
+.dropdown a:hover{
+    color:white;
+}
 .dropdown:hover .dropdown-menu {
     display: block;
     width: 100%;
@@ -518,15 +540,17 @@ hr {
     margin-left:20px;
     padding: 50px 0;
 }
-
-/* Định dạng cho icon và chữ "Free Games" */
-.free-games-section {
-    display: flex;
-    align-items: center;
-    font-size: calc(1rem + 1vw); /* Kích thước chữ thay đổi theo kích thước màn hình */
-    gap: 1vw; /* Khoảng cách giữa icon và chữ thay đổi theo kích thước màn hình */
-    font-weight: bold;
-}
+    .gamefree .btn_orther:hover{
+        color:white!important;
+    }
+    /* Định dạng cho icon và chữ "Free Games" */
+    .free-games-section {
+        display: flex;
+        align-items: center;
+        font-size: calc(1rem + 1vw); /* Kích thước chữ thay đổi theo kích thước màn hình */
+        gap: 1vw; /* Khoảng cách giữa icon và chữ thay đổi theo kích thước màn hình */
+        font-weight: bold;
+    }
 
     .free-games-section i {
         font-size: calc(1.5rem + 1vw); /* Kích thước của icon thay đổi theo kích thước màn hình */
@@ -539,33 +563,7 @@ hr {
     align-items: center;
 }
 
-.view-more-button {
-    padding: calc(5px + 0.5vw) calc(10px + 1vw);
-    background:none;
-    color: white; /* Màu chữ */
-    border: 1px solid white;
-    border-radius: 10px;
-    cursor: pointer;
-    font-family: 'Roboto', sans-serif;
-    text-transform: uppercase;
-    font-size: calc(0.5rem + 0.5vw);
-}
 
-    .view-more-button:hover {
-        background-color: #4e4b4b;
-    }
-
-    .view-more-button a {
-        text-decoration: none; /* Loại bỏ gạch chân */
-        color: white; /* Màu chữ của link */
-        display: block;
-    }
-
-        .view-more-button a:hover {
-            color: white; /* Đảm bảo chữ của link vẫn màu trắng khi hover */
-        }
-
-/* Điều chỉnh kích thước chữ cho màn hình nhỏ */
 @media (max-width: 768px) {
     .free-games-section {
         font-size: calc(0.8rem + 1vw);
@@ -575,9 +573,7 @@ hr {
             font-size: calc(1.2rem + 1vw);
         }
 
-    .view-more-button {
-        font-size: calc(0.7rem + 0.5vw);
-    }
+
 }
 
 .best-seller_most-player_top-upcoming-wishlisted h2 {
@@ -665,7 +661,7 @@ hr {
     padding:20px;
     padding-top:0;
     display:flex;
-    justify-content:flex-end;
+    justify-content:flex-start;
     align-items:center;
 }
 
@@ -685,9 +681,154 @@ hr {
         background:rgb(60, 222, 84, 0.98)
     }
 
-.owl-carousel .owl-stage{
-    display:flex;
-    justify-content:center;
+.footeer_card .btn_card .btn_orther {
+    border: 3px solid #000;
+    color: #000;
+    font: 12px Montserrat;
+    text-transform: uppercase;
+    padding: 10px;
+    font-weight: 600;
+    width: 150px; /* Full width of button */
+    max-width: 300px; /* Độ rộng tối đa của nút */
+    display: block;
+    text-align: left;
+    margin: 10px auto;
+    position: relative;
+    background: #fff; /* Nền trắng mặc định */
+    transition: all 0.3s ease-out; /* Thêm hiệu ứng cho toàn bộ nút */
+    border-radius:5px;
+    text-decoration:none;
+}
+
+    .footeer_card .btn_card .btn_orther:before {
+        content: ">";
+        position: absolute;
+        right: 0;
+        top: 0;
+        background: #000;
+        color: #fff;
+        font-size: 20px;
+        width: 35px;
+        height: 100%;
+        line-height: 31px;
+        text-align: center;
+        font-family: consolas;
+        padding-right: 15px;
+        transition: all 0.3s ease-out;
+        text-decoration: none;
+    }
+
+    .footeer_card .btn_card .btn_orther:hover {
+        background: #00A97F; /* Màu nền xanh khi hover */
+        color: #fff ; /* Màu chữ trắng khi hover */
+        border-color: #00A97F; /* Cập nhật viền thành màu #00A97F khi hover */
+        text-decoration: none;
+    }
+
+        .footeer_card .btn_card .btn_orther:hover:before {
+            padding-right: 0;
+            background: #fff; /* Đổi nền mũi tên thành trắng khi hover */
+            color: #00A97F; /* Màu mũi tên xanh khi hover */
+            text-decoration: none;
+        }
+
+
+/*Trai Tym nè*/
+.heart-container {
+    --heart-color: rgb(91, 255, 195);
+    position: relative;
+    width: 20px;
+    height: 20px;
+    transition: .3s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+}
+
+    .heart-container .checkbox {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        z-index: 20;
+        cursor: pointer;
+    }
+
+    .heart-container .svg-container {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .heart-container .svg-outline,
+    .heart-container .svg-filled {
+        fill: var(--heart-color);
+        position: absolute;
+    }
+
+    .heart-container .svg-filled {
+        animation: keyframes-svg-filled 1s;
+        display: none;
+    }
+
+    .heart-container .svg-celebrate {
+        position: absolute;
+        animation: keyframes-svg-celebrate .5s;
+        animation-fill-mode: forwards;
+        display: none;
+        stroke: var(--heart-color);
+        fill: var(--heart-color);
+        stroke-width: 2px;
+    }
+
+    .heart-container .checkbox:checked ~ .svg-container .svg-filled {
+        display: block
+    }
+
+    .heart-container .checkbox:checked ~ .svg-container .svg-celebrate {
+        display: block
+    }
+
+@keyframes keyframes-svg-filled {
+    0% {
+        transform: scale(0);
+    }
+
+    25% {
+        transform: scale(1.2);
+    }
+
+    50% {
+        transform: scale(1);
+        filter: brightness(1.5);
+    }
+}
+
+@keyframes keyframes-svg-celebrate {
+    0% {
+        transform: scale(0);
+    }
+
+    50% {
+        opacity: 1;
+        filter: brightness(1.5);
+    }
+
+    100% {
+        transform: scale(1.4);
+        opacity: 0;
+        display: none;
+    }
+}
+
+
+
+.owl-carousel .owl-stage {
+    display: flex;
+    justify-content: center;
 }
 
 .owl-carousel .owl-item {
