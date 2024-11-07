@@ -337,7 +337,7 @@
     },
 
 
-    //Forgot password
+    //For got password
     {
       "DownstreamPathTemplate": "/api/Auth/forgot-password",
       "DownstreamScheme": "https",

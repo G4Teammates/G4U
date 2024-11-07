@@ -21,6 +21,7 @@ using Client.Models.ProductDTO;
 using Client.Repositories.Interfaces.Product;
 using Client.Repositories.Interfaces.Categories;
 using Client.Models.CategorisDTO;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
 
 namespace Client.Controllers
 {
@@ -58,26 +59,6 @@ namespace Client.Controllers
                         return View();
                     }
 
-                    // Tạo claims từ thông tin người dùng
-                    //        var claims = new List<Claim>
-                    //{
-                    //    new Claim(ClaimTypes.Name, user.DisplayName),
-                    //    new Claim("Avatar", user.Avatar),
-                    //    new Claim("Token", user.Token) // Hoặc thêm claim khác cần thiết
-                    //};
-
-                    //        var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                    //        var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
-
-                    //        // Đăng nhập và thiết lập cookie xác thực
-                    //        await HttpContext.SignInAsync(
-                    //            CookieAuthenticationDefaults.AuthenticationScheme,
-                    //            claimsPrincipal,
-                    //            new AuthenticationProperties
-                    //            {
-                    //                IsPersistent = true // Giữ phiên đăng nhập lâu dài
-                    //            });
-
                     _tokenProvider.SetToken(user!.Token);
                     HttpContext.Response.Cookies.Append("IsLogin", response.IsSuccess.ToString());
 
@@ -92,10 +73,10 @@ namespace Client.Controllers
                         Avatar = user.Avatar!
                     };
                     await _helperService.UpdateClaim(userClaim, HttpContext);
-
+                    TempData["success"] = "Login success";
                     return RedirectToAction("Index", "Home");
                 }
-                return RedirectToAction(nameof(Register), "User");
+                TempData["error"] = "Login fail, check your username(or email) and password";
             }
             return View();
 
@@ -158,19 +139,64 @@ namespace Client.Controllers
             return RedirectToAction("Index");
         }
 
-        public IActionResult Logout()
+        [HttpGet]
+        public async Task<IActionResult> Logout()
         {
             _tokenProvider.ClearToken();
             HttpContext.Response.Cookies.Delete("IsLogin");
             HttpContext.Response.Cookies.Delete("g_csrf_token");
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
             return RedirectToAction("Index", "Home");
         }
 
+        [HttpGet]
         public IActionResult ForgotPassword()
         {
             return View();
         }
+
+        [HttpPost]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var response = await _authenService.ForgotPasswordAsync(model);
+                if (response.IsSuccess)
+                {
+                    TempData["success"] = "Check your email";
+                    return View();
+                }
+                TempData["success"] = "Forgot password is fail";
+            }
+            return View();
+        }
+
+
+        [HttpGet]
+        public IActionResult ResetPassword(string userId, string token)
+        {
+            ViewData["UserId"] = userId;
+            ViewData["Token"] = token;
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ResetPassword(ResetPasswordModel model)
+        {
+            var response = await _authenService.ResetPasswordAsync(model);
+            if (response.IsSuccess)
+            {
+                TempData["success"] = "Reset password is success";
+                return RedirectToAction(nameof(Logout));
+            }
+            TempData["error"] = "Reset password is fail";
+            return View();
+        }
+
+
+
+
 
         [HttpGet]
         public IActionResult Register()
@@ -187,18 +213,14 @@ namespace Client.Controllers
                 if (response.IsSuccess)
                 {
                     var user = JsonConvert.DeserializeObject<RegisterModel>(response.Result.ToString()!);
-                    //_tokenProvider.SetToken(user!.Token);
-
+                    TempData["success"] = "Register is success";
                     return RedirectToAction("Index", "Home");
                 }
+                TempData["success"] = "Register is fail";
             }
             return View();
         }
 
-        public IActionResult ChangePassword()
-        {
-            return View();
-        }
 
         [HttpGet]
         public async Task<IActionResult> Information()
@@ -252,10 +274,10 @@ namespace Client.Controllers
                         updateUser.Avatar = imageUrl;
                     }
                 }
-                else
-                {
+                //else
+                //{
 
-                }
+                //}
 
 
                 IEnumerable<Claim> claim = HttpContext.User.Claims;
@@ -271,9 +293,6 @@ namespace Client.Controllers
 
                 await _helperService.UpdateClaim(user, HttpContext);
                 var response = await _userService.UpdateUser(updateUser);
-
-
-
 
 
                 if (response.IsSuccess)
@@ -293,39 +312,6 @@ namespace Client.Controllers
 
 
 
-        //[HttpPost]
-        //public async Task<IActionResult> Information(ListUser user)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        var updateUser = new ListUser
-        //        {
-        //            Username = user.Username,
-        //            PhoneNumber = user.PhoneNumber,
-        //            Email = user.Email,
-        //            DisplayName = user.DisplayName
-        //            // Nếu bạn có thêm thuộc tính, hãy thêm vào đây
-        //        };
-
-        //        ResponseModel? response = await _userService.UpdateUsers(updateUser);
-
-        //        if (response != null && response.IsSuccess)
-        //        {
-        //            TempData["success"] = "User updated successfully";
-        //            return RedirectToAction(nameof(Information));
-        //        }
-        //        else
-        //        {
-        //            TempData["error"] = response?.Message;
-        //        }
-        //    }
-
-        //    // Nếu ModelState không hợp lệ, trả về lại model để hiển thị lỗi
-        //    return View(user);
-
-        //}
-
-
         public IActionResult EditProfile()
         {
             return View();
@@ -341,12 +327,29 @@ namespace Client.Controllers
             return View();
         }
 
+        [HttpGet]
         public IActionResult PasswordSecurity()
         {
             return View();
         }
 
-        [HttpGet]
+        
+        [HttpPost]
+        public async Task<IActionResult> PasswordSecurity(ChangePasswordModel model)
+        {
+            model.Id = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)!.Value;
+            var response = await _authenService.ChangePasswordAsync(model);
+            if (response.IsSuccess)
+            {
+                TempData["success"] = response.Message;
+            }
+            else
+            {
+                TempData["error"] = response.Message;
+            }
+            return View();
+        }
+       [HttpGet]
         public async Task<IActionResult> UploadProduct(CreateProductModel model)
         {
             CreateProductModel createProductModel = new CreateProductModel();
@@ -453,6 +456,10 @@ namespace Client.Controllers
         }
 
         public IActionResult DownloadProduct()
+        {
+            return View();
+        }
+        public IActionResult UserDashboard()
         {
             return View();
         }
