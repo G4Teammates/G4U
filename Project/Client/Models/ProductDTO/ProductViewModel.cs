@@ -10,6 +10,8 @@ namespace Client.Models.ProductDTO
         public CreateProductModel? CreateProductModel { get; set; }
         public UpdateProductModel? UpdateProductModel { get; set; }
         public ICollection<CommentDTOModel> CommentDTOModels { get; set; }
+        public CreateCommentDTOModel? createcomment { get; set; }
+        
         public CommentDTOModel CMT { get; set; }
         public ICollection<CategoriesModel>? CategoriesModel { get; set; }
         public ICollection<ProductModel>? Product { get; set; }
@@ -19,6 +21,7 @@ namespace Client.Models.ProductDTO
         public int pageSize { get; set; }
         public int totalItem { get; set; }
         public int pageCount { get; set; }
-        
+        public string userName { get; set; }
+
     }
 }
