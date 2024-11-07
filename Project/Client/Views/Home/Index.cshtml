@@ -2,20 +2,7 @@
 @model AllModel
 
 
-@*
-<div class="Image_Gallery">
-    <div class="box">
-        <span style="--i:1"><img src="~/image/game.jpg" /></span>
-        <span style="--i:2"><img src="~/image/g4t.png" /></span>
-        <span style="--i:3"><img src="~/image/g4t1.png" /></span>
-        <span style="--i:4"><img src="~/image/bia.jpg" /></span>
-        <span style="--i:5"><img src="~/image/game.jpg" /></span>
-        <span style="--i:6"><img src="~/image/game.jpg" /></span>
-        <span style="--i:7"><img src="~/image/game.jpg" /></span>
-        <span style="--i:8"><<img src="~/image/game.jpg" /></span>
-    </div>
-</div>
- *@
+
 <div id="g_id_onload"
      data-client_id="931532368031-fve5bfiu4t6uvu5laj3gq9fbj7okl43e.apps.googleusercontent.com"
      data-login_uri='/google-response'
@@ -72,7 +59,19 @@
     </button>
 </div>
 
+@if (TempData["success"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["success"]
+    </div>
+}
 
+@if (TempData["error"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["error"]
+    </div>
+}
 <div class="gamemonth">
     <section class="header_section">
         <h1>Game Of The Month</h1>

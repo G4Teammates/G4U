@@ -15,25 +15,29 @@
                 <span class="input-group-text">
                     <i class="bi bi-person"></i>
                 </span>
-                <input type="text" asp-for="@Model.Username" class="form-control" placeholder="Username" required>
+                <input type="text" asp-for="@Model.Username" class="form-control" placeholder="Username" >
+                <span asp-validation-for="Username" class="text-danger"></span>
             </div>
             <div class="login-input input-group">
                 <span class="input-group-text">
                     <i class="bi bi-envelope"></i>
                 </span>
-                <input type="text" asp-for="@Model.Email" class="form-control" placeholder="Email" required>
+                <input type="text" asp-for="@Model.Email" class="form-control" placeholder="Email" >
+                <span asp-validation-for="Email" class="text-danger"></span>
             </div>
             <div class="login-input input-group">
                 <span class="input-group-text">
                     <i class="bi bi-lock"></i>
                 </span>
-                <input type="password" asp-for="@Model.Password" class="form-control" placeholder="Password" required>
+                <input type="password" asp-for="@Model.Password" class="form-control" placeholder="Password" >
+                <span asp-validation-for="Password" class="text-danger"></span>
             </div>
             <div class="login-input input-group">
                 <span class="input-group-text">
                     <i class="bi bi-shield-lock"></i>
                 </span>
-                <input type="password" asp-for="@Model.ConfirmPassword" class="form-control" placeholder="Confirm Password" required>
+                <input type="password" asp-for="@Model.ConfirmPassword" class="form-control" placeholder="Confirm Password" >
+                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
             </div>
             <div class="d-flex justify-content-between mb-3">
                 <div class="form-check">
@@ -51,3 +55,8 @@
         </div>
     </div>
 </div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

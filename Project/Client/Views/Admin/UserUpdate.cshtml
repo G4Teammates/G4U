@@ -5,6 +5,20 @@
         <div class="modal-content">
             <div class="container p-5">
 
+                @if (TempData["success"] != null)
+                {
+                    <div class="alert alert-success">
+                        @TempData["success"]
+                    </div>
+                }
+
+                @if (TempData["error"] != null)
+                {
+                    <div class="alert alert-danger">
+                        @TempData["error"]
+                    </div>
+                }
+
                 @if (Model != null)
                 {
                     <form class="row" asp-action="UserUpdate" method="post" enctype="multipart/form-data">

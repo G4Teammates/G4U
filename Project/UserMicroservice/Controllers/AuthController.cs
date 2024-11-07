@@ -135,11 +135,11 @@ namespace UserMicroservice.Controllers
         }
 
         [HttpPost("forgot-password")]
-        public async Task<IActionResult> ForgotPassword(string email, string urlSuccess)
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordModel forgotPasswordModel)
         {
             try
             {
-                ResponseModel response = await _authService.ForgotPasswordAsync(email, urlSuccess);
+                ResponseModel response = await _authService.ForgotPasswordAsync(forgotPasswordModel.Email);
                 if (response.IsSuccess)
                     return Ok(response);
                 return BadRequest(response);
@@ -153,11 +153,11 @@ namespace UserMicroservice.Controllers
         }
 
         [HttpPost("reset-password")]
-        public async Task<IActionResult> ResetPassword(string token, string newPassword)
+        public async Task<IActionResult> ResetPassword(ResetPasswordModel model)
         {
             try
             {
-                ResponseModel response = await _authService.ResetPassword(token, newPassword);
+                ResponseModel response = await _authService.ResetPassword(model);
                 if (response.IsSuccess)
                     return Ok(response);
                 return BadRequest(response);
@@ -170,11 +170,11 @@ namespace UserMicroservice.Controllers
         }
 
         [HttpPost("change-password")]
-        public async Task<IActionResult> ChangePassword(string id, string oldPassword, string newPassword)
+        public async Task<IActionResult> ChangePassword(ChangePasswordModel model)
         {
             try
             {
-                ResponseModel response = await _authService.ChangePassword(id, oldPassword, newPassword);
+                ResponseModel response = await _authService.ChangePassword(model);
                 if (response.IsSuccess)
                     return Ok(response);
                 return BadRequest(response);

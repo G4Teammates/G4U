@@ -1,5 +1,6 @@
 ﻿@model Client.Models.UserDTO.UpdateUser
 
+
 <div class="main">
     <div class="row justify-content-center">
         <div class="col-md-3 p-3">
@@ -7,8 +8,8 @@
                 <img src="@Model.Avatar" class="rounded me-3" alt="Avatar" style="width:80px; height:80px;" />
                 <div class="d-flex flex-column text-truncate">
                     <h5 class="mb-0">@Model.DisplayName</h5>
+                    <p class="mb-0 text-muted" title="@Model.Username"> @Model.Username</p>
                     <p class="mb-0 text-muted" title="@Model.Email">@Model.Email</p>
-                    <p class="mb-0 text-muted" title="@Model.PhoneNumber"> @Model.PhoneNumber</p>
                 </div>
             </div>
 
@@ -48,6 +49,20 @@
             </div>
             <hr />
             <div class="mt-5">
+
+                @if (TempData["success"] != null)
+                {
+                    <div class="alert alert-success">
+                        @TempData["success"]
+                    </div>
+                }
+
+                @if (TempData["error"] != null)
+                {
+                    <div class="alert alert-danger">
+                        @TempData["error"]
+                    </div>
+                }
 
                     <form  class="row" asp-action="Information" method="post" enctype="multipart/form-data">
                         <div class="col-md-4">

@@ -10,14 +10,36 @@ namespace Client.Repositories.Services.Authentication
     {
         private readonly IBaseService _baseService = baseService;
         private readonly string _authenUrl = APIGateWay + "/auth";
-        public Task<ResponseModel> ChangePasswordAsync(string username, string oldPassword, string newPassword)
+
+
+        public async Task<ResponseModel> ResetPasswordAsync(ResetPasswordModel model)
         {
-            throw new NotImplementedException();
+            return await _baseService.SendAsync(new RequestModel
+            {
+                ApiType = ApiType.POST,
+                Data = model,
+                Url = _authenUrl + "/reset-password"
+            });
         }
 
-        public Task<ResponseModel> ForgotPasswordAsync(string username)
+        public async Task<ResponseModel> ChangePasswordAsync(ChangePasswordModel model)
         {
-            throw new NotImplementedException();
+            return await _baseService.SendAsync(new RequestModel
+            {
+                ApiType = ApiType.POST,
+                Data = model,
+                Url = _authenUrl + "/change-password"
+            });
+        }
+
+        public async Task<ResponseModel> ForgotPasswordAsync(ForgotPasswordModel model)
+        {
+            return await _baseService.SendAsync(new RequestModel
+            {
+                ApiType = ApiType.POST,
+                Data = model,
+                Url = _authenUrl + "/forgot-password"
+            });
         }
 
         public async Task<ResponseModel> LoginAsync(LoginRequestModel loginModel)
@@ -55,9 +77,5 @@ namespace Client.Repositories.Services.Authentication
             });
         }
 
-        public Task<ResponseModel> ResetPasswordAsync(string username, string newPassword)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

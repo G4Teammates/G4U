@@ -49,4 +49,8 @@
     <ProjectReference Include="..\UserMicroservice\UserMicroservice.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="wwwroot\css\site.css" />
+  </ItemGroup>
+
 </Project>
