@@ -314,7 +314,6 @@ namespace Client.Controllers
         }
 
 
-
         public IActionResult EditProfile()
         {
             return View();

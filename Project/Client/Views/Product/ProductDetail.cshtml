@@ -228,6 +228,19 @@
                             }
                         </div>
                     </div>
+
+                    <div class="product-detail-item row" style="display: none;">
+                        <div class="col-auto">
+                            <i class="fas fa-thumbs-up"></i>
+                        </div>
+                        <div class="col">
+                            <strong>Likes: </strong>
+                            <span>
+                                @product.UserName
+                            </span>
+                        </div>
+                    </div>
+
                 </div>
                 <br />
 
@@ -370,14 +383,33 @@
 
                 <!-- Form nhập bình luận -->
                 <h4>Thêm bình luận</h4>
-                <form asp-action="AddComment" method="post">
+                <form asp-action="CreateComment" asp-controller="Product" method="post" enctype="multipart/form-data">
                     <div class="form-group">
-                        <label for="content">Nội dung bình luận:</label>
-                        <textarea id="content" name="Content" class="form-control" required></textarea>
+                        <label asp-for="createcomment.Content">Nội dung bình luận:</label>
+                        <textarea asp-for="createcomment.Content" name="Content" class="form-control" required></textarea>
+                        <span asp-validation-for="createcomment.Content" class="text-danger"></span>
                     </div>
-                    <input type="hidden" name="ProductId" value="@product.Id" /> <!-- Thêm ProductId để liên kết với sản phẩm -->
+
+                    <!-- Gán ProductId và UserName từ dữ liệu của sản phẩm và hiển thị nhưng không cho nhập -->
+                    <div class="form-group">
+                        <label asp-for="createcomment.ProductId">ProductId:</label>
+                        <input asp-for="createcomment.ProductId" name="ProductId" class="form-control" value="@product.Id" readonly />
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="createcomment.UserName">UserName:</label>
+                        <input asp-for="createcomment.UserName" name="UserName" class="form-control" value="@product.UserName" readonly />
+                    </div>
+
+                    <!-- Gán trạng thái mặc định cho Status và hiển thị nhưng không cho nhập -->
+                    <div class="form-group">
+                        <label asp-for="createcomment.Status">Status:</label>
+                        <input asp-for="createcomment.Status" name="Status" class="form-control" value="1" readonly />
+                    </div>
+
                     <button type="submit" class="btn btn-primary">Gửi bình luận</button>
                 </form>
+
+
             }
         </div>
 
