@@ -73,6 +73,9 @@ namespace Client.Controllers
                         Avatar = user.Avatar!
                     };
                     await _helperService.UpdateClaim(userClaim, HttpContext);
+
+                    TempData["success"] = "Login successfully";
+
                     TempData["success"] = "Login success";
                     return RedirectToAction("Index", "Home");
                 }
