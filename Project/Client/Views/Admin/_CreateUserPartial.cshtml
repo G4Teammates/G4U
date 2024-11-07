@@ -1,8 +1,25 @@
 ﻿@using Client.Models.UserDTO
 @model CreateUser
 
+
+
 <form class="row" asp-action="UserCreate" enctype="multipart/form-data">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    @if (TempData["success"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["success"]
+        </div>
+    }
+
+    @if (TempData["error"] != null)
+    {
+        <div class="alert alert-danger">
+            @TempData["error"]
+        </div>
+    }
+
     <div class="row">
         <div class="col">
             <div class="mb-2">
@@ -24,6 +41,13 @@
                 <span asp-validation-for="@Model.Role" class="text-danger"></span>
             </div>
         </div>
+
+
+      
+
+
+
+
         <div class="col">
             <div class="text-center">
                 @if (Model.AvatarFile != null)
