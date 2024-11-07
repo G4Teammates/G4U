@@ -108,6 +108,7 @@ namespace Client.Controllers
                     productViewModel.totalItem = data.Count;
                     productViewModel.pageSize = pageSize;
                     productViewModel.pageCount = (int)Math.Ceiling(total.Count / (double)pageSize);
+                    TempData["success"] = "Filter Products successfully";
                 }
                 else
                 {
@@ -181,6 +182,7 @@ namespace Client.Controllers
                     productViewModel.totalItem = data.Count;
                     productViewModel.pageSize = pageSize;
                     productViewModel.pageCount = (int)Math.Ceiling(total.Count / (double)pageSize);
+                    TempData["success"] = "Sort Products successfully";
                 }
                 else
                 {

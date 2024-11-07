@@ -238,7 +238,7 @@ namespace CategoryMicroservice.Repositories.Services
                 if (upCate != null)
                 {
                     // Kiểm tra xem danh mục đã tồn tại chưa
-                    var checkExist = await _db.Categories.AnyAsync(x => x.Name == Categrori.Name);
+                    var checkExist = await _db.Categories.AnyAsync(x => x.Name == Categrori.Name && x.Id != Categrori.Id);
                     if (checkExist)
                     {
                         response.IsSuccess = false;

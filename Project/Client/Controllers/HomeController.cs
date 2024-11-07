@@ -86,6 +86,7 @@ namespace Client.Controllers
                     var user = _helperService.GetUserFromJwtToken((JwtSecurityToken)response.Result);
                     ViewBag.User = user;
                     ViewData["IsLogin"] = true;
+                    TempData["success"] = "Welcome back "+ user;
                 }
                 else
                 {
@@ -145,6 +146,7 @@ namespace Client.Controllers
                     productViewModel.totalItem = data.Count;
                     productViewModel.pageSize = pageSize;
                     productViewModel.pageCount = (int)Math.Ceiling(total.Count / (double)pageSize);
+                    TempData["success"] = "Search Products successfully";
                 }
                 else
                 {
