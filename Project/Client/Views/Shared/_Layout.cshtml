@@ -28,13 +28,13 @@
     <div class="">
         <header>
             <!-- Navbar -->
-            <nav class="navbaradmin navbar navbar-expand-lg navbar-light bg-white">
+            <nav class="navbaradmin navbar navbar-expand-lg navbar-light bg-white sticky-top">
                 <div class="container-fluid d-flex">
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
                     </button>
                     <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
-                        <div class="d-flex align-items-center" style="width:30vw">
+                        <div class="d-flex align-items-center">
                             <div>
                                 <a asp-controller="Home" asp-action="Index">
                                     <img src="~/Image/logo.png" alt="Logo" style="max-height: 60px;">
@@ -55,6 +55,26 @@
                                     Products
                                 </a>
                             </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link btn fw-bold" id="navbarDropdown1" asp-controller="G4T" asp-action="ContactUs" role="button">
+                                    Contact Us
+                                </a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link btn fw-bold" id="navbarDropdown1" asp-controller="G4T" asp-action="Blog" role="button">
+                                    Blog
+                                </a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link btn fw-bold" id="navbarDropdown1" role="button">
+                                    Help
+                                </a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link btn fw-bold" id="navbarDropdown2" role="button">
+                                    Play
+                                </a>
+                            </li>
                          @*    <li class="nav-item dropdown">
                                 <a class="nav-link btn fw-bold" id="navbarDropdown2" role="button">
                                     Game 2D/3D
@@ -70,21 +90,8 @@
                                     Asset 2D/3D
                                 </a>
                             </li> *@
-                            <li class="nav-item dropdown">
-                                <a class="nav-link btn fw-bold" id="navbarDropdown1" asp-controller="G4T" asp-action="ContactUs" role="button">
-                                    Contact Us
-                                </a>
-                            </li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link btn fw-bold" id="navbarDropdown1" asp-controller="G4T" asp-action="Blog" role="button">
-                                    Blog
-                                </a>
-                            </li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link btn fw-bold" id="navbarDropdown1" asp-controller="Help" asp-action="G4T" role="button">
-                                    Help
-                                </a>
-                            </li>
+                            
+                           
                         </ul>
 
                         <!-- Phần ngôn ngữ và thông tin người dùng -->

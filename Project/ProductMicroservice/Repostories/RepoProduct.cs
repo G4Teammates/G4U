@@ -28,6 +28,7 @@ using ProductMicroservice.Repostories.Helper;
 using X.PagedList.Extensions;
 using ProductMicroservice.Models.Message;
 using ProductMicroservice.Repostories.Messages;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ProductMicroservice.Repostories
 {
@@ -63,6 +64,153 @@ namespace ProductMicroservice.Repostories
             ResponseDTO response = new();
             try
             {
+                #region Kiểm tra trùng lặp trong danh sách categories
+                var duplicateCategories = Product.Categories
+                    .GroupBy(c => c.CategoryName.ToLower())
+                    .Where(g => g.Count() > 1)
+                    .Select(g => g.Key)
+                    .ToList();
+                if (duplicateCategories.Any())
+                {
+                    response.IsSuccess = false;
+                    response.Message = $"The following categories are duplicated: {string.Join(", ", duplicateCategories)}";
+                    return response; // Ngưng hàm và trả về response
+                }
+                #endregion
+
+                #region Kiểm tra xem tên product có trùng lặp trong cơ sở dữ liệu
+                var existingProduct = await _db.Products
+                    .AnyAsync(p => p.Name.ToLower() == Product.Name.ToLower());
+                if (existingProduct)
+                {
+                    response.IsSuccess = false;
+                    response.Message = $"The product name '{Product.Name}' is already in use.";
+                    return response; // Ngưng hàm và trả về response
+                }
+                #endregion
+
+                #region Kiểm tra category có tồn tại hay không
+                int maxRetryAttempts = 3; // Số lần thử lại tối đa
+                int retryCount = 0; // Đếm số lần thử lại
+                bool _isExist = false; // Khởi tạo biến _isExist
+                bool isCompleted = false; // Biến đánh dấu hoàn thành
+
+                while (retryCount < maxRetryAttempts && !isCompleted)
+                {
+                    _message.SendingMessageCheckExistCategory(Product.Categories); // Gửi message
+
+                    var tcs = new TaskCompletionSource<bool>(); // Tạo TaskCompletionSource
+
+                    // Đăng ký sự kiện để gán giá trị
+                    _message.OnCategoryResponseReceived += (response) =>
+                    {
+                        Console.WriteLine($"Received response: {response.CategoryName}, _IsExist: {response.IsExist}");
+                        _isExist = response.IsExist; // Gán giá trị vào biến
+
+                        // Đánh dấu task đã hoàn thành
+                        if (!tcs.Task.IsCompleted)
+                        {
+                            tcs.SetResult(_isExist);
+                            Console.WriteLine("SetResult done");
+                        }
+                    };
+
+                    // Chờ cho sự kiện được kích hoạt hoặc timeout sau 5 giây
+                    var timeoutTask = Task.Delay(5000); // Thời gian timeout là 5 giây
+                    var completedTask = await Task.WhenAny(tcs.Task, timeoutTask);
+
+                    // Nếu timeout xảy ra
+                    if (completedTask == timeoutTask)
+                    {
+                        Console.WriteLine($"Attempt {retryCount + 1} failed due to timeout.");
+                        retryCount++; // Tăng số lần thử lại
+
+                        if (retryCount >= maxRetryAttempts)
+                        {
+                            response.IsSuccess = false;
+                            response.Message = "The system encountered a problem while performing deletion"; // Trả về lỗi sau khi hết số lần thử lại
+                            return response; // Ngưng hàm và trả về response
+                        }
+
+                        // Nếu chưa đạt giới hạn retry, tiếp tục vòng lặp
+                        continue;
+                    }
+
+                    // Nếu có phản hồi, thoát khỏi vòng lặp
+                    isCompleted = true;
+
+                    // Xử lý kết quả khi có phản hồi từ RabbitMQ
+                    if (!_isExist)
+                    {
+                        response.IsSuccess = false;
+                        response.Message = "The Category is not exist"; // Trả về lỗi sau khi hết số lần thử lại
+                        return response; // Ngưng hàm và trả về response
+                    }
+                }
+                #endregion
+
+                #region Kiểm tra user có tồn tại hay không
+                int maxRetryAttempts2 = 3; // Số lần thử lại tối đa
+                int retryCount2 = 0; // Đếm số lần thử lại
+                bool _isExist2 = false; // Khởi tạo biến _isExist
+                bool isCompleted2 = false; // Biến đánh dấu hoàn thành
+
+                while (retryCount2 < maxRetryAttempts2 && !isCompleted2)
+                {
+                    _message.SendingMessageCheckExistCategory(Product.UserName); // Gửi message
+
+                    var tcs2 = new TaskCompletionSource<bool>(); // Tạo TaskCompletionSource
+
+                    // Đăng ký sự kiện để gán giá trị
+                    _message.OnUserResponseReceived += (response2) =>
+                    {
+                        Console.WriteLine($"_IsExist: {response2.IsExist}");
+                        _isExist2 = response2.IsExist; // Gán giá trị vào biến
+
+                        // Đánh dấu task đã hoàn thành
+                        if (!tcs2.Task.IsCompleted)
+                        {
+                            tcs2.SetResult(_isExist2);
+                            Console.WriteLine("SetResult done");
+                        }
+                    };
+
+                    // Chờ cho sự kiện được kích hoạt hoặc timeout sau 5 giây
+                    var timeoutTask2 = Task.Delay(5000); // Thời gian timeout là 5 giây
+                    var completedTask2 = await Task.WhenAny(tcs2.Task, timeoutTask2);
+
+                    // Nếu timeout xảy ra
+                    if (completedTask2 == timeoutTask2)
+                    {
+                        Console.WriteLine($"Attempt {retryCount2 + 1} failed due to timeout.");
+                        retryCount2++; // Tăng số lần thử lại
+
+                        if (retryCount2 >= maxRetryAttempts2)
+                        {
+                            response.IsSuccess = false;
+                            response.Message = "The system encountered a problem while performing deletion"; // Trả về lỗi sau khi hết số lần thử lại
+                            return response; // Ngưng hàm và trả về response
+                        }
+
+                        // Nếu chưa đạt giới hạn retry, tiếp tục vòng lặp
+                        continue;
+                    }
+
+                    // Nếu có phản hồi, thoát khỏi vòng lặp
+                    isCompleted2 = true;
+
+                    // Xử lý kết quả khi có phản hồi từ RabbitMQ
+                    if (!_isExist2)
+                    {
+                        response.IsSuccess = false;
+                        response.Message = "User is not exist"; // Trả về lỗi sau khi hết số lần thử lại
+                        return response; // Ngưng hàm và trả về response
+                    }
+                }
+                #endregion
+
+                #region Kiểm duyệt và update product
+
                 var product = await _db.Products.FindAsync(Product.Id);
                 if (product != null)
                 {
@@ -175,6 +323,7 @@ namespace ProductMicroservice.Repostories
                     response.IsSuccess = false;
                     response.Message = "Not found any Product";
                 }
+                #endregion
             }
             catch (Exception ex)
             {
@@ -465,7 +614,153 @@ namespace ProductMicroservice.Repostories
         {
             ResponseDTO response = new();
             try
-            {          
+            {
+                # region Kiểm tra trùng lặp trong danh sách categories
+                var duplicateCategories = Product.Categories
+                    .GroupBy(c => c.CategoryName.ToLower())
+                    .Where(g => g.Count() > 1)
+                    .Select(g => g.Key)
+                    .ToList();
+                if (duplicateCategories.Any())
+                {
+                    response.IsSuccess = false;
+                    response.Message = $"The following categories are duplicated: {string.Join(", ", duplicateCategories)}";
+                    return response; // Ngưng hàm và trả về response
+                }
+                #endregion
+
+                #region Kiểm tra xem tên product có trùng lặp trong cơ sở dữ liệu
+                var existingProduct = await _db.Products
+                    .AnyAsync(p => p.Name.ToLower() == Product.Name.ToLower());
+                if (existingProduct)
+                {
+                    response.IsSuccess = false;
+                    response.Message = $"The product name '{Product.Name}' is already in use.";
+                    return response; // Ngưng hàm và trả về response
+                }
+                #endregion
+
+                #region Kiểm tra category có tồn tại hay không
+                int maxRetryAttempts = 3; // Số lần thử lại tối đa
+                int retryCount = 0; // Đếm số lần thử lại
+                bool _isExist = false; // Khởi tạo biến _isExist
+                bool isCompleted = false; // Biến đánh dấu hoàn thành
+
+                while (retryCount < maxRetryAttempts && !isCompleted)
+                {
+                    _message.SendingMessageCheckExistCategory(Product.Categories); // Gửi message
+
+                    var tcs = new TaskCompletionSource<bool>(); // Tạo TaskCompletionSource
+
+                    // Đăng ký sự kiện để gán giá trị
+                    _message.OnCategoryResponseReceived += (response) =>
+                    {
+                        Console.WriteLine($"Received response: {response.CategoryName}, _IsExist: {response.IsExist}");
+                        _isExist = response.IsExist; // Gán giá trị vào biến
+
+                        // Đánh dấu task đã hoàn thành
+                        if (!tcs.Task.IsCompleted)
+                        {
+                            tcs.SetResult(_isExist);
+                            Console.WriteLine("SetResult done");
+                        }
+                    };
+
+                    // Chờ cho sự kiện được kích hoạt hoặc timeout sau 5 giây
+                    var timeoutTask = Task.Delay(5000); // Thời gian timeout là 5 giây
+                    var completedTask = await Task.WhenAny(tcs.Task, timeoutTask);
+
+                    // Nếu timeout xảy ra
+                    if (completedTask == timeoutTask)
+                    {
+                        Console.WriteLine($"Attempt {retryCount + 1} failed due to timeout.");
+                        retryCount++; // Tăng số lần thử lại
+
+                        if (retryCount >= maxRetryAttempts)
+                        {
+                            response.IsSuccess = false;
+                            response.Message = "The system encountered a problem while performing deletion"; // Trả về lỗi sau khi hết số lần thử lại
+                            return response; // Ngưng hàm và trả về response
+                        }
+
+                        // Nếu chưa đạt giới hạn retry, tiếp tục vòng lặp
+                        continue;
+                    }
+
+                    // Nếu có phản hồi, thoát khỏi vòng lặp
+                    isCompleted = true;
+
+                    // Xử lý kết quả khi có phản hồi từ RabbitMQ
+                    if (!_isExist)
+                    {
+                        response.IsSuccess = false;
+                        response.Message = "The Category is not exist"; // Trả về lỗi sau khi hết số lần thử lại
+                        return response; // Ngưng hàm và trả về response
+                    }
+                }
+                #endregion
+
+                #region Kiểm tra user có tồn tại hay không
+                int maxRetryAttempts2 = 3; // Số lần thử lại tối đa
+                int retryCount2 = 0; // Đếm số lần thử lại
+                bool _isExist2 = false; // Khởi tạo biến _isExist
+                bool isCompleted2 = false; // Biến đánh dấu hoàn thành
+
+                while (retryCount2 < maxRetryAttempts2 && !isCompleted2)
+                {
+                    _message.SendingMessageCheckExistUserName(username); // Gửi message
+
+                    var tcs2 = new TaskCompletionSource<bool>(); // Tạo TaskCompletionSource
+
+                    // Đăng ký sự kiện để gán giá trị
+                    _message.OnUserResponseReceived += (response2) =>
+                    {
+                        Console.WriteLine($"_IsExist: {response2.IsExist}");
+                        _isExist2 = response2.IsExist; // Gán giá trị vào biến
+
+                        // Đánh dấu task đã hoàn thành
+                        if (!tcs2.Task.IsCompleted)
+                        {
+                            tcs2.SetResult(_isExist2);
+                            Console.WriteLine("SetResult done");
+                        }
+                    };
+
+                    // Chờ cho sự kiện được kích hoạt hoặc timeout sau 5 giây
+                    var timeoutTask2 = Task.Delay(5000); // Thời gian timeout là 5 giây
+                    var completedTask2 = await Task.WhenAny(tcs2.Task, timeoutTask2);
+
+                    // Nếu timeout xảy ra
+                    if (completedTask2 == timeoutTask2)
+                    {
+                        Console.WriteLine($"Attempt {retryCount2 + 1} failed due to timeout.");
+                        retryCount2++; // Tăng số lần thử lại
+
+                        if (retryCount2 >= maxRetryAttempts2)
+                        {
+                            response.IsSuccess = false;
+                            response.Message = "The system encountered a problem while performing deletion"; // Trả về lỗi sau khi hết số lần thử lại
+                            return response; // Ngưng hàm và trả về response
+                        }
+
+                        // Nếu chưa đạt giới hạn retry, tiếp tục vòng lặp
+                        continue;
+                    }
+
+                    // Nếu có phản hồi, thoát khỏi vòng lặp
+                    isCompleted2 = true;
+
+                    // Xử lý kết quả khi có phản hồi từ RabbitMQ
+                    if (!_isExist2)
+                    {
+                        response.IsSuccess = false;
+                        response.Message = "User is not exist"; // Trả về lỗi sau khi hết số lần thử lại
+                        return response; // Ngưng hàm và trả về response
+                    }
+                }
+                #endregion
+
+                #region Kiểm duyệt và add product
                 if (imageFiles != null || imageFiles.Count != 0)
                 {
                     /*response.Result = _mapper.Map<Products>(product);*/
@@ -558,6 +853,7 @@ namespace ProductMicroservice.Repostories
                     response.IsSuccess = false;
                     response.Message = "Not found any File to create Product";
                 }
+                #endregion
             }
             catch (Exception ex)
             {

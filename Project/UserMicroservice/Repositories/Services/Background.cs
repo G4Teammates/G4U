@@ -1,6 +1,6 @@
-﻿using CategoryMicroservice.Repositories.Interfaces;
+﻿using UserMicroservice.Repositories.Interfaces;
 
-namespace CategoryMicroservice.Repositories
+namespace UserMicroservice.Repositories.Services
 {
     public class Background : BackgroundService
     {
@@ -14,9 +14,10 @@ namespace CategoryMicroservice.Repositories
         {
             // Chạy ReceiveMessage trong một tác vụ nền
             await Task.WhenAll(
-                Task.Run(() => _messageComsumer.ReceiveMessage(), stoppingToken),
                 Task.Run(() => _messageComsumer.ReceiveMessageCheckExist(), stoppingToken)
             );
+
+
             // Giữ cho dịch vụ chạy liên tục
             while (!stoppingToken.IsCancellationRequested)
             {

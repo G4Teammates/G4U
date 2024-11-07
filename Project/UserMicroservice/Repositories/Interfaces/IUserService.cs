@@ -2,6 +2,7 @@
 using UserMicroservice.DBContexts.Entities;
 using UserMicroservice.DBContexts.Enum;
 using UserMicroservice.Models;
+using UserMicroservice.Models.Message;
 using UserMicroservice.Models.UserManagerModel;
 namespace UserMicroservice.Repositories.Interfaces
 {
@@ -21,7 +22,7 @@ namespace UserMicroservice.Repositories.Interfaces
         Task<ResponseModel> GetAllProductsInWishList(string id);
 
         //Task<ICollection<UserModel>> FindUsersCriteria(SearchCriteria criteria);
-
+        Task<bool> CheckUserByUserNameAsync(string userName);
 
     }
 
