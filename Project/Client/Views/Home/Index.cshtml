@@ -80,7 +80,7 @@
         @TempData["error"]
     </div>
 }
-<div class="gamemonth">
+<div class="gamemonth" style="margin-top:3vw;">
     <section class="header_section">
         <h1 style="font-family: 'Poppins', sans-serif; text-transform:uppercase;">Game Of The Month</h1>
     </section>
@@ -184,7 +184,7 @@
 
 
 
-<div class="gamefree row">
+<div class="gamefree row" style="margin-top:5vw;">
     <div class="row">
         <div class="col-9 col-sm-9 col-md-9 free-games-section">
             <i class="fa-solid fa-gift"></i>
@@ -192,7 +192,7 @@
         </div>
         <div class="col-3 col-sm-3 col-md-3 footeer_card" >
             <div class="btn_card" style="display:flex;justify-content:flex-end;" style="width:250px;font-size:font: 15px Montserrat;">
-                <a href="#" class="btn_orther" style="width:200px;font: 15px Montserrat;">Read More</a>
+                <a href="#" class="btn_orther" style="width:200px;font: 15px Montserrat;">View More</a>
             </div>
         </div>
     </div>
@@ -258,17 +258,16 @@
             }
         }
     </div>
-    <p>Discounts Now - Dec 10</p>
 </div>
 
 
-<div class="ortherproduct">
+<div class="ortherproduct" style="margin-top:10vw;">
     <section class="header_section">
-        <h1>Orther Product</h1>
+        <h1 style="font-family: 'Poppins', sans-serif; text-transform:uppercase;">Orther Product</h1>
     </section>
 
     <!-- Danh sách Nút Điều Hướng -->
-    <div class="lisotherproduct_name row mt-3">
+    <div class="lisotherproduct_name row mt-3" style="font-family: 'Poppins', sans-serif; text-transform:uppercase;">
         <a class="col-6 col-sm-2 col-md-2" href="#foryou">For You</a>
         <a class="col-6 col-sm-2 col-md-2" href="#popular">Popular</a>
         <a class="col-4 col-sm-2 col-md-2" href="#free">Free</a>
@@ -282,10 +281,15 @@
 
 
     <section id="popular" class="mt-5">
-        <div class="d-flex justify-content-between align-items-center mb-1">
-            <h3>Popular</h3>
-            <a href="">View More</a>
+        <div class="d-flex justify-content-between align-items-center row">
+            <h3 class="col-8 col-sm-8 col-md-8 ms-4 fw-bold" style="font-family: 'Poppins', sans-serif; text-transform:uppercase;">Popular</h3>
+            <div class="col-3 col-sm-3 col-md-3 footeer_card">
+                <div class="btn_card" style="display:flex;justify-content:end;" style="width:200px;font-size:font: 15px Montserrat;">
+                    <a href="#" class="btn_orther" style="width:200px;font: 15px Montserrat;">View More</a>
+                </div>
+            </div>
         </div>
+        
         <div class="wrapper_other">
             @if (Model.Product != null)
             {
@@ -313,7 +317,32 @@
                                     ? product.Description.Substring(0, 100) + "..."
                                     : product.Description)
                             </p>
-                            <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@product.Id" class="btn_orther">Read More</a>
+                            <div class="row d-flex align-items-center justify-content-between">
+                                <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@product.Id" class="col-md-6 btn_orther ms-2 text-center">Read More</a>
+                                <div class="col-md-3"></div>
+                                @* Day la trai tym ne *@
+                                <div title="Wishlist" class="col-md-3 heart-container" style="width:20px;height:20px;">
+                                    <input id="Give-It-An-Id" class="checkbox" type="checkbox">
+                                    <div class="svg-container">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="svg-outline" viewBox="0 0 24 24">
+                                            <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Zm-3.585,18.4a2.973,2.973,0,0,1-3.83,0C4.947,16.006,2,11.87,2,8.967a4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,11,8.967a1,1,0,0,0,2,0,4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,22,8.967C22,11.87,19.053,16.006,13.915,20.313Z">
+                                            </path>
+                                        </svg>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="svg-filled" viewBox="0 0 24 24">
+                                            <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Z">
+                                            </path>
+                                        </svg>
+                                        <svg xmlns="http://www.w3.org/2000/svg" height="100" width="100" class="svg-celebrate">
+                                            <polygon points="10,10 20,20"></polygon>
+                                            <polygon points="10,50 20,50"></polygon>
+                                            <polygon points="20,80 30,70"></polygon>
+                                            <polygon points="90,10 80,20"></polygon>
+                                            <polygon points="90,50 80,50"></polygon>
+                                            <polygon points="80,80 70,70"></polygon>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 }
@@ -323,10 +352,14 @@
 
 
 
-    <section id="free" class="mt-5">
-        <div class="d-flex justify-content-between align-items-center mb-1">
-            <h3>Free</h3>
-            <a href="">View More</a>
+    <section id="free" style="margin-top:5vw;">
+        <div class="d-flex justify-content-between align-items-center row">
+            <h3 class="col-8 col-sm-8 col-md-8 ms-4 fw-bold" style="font-family: 'Poppins', sans-serif; text-transform:uppercase;">Free</h3>
+            <div class="col-3 col-sm-3 col-md-3 footeer_card">
+                <div class="btn_card" style="display:flex;justify-content:end;" style="width:200px;font-size:font: 15px Montserrat;">
+                    <a href="#" class="btn_orther" style="width:200px;font: 15px Montserrat;">View More</a>
+                </div>
+            </div>
         </div>
         <div class="wrapper_other">
             @if (Model.Product != null)
@@ -357,7 +390,32 @@
                                     ? product.Description.Substring(0, 100) + "..."
                                     : product.Description)
                             </p>
-                            <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@product.Id" class="btn_orther">Read More</a>
+                            <div class="row d-flex align-items-center justify-content-between">
+                                <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@product.Id" class="col-md-6 btn_orther ms-2 text-center">Read More</a>
+                                <div class="col-md-3"></div>
+                                @* Day la trai tym ne *@
+                                <div title="Wishlist" class="col-md-3 heart-container" style="width:20px;height:20px;">
+                                    <input id="Give-It-An-Id" class="checkbox" type="checkbox">
+                                    <div class="svg-container">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="svg-outline" viewBox="0 0 24 24">
+                                            <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Zm-3.585,18.4a2.973,2.973,0,0,1-3.83,0C4.947,16.006,2,11.87,2,8.967a4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,11,8.967a1,1,0,0,0,2,0,4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,22,8.967C22,11.87,19.053,16.006,13.915,20.313Z">
+                                            </path>
+                                        </svg>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="svg-filled" viewBox="0 0 24 24">
+                                            <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Z">
+                                            </path>
+                                        </svg>
+                                        <svg xmlns="http://www.w3.org/2000/svg" height="100" width="100" class="svg-celebrate">
+                                            <polygon points="10,10 20,20"></polygon>
+                                            <polygon points="10,50 20,50"></polygon>
+                                            <polygon points="20,80 30,70"></polygon>
+                                            <polygon points="90,10 80,20"></polygon>
+                                            <polygon points="90,50 80,50"></polygon>
+                                            <polygon points="80,80 70,70"></polygon>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 }
@@ -366,10 +424,14 @@
     </section>
 
 
-    <section id="new" class="mt-5">
-        <div class="d-flex justify-content-between align-items-center mb-1">
-            <h3>New</h3>
-            <a href="">View More</a>
+    <section id="new" style="margin-top:5vw;">
+        <div class="d-flex justify-content-between align-items-center row">
+            <h3 class="col-8 col-sm-8 col-md-8 ms-4 fw-bold" style="font-family: 'Poppins', sans-serif; text-transform:uppercase;">New</h3>
+            <div class="col-3 col-sm-3 col-md-3 footeer_card">
+                <div class="btn_card" style="display:flex;justify-content:end;" style="width:200px;font-size:font: 15px Montserrat;">
+                    <a href="#" class="btn_orther" style="width:200px;font: 15px Montserrat;">View More</a>
+                </div>
+            </div>
         </div>
         <div class="wrapper_other">
             @if (Model.Product != null)
@@ -399,7 +461,32 @@
                                     ? product.Description.Substring(0, 100) + "..."
                                     : product.Description)
                             </p>
-                            <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@product.Id" class="btn_orther">Read More</a>
+                            <div class="row d-flex align-items-center justify-content-between">
+                                <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@product.Id" class="col-md-6 btn_orther ms-2 text-center">Read More</a>
+                                <div class="col-md-3"></div>
+                                @* Day la trai tym ne *@
+                                <div title="Wishlist" class="col-md-3 heart-container" style="width:20px;height:20px;">
+                                    <input id="Give-It-An-Id" class="checkbox" type="checkbox">
+                                    <div class="svg-container">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="svg-outline" viewBox="0 0 24 24">
+                                            <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Zm-3.585,18.4a2.973,2.973,0,0,1-3.83,0C4.947,16.006,2,11.87,2,8.967a4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,11,8.967a1,1,0,0,0,2,0,4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,22,8.967C22,11.87,19.053,16.006,13.915,20.313Z">
+                                            </path>
+                                        </svg>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="svg-filled" viewBox="0 0 24 24">
+                                            <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Z">
+                                            </path>
+                                        </svg>
+                                        <svg xmlns="http://www.w3.org/2000/svg" height="100" width="100" class="svg-celebrate">
+                                            <polygon points="10,10 20,20"></polygon>
+                                            <polygon points="10,50 20,50"></polygon>
+                                            <polygon points="20,80 30,70"></polygon>
+                                            <polygon points="90,10 80,20"></polygon>
+                                            <polygon points="90,50 80,50"></polygon>
+                                            <polygon points="80,80 70,70"></polygon>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 }
@@ -408,10 +495,14 @@
     </section>
 
 
-    <section id="more" class="mt-5">
-        <div class="d-flex justify-content-between align-items-center mb-1">
-            <h3>More</h3>
-            <a href="">View More</a>
+    <section id="more" style="margin-top:5vw;">
+        <div class="d-flex justify-content-between align-items-center row">
+            <h3 class="col-8 col-sm-8 col-md-8 ms-4 fw-bold" style="font-family: 'Poppins', sans-serif; text-transform:uppercase;">More</h3>
+            <div class="col-3 col-sm-3 col-md-3 footeer_card">
+                <div class="btn_card" style="display:flex;justify-content:end;" style="width:200px;font-size:font: 15px Montserrat;">
+                    <a href="#" class="btn_orther" style="width:200px;font: 15px Montserrat;">View More</a>
+                </div>
+            </div>
         </div>
         <div class="wrapper_other">
             @if (Model.Product != null)
@@ -447,7 +538,32 @@
                                     ? product.Description.Substring(0, 100) + "..."
                                     : product.Description)
                             </p>
-                            <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@product.Id" class="btn_orther">Read More</a>
+                            <div class="row d-flex align-items-center justify-content-between">
+                                <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@product.Id" class="col-md-6 btn_orther ms-2 text-center">Read More</a>
+                                <div class="col-md-3"></div>
+                                @* Day la trai tym ne *@
+                                <div title="Wishlist" class="col-md-3 heart-container" style="width:20px;height:20px;">
+                                    <input id="Give-It-An-Id" class="checkbox" type="checkbox">
+                                    <div class="svg-container">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="svg-outline" viewBox="0 0 24 24">
+                                            <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Zm-3.585,18.4a2.973,2.973,0,0,1-3.83,0C4.947,16.006,2,11.87,2,8.967a4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,11,8.967a1,1,0,0,0,2,0,4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,22,8.967C22,11.87,19.053,16.006,13.915,20.313Z">
+                                            </path>
+                                        </svg>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="svg-filled" viewBox="0 0 24 24">
+                                            <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Z">
+                                            </path>
+                                        </svg>
+                                        <svg xmlns="http://www.w3.org/2000/svg" height="100" width="100" class="svg-celebrate">
+                                            <polygon points="10,10 20,20"></polygon>
+                                            <polygon points="10,50 20,50"></polygon>
+                                            <polygon points="20,80 30,70"></polygon>
+                                            <polygon points="90,10 80,20"></polygon>
+                                            <polygon points="90,50 80,50"></polygon>
+                                            <polygon points="80,80 70,70"></polygon>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 }
@@ -455,12 +571,12 @@
         </div>
     </section>
 </div>
-<div class="best-seller_most-player_top-upcoming-wishlisted row mt-5">
-    <div class="col-12 col-sm-12 col-md-4" style="border-right:1px solid black;border-left:1px solid black;">
+<div class="best-seller_most-player_top-upcoming-wishlisted row" style="margin-top:7vw;">
+    <div class="col-12 col-sm-12 col-md-4" style="margin:0 auto;">
         <h2>
             <a href="" style="text-decoration:none;color:black;">Top Sellers <i class="fa-solid fa-angle-right"></i></a>
         </h2>
-        <div class="row">
+        <div class="row ">
             @if (Model.Product != null)
             {
                 // Lọc sản phẩm, sắp xếp giảm dần theo số lượng đã bán và lấy 5 sản phẩm đầu tiên
@@ -470,45 +586,48 @@
 
                 foreach (var product in topSoldProducts)
                 {
-                    <div class="col-4 col-sm-4 col-md-4 mt-3">
-                        @if (product.Links != null)
-                        {
-                            string secondImageUrl = null; // Biến để lưu URL hình ảnh thứ hai
-                            int imageCount = 0; // Biến đếm số lượng hình ảnh đã tìm thấy
-
-                            foreach (var link in product.Links) // Lặp qua từng đối tượng LinkModel
-                            {
-                                if (link.Url.Contains("cloudinary"))
-                                {
-                                    imageCount++; // Tăng biến đếm hình ảnh
-
-                                    // Nếu là hình ảnh thứ hai
-                                    if (imageCount == 2)
+                    <div class="product-link row mt-3">
+                        <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@product.Id" class="product-card">
+                            <div class="product-content">
+                                <div class="image-container">
+                                    @if (product.Links != null)
                                     {
-                                        secondImageUrl = link.Url; // Lưu URL hình ảnh thứ hai
-                                        break; // Thoát khỏi vòng lặp khi đã tìm thấy
-                                    }
-                                }
-                            }
+                                        string secondImageUrl = null;
+                                        int imageCount = 0;
 
-                            // Hiển thị hình ảnh thứ hai nếu có
-                            if (secondImageUrl != null)
-                            {
-                                <div style="width: 100%;height: 70px;overflow: hidden;display: flex;align-items: center;justify-content: center;">
-                                    <img src="@secondImageUrl" alt="Cloudinary Image" style="width: 100%;height: 100%;object-fit: cover;" />
+                                        foreach (var link in product.Links)
+                                        {
+                                            if (link.Url.Contains("cloudinary"))
+                                            {
+                                                imageCount++;
+
+                                                if (imageCount == 2)
+                                                {
+                                                    secondImageUrl = link.Url;
+                                                    break;
+                                                }
+                                            }
+                                        }
+
+                                        if (secondImageUrl != null)
+                                        {
+                                            <img src="@secondImageUrl" alt="Cloudinary Image" />
+                                        }
+                                    }
                                 </div>
-                            }
-                        }
-                    </div>
-                    <div class="col-8 col-sm-8 col-md-8 mt-3">
-                        @product.Name
+                                <div class="product-name">
+                                    @product.Name
+                                </div>
+                            </div>
+                        </a>
                     </div>
                 }
             }
         </div>
+
     </div>
 
-    <div class="col-12 col-sm-12 col-md-4" style="border-right:1px solid black;border-left:1px solid black;">
+    <div class="col-12 col-sm-12 col-md-4" style="margin:0 auto;">
         <h2>
             <a href="" style="text-decoration:none;color:black;">Most Played<i class="fa-solid fa-angle-right"></i></a>
         </h2>
@@ -523,45 +642,47 @@
 
                 foreach (var product in topLikedProducts)
                 {
-                    <div class="col-4 col-sm-4 col-md-4 mt-3">
-                        @if (product.Links != null)
-                        {
-                            string secondImageUrl = null; // Biến để lưu URL hình ảnh thứ hai
-                            int imageCount = 0; // Biến đếm số lượng hình ảnh đã tìm thấy
-
-                            foreach (var link in product.Links) // Lặp qua từng đối tượng LinkModel
-                            {
-                                if (link.Url.Contains("cloudinary"))
-                                {
-                                    imageCount++; // Tăng biến đếm hình ảnh
-
-                                    // Nếu là hình ảnh thứ hai
-                                    if (imageCount == 2)
+                    <div class="product-link row mt-3">
+                        <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@product.Id" class="product-card">
+                            <div class="product-content">
+                                <div class="image-container">
+                                    @if (product.Links != null)
                                     {
-                                        secondImageUrl = link.Url; // Lưu URL hình ảnh thứ hai
-                                        break; // Thoát khỏi vòng lặp khi đã tìm thấy
-                                    }
-                                }
-                            }
+                                        string secondImageUrl = null;
+                                        int imageCount = 0;
 
-                            // Hiển thị hình ảnh thứ hai nếu có
-                            if (secondImageUrl != null)
-                            {
-                                <div style="width: 100%;height: 70px;overflow: hidden;display: flex;align-items: center;justify-content: center;">
-                                    <img src="@secondImageUrl" alt="Cloudinary Image" style="width: 100%;height: 100%;object-fit: cover;" />
+                                        foreach (var link in product.Links)
+                                        {
+                                            if (link.Url.Contains("cloudinary"))
+                                            {
+                                                imageCount++;
+
+                                                if (imageCount == 2)
+                                                {
+                                                    secondImageUrl = link.Url;
+                                                    break;
+                                                }
+                                            }
+                                        }
+
+                                        if (secondImageUrl != null)
+                                        {
+                                            <img src="@secondImageUrl" alt="Cloudinary Image" />
+                                        }
+                                    }
                                 </div>
-                            }
-                        }
-                    </div>
-                    <div class="col-8 col-sm-8 col-md-8 mt-3">
-                        @product.Name
+                                <div class="product-name">
+                                    @product.Name
+                                </div>
+                            </div>
+                        </a>
                     </div>
                 }
             }
         </div>
     </div>
 
-    <div class="col-12 col-sm-12 col-md-4" style="border-right:1px solid black;border-left:1px solid black;">
+    <div class="col-12 col-sm-12 col-md-4" style="margin:0 auto;">
         <h2>
             <a href="" style="text-decoration:none;color:black;">Top Upcoming Wishlisted <i class="fa-solid fa-angle-right"></i></a>
         </h2>
@@ -573,38 +694,40 @@
 
                 foreach (var product in upcomingWishlistedProducts)
                 {
-                    <div class="col-4 col-sm-4 col-md-4 mt-3">
-                        @if (product.Links != null)
-                        {
-                            string secondImageUrl = null; // Biến để lưu URL hình ảnh thứ hai
-                            int imageCount = 0; // Biến đếm số lượng hình ảnh đã tìm thấy
-
-                            foreach (var link in product.Links) // Lặp qua từng đối tượng LinkModel
-                            {
-                                if (link.Url.Contains("cloudinary"))
-                                {
-                                    imageCount++; // Tăng biến đếm hình ảnh
-
-                                    // Nếu là hình ảnh thứ hai
-                                    if (imageCount == 2)
+                    <div class="product-link row mt-3">
+                        <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@product.Id" class="product-card">
+                            <div class="product-content">
+                                <div class="image-container">
+                                    @if (product.Links != null)
                                     {
-                                        secondImageUrl = link.Url; // Lưu URL hình ảnh thứ hai
-                                        break; // Thoát khỏi vòng lặp khi đã tìm thấy
-                                    }
-                                }
-                            }
+                                        string secondImageUrl = null;
+                                        int imageCount = 0;
 
-                            // Hiển thị hình ảnh thứ hai nếu có
-                            if (secondImageUrl != null)
-                            {
-                                <div style="width: 100%;height: 70px;overflow: hidden;display: flex;align-items: center;justify-content: center;">
-                                    <img src="@secondImageUrl" alt="Cloudinary Image" style="width: 100%;height: 100%;object-fit: cover;" />
+                                        foreach (var link in product.Links)
+                                        {
+                                            if (link.Url.Contains("cloudinary"))
+                                            {
+                                                imageCount++;
+
+                                                if (imageCount == 2)
+                                                {
+                                                    secondImageUrl = link.Url;
+                                                    break;
+                                                }
+                                            }
+                                        }
+
+                                        if (secondImageUrl != null)
+                                        {
+                                            <img src="@secondImageUrl" alt="Cloudinary Image" />
+                                        }
+                                    }
                                 </div>
-                            }
-                        }
-                    </div>
-                    <div class="col-8 col-sm-8 col-md-8 mt-3">
-                        @product.Name
+                                <div class="product-name">
+                                    @product.Name
+                                </div>
+                            </div>
+                        </a>
                     </div>
                 }
             }

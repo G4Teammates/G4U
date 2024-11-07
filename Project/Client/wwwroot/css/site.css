@@ -577,10 +577,14 @@ hr {
 }
 
 .best-seller_most-player_top-upcoming-wishlisted h2 {
-    transition: margin 0.3s ease;
+    transition: margin 0.5s ease;
+    font-size: 2vw;
+    font-family: 'Poppins', sans-serif;
+    font-weight:bold;
 }
 .best-seller_most-player_top-upcoming-wishlisted h2:hover {
     margin-left: 20px;
+    color: #00A97F !important;
 }
 .header_section {
     margin-top: 50px;
@@ -720,7 +724,7 @@ hr {
 
     .footeer_card .btn_card .btn_orther:hover {
         background: #00A97F; /* Màu nền xanh khi hover */
-        color: #fff ; /* Màu chữ trắng khi hover */
+        color: #fff !important ; /* Màu chữ trắng khi hover */
         border-color: #00A97F; /* Cập nhật viền thành màu #00A97F khi hover */
         text-decoration: none;
     }
@@ -1261,4 +1265,57 @@ ul{
 
 
 
+
+
+.product-card {
+    display: flex;
+    border: 1px solid #ddd; /* Viền xung quanh */
+    border-radius: 8px; /* Bo góc */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Đổ bóng */
+    transition: box-shadow 0.3s ease, transform 0.3s ease; /* Hiệu ứng khi hover */
+    text-decoration: none; /* Xóa underline cho link */
+    width: 100%;
+    padding: 10px 0; /* Tạo khoảng cách top và bottom */
+}
+
+.product-content {
+    display: flex; /* Sắp xếp các phần tử nằm theo hàng ngang */
+    align-items: center; /* Căn giữa theo chiều dọc */
+    width: 100%; /* Chiếm toàn bộ chiều rộng */
+}
+
+.image-container {
+    width: 80px; /* Giảm kích thước của hình ảnh */
+    height: 80px; /* Giảm kích thước của hình ảnh */
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 10px; /* Khoảng cách giữa hình ảnh và tên sản phẩm */
+    padding: 5px 0; /* Thêm padding top và bottom */
+}
+
+.product-name {
+    font-size: 14px;
+    color: #333;
+    font-weight: bold;
+    text-align: left; /* Căn trái tên sản phẩm */
+    flex: 1; /* Để tên sản phẩm chiếm không gian còn lại */
+}
+
+.product-card:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Đổ bóng mạnh hơn khi hover */
+    transform: translateY(-5px); /* Di chuyển nhẹ lên khi hover */
+}
+
+    .product-card:hover .product-name {
+        color: #00A97F; /* Thay đổi màu chữ khi hover */
+    }
+
+.product-card img {
+    width: 100%; /* Giới hạn chiều rộng hình ảnh */
+    height: 100%; /* Giới hạn chiều cao hình ảnh */
+    object-fit: cover; /* Đảm bảo hình ảnh không bị biến dạng */
+    display: block;
+}
 
