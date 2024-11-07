@@ -158,96 +158,42 @@ namespace Client.Controllers
             return View(productViewModel);
         }
 
-        //[HttpPost]
-        //public async Task<IActionResult> CreateComment(CreateCommentDTOModel model)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        var errors = ModelState.Values.SelectMany(v => v.Errors)
-        //                                      .Select(e => e.ErrorMessage);
-        //        return BadRequest(new { Errors = errors });
-        //    }
 
-        //    try
-        //    {
-        //        // Gọi service CreateCommentAsync
-        //        var response = await _commentService.CreateCommentAsync(model);
-
-        //        if (response != null && response.IsSuccess)
-        //        {
-        //            TempData["success"] = "Category created successfully";
-        //            return RedirectToAction(nameof(CommentManager));
-        //        }
-        //        else
-        //        {
-        //            TempData["error"] = response?.Message ?? "An unknown error occurred.";
-        //            return RedirectToAction(nameof(CommentManager));
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        TempData["error"] = $"An error occurred: {ex.Message}";
-        //        return RedirectToAction(nameof(CommentManager));
-        //    }
-
-        //}
-
-
-
-        public async Task<IActionResult> Productss(int? page, int pageSize = 99)
+        [HttpPost]
+        public async Task<IActionResult> SortProducts(string sort, int? page, int pageSize = 5)
         {
             int pageNumber = (page ?? 1);
-            ProductViewModel product = new();
+            ProductViewModel productViewModel = new();
+
             try
             {
-
-                ResponseModel? response1 = await _categoryService.GetAllCategoryAsync(1, 99);
-
-                ResponseModel? response = await _productService.GetAllProductAsync(pageNumber, pageSize);
-
+                // Gọi API để lấy danh sách sản phẩm đã sắp xếp
+                ResponseModel? response = await _productService.SortProductAsync(sort, page, pageSize);
                 ResponseModel? response2 = await _productService.GetAllProductAsync(1, 99);
-
-
+                ResponseModel? response3 = await _categoryService.GetAllCategoryAsync(1, 99);
                 var total = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response2.Result.ToString()!));
-
                 if (response != null && response.IsSuccess)
                 {
-
-                    product.Product = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response.Result.ToString()!));
-
-                    product.CategoriesModel = JsonConvert.DeserializeObject<ICollection<CategoriesModel>>(Convert.ToString(response1.Result.ToString()!));
-
-                    var data = product.Product;
-                    product.pageNumber = pageNumber;
-                    product.totalItem = data.Count;
-                    product.pageSize = pageSize;
-                    product.pageCount = (int)Math.Ceiling(total.Count / (double)pageSize);
-
+                    productViewModel.Product = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response.Result.ToString()!));
+                    productViewModel.CategoriesModel = JsonConvert.DeserializeObject<ICollection<CategoriesModel>>(Convert.ToString(response.Result.ToString()!));
+                    var data = productViewModel.Product;
+                    productViewModel.pageNumber = pageNumber;
+                    productViewModel.totalItem = data.Count;
+                    productViewModel.pageSize = pageSize;
+                    productViewModel.pageCount = (int)Math.Ceiling(total.Count / (double)pageSize);
                 }
                 else
                 {
                     TempData["error"] = response?.Message;
                 }
-
             }
             catch (Exception ex)
             {
                 TempData["error"] = ex.Message;
             }
 
-            // Tạo mã QR cho từng sản phẩm
-            foreach (var item in product.Product)
-            {
-                string qrCodeUrl = Url.Action("UpdateProduct", "Admin", new { id = item.Id }, Request.Scheme);
-                item.QrCode = _productService.GenerateQRCode(qrCodeUrl); // Tạo mã QR và lưu vào thuộc tính
-
-                /*string barCodeUrl = Url.Action("UpdateProduct", "Admin", new { id = item.Id }, Request.Scheme);
-                item.BarCode = _productService.GenerateBarCode(11111111111); // Tạo mã QR và lưu vào thuộc tính*/
-            }
-
-            return View(product);
+            return View("Product", productViewModel); // Trả về view ProductsManager với danh sách sản phẩm đã sắp xếp
         }
-
         public IActionResult Collection()
         {
             return View();
