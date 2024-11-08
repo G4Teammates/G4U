@@ -174,7 +174,7 @@
                         <div class="col">
                             <strong>Sold: </strong>
                             <span>
-                                @(product.Sold == 0 ? "None" : product.Sold.ToString())
+                                 @(product.Sold == 0 ? " None" : " " + product.Sold.ToString())
                             </span>
                         </div>
                     </div>
@@ -186,7 +186,7 @@
                         <div class="col">
                             <strong>Discount: </strong>
                             <span>
-                                @(product.Discount == 0 ? "None" : product.Discount.ToString() + "%")
+                                @(product.Discount == 0 ? " None" : " " + product.Discount.ToString() + "%")
                             </span>
                         </div>
                     </div>
@@ -198,7 +198,7 @@
                         <div class="col">
                             <strong>Likes: </strong>
                             <span>
-                                @(product.Interactions.NumberOfLikes == 0 ? "None" : product.Interactions.NumberOfLikes.ToString())
+                                @(product.Interactions.NumberOfLikes == 0 ? " None" : " " + product.Interactions.NumberOfLikes.ToString())
                             </span>
                         </div>
                     </div>
@@ -210,7 +210,7 @@
                         <div class="col">
                             <strong>Price: </strong>
                             <span>
-                                @(product.Price == 0 ? "Free" : product.Price.ToString("C"))
+                                @(product.Price == 0 ? " Free" : " " + product.Price.ToString("C"))
                             </span>
                         </div>
                     </div>
