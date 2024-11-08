@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Azure;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -378,15 +379,22 @@ namespace ProductMicroService.Controllers
         {
             try
             {
-                ResponseDTO response = await _repoProduct.GetAllProductsByUserName(userName);
-                if (response.IsSuccess)
-                    return Ok(response);
-                return BadRequest(response);
+                var Pros = await _repoProduct.GetAllProductsByUserName(userName);
+                if (Pros.IsSuccess)
+                {
+                    _responseDTO.Result = Pros.Result;
+                    return Ok(_responseDTO);
+                }
+                _responseDTO.Message = Pros.Message;
+                return BadRequest(_responseDTO.Message);
             }
             catch (Exception ex)
             {
-                // Trả về lỗi 500 cho các lỗi chưa dự đoán
-                return StatusCode(500, new { message = "An unexpected error occurred. Detail" + ex.Message });
+                _responseDTO.IsSuccess = false;
+
+                _responseDTO.Message = "An error occurred while GetAllProductsByUserName the Products: " + ex.Message;
+
+                return StatusCode(500, _responseDTO); // Trả về mã lỗi 500 với thông báo lỗi chi tiết
             }
         }
     }

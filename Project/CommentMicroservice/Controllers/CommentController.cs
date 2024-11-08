@@ -204,5 +204,28 @@ namespace CommentMicroService.Controllers
                 return StatusCode(500, _responseModel); // Trả về mã lỗi 500 với thông báo lỗi chi tiết
             }
         }
+
+        [HttpGet("ParentId/{id?}")]
+        public async Task<IActionResult> GetByParentId([FromRoute] string id, int? page, int pageSize)
+        {
+            try
+            {
+                int pageNumber = (page ?? 1);
+                var Comm = await _db.GetByParentId(id, pageNumber, pageSize);
+                if (Comm.IsSuccess)
+                {
+                    _responseModel.Result = Comm.Result;
+                    return Ok(_responseModel);
+                }
+                _responseModel.Message = Comm.Message;
+                return BadRequest(_responseModel.Message);
+            }
+            catch (Exception ex)
+            {
+                _responseModel.IsSuccess = false;
+                _responseModel.Message = "An error occurred while getting the Comment: " + ex.Message;
+                return StatusCode(500, _responseModel); // Trả về mã lỗi 500 với thông báo lỗi chi tiết
+            }
+        }
     }
 }

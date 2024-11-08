@@ -228,6 +228,19 @@
                             }
                         </div>
                     </div>
+
+                    <div class="product-detail-item row" style="display: none;">
+                        <div class="col-auto">
+                            <i class="fas fa-thumbs-up"></i>
+                        </div>
+                        <div class="col">
+                            <strong>Likes: </strong>
+                            <span>
+                                @product.UserName
+                            </span>
+                        </div>
+                    </div>
+
                 </div>
                 <br />
 
@@ -286,25 +299,23 @@
 
                 <h3 class="mt-4">Comment</h3>
 
-                @if (Model.CommentDTOModels != null && Model.CommentDTOModels.Any())
+                @if (Model.CommentDTOModels != null)
                 {
                     foreach (var comment in Model.CommentDTOModels)
                     {
-                        if (comment != null && comment.ParentId == null) // Kiểm tra xem comment có phải là null không
+                        if (comment != null) // Kiểm tra xem comment có phải là null không
                         {
+
                             <div class="comment">
                                 <div class="row">
                                     <div class="col-md-1 comment-icon d-flex justify-content-center mt-5">
                                         <i class="fa-solid fa-user-secret"></i>
                                     </div>
-                                    <!-- UserName và Content nằm trong cùng viền -->
                                     <div class="col-md-11 comment-body">
                                         <div class="comment-header">
                                             <p><strong>@comment.UserName</strong></p>
                                             <p class="created-at">@comment.CreatedAt.ToString("g")</p>
                                         </div>
-
-                                        <!-- Nội dung của comment -->
                                         <div class="comment-content">
                                             <p>@comment.Content</p>
                                         </div>
@@ -312,53 +323,27 @@
                                 </div>
 
                                 <div class="row">
-                                    <!-- Nút Xem thêm -->
-                                    <a class="col-md-10" href="#" id="toggleButton-@comment.Id" onclick="Xemthem('commentContent-@comment.Id', 'toggleButton-@comment.Id'); return false;" style="text-decoration:none; color:gray;">Nội dung phản hồi...</a>
-                                    <!-- Likes và Dislikes nằm cùng hàng, căn phải -->
-                                    <div class="col-md-2 comment-footer">
-                                        <p class="likes">
-                                            <small>
-                                                @comment.NumberOfLikes <i class="fa-solid fa-thumbs-up"></i>
-                                                @comment.NumberOfDisLikes <i class="fa-solid fa-thumbs-down"></i>
-                                            </small>
-                                        </p>
+                                    <!-- Nút "Xem thêm" -->
+                                    <div class=" col-6 text-start">
+                                        <a style="width:50%; text-decoration:none; color:black" id="toggleButton-@comment.Id" onclick="toggleReplies('@comment.Id')">Xem thêm | </a>
+                                        <!-- Nút "Reply" -->
+                                        <a style="width:50%; text-decoration:none; color:black" onclick="scrollToReplyForm('@comment.Id')">Reply</a>
+                                    </div>
+                                    <div class="col-6 text-end">
+                                        <div class="col-md-2 comment-footer text-end">
+                                            <p class="likes">
+                                                <small>
+                                                    @comment.NumberOfLikes <i class="fa-solid fa-thumbs-up"></i>
+                                                    @comment.NumberOfDisLikes <i class="fa-solid fa-thumbs-down"></i>
+                                                </small>
+                                            </p>
+                                        </div>
                                     </div>
                                 </div>
 
+                                <!-- Phần chứa các bình luận con -->
+                                <div id="replies-@comment.Id" class="ms-5" style="display: none;"></div>
 
-                                <!-- Phần chứa comment con -->
-                                <div id="commentContent-@comment.Id" style="display: none;">
-                                    @foreach (var cmt in Model.CommentDTOModels)
-                                    {
-                                        if (cmt != null && cmt.ParentId != null)
-                                        {
-                                            <div class="comment ms-5" id="commentContent-@cmt.Id">
-                                                <div class="row">
-                                                    <div class="col-md-1 comment-icon">
-                                                        <i class="fa-solid fa-user-secret"></i>
-                                                    </div>
-                                                    <div class="col-md-11 comment-body">
-                                                        <div class="comment-header">
-                                                            <p><strong>@cmt.UserName</strong></p>
-                                                            <p class="created-at">@cmt.CreatedAt.ToString("g")</p>
-                                                        </div>
-                                                        <div class="comment-content">
-                                                            <p>@cmt.Content</p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="comment-footer">
-                                                    <p class="likes">
-                                                        <small>
-                                                            @cmt.NumberOfLikes <i class="fa-solid fa-thumbs-up"></i>
-                                                            @cmt.NumberOfDisLikes <i class="fa-solid fa-thumbs-down"></i>
-                                                        </small>
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        }
-                                    }
-                                </div>
                             </div>
                         }
                     }
@@ -370,14 +355,36 @@
 
                 <!-- Form nhập bình luận -->
                 <h4>Thêm bình luận</h4>
-                <form asp-action="AddComment" method="post">
+                <form asp-action="CreateComment" asp-controller="Product" method="post" enctype="multipart/form-data" id="comment-form">
                     <div class="form-group">
-                        <label for="content">Nội dung bình luận:</label>
-                        <textarea id="content" name="Content" class="form-control" required></textarea>
+                        <label asp-for="createcomment.Content">Nội dung bình luận:</label>
+                        <textarea asp-for="createcomment.Content" name="Content" class="form-control" required></textarea>
+                        <span asp-validation-for="createcomment.Content" class="text-danger"></span>
                     </div>
-                    <input type="hidden" name="ProductId" value="@product.Id" /> <!-- Thêm ProductId để liên kết với sản phẩm -->
+
+                    <!-- Gán ProductId và UserName từ dữ liệu của sản phẩm và hiển thị nhưng không cho nhập -->
+                    <div class="form-group" style="display:none">
+                        <label asp-for="createcomment.ProductId">ProductId:</label>
+                        <input asp-for="createcomment.ProductId" name="ProductId" class="form-control" value="@product.Id" readonly />
+                    </div>
+                    <div class="form-group" style="display:none">
+                        <label asp-for="createcomment.UserName">UserName:</label>
+                        <input asp-for="createcomment.UserName" name="UserName" class="form-control" value="@Model.userName" readonly />
+                    </div>
+                    <div class="form-group" style="display:none">
+                        <label asp-for="createcomment.ParentId">ParentId:</label>
+                        <input asp-for="createcomment.ParentId" name="ParentId" class="form-control" id="parentId" value="" readonly />
+                    </div>
+                    <!-- Gán trạng thái mặc định cho Status và hiển thị nhưng không cho nhập -->
+                    <div class="form-group" style="display:none">
+                        <label asp-for="createcomment.Status">Status:</label>
+                        <input asp-for="createcomment.Status" name="Status" class="form-control" value="1" readonly />
+                    </div>
+
                     <button type="submit" class="btn btn-primary">Gửi bình luận</button>
                 </form>
+
+
             }
         </div>
 
@@ -463,4 +470,45 @@
             console.error("Element with ID " + contentId + " not found.");
         }
     }
+
+    function toggleReplies(parentId) {
+        var repliesContainer = $('#replies-' + parentId);
+        var button = $('#toggleButton-' + parentId);
+
+        if (repliesContainer.is(':visible')) {
+            // Nếu đang hiển thị, ẩn bình luận con và đổi nút thành "Xem thêm | "
+            repliesContainer.hide();
+            button.text('Xem thêm');
+        } else {
+            // Nếu đang ẩn, tải bình luận con nếu chưa có và đổi nút thành "Ẩn bớt"
+            if (repliesContainer.html().trim() === '') {
+                $.ajax({
+                    url: '/Product/GetReply',
+                    type: 'GET',
+                    data: { parentId: parentId },
+                    success: function (data) {
+                        repliesContainer.html(data).show();
+                        button.text('Ẩn bớt');
+                    },
+                    error: function () {
+                        alert('Không thể tải phản hồi. Vui lòng thử lại sau.');
+                    }
+                });
+            } else {
+                repliesContainer.show();
+                button.text('Ẩn bớt');
+            }
+        }
+    }
+
+    function scrollToReplyForm(parentId) {
+        // Cuộn xuống phần form nhập bình luận
+        $('html, body').animate({
+            scrollTop: $('#comment-form').offset().top
+        }, 500);
+
+        // Điền ParentId vào form
+        $('input[name="ParentId"]').val(parentId);
+    }
 </script>
+

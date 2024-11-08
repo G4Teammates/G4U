@@ -80,7 +80,7 @@ namespace ProductMicroservice.Repostories
 
                 #region Kiểm tra xem tên product có trùng lặp trong cơ sở dữ liệu
                 var existingProduct = await _db.Products
-                    .AnyAsync(p => p.Name.ToLower() == Product.Name.ToLower());
+                    .AnyAsync(p => p.Name.ToLower() == Product.Name.ToLower() && p.Id != Product.Id);
                 if (existingProduct)
                 {
                     response.IsSuccess = false;
@@ -920,7 +920,7 @@ namespace ProductMicroservice.Repostories
                 }
 
                 response.Message = "Get All Products Success";
-                response.Result = products;
+                response.Result = _mapper.Map<ICollection<Products>>(products);
             }
             catch (Exception ex)
             {

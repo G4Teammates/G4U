@@ -92,5 +92,6 @@ namespace Client.Models.ComentDTO
         /// </summary>
         [BsonElement("numberOfDisLikes")]
         public int NumberOfDisLikes { get; set; }
+
     }
 }
