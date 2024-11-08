@@ -182,3 +182,82 @@
     }
 }
 
+
+
+
+/*Phân trang nè*/
+/* Style cho phần phân trang */
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    font-family: 'Poppins', sans-serif;
+}
+
+    /* Base style cho các nút phân trang */
+    .pagination .page-link {
+        font-size: 1em;
+        font-weight: bold;
+        color: #00A97F;
+        background-color: transparent;
+        border: 2px solid #00A97F; /* Viền bên ngoài */
+        padding: 8px 16px;
+        margin: 0 5px;
+        border-radius: 8px;
+        position: relative;
+        text-align: center;
+        transition: all 0.3s;
+    }
+
+        /* Hiệu ứng hover */
+        .pagination .page-link:hover {
+            background-color: #00A97F;
+            color: #fff;
+            box-shadow: 0 0 20px rgba(0, 169, 127, 0.8), 0 0 30px rgba(0, 169, 127, 0.6);
+            transform: scale(1.1);
+        }
+
+    /* Nút active */
+    .pagination .page-item.active .page-link {
+        background-color: #00A97F;
+        color: white;
+        box-shadow: 0 0 15px rgba(0, 169, 127, 1), 0 0 25px rgba(0, 169, 127, 0.8);
+    }
+
+    /* Disabled state */
+    .pagination .page-item.disabled .page-link {
+        background-color: #6c757d;
+        color: #fff;
+        pointer-events: none;
+    }
+
+/* Style viền khoa học viễn tưởng */
+.sci-fi-btn {
+    border: 2px solid #00A97F;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 169, 127, 0.4), 0 0 20px rgba(0, 169, 127, 0.3); /* Ánh sáng xung quanh */
+    position: relative;
+    overflow: hidden;
+}
+
+    .sci-fi-btn:before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, #00A97F, #800080); /* Gradient giống kiểu mẫu */
+        opacity: 0.15;
+        z-index: -1;
+        transition: opacity 0.3s ease;
+    }
+
+    .sci-fi-btn:hover:before {
+        opacity: 0.3;
+    }
+
+    .sci-fi-btn:active {
+        box-shadow: 0 0 30px rgba(0, 169, 127, 1), 0 0 50px rgba(0, 169, 127, 0.8);
+    }
+

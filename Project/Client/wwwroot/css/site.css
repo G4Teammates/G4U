@@ -577,10 +577,14 @@ hr {
 }
 
 .best-seller_most-player_top-upcoming-wishlisted h2 {
-    transition: margin 0.3s ease;
+    transition: margin 0.5s ease;
+    font-size: 1.5vw;
+    font-family: 'Poppins', sans-serif;
+    font-weight:bold;
 }
 .best-seller_most-player_top-upcoming-wishlisted h2:hover {
     margin-left: 20px;
+    color: #00A97F !important;
 }
 .header_section {
     margin-top: 50px;
@@ -612,9 +616,11 @@ hr {
     .container_gamemonth .card_gamemonth {
         width: 380px;
         border-radius: 25px;
-        background: #fff;
+        background: linear-gradient(#fff, #fff) padding-box, linear-gradient(135deg, #00A97F, #800080) border-box;
+        border: 2px solid transparent;
         box-shadow: 0 0 20px #E0F2F1;
     }
+
 
 .container_gamemonth .card_gamemonth .img_gamemonth{
     padding: 25px;
@@ -629,24 +635,28 @@ hr {
 }
 
 .card_gamemonth .info {
-    border-top: 2px solid #E0F2F1;
     position: relative;
+    border-top: 2px solid transparent;
+    background: linear-gradient(#fff, #fff) padding-box, linear-gradient(135deg, #00A97F, #800080) border-box
 }
+
 
     .card_gamemonth .info .name {
         position: absolute;
         left: 50%;
         top: -22px;
         transform: translate(-50%);
-        padding: 10px;
+        padding: 10px 20px;
         font-size: 20px;
         border-radius: 50px;
-        background: #E0F2F1;
+        background: linear-gradient(#fff, #fff) padding-box, linear-gradient(135deg, #00A97F, #800080) border-box;
+        border: 2px solid transparent;
         font-weight: bold;
         white-space: nowrap;
         box-shadow: 0px 10px 20px -10px #E0F2F1;
         font-family: 'Poppins';
     }
+
 
     .card_gamemonth .info .about {
         margin-top: 30px;
@@ -720,7 +730,7 @@ hr {
 
     .footeer_card .btn_card .btn_orther:hover {
         background: #00A97F; /* Màu nền xanh khi hover */
-        color: #fff ; /* Màu chữ trắng khi hover */
+        color: #fff !important ; /* Màu chữ trắng khi hover */
         border-color: #00A97F; /* Cập nhật viền thành màu #00A97F khi hover */
         text-decoration: none;
     }
@@ -875,34 +885,60 @@ hr {
 
 
 /*Other Product*/
-.ortherproduct{
-    width:95%;
-    min-height:500px;
-    margin:0 auto;
+.ortherproduct {
+    width: 95%;
+    min-height: 500px;
+    margin: 0 auto;
 }
+
 .lisotherproduct_name {
     width: 100%;
     min-height: 50px;
-    justify-content: center;
+    display: flex;
+    justify-content: space-between; /* Để các thẻ a cách đều nhau */
     align-items: center;
     font-size: 22px;
-    font-weight:bold;
-    text-align:center;
+    font-weight: bold;
+    text-align: center;
 }
 
-.lisotherproduct_name a{
-    color:#62e079;
-    text-decoration:none;
-    text-align:center;
-    align-items:center;
-    justify-content: center;
-    min-height:40px;
-    padding:5px;
+    .lisotherproduct_name a {
+        display: block;
+        padding: 10px 20px;
+        text-align: center;
+        text-decoration: none;
+        border: 3px solid transparent;
+        border-radius: 12px;
+        background: linear-gradient(#fff, #fff) padding-box, linear-gradient(135deg, #00A97F, #800080) border-box;
+        color: #000; /* Màu chữ mặc định */
+        font-weight: bold;
+        flex-grow: 1; /* Đảm bảo các thẻ a có độ dài bằng nhau */
+        margin: 0 5px; /* Thêm khoảng cách giữa các thẻ a */
+        text-transform: uppercase;
+    }
+
+        .lisotherproduct_name a:hover {
+            color: #fff; /* Màu chữ khi hover */
+            background: #00A97F; /* Màu nền khi hover */
+            border-color: #00A97F; /* Màu viền khi hover */
+        }
+
+.header_section {
+    width: 100%;
+    border: 3px solid transparent;
+    border-radius: 12px;
+    padding: 15px 20px;
+    background: linear-gradient(#fff, #fff) padding-box, linear-gradient(135deg, #00A97F, #800080) border-box;
+    max-width: 83.3%;
+    margin: 0 auto;
+    text-align: center;
 }
-.lisotherproduct_name a:hover{
-    background-color:#0c9a77;
-    color:white;
-}
+
+    .header_section h1 {
+        font-family: 'Poppins', sans-serif;
+        text-transform: uppercase;
+        color: #00A97F;
+    }
 
 
 /*#foryou, #popular, #free, #new, #more {
@@ -1261,4 +1297,57 @@ ul{
 
 
 
+
+
+.product-card {
+    display: flex;
+    border: 1px solid #ddd; /* Viền xung quanh */
+    border-radius: 8px; /* Bo góc */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Đổ bóng */
+    transition: box-shadow 0.3s ease, transform 0.3s ease; /* Hiệu ứng khi hover */
+    text-decoration: none; /* Xóa underline cho link */
+    width: 100%;
+    padding: 10px 0; /* Tạo khoảng cách top và bottom */
+}
+
+.product-content {
+    display: flex; /* Sắp xếp các phần tử nằm theo hàng ngang */
+    align-items: center; /* Căn giữa theo chiều dọc */
+    width: 100%; /* Chiếm toàn bộ chiều rộng */
+}
+
+.image-container {
+    width: 80px; /* Giảm kích thước của hình ảnh */
+    height: 80px; /* Giảm kích thước của hình ảnh */
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 10px; /* Khoảng cách giữa hình ảnh và tên sản phẩm */
+    padding: 5px 0; /* Thêm padding top và bottom */
+}
+
+.product-name {
+    font-size: 14px;
+    color: #333;
+    font-weight: bold;
+    text-align: left; /* Căn trái tên sản phẩm */
+    flex: 1; /* Để tên sản phẩm chiếm không gian còn lại */
+}
+
+.product-card:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Đổ bóng mạnh hơn khi hover */
+    transform: translateY(-5px); /* Di chuyển nhẹ lên khi hover */
+}
+
+    .product-card:hover .product-name {
+        color: #00A97F; /* Thay đổi màu chữ khi hover */
+    }
+
+.product-card img {
+    width: 100%; /* Giới hạn chiều rộng hình ảnh */
+    height: 100%; /* Giới hạn chiều cao hình ảnh */
+    object-fit: cover; /* Đảm bảo hình ảnh không bị biến dạng */
+    display: block;
+}
 
