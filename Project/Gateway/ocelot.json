@@ -479,7 +479,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7159
+          "Port": 7105
         }
       ],
       //"AuthenticationOptions": {
@@ -599,7 +599,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7159
+          "Port": 7250
         }
       ],
       //"AuthenticationOptions": {

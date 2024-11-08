@@ -3,10 +3,12 @@ using Client.Models.AuthenModel;
 using Client.Models.CategorisDTO;
 using Client.Models.ComentDTO;
 using Client.Models.ProductDTO;
+using Client.Models.UserDTO;
 using Client.Repositories.Interfaces;
 using Client.Repositories.Interfaces.Categories;
 using Client.Repositories.Interfaces.Comment;
 using Client.Repositories.Interfaces.Product;
+using Client.Repositories.Interfaces.User;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
@@ -15,13 +17,14 @@ using System.Security.Claims;
 
 namespace Client.Controllers
 {
-    public class ProductController(IHelperService helperService, IRepoProduct repoProduct, ICategoriesService categoryService, ICommentService commentService) : Controller
+    public class ProductController(IHelperService helperService, IRepoProduct repoProduct, ICategoriesService categoryService, ICommentService commentService, IUserService userService) : Controller
     {
 
         private readonly IHelperService _helperService = helperService;
         public readonly IRepoProduct _productService = repoProduct;
         public readonly ICategoriesService _categoryService = categoryService;
         public readonly ICommentService _commentService = commentService;
+        public readonly IUserService _userService = userService;
         public async Task<IActionResult> ProductIndex()
         {
             return View();
@@ -138,7 +141,7 @@ namespace Client.Controllers
             };*/
             ProductViewModel productViewModel = new ProductViewModel();
             ResponseModel? response = await _productService.GetDetailByIdAsync(id);
-            ResponseModel? response1 = await _commentService.GetByproductId(id, 1, 9);
+            ResponseModel? response1 = await _commentService.GetByproductId(id, 1, 9999);
             ResponseModel? response2 = await _productService.GetAllProductAsync(1,99);
 
             if (response != null && response.IsSuccess)
@@ -242,10 +245,44 @@ namespace Client.Controllers
             }
 
         }
-        public IActionResult Collection()
-        {
-            return View();
-        }
 
+
+        public async Task<IActionResult> Collection()
+        {
+            IEnumerable<Claim> claim = HttpContext.User.Claims;
+            ProductViewModel productViewModel = new ProductViewModel();
+            string un = claim.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value!;
+            string i = claim.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value!;
+            ResponseModel? ProResponese = await _productService.GetAllProductsByUserName(un);
+            ResponseModel? WishListResponse = await _userService.GetAllProductsInWishList(i);
+            /*ResponseModel? response2 = await _userService.GetUserAsync(i);*/
+
+            if (ProResponese != null && ProResponese.IsSuccess)
+            {
+                // Deserialize vào lớp trung gian với kiểu ProductModel
+                //ProductModel? model = JsonConvert.DeserializeObject<ProductModel>(Convert.ToString(response.Result));
+                List<ProductModel>? ListProduct = JsonConvert.DeserializeObject<List<ProductModel>>(Convert.ToString(ProResponese.Result));
+                /*List<UsersDTO>? model1 = JsonConvert.DeserializeObject<List<UsersDTO>>(Convert.ToString(response1.Result));*/
+                List<WishlistModel>? Wishlist = JsonConvert.DeserializeObject<List<WishlistModel>>(Convert.ToString(WishListResponse.Result));
+
+                if (ListProduct != null)
+                {
+
+                    productViewModel.Product = ListProduct ?? new List<ProductModel>();
+                    /*productViewModel.User = model1 ?? new List<UsersDTO>();*/
+                    productViewModel.Wishlist = Wishlist ?? new List<WishlistModel>();
+                    productViewModel.userName = claim.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value!;
+                    productViewModel.userID = claim.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value!;
+                }
+            }
+            else
+            {
+                TempData["error"] = ProResponese?.Message + WishListResponse .Message?? "Đã có lỗi xảy ra khi lấy thông tin sản phẩm.";
+                return NotFound();
+            }
+
+            // Trả về View với ProductViewModel
+            return View(productViewModel);
+        }
     }
 }
