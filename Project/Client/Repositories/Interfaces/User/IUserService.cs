@@ -14,5 +14,6 @@ namespace Client.Repositories.Interfaces.User
         Task<ResponseModel> DeleteUser(string id);
         Task<ResponseModel>? FindUsers(string? query);
         Task<ResponseModel> ChangeStatus(string id, UserStatus status);
+        Task<ResponseModel> GetAllProductsInWishList(string id);
     }
 }

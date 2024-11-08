@@ -1,4 +1,7 @@
-﻿<style>
+﻿@using Client.Models.ProductDTO
+@model ProductViewModel
+
+<style>
 /*     body {
         background-color: #1b2838;
         color: #c7d5e0;
@@ -82,47 +85,43 @@
 </style>
 
 <div class="wishlist-container">
-    <h1 class="text-success"><i class="fas fa-heart"></i> Your Wishlist</h1>
+    <h1 class="text-success"><i class="fas fa-heart"></i> Your Library</h1>
     <div class="collections">
         <div class="collection-card add-new">
             + CREATE A NEW WISHLIST
         </div>
-        <div class="collection-card">
-            <img src="~/Image/game.jpg" alt="Favorites">
-            <div class="text">
-                <p class="title text-white">Favorites</p>
-            </div>
-        </div>
-        <div class="collection-card">
-            <img src="~/Image//game.jpg" alt="Heheh">
-            <div class="text">
-                <p class="title text-white">Heheh</p>
-            </div>
-        </div>
-        <div class="collection-card">
-            <img src="~/Image//game.jpg" alt="Heheh">
-            <div class="text">
-                <p class="title text-white">Heheh</p>
-            </div>
-        </div>
+        @if (Model.Product != null)
+        { foreach (var product in Model.Product)
+            {
                 <div class="collection-card">
-            <img src="~/Image//game.jpg" alt="Heheh">
-            <div class="text">
-                <p class="title text-white">Heheh</p>
-            </div>
-        </div>
-                <div class="collection-card">
-            <img src="~/Image//game.jpg" alt="Heheh">
-            <div class="text">
-                <p class="title text-white">Heheh</p>
-            </div>
-        </div>
-                <div class="collection-card">
-            <img src="~/Image//game.jpg" alt="Heheh">
-            <div class="text">
-                <p class="title text-white">Heheh</p>
-            </div>
-        </div>
+                    @if (product.Links != null)
+                    {
+                        string firstImageUrl = null; // Biến để lưu URL hình ảnh đầu tiên
+
+                        foreach (var link in product.Links) // Lặp qua từng đối tượng LinkModel
+                        {
+                            if (link.Url.Contains("cloudinary"))
+                            {
+                                firstImageUrl = link.Url; // Lưu URL hình ảnh đầu tiên
+                                break; // Thoát khỏi vòng lặp khi đã tìm thấy
+                            }
+                        }
+
+                        // Hiển thị hình ảnh đầu tiên nếu có
+                        if (firstImageUrl != null)
+                        {
+                            <img src="@firstImageUrl" alt="Cloudinary Image" />
+                        }
+
+
+                    }
+                    <div class="text">
+                        <p class="title text-white">@product.Name</p>
+                    </div>
+                </div>
+            }
+        }
+        
 
     </div>
 </div>
@@ -134,42 +133,20 @@
         <div class="collection-card add-new">
             + CREATE A NEW WISHLIST
         </div>
-        <div class="collection-card">
-            <img src="~/Image/game.jpg" alt="Favorites">
-            <div class="text">
-                <p class="title text-white">Favorites</p>
-            </div>
-        </div>
-        <div class="collection-card">
-            <img src="~/Image//game.jpg" alt="Heheh">
-            <div class="text">
-                <p class="title text-white">Heheh</p>
-            </div>
-        </div>
-        <div class="collection-card">
-            <img src="~/Image//game.jpg" alt="Heheh">
-            <div class="text">
-                <p class="title text-white">Heheh</p>
-            </div>
-        </div>
-        <div class="collection-card">
-            <img src="~/Image//game.jpg" alt="Heheh">
-            <div class="text">
-                <p class="title text-white">Heheh</p>
-            </div>
-        </div>
-        <div class="collection-card">
-            <img src="~/Image//game.jpg" alt="Heheh">
-            <div class="text">
-                <p class="title text-white">Heheh</p>
-            </div>
-        </div>
-        <div class="collection-card">
-            <img src="~/Image//game.jpg" alt="Heheh">
-            <div class="text">
-                <p class="title text-white">Heheh</p>
-            </div>
-        </div>
+        @if (Model.Wishlist != null)
+        {
+            foreach (var image in Model.Wishlist)
+            {
+                <div class="collection-card">
+                    <img src="@image.ProductImage" alt="Favorites">
+                    <div class="text">
+                        <p class="title text-white">@image.ProductName</p>
+                    </div>
+                </div>
+
+            }
+
+        }
 
     </div>
 </div>

@@ -299,7 +299,7 @@
 
                 <h3 class="mt-4">Comment</h3>
 
-                @if (Model.CommentDTOModels != null && Model.CommentDTOModels.Any())
+                @if (Model.CommentDTOModels != null)
                 {
                     foreach (var comment in Model.CommentDTOModels)
                     {
@@ -343,6 +343,7 @@
 
                                 <!-- Phần chứa các bình luận con -->
                                 <div id="replies-@comment.Id" class="ms-5" style="display: none;"></div>
+
                             </div>
                         }
                     }
@@ -470,7 +471,6 @@
         }
     }
 
-
     function toggleReplies(parentId) {
         var repliesContainer = $('#replies-' + parentId);
         var button = $('#toggleButton-' + parentId);
@@ -511,3 +511,4 @@
         $('input[name="ParentId"]').val(parentId);
     }
 </script>
+

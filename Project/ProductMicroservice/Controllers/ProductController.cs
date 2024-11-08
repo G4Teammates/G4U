@@ -391,7 +391,9 @@ namespace ProductMicroService.Controllers
             catch (Exception ex)
             {
                 _responseDTO.IsSuccess = false;
-                _responseDTO.Message = "An error occurred while sortting the Products: " + ex.Message;
+
+                _responseDTO.Message = "An error occurred while GetAllProductsByUserName the Products: " + ex.Message;
+
                 return StatusCode(500, _responseDTO); // Trả về mã lỗi 500 với thông báo lỗi chi tiết
             }
         }
