@@ -2,6 +2,7 @@
 
 using Client.Models.CategorisDTO;
 using Client.Models.ComentDTO;
+using Client.Models.UserDTO;
 
 namespace Client.Models.ProductDTO
 {
@@ -17,11 +18,16 @@ namespace Client.Models.ProductDTO
         public ICollection<ProductModel>? Product { get; set; }
 
         public ProductModel? Prod { get; set; }
+       /* public ICollection<UsersDTO>? User { get; set; }*/
+
+        public ICollection<WishlistModel>? Wishlist { get; set; }
+       /* public UsersDTO? User1 { get; set; }*/
         public int pageNumber { get; set; }
         public int pageSize { get; set; }
         public int totalItem { get; set; }
         public int pageCount { get; set; }
         public string userName { get; set; }
+        public string userID {  get; set; }
 
     }
 }

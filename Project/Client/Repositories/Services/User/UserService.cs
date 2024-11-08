@@ -84,5 +84,14 @@ namespace Client.Repositories.Services.User
                 Url = StaticTypeApi.APIGateWay + "/User/status/" + id
             });
         }
+
+        public async Task<ResponseModel> GetAllProductsInWishList(string id)
+        {
+            return await _baseService.SendAsync(new RequestModel()
+            {
+                ApiType = StaticTypeApi.ApiType.GET,
+                Url = $"{StaticTypeApi.APIGateWay}/User/getAllProductsInWishList/{id}"
+            });
+        }
     }
 }
