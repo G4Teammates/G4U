@@ -920,7 +920,7 @@ namespace ProductMicroservice.Repostories
                 }
 
                 response.Message = "Get All Products Success";
-                response.Result = products;
+                response.Result = _mapper.Map<ICollection<Products>>(products);
             }
             catch (Exception ex)
             {

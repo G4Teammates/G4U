@@ -117,5 +117,13 @@ namespace Client.Repositories.Services.Comment
                 Url = StaticTypeApi.APIGateWay + "/Comment"
             });
         }
+        public async Task<ResponseModel> GetByParentIdAsync(string parentId, int? pageNumber, int pageSize)
+        {
+            return await _baseService.SendAsync(new RequestModel()
+            {
+                ApiType = StaticTypeApi.ApiType.GET,
+                Url = $"{StaticTypeApi.APIGateWay}/Comment/ParentId/{parentId}?page=" + pageNumber.ToString() + "&pageSize=" + pageSize.ToString()
+            });
+        }
     }
 }

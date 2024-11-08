@@ -1,4 +1,5 @@
-﻿using Client.Models;
+﻿using Azure;
+using Client.Models;
 using Client.Models.AuthenModel;
 using Client.Models.CategorisDTO;
 using Client.Models.ComentDTO;
@@ -129,34 +130,70 @@ namespace Client.Controllers
         public async Task<IActionResult> ProductDetail(string id)
         {
             IEnumerable<Claim> claim = HttpContext.User.Claims;
-            /*UserClaimModel userClaim = new UserClaimModel
-            {
-                Id = claim.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value!,
-                Username = claim.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value!,
-                Email = claim.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value!,
-                Role = claim.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value!,
-            };*/
             ProductViewModel productViewModel = new ProductViewModel();
-            ResponseModel? response = await _productService.GetDetailByIdAsync(id);
-            ResponseModel? response1 = await _commentService.GetByproductId(id, 1, 9);
-            ResponseModel? response2 = await _productService.GetAllProductAsync(1,99);
+            ResponseModel? productReponse = await _productService.GetDetailByIdAsync(id);
+            ResponseModel? cmtResponse = await _commentService.GetByproductId(id, 1, 9999);
+            ResponseModel? productsReponse = await _productService.GetAllProductAsync(1,99);
 
-            if (response != null && response.IsSuccess)
+            if (productReponse != null && productReponse.IsSuccess)
             {
-                // Deserialize vào lớp trung gian với kiểu ProductModel
-                ProductModel? model = JsonConvert.DeserializeObject<ProductModel>(Convert.ToString(response.Result));
-                List<ProductModel>? model2 = JsonConvert.DeserializeObject<List<ProductModel>>(Convert.ToString(response2.Result));
-                // Deserialize response1.Result thành danh sách CommentDTOModel
-                List<CommentDTOModel>? comments = JsonConvert.DeserializeObject<List<CommentDTOModel>>(Convert.ToString(response1.Result));
+                
+                ProductModel? ProductModel = JsonConvert.DeserializeObject<ProductModel>(Convert.ToString(productReponse.Result));
 
-                if (model != null)
+                List<ProductModel>? ProductsModel = JsonConvert.DeserializeObject<List<ProductModel>>(Convert.ToString(productsReponse.Result));
+                
+                List<CommentDTOModel>? commentsModel = JsonConvert.DeserializeObject<List<CommentDTOModel>>(Convert.ToString(cmtResponse.Result));
+
+                if (ProductModel != null)
                 {
                     // Gán model vào ProductViewModel
-                    productViewModel.Prod = new ProductModel {Name = model.Name, Price = model.Price, UserName = model.UserName, Description = model.Description, Categories = model.Categories, CreatedAt = model.CreatedAt, UpdatedAt = model.UpdatedAt, Platform = model.Platform, Interactions = model.Interactions, Links = model.Links, Sold = model.Sold, Status = model.Status, Id = model.Id, Discount = model.Discount, QrCode = model.QrCode };
+                    productViewModel.Prod = new ProductModel {Name = ProductModel.Name,
+                                                                Price = ProductModel.Price,
+                                                                UserName = ProductModel.UserName,
+                                                                Description = ProductModel.Description,
+                                                                Categories = ProductModel.Categories,
+                                                                CreatedAt = ProductModel.CreatedAt,
+                                                                UpdatedAt = ProductModel.UpdatedAt,
+                                                                Platform = ProductModel.Platform,
+                                                                Interactions = ProductModel.Interactions,
+                                                                Links = ProductModel.Links,
+                                                                Sold = ProductModel.Sold,
+                                                                Status = ProductModel.Status,
+                                                                Id = ProductModel.Id,
+                                                                Discount = ProductModel.Discount,
+                                                                QrCode = ProductModel.QrCode };
 
-                    productViewModel.Product = model2 ?? new List<ProductModel>();
+                    productViewModel.Product = ProductsModel ?? new List<ProductModel>();
                     // Gán danh sách comments vào ProductViewModel
-                    productViewModel.CommentDTOModels = comments ?? new List<CommentDTOModel>();
+                    productViewModel.CommentDTOModels = commentsModel ?? new List<CommentDTOModel>();
+
+                    productViewModel.userName = claim.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value!;
+                }
+            }
+            else
+            {
+                TempData["error"] = productReponse?.Message ?? "Đã có lỗi xảy ra khi lấy thông tin sản phẩm.";
+                return NotFound();
+            }
+
+            // Trả về View với ProductViewModel
+            return View(productViewModel);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetReply(string parentId)
+        {
+            IEnumerable<Claim> claim = HttpContext.User.Claims;
+            ProductViewModel productViewModel = new ProductViewModel();
+            ResponseModel? response = await _commentService.GetByParentIdAsync(parentId,1,9999);
+            if (response != null && response.IsSuccess)
+            {
+                List<CommentDTOModel>? comments = JsonConvert.DeserializeObject<List<CommentDTOModel>>(Convert.ToString(response.Result));
+
+                if (comments != null)
+                {
+                    // Gán danh sách comments vào ProductViewModel
+                    productViewModel.Reply = comments ?? new List<CommentDTOModel>();
                     productViewModel.userName = claim.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value!;
                 }
             }
@@ -167,9 +204,8 @@ namespace Client.Controllers
             }
 
             // Trả về View với ProductViewModel
-            return View(productViewModel);
+            return PartialView("_CommentReplies", productViewModel);
         }
-
 
         [HttpPost]
         public async Task<IActionResult> SortProducts(string sort, int? page, int pageSize = 5)
