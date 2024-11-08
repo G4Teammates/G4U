@@ -1,0 +1,77 @@
+﻿@using Client.Models.ProductDTO
+@model ProductViewModel
+
+@foreach (var reply in Model.Reply)
+{
+    <div class="comment">
+        <div class="row">
+            <div class="col-md-1 comment-icon d-flex justify-content-center mt-5">
+                <i class="fa-solid fa-user-secret"></i>
+            </div>
+            <div class="col-md-11 comment-body">
+                <div class="comment-header">
+                    <p><strong>@reply.UserName</strong></p>
+                    <p class="created-at">@reply.CreatedAt.ToString("g")</p>
+                </div>
+                <div class="comment-content">
+                    <p>@reply.Content</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Nút "Xem thêm" -->
+            <div class=" col-6 text-start">
+                <a style="width:50%; text-decoration:none; color:black" id="toggleButton-@reply.Id" onclick="toggleReplies('@reply.Id')">Xem thêm | </a>
+                <!-- Nút "Reply" -->
+                <a style="width:50%; text-decoration:none; color:black" onclick="scrollToReplyForm('@reply.Id')">Reply</a>
+            </div>
+            <div class="col-6 justify-content-end">
+                <div class="col-md-2 comment-footer text-end">
+                    <p class="likes">
+                        <small>
+                            @reply.NumberOfLikes <i class="fa-solid fa-thumbs-up"></i>
+                            @reply.NumberOfDisLikes <i class="fa-solid fa-thumbs-down"></i>
+                        </small>
+                    </p>
+                </div>
+            </div>         
+        </div>
+
+        <!-- Phần chứa các bình luận con -->
+        <div id="replies-@reply.Id" class="ms-5" style="display: none;"></div>
+    </div>
+}
+
+<script>
+    function toggleReplies(parentId) {
+        var repliesContainer = $('#replies-' + parentId);
+        var button = $('#toggleButton-' + parentId);
+
+        if (repliesContainer.is(':visible')) {
+            // Nếu đang hiển thị, ẩn bình luận con và đổi nút thành "Xem thêm | "
+            repliesContainer.hide();
+            button.text('Xem thêm');
+        } else {
+            // Nếu đang ẩn, tải bình luận con nếu chưa có và đổi nút thành "Ẩn bớt"
+            if (repliesContainer.html().trim() === '') {
+                $.ajax({
+                    url: '/Product/GetReply',
+                    type: 'GET',
+                    data: { parentId: parentId },
+                    success: function (data) {
+                        repliesContainer.html(data).show();
+                        button.text('Ẩn bớt');
+                    },
+                    error: function () {
+                        alert('Không thể tải phản hồi. Vui lòng thử lại sau.');
+                    }
+                });
+            } else {
+                repliesContainer.show();
+                button.text('Ẩn bớt');
+            }
+        }
+    }
+
+</script>

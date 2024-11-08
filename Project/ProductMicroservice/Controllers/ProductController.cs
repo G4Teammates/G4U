@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Azure;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -383,14 +384,16 @@ namespace ProductMicroService.Controllers
                 {
                     _responseDTO.Result = Pros.Result;
                     return Ok(_responseDTO);
-                }                 
+                }
                 _responseDTO.Message = Pros.Message;
                 return BadRequest(_responseDTO.Message);
             }
             catch (Exception ex)
             {
                 _responseDTO.IsSuccess = false;
-                _responseDTO.Message = "An error occurred while filtering the Products: " + ex.Message;
+
+                _responseDTO.Message = "An error occurred while GetAllProductsByUserName the Products: " + ex.Message;
+
                 return StatusCode(500, _responseDTO); // Trả về mã lỗi 500 với thông báo lỗi chi tiết
             }
         }

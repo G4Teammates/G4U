@@ -610,6 +610,21 @@
       "UpstreamHttpMethod": [ "Get" ]
     },
 
+    //get list by parentid
+    {
+      "DownstreamPathTemplate": "/api/Comment/ParentId/{id}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7250
+        }
+      ],
+      "UpstreamPathTemplate": "/Comment/ParentId/{id}",
+      "UpstreamHttpMethod": [ "Get" ]
+    },
+
+
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //                                                                                                                    //
