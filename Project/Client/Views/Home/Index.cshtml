@@ -81,9 +81,13 @@
     </div>
 }
 <div class="gamemonth" style="margin-top:3vw;">
-    <section class="header_section">
-        <h1 style="font-family: 'Poppins', sans-serif; text-transform:uppercase;">Game Of The Month</h1>
+    <section class="header_section" style="width:100%;border: 3px solid transparent; border-radius: 12px; padding: 15px 20px; background: linear-gradient(#fff, #fff) padding-box, linear-gradient(135deg, #00A97F, #800080) border-box; max-width: 80%; margin: 0 auto;">
+        <h1 style="font-family: 'Poppins', sans-serif; text-transform: uppercase; color: #00A97F; text-align: center;">
+            Game Of The Month
+        </h1>
     </section>
+
+
     <div class="wrapper_gamemonth">
         <div class="slider_gamemonth">
             <div class="container_gamemonth owl-carousel owl-theme">
@@ -123,7 +127,10 @@
                                 }
                             </div>
                             <div class="info">
-                                <span class="name">@product.Name</span>
+                                <div class="name-container">
+                                    <span class="name">@product.Name</span>
+                                </div>
+                                
                                 <p class="about">
                                     @(product.Description.Length > 100
                                         ? product.Description.Substring(0, 100) + "..."
@@ -135,7 +142,7 @@
                                     <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@product.Id" class="btn_orther">Read More</a>
                                 </div>
                                 <div class="col-md-3"></div>
-                                <div title="Wishlist" class="col-md-3 heart-container" style="width:20px;height:20px;">
+                                <div title="Wishlist" class="col-md-3 heart-container" style="width:20px;height:20px;--heart-color: Black;position: relative;width: 20px;height: 20px;transition: .3s;display: flex;justify-content: center;align-items: center;margin: 0 auto;">
                                     <input id="Give-It-An-Id" class="checkbox" type="checkbox">
                                     <div class="svg-container">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="svg-outline" viewBox="0 0 24 24">
@@ -230,7 +237,7 @@
                             <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@product.Id" class="col-md-6 btn_orther ms-2 text-center">Read More</a>
                             <div class="col-md-3"></div>
                             @* Day la trai tym ne *@
-                            <div title="Wishlist" class="col-md-3 heart-container" style="width:20px;height:20px;">
+                            <div title="Wishlist" class="col-md-3 heart-container" style="width:20px;height:20px;  ">
                                 <input id="Give-It-An-Id" class="checkbox" type="checkbox">
                                 <div class="svg-container">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="svg-outline" viewBox="0 0 24 24">
@@ -262,12 +269,14 @@
 
 
 <div class="ortherproduct" style="margin-top:10vw;">
-    <section class="header_section">
-        <h1 style="font-family: 'Poppins', sans-serif; text-transform:uppercase;">Orther Product</h1>
-    </section>
 
+    <section class="header_section" style="width:100%;border: 3px solid transparent; border-radius: 12px; padding: 15px 20px; background: linear-gradient(#fff, #fff) padding-box, linear-gradient(135deg, #00A97F, #800080) border-box; max-width: 83.3%; margin: 0 auto;">
+        <h1 style="font-family: 'Poppins', sans-serif; text-transform: uppercase; color: #00A97F; text-align: center;">
+            Orther Product
+        </h1>
+    </section>
     <!-- Danh sách Nút Điều Hướng -->
-    <div class="lisotherproduct_name row mt-3" style="font-family: 'Poppins', sans-serif; text-transform:uppercase;">
+    <div class="lisotherproduct_name row mt-3 ms-1" style="font-family: 'Poppins', sans-serif; text-transform:uppercase;">
         <a class="col-6 col-sm-2 col-md-2" href="#foryou">For You</a>
         <a class="col-6 col-sm-2 col-md-2" href="#popular">Popular</a>
         <a class="col-4 col-sm-2 col-md-2" href="#free">Free</a>
@@ -280,9 +289,11 @@
 
 
 
-    <section id="popular" class="mt-5">
+    <section id="popular" style="margin-top:5vw;">
         <div class="d-flex justify-content-between align-items-center row">
-            <h3 class="col-8 col-sm-8 col-md-8 ms-4 fw-bold" style="font-family: 'Poppins', sans-serif; text-transform:uppercase;">Popular</h3>
+            <h3 class="col-2 col-sm-2 col-md-2 ms-3 fw-bold text-center" style="display: inline-block; border: 3px solid transparent; border-radius: 12px; padding: 15px 20px; background: linear-gradient(#fff, #fff) padding-box, linear-gradient(135deg, #00A97F, #800080) border-box; font-family: 'Poppins', sans-serif; text-transform: uppercase;">
+                Popular
+            </h3>
             <div class="col-3 col-sm-3 col-md-3 footeer_card">
                 <div class="btn_card" style="display:flex;justify-content:end;" style="width:200px;font-size:font: 15px Montserrat;">
                     <a href="#" class="btn_orther" style="width:200px;font: 15px Montserrat;">View More</a>
@@ -354,7 +365,7 @@
 
     <section id="free" style="margin-top:5vw;">
         <div class="d-flex justify-content-between align-items-center row">
-            <h3 class="col-8 col-sm-8 col-md-8 ms-4 fw-bold" style="font-family: 'Poppins', sans-serif; text-transform:uppercase;">Free</h3>
+            <h3 class="col-2 col-sm-2 col-md-2 ms-3 fw-bold text-center" style="border: 3px solid transparent; border-radius: 12px; padding: 15px 20px; background: linear-gradient(#fff, #fff) padding-box, linear-gradient(135deg, #00A97F, #800080) border-box;font-family: 'Poppins', sans-serif; text-transform:uppercase;">Free</h3>
             <div class="col-3 col-sm-3 col-md-3 footeer_card">
                 <div class="btn_card" style="display:flex;justify-content:end;" style="width:200px;font-size:font: 15px Montserrat;">
                     <a href="#" class="btn_orther" style="width:200px;font: 15px Montserrat;">View More</a>
@@ -426,7 +437,7 @@
 
     <section id="new" style="margin-top:5vw;">
         <div class="d-flex justify-content-between align-items-center row">
-            <h3 class="col-8 col-sm-8 col-md-8 ms-4 fw-bold" style="font-family: 'Poppins', sans-serif; text-transform:uppercase;">New</h3>
+            <h3 class="col-2 col-sm-2 col-md-2 ms-3 fw-bold text-center" style="border: 3px solid transparent; border-radius: 12px; padding: 15px 20px; background: linear-gradient(#fff, #fff) padding-box, linear-gradient(135deg, #00A97F, #800080) border-box;font-family: 'Poppins', sans-serif; text-transform:uppercase;">New</h3>
             <div class="col-3 col-sm-3 col-md-3 footeer_card">
                 <div class="btn_card" style="display:flex;justify-content:end;" style="width:200px;font-size:font: 15px Montserrat;">
                     <a href="#" class="btn_orther" style="width:200px;font: 15px Montserrat;">View More</a>
@@ -497,7 +508,7 @@
 
     <section id="more" style="margin-top:5vw;">
         <div class="d-flex justify-content-between align-items-center row">
-            <h3 class="col-8 col-sm-8 col-md-8 ms-4 fw-bold" style="font-family: 'Poppins', sans-serif; text-transform:uppercase;">More</h3>
+            <h3 class="col-2 `col-sm-2 col-md-2 ms-3 fw-bold text-center" style="border: 3px solid transparent; border-radius: 12px; padding: 15px 20px; background: linear-gradient(#fff, #fff) padding-box, linear-gradient(135deg, #00A97F, #800080) border-box;font-family: 'Poppins', sans-serif; text-transform:uppercase;">More</h3>
             <div class="col-3 col-sm-3 col-md-3 footeer_card">
                 <div class="btn_card" style="display:flex;justify-content:end;" style="width:200px;font-size:font: 15px Montserrat;">
                     <a href="#" class="btn_orther" style="width:200px;font: 15px Montserrat;">View More</a>
@@ -574,7 +585,9 @@
 <div class="best-seller_most-player_top-upcoming-wishlisted row" style="margin-top:7vw;">
     <div class="col-12 col-sm-12 col-md-4" style="margin:0 auto;">
         <h2>
-            <a href="" style="text-decoration:none;color:black;">Top Sellers <i class="fa-solid fa-angle-right"></i></a>
+            <a href="" style="text-decoration:none;color:black; display: inline-block; border: 3px solid transparent; border-radius: 12px; padding: 15px 20px; background: linear-gradient(#fff, #fff) padding-box, linear-gradient(135deg, #00A97F, #800080) border-box; font-family: 'Poppins', sans-serif; text-transform: uppercase;">
+                Top Sellers <i class="fa-solid fa-angle-right"></i>
+            </a>
         </h2>
         <div class="row ">
             @if (Model.Product != null)
@@ -629,8 +642,11 @@
 
     <div class="col-12 col-sm-12 col-md-4" style="margin:0 auto;">
         <h2>
-            <a href="" style="text-decoration:none;color:black;">Most Played<i class="fa-solid fa-angle-right"></i></a>
+            <a href="" style="text-decoration:none;color:black; display: inline-block; border: 3px solid transparent; border-radius: 12px; padding: 15px 20px; background: linear-gradient(#fff, #fff) padding-box, linear-gradient(135deg, #00A97F, #800080) border-box; font-family: 'Poppins', sans-serif; text-transform: uppercase;">
+                Most Played <i class="fa-solid fa-angle-right"></i>
+            </a>
         </h2>
+
         <div class="row">
             @if (Model.Product != null)
             {
@@ -684,7 +700,9 @@
 
     <div class="col-12 col-sm-12 col-md-4" style="margin:0 auto;">
         <h2>
-            <a href="" style="text-decoration:none;color:black;">Top Upcoming Wishlisted <i class="fa-solid fa-angle-right"></i></a>
+            <a href="" style="text-decoration:none;color:black; display: inline-block; border: 3px solid transparent; border-radius: 12px; padding: 15px 20px; background: linear-gradient(#fff, #fff) padding-box, linear-gradient(135deg, #00A97F, #800080) border-box; font-family: 'Poppins', sans-serif; text-transform: uppercase;">
+                Top Upcoming Wishlisted <i class="fa-solid fa-angle-right"></i>
+            </a>
         </h2>
         <div class="row">
             @if (Model.Product != null)
