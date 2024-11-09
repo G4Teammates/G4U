@@ -479,7 +479,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7159
+          "Port": 7105
         }
       ],
       //"AuthenticationOptions": {
@@ -599,7 +599,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7159
+          "Port": 7250
         }
       ],
       //"AuthenticationOptions": {
@@ -609,6 +609,21 @@
       "UpstreamPathTemplate": "/Comment/search={searchString}",
       "UpstreamHttpMethod": [ "Get" ]
     },
+
+    //get list by parentid
+    {
+      "DownstreamPathTemplate": "/api/Comment/ParentId/{id}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7250
+        }
+      ],
+      "UpstreamPathTemplate": "/Comment/ParentId/{id}",
+      "UpstreamHttpMethod": [ "Get" ]
+    },
+
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

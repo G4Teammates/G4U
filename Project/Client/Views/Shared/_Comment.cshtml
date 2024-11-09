@@ -1,0 +1,33 @@
+﻿@model Client.Models.ComentDTO.CommentDTOModel
+
+@if (Model.ParentId != null){}
+<div class="comment  " id="commentContent-@Model.Id">
+    <div class="row">
+        <div class="col-md-1 comment-icon">
+            <i class="fa-solid fa-user-secret"></i>
+        </div>
+        <div class="col-md-11 comment-body">
+            <div class="comment-header">
+                <p><strong>@Model.UserName</strong></p>
+                <p class="created-at">@Model.CreatedAt.ToString("g")</p>
+            </div>
+            <div class="comment-content">
+                <p>@Model.Content</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <a class="col-md-10" href="#" id="toggleButton-@Model.Id" onclick="Xemthem('commentContent-@Model.Id', 'toggleButton-@Model.Id'); return false;" style="text-decoration:none; color:gray;">Nội dung phản hồi...</a>
+        <div class="col-md-2 comment-footer">
+            <p class="likes">
+                <small>
+                    @Model.NumberOfLikes <i class="fa-solid fa-thumbs-up"></i>
+                    @Model.NumberOfDisLikes <i class="fa-solid fa-thumbs-down"></i>
+                </small>
+            </p>
+        </div>
+    </div>
+
+
+</div>

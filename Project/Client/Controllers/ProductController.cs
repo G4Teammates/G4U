@@ -1,25 +1,31 @@
-﻿using Client.Models;
+﻿using Azure;
+using Client.Models;
+using Client.Models.AuthenModel;
 using Client.Models.CategorisDTO;
 using Client.Models.ComentDTO;
 using Client.Models.ProductDTO;
+using Client.Models.UserDTO;
 using Client.Repositories.Interfaces;
 using Client.Repositories.Interfaces.Categories;
 using Client.Repositories.Interfaces.Comment;
 using Client.Repositories.Interfaces.Product;
+using Client.Repositories.Interfaces.User;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace Client.Controllers
 {
-    public class ProductController(IHelperService helperService, IRepoProduct repoProduct, ICategoriesService categoryService, ICommentService commentService) : Controller
+    public class ProductController(IHelperService helperService, IRepoProduct repoProduct, ICategoriesService categoryService, ICommentService commentService, IUserService userService) : Controller
     {
 
         private readonly IHelperService _helperService = helperService;
         public readonly IRepoProduct _productService = repoProduct;
         public readonly ICategoriesService _categoryService = categoryService;
         public readonly ICommentService _commentService = commentService;
+        public readonly IUserService _userService = userService;
         public async Task<IActionResult> ProductIndex()
         {
             return View();
@@ -108,6 +114,7 @@ namespace Client.Controllers
                     productViewModel.totalItem = data.Count;
                     productViewModel.pageSize = pageSize;
                     productViewModel.pageCount = (int)Math.Ceiling(total.Count / (double)pageSize);
+                    TempData["success"] = "Filter Products successfully";
                 }
                 else
                 {
@@ -125,27 +132,74 @@ namespace Client.Controllers
      
         public async Task<IActionResult> ProductDetail(string id)
         {
+            IEnumerable<Claim> claim = HttpContext.User.Claims;
             ProductViewModel productViewModel = new ProductViewModel();
-            ResponseModel? response = await _productService.GetDetailByIdAsync(id);
-            ResponseModel? response1 = await _commentService.GetByproductId(id, 1, 9);
-            ResponseModel? response2 = await _productService.GetAllProductAsync(1,99);
 
-            if (response != null && response.IsSuccess)
+            ResponseModel? productReponse = await _productService.GetDetailByIdAsync(id);
+            ResponseModel? cmtResponse = await _commentService.GetByproductId(id, 1, 9999);
+            ResponseModel? productsReponse = await _productService.GetAllProductAsync(1,99);
+
+
+            if (productReponse != null && productReponse.IsSuccess)
             {
-                // Deserialize vào lớp trung gian với kiểu ProductModel
-                ProductModel? model = JsonConvert.DeserializeObject<ProductModel>(Convert.ToString(response.Result));
-                List<ProductModel>? model2 = JsonConvert.DeserializeObject<List<ProductModel>>(Convert.ToString(response2.Result));
-                // Deserialize response1.Result thành danh sách CommentDTOModel
-                List<CommentDTOModel>? comments = JsonConvert.DeserializeObject<List<CommentDTOModel>>(Convert.ToString(response1.Result));
+                
+                ProductModel? ProductModel = JsonConvert.DeserializeObject<ProductModel>(Convert.ToString(productReponse.Result));
 
-                if (model != null)
+                List<ProductModel>? ProductsModel = JsonConvert.DeserializeObject<List<ProductModel>>(Convert.ToString(productsReponse.Result));
+                
+                List<CommentDTOModel>? commentsModel = JsonConvert.DeserializeObject<List<CommentDTOModel>>(Convert.ToString(cmtResponse.Result));
+
+                if (ProductModel != null)
                 {
                     // Gán model vào ProductViewModel
-                    productViewModel.Prod = new ProductModel {Name = model.Name, Price = model.Price, UserName = model.UserName, Description = model.Description, Categories = model.Categories, CreatedAt = model.CreatedAt, UpdatedAt = model.UpdatedAt, Platform = model.Platform, Interactions = model.Interactions, Links = model.Links, Sold = model.Sold, Status = model.Status, Id = model.Id, Discount = model.Discount, QrCode = model.QrCode };
+                    productViewModel.Prod = new ProductModel {Name = ProductModel.Name,
+                                                                Price = ProductModel.Price,
+                                                                UserName = ProductModel.UserName,
+                                                                Description = ProductModel.Description,
+                                                                Categories = ProductModel.Categories,
+                                                                CreatedAt = ProductModel.CreatedAt,
+                                                                UpdatedAt = ProductModel.UpdatedAt,
+                                                                Platform = ProductModel.Platform,
+                                                                Interactions = ProductModel.Interactions,
+                                                                Links = ProductModel.Links,
+                                                                Sold = ProductModel.Sold,
+                                                                Status = ProductModel.Status,
+                                                                Id = ProductModel.Id,
+                                                                Discount = ProductModel.Discount,
+                                                                QrCode = ProductModel.QrCode };
 
-                    productViewModel.Product = model2 ?? new List<ProductModel>();
+                    productViewModel.Product = ProductsModel ?? new List<ProductModel>();
                     // Gán danh sách comments vào ProductViewModel
-                    productViewModel.CommentDTOModels = comments ?? new List<CommentDTOModel>();    
+                    productViewModel.CommentDTOModels = commentsModel ?? new List<CommentDTOModel>();
+
+                    productViewModel.userName = claim.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value!;
+                }
+            }
+            else
+            {
+                TempData["error"] = productReponse?.Message ?? "Đã có lỗi xảy ra khi lấy thông tin sản phẩm.";
+                return NotFound();
+            }
+
+            // Trả về View với ProductViewModel
+            return View(productViewModel);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetReply(string parentId)
+        {
+            IEnumerable<Claim> claim = HttpContext.User.Claims;
+            ProductViewModel productViewModel = new ProductViewModel();
+            ResponseModel? response = await _commentService.GetByParentIdAsync(parentId,1,9999);
+            if (response != null && response.IsSuccess)
+            {
+                List<CommentDTOModel>? comments = JsonConvert.DeserializeObject<List<CommentDTOModel>>(Convert.ToString(response.Result));
+
+                if (comments != null)
+                {
+                    // Gán danh sách comments vào ProductViewModel
+                    productViewModel.Reply = comments ?? new List<CommentDTOModel>();
+                    productViewModel.userName = claim.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value!;
                 }
             }
             else
@@ -155,9 +209,8 @@ namespace Client.Controllers
             }
 
             // Trả về View với ProductViewModel
-            return View(productViewModel);
+            return PartialView("_CommentReplies", productViewModel);
         }
-
 
         [HttpPost]
         public async Task<IActionResult> SortProducts(string sort, int? page, int pageSize = 5)
@@ -181,6 +234,7 @@ namespace Client.Controllers
                     productViewModel.totalItem = data.Count;
                     productViewModel.pageSize = pageSize;
                     productViewModel.pageCount = (int)Math.Ceiling(total.Count / (double)pageSize);
+                    TempData["success"] = "Sort Products successfully";
                 }
                 else
                 {
@@ -194,10 +248,79 @@ namespace Client.Controllers
 
             return View("Product", productViewModel); // Trả về view ProductsManager với danh sách sản phẩm đã sắp xếp
         }
-        public IActionResult Collection()
+
+
+        [HttpPost]
+        public async Task<IActionResult> CreateComment(CreateCommentDTOModel model)
         {
-            return View();
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors)
+                                              .Select(e => e.ErrorMessage);
+                return BadRequest(new { Errors = errors });
+            }
+
+            try
+            {
+                // Gọi service CreateCommentAsync
+                var response = await _commentService.CreateCommentAsync(model);
+
+                if (response != null && response.IsSuccess)
+                {
+                    TempData["success"] = "Category created successfully";
+                    return RedirectToAction("ProductDetail", new { id = model.ProductId });
+                }
+                else
+                {
+                    TempData["error"] = response?.Message ?? "An unknown error occurred.";
+                    return RedirectToAction("ProductDetail", new { id = model.ProductId });
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = $"An error occurred: {ex.Message}";
+                return RedirectToAction("ProductDetail", new { id = model.ProductId });
+            }
+
         }
 
+
+        public async Task<IActionResult> Collection()
+        {
+            IEnumerable<Claim> claim = HttpContext.User.Claims;
+            ProductViewModel productViewModel = new ProductViewModel();
+            string un = claim.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value!;
+            string i = claim.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value!;
+            ResponseModel? ProResponese = await _productService.GetAllProductsByUserName(un);
+            ResponseModel? WishListResponse = await _userService.GetAllProductsInWishList(i);
+            /*ResponseModel? response2 = await _userService.GetUserAsync(i);*/
+
+            if (ProResponese != null && ProResponese.IsSuccess)
+            {
+                // Deserialize vào lớp trung gian với kiểu ProductModel
+                //ProductModel? model = JsonConvert.DeserializeObject<ProductModel>(Convert.ToString(response.Result));
+                List<ProductModel>? ListProduct = JsonConvert.DeserializeObject<List<ProductModel>>(Convert.ToString(ProResponese.Result));
+                /*List<UsersDTO>? model1 = JsonConvert.DeserializeObject<List<UsersDTO>>(Convert.ToString(response1.Result));*/
+                List<WishlistModel>? Wishlist = JsonConvert.DeserializeObject<List<WishlistModel>>(Convert.ToString(WishListResponse.Result));
+
+                if (ListProduct != null)
+                {
+
+                    productViewModel.Product = ListProduct ?? new List<ProductModel>();
+                    /*productViewModel.User = model1 ?? new List<UsersDTO>();*/
+                    productViewModel.Wishlist = Wishlist ?? new List<WishlistModel>();
+                    productViewModel.userName = claim.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value!;
+                    productViewModel.userID = claim.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value!;
+                }
+            }
+            else
+            {
+                TempData["error"] = ProResponese?.Message + WishListResponse .Message?? "Đã có lỗi xảy ra khi lấy thông tin sản phẩm.";
+                return NotFound();
+            }
+
+            // Trả về View với ProductViewModel
+            return View(productViewModel);
+        }
     }
 }

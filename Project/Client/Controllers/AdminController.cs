@@ -118,6 +118,7 @@ namespace Client.Controllers
                     var user = _helperService.GetUserFromJwtToken((JwtSecurityToken)response.Result);
                     ViewBag.User = user;
                     ViewData["IsLogin"] = true;
+                    TempData["success"] = "Welcome to admin dashboarch "+user;
                 }
                 else
                 {
@@ -154,25 +155,6 @@ namespace Client.Controllers
             }
 
             return View(statistical);
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> GetLatestStats()
-        {
-            AllModel statistical = new();
-            var responseModel = await _statisticalService.GetAll(1, 99);  // Hàm này nên trả về dữ liệu thống kê mới
-
-            if (responseModel != null && responseModel.IsSuccess)
-            {
-                // Đọc và gán dữ liệu sản phẩm cho model
-                statistical.statis = JsonConvert.DeserializeObject<ICollection<StatisticalModel>>(responseModel.Result.ToString()!);
-
-            }
-            else
-            {
-                TempData["error"] = responseModel?.Message;
-            }
-            return Json(statistical);
         }
         #endregion
 
@@ -545,6 +527,7 @@ namespace Client.Controllers
                 ProductModel? model = JsonConvert.DeserializeObject<ProductModel>(Convert.ToString(response.Result));
 
                 // Trả về model UsersDTO để sử dụng trong View
+                TempData["success"] = "Get product need update successfully";
                 return View(model);
             }
             else
@@ -587,7 +570,7 @@ namespace Client.Controllers
 
                 if (response.IsSuccess)
                 {
-                    TempData["success"] = "Product created successfully";
+                    TempData["success"] = "Product updated successfully";
                     return RedirectToAction(nameof(ProductsManager));
                 }
                 else
@@ -661,7 +644,7 @@ namespace Client.Controllers
             if (response != null && response.IsSuccess)
             {
                 ProductModel? model = JsonConvert.DeserializeObject<ProductModel>(Convert.ToString(response.Result));
-
+                TempData["success"] = "Get product for delete successfully";
                 // Trả về model UsersDTO để sử dụng trong View
                 return View(model);
             }
@@ -713,6 +696,7 @@ namespace Client.Controllers
                     productViewModel.totalItem = data.Count;
                     productViewModel.pageSize = pageSize;
                     productViewModel.pageCount = (int)Math.Ceiling(total.Count / (double)pageSize);
+                    TempData["success"] = "Search product successfully";
                 }
                 else
                 {
@@ -723,6 +707,16 @@ namespace Client.Controllers
             {
                 TempData["error"] = ex.Message;
             }
+            // Tạo mã QR cho từng sản phẩm
+            foreach (var item in productViewModel.Product)
+            {
+                string qrCodeUrl = Url.Action("UpdateProduct", "Admin", new { id = item.Id }, Request.Scheme);
+                item.QrCode = _productService.GenerateQRCode(qrCodeUrl); // Tạo mã QR và lưu vào thuộc tính
+
+                /*string barCodeUrl = Url.Action("UpdateProduct", "Admin", new { id = item.Id }, Request.Scheme);
+                item.BarCode = _productService.GenerateBarCode(11111111111); // Tạo mã QR và lưu vào thuộc tính*/
+            }
+
 
             return View("ProductsManager", productViewModel); // Trả về view ProductsManager với danh sách sản phẩm đã tìm kiếm
         }
@@ -749,6 +743,7 @@ namespace Client.Controllers
                     productViewModel.totalItem = data.Count;
                     productViewModel.pageSize = pageSize;
                     productViewModel.pageCount = (int)Math.Ceiling(total.Count / (double)pageSize);
+                    TempData["success"] = "Sort product successfully";
                 }
                 else
                 {
@@ -758,6 +753,15 @@ namespace Client.Controllers
             catch (Exception ex)
             {
                 TempData["error"] = ex.Message;
+            }
+            // Tạo mã QR cho từng sản phẩm
+            foreach (var item in productViewModel.Product)
+            {
+                string qrCodeUrl = Url.Action("UpdateProduct", "Admin", new { id = item.Id }, Request.Scheme);
+                item.QrCode = _productService.GenerateQRCode(qrCodeUrl); // Tạo mã QR và lưu vào thuộc tính
+
+                /*string barCodeUrl = Url.Action("UpdateProduct", "Admin", new { id = item.Id }, Request.Scheme);
+                item.BarCode = _productService.GenerateBarCode(11111111111); // Tạo mã QR và lưu vào thuộc tính*/
             }
 
             return View("ProductsManager", productViewModel); // Trả về view ProductsManager với danh sách sản phẩm đã sắp xếp
@@ -793,6 +797,7 @@ namespace Client.Controllers
                     productViewModel.totalItem = data.Count;
                     productViewModel.pageSize = pageSize;
                     productViewModel.pageCount = (int)Math.Ceiling(total.Count / (double)pageSize);
+                    TempData["success"] = "Filer product successfully";
                 }
                 else
                 {
@@ -802,6 +807,15 @@ namespace Client.Controllers
             catch (Exception ex)
             {
                 TempData["error"] = ex.Message;
+            }
+            // Tạo mã QR cho từng sản phẩm
+            foreach (var item in productViewModel.Product)
+            {
+                string qrCodeUrl = Url.Action("UpdateProduct", "Admin", new { id = item.Id }, Request.Scheme);
+                item.QrCode = _productService.GenerateQRCode(qrCodeUrl); // Tạo mã QR và lưu vào thuộc tính
+
+                /*string barCodeUrl = Url.Action("UpdateProduct", "Admin", new { id = item.Id }, Request.Scheme);
+                item.BarCode = _productService.GenerateBarCode(11111111111); // Tạo mã QR và lưu vào thuộc tính*/
             }
 
             return View("ProductsManager", productViewModel); // Trả về view ProductsManager với danh sách sản phẩm đã lọc
@@ -869,6 +883,7 @@ namespace Client.Controllers
                 if (response.IsSuccess && response.Result != null)
                 {
                     TempData["searchResult"] = JsonConvert.SerializeObject(response.Result);
+                    TempData["success"] = "Search order successfully";
                     return RedirectToAction(nameof(OrdersManager));
                 }
                 else
@@ -898,6 +913,7 @@ namespace Client.Controllers
                     {
                         Items = orderItems
                     };
+                    TempData["success"] = "Get order detail successfully";
                     return PartialView("_OrderItemsPartial", orderViewModel);
                 }
                 else
@@ -948,6 +964,7 @@ namespace Client.Controllers
                 if (response.IsSuccess)
                 {
                     var order = JsonConvert.DeserializeObject<OrderModel>(Convert.ToString(response.Result.ToString()!));
+                    TempData["success"] = "Get order need to update successfully";
                     return View(order);
                 }
                 else
@@ -985,6 +1002,7 @@ namespace Client.Controllers
                     categories.totalItem = data.Count;
                     categories.pageSize = pageSize;
                     categories.pageCount = (int)Math.Ceiling(total.Count / (double)pageSize);
+
                 }
                 else
                 {
@@ -1048,7 +1066,7 @@ namespace Client.Controllers
             if (response != null && response.IsSuccess)
             {
                 CategoriesModel? model = JsonConvert.DeserializeObject<CategoriesModel>(Convert.ToString(response.Result));
-
+                TempData["success"] = "Get category for update successfully";
                 // Trả về model UsersDTO để sử dụng trong View
                 return View(model);
             }
@@ -1099,7 +1117,7 @@ namespace Client.Controllers
             if (response != null && response.IsSuccess)
             {
                 CategoriesModel? model = JsonConvert.DeserializeObject<CategoriesModel>(Convert.ToString(response.Result));
-
+                TempData["success"] = "GEt category for delete successfully";
                 // Trả về model UsersDTO để sử dụng trong View
                 return View(model);
             }
@@ -1156,6 +1174,7 @@ namespace Client.Controllers
                     categoryViewModel.totalItem = data.Count;
                     categoryViewModel.pageSize = pageSize;
                     categoryViewModel.pageCount = (int)Math.Ceiling(total.Count / (double)pageSize);
+                    TempData["success"] = "Search category successfully";
                 }
                 else
                 {
@@ -1249,7 +1268,7 @@ namespace Client.Controllers
             if (response != null && response.IsSuccess)
             {
                 CommentDTOModel? model = JsonConvert.DeserializeObject<CommentDTOModel>(Convert.ToString(response.Result));
-
+                TempData["success"] = "Get comment for update successfully";
                 // Trả về model UsersDTO để sử dụng trong View
                 return View(model);
             }
@@ -1299,7 +1318,7 @@ namespace Client.Controllers
             if (response != null && response.IsSuccess)
             {
                 ProductModel? model = JsonConvert.DeserializeObject<ProductModel>(Convert.ToString(response.Result));
-
+                TempData["success"] = "Get comment for delete successfully";
                 // Trả về model UsersDTO để sử dụng trong View
                 return View(model);
             }
@@ -1314,7 +1333,7 @@ namespace Client.Controllers
         {
             if (string.IsNullOrEmpty(ids))
             {
-                TempData["error"] = "Không có ID nào để xóa.";
+                TempData["error"] = "Id is not null.";
                 return RedirectToAction("CommentManager");
             }
 
@@ -1330,7 +1349,7 @@ namespace Client.Controllers
                 }
             }
 
-            TempData["success"] = "Xóa bình luận thành công.";
+            TempData["success"] = "Delete Comment successfully.";
             return RedirectToAction("CommentManager");
         }
 
@@ -1355,6 +1374,7 @@ namespace Client.Controllers
                     cmtViewModel.totalItem = data.Count;
                     cmtViewModel.pageSize = pageSize;
                     cmtViewModel.pageCount = (int)Math.Ceiling(total.Count / (double)pageSize);
+                    TempData["success"] = "Search comment successfully";
                 }
                 else
                 {

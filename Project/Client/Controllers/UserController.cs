@@ -73,6 +73,9 @@ namespace Client.Controllers
                         Avatar = user.Avatar!
                     };
                     await _helperService.UpdateClaim(userClaim, HttpContext);
+
+                    TempData["success"] = "Login successfully";
+
                     TempData["success"] = "Login success";
                     return RedirectToAction("Index", "Home");
                 }
@@ -309,7 +312,6 @@ namespace Client.Controllers
             // Nếu ModelState không hợp lệ, trả về lại model để hiển thị lỗi
             return View(updateUser);
         }
-
 
 
         public IActionResult EditProfile()
