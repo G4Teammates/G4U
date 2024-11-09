@@ -17,7 +17,7 @@ namespace OrderMicroservice.Repositories.Services
     public class PaymentService : IPaymentService
     {
         private static readonly HttpClient client = new();
-
+        private static readonly string Gateway = "https://localhost:7296";
 
         public async Task<ResponseModel> MoMoPayment(string orderId, long amount)
         {
@@ -92,7 +92,7 @@ namespace OrderMicroservice.Repositories.Services
                 List<ItemData> items = model.Items.Select(i => new ItemData(i.ProductName, i.Quantity, (int)i.Price)).ToList();
 
                 PaymentData paymentData = new PaymentData(orderId, (int)model.TotalPrice, $"Payment for order: {model.Id}",
-                     items, cancelUrl: "https://localhost:3002", returnUrl: "https://localhost:3002");
+                     items, cancelUrl: $"{Gateway}/Order/PaymentFailure", returnUrl: $"{Gateway}/Order/PaymentSuccess");
 
                 CreatePaymentResult createPayment = await payOS.createPaymentLink(paymentData);
 

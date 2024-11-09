@@ -39,21 +39,21 @@ namespace OrderMicroservice.Controllers
                 return StatusCode(500, new { message = "An unexpected error occurred. Detail" + ex.Message });
             }
         }
-        //[HttpPost("vietqr")]
-        //public async Task<ActionResult> VietQRPayment([FromBody] string id, int amount, string productName, int quantity)
-        //{
-        //    try
-        //    {
-        //        ResponseModel response = await _paymentService.VierQRPayment(id, amount, productName, quantity);
-        //        if (response.IsSuccess)
-        //            return Ok(response);
-        //        return BadRequest(response);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        // Trả về lỗi 500 cho các lỗi chưa dự đoán
-        //        return StatusCode(500, new { message = "An unexpected error occurred. Detail" + ex.Message });
-        //    }
-        //}
+        [HttpPost("vietqr")]
+        public async Task<ActionResult> VietQRPayment([FromBody] string id, int amount, string productName, int quantity)
+        {
+            try
+            {
+                ResponseModel response = await _paymentService.VierQRPayment(id, amount, productName, quantity);
+                if (response.IsSuccess)
+                    return Ok(response);
+                return BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                // Trả về lỗi 500 cho các lỗi chưa dự đoán
+                return StatusCode(500, new { message = "An unexpected error occurred. Detail" + ex.Message });
+            }
+        }
     }
 }
