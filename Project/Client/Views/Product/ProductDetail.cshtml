@@ -139,6 +139,17 @@
  
         }
 
+
+    /*Xem them vơi reply nha*/
+    .link-action {
+        cursor: pointer;
+    }
+
+        .link-action:hover {
+            color: #00A97F; /* Màu khi hover */
+            background-color: #f0f0f0; /* Màu nền khi hover */
+        }
+
 </style>
 
 <div class="container mt-4">
@@ -269,7 +280,7 @@
                         <button type="submit" name="action" value="like" class="sci-fi-btn like-btn">
                             <i class="fas fa-thumbs-up"></i>
                             <span class="like-count">
-                                @(product.Interactions.NumberOfLikes == 0 ? " None" : product.Interactions.NumberOfLikes.ToString())
+                                @(product.Interactions.NumberOfLikes == 0 ? "0" : product.Interactions.NumberOfLikes.ToString())
                             </span>
                         </button>
 
@@ -366,45 +377,53 @@
 
                                 <div class="row">
                                     <!-- Nút "Xem thêm" -->
-                                    <div class=" col-6 text-start">
-                                        <a style="width:50%; text-decoration:none; color:black" id="toggleButton-@comment.Id" onclick="toggleReplies('@comment.Id')">Xem thêm | </a>
-                                        <!-- Nút "Reply" -->
-                                        <a style="width:50%; text-decoration:none; color:black" onclick="scrollToReplyForm('@comment.Id')">Reply</a>
+                                    <div class="col-md-6 text-start">
+                                        <a id="toggleButton-@comment.Id"
+                                           class="link-action"
+                                           onclick="toggleReplies('@comment.Id')"
+                                           style="width:50%; text-decoration:none; color:black; padding:5px; border-radius:5px; transition: all 0.3s;">
+                                            Xem thêm 
+                                        </a>
+                                        |
+                                        <a class="link-action"
+                                           onclick="scrollToReplyForm('@comment.Id')"
+                                           style="width:50%; text-decoration:none; color:black; padding:5px; border-radius:5px; transition: all 0.3s;">
+                                            Reply
+                                        </a>
                                     </div>
-                                    <div class="col-6 text-end">
-                                        <div class="col-md-2 comment-footer text-end">
-                                            <p class="likes">
-                                                <small>
-                                                    <span id="like-count-@comment.Id">@comment.NumberOfLikes</span>
 
-                                                    <!-- Form for Increasing Like -->
-                                                    <form asp-action="IncreaseLike" asp-controller="Product" method="post" style="display:inline;">
-                                                        <!-- Hidden input to send the comment ID -->
-                                                        <input type="hidden" name="commentID" value="@comment.Id" />
-                                                        <!-- Hidden input to send the product ID -->
-                                                        <input type="hidden" name="productID" value="@product.Id" />
-                                                        <button type="submit" class="like-button" style="background:none; border:none; cursor:pointer;">
-                                                            <i class="fa-solid fa-thumbs-up"></i>
-                                                        </button>
-                                                    </form>
+                                    <div class="col-md-6 comment-footer text-end">
+                                        <p class="likes">
+                                            <small>
+                                                <span id="like-count-@comment.Id">@comment.NumberOfLikes</span>
 
-                                                    <span id="dislike-count-@comment.Id">@comment.NumberOfDisLikes</span>
+                                                <!-- Form for Increasing Like -->
+                                                <form asp-action="IncreaseLike" asp-controller="Product" method="post" style="display:inline;">
+                                                    <!-- Hidden input to send the comment ID -->
+                                                    <input type="hidden" name="commentID" value="@comment.Id" />
+                                                    <!-- Hidden input to send the product ID -->
+                                                    <input type="hidden" name="productID" value="@product.Id" />
+                                                    <button type="submit" class="like-button" style="background:none; border:none; cursor:pointer;">
+                                                        <i class="fa-solid fa-thumbs-up"></i>
+                                                    </button>
+                                                </form>
 
-                                                    <!-- Form for Decreasing Like -->
-                                                    <form asp-action="DecreaseLike" asp-controller="Product" method="post" style="display:inline;">
-                                                        <!-- Hidden input to send the comment ID -->
-                                                        <input type="hidden" name="commentID" value="@comment.Id" />
-                                                        <!-- Hidden input to send the product ID -->
-                                                        <input type="hidden" name="productID" value="@product.Id" />
-                                                        <button type="submit" class="dislike-button" style="background:none; border:none; cursor:pointer;">
-                                                            <i class="fa-solid fa-thumbs-down"></i>
-                                                        </button>
-                                                    </form>
-                                                </small>
+                                                <span id="dislike-count-@comment.Id">@comment.NumberOfDisLikes</span>
+
+                                                <!-- Form for Decreasing Like -->
+                                                <form asp-action="DecreaseLike" asp-controller="Product" method="post" style="display:inline;">
+                                                    <!-- Hidden input to send the comment ID -->
+                                                    <input type="hidden" name="commentID" value="@comment.Id" />
+                                                    <!-- Hidden input to send the product ID -->
+                                                    <input type="hidden" name="productID" value="@product.Id" />
+                                                    <button type="submit" class="dislike-button" style="background:none; border:none; cursor:pointer;">
+                                                        <i class="fa-solid fa-thumbs-down"></i>
+                                                    </button>
+                                                </form>
+                                            </small>
 
 
-                                            </p>
-                                        </div>
+                                        </p>
                                     </div>
                                 </div>
 
@@ -545,13 +564,15 @@
     function toggleReplies(parentId) {
         var repliesContainer = $('#replies-' + parentId);
         var button = $('#toggleButton-' + parentId);
+        var replyLink = $('#replyLink-' + parentId); // Nút Reply
 
         if (repliesContainer.is(':visible')) {
-            // Nếu đang hiển thị, ẩn bình luận con và đổi nút thành "Xem thêm | "
+            // Nếu bình luận con đang hiển thị, ẩn và thay đổi văn bản nút thành "Xem thêm"
             repliesContainer.hide();
             button.text('Xem thêm');
+            replyLink.show();  // Hiện lại nút Reply
         } else {
-            // Nếu đang ẩn, tải bình luận con nếu chưa có và đổi nút thành "Ẩn bớt"
+            // Nếu bình luận con đang ẩn, tải bình luận con nếu chưa có và đổi văn bản nút thành "Ẩn bớt"
             if (repliesContainer.html().trim() === '') {
                 $.ajax({
                     url: '/Product/GetReply',
@@ -560,6 +581,7 @@
                     success: function (data) {
                         repliesContainer.html(data).show();
                         button.text('Ẩn bớt');
+                        replyLink.hide();  // Ẩn nút Reply khi có bình luận con
                     },
                     error: function () {
                         alert('Không thể tải phản hồi. Vui lòng thử lại sau.');
@@ -568,6 +590,7 @@
             } else {
                 repliesContainer.show();
                 button.text('Ẩn bớt');
+                replyLink.hide();  // Ẩn nút Reply khi có bình luận con
             }
         }
     }
