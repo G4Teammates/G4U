@@ -375,9 +375,34 @@
                                         <div class="col-md-2 comment-footer text-end">
                                             <p class="likes">
                                                 <small>
-                                                    @comment.NumberOfLikes <i class="fa-solid fa-thumbs-up"></i>
-                                                    @comment.NumberOfDisLikes <i class="fa-solid fa-thumbs-down"></i>
+                                                    <span id="like-count-@comment.Id">@comment.NumberOfLikes</span>
+
+                                                    <!-- Form for Increasing Like -->
+                                                    <form asp-action="IncreaseLike" asp-controller="Product" method="post" style="display:inline;">
+                                                        <!-- Hidden input to send the comment ID -->
+                                                        <input type="hidden" name="commentID" value="@comment.Id" />
+                                                        <!-- Hidden input to send the product ID -->
+                                                        <input type="hidden" name="productID" value="@product.Id" />
+                                                        <button type="submit" class="like-button" style="background:none; border:none; cursor:pointer;">
+                                                            <i class="fa-solid fa-thumbs-up"></i>
+                                                        </button>
+                                                    </form>
+
+                                                    <span id="dislike-count-@comment.Id">@comment.NumberOfDisLikes</span>
+
+                                                    <!-- Form for Decreasing Like -->
+                                                    <form asp-action="DecreaseLike" asp-controller="Product" method="post" style="display:inline;">
+                                                        <!-- Hidden input to send the comment ID -->
+                                                        <input type="hidden" name="commentID" value="@comment.Id" />
+                                                        <!-- Hidden input to send the product ID -->
+                                                        <input type="hidden" name="productID" value="@product.Id" />
+                                                        <button type="submit" class="dislike-button" style="background:none; border:none; cursor:pointer;">
+                                                            <i class="fa-solid fa-thumbs-down"></i>
+                                                        </button>
+                                                    </form>
                                                 </small>
+
+
                                             </p>
                                         </div>
                                     </div>

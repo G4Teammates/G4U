@@ -293,6 +293,69 @@ namespace CommentMicroservice.Repositories
             return response;
         }
 
+        public async Task<ResponseModel> IncreaseLike(string commentId)
+        {
+            ResponseModel response = new();
+            try
+            {
+                var comment = await _db.Comments.FindAsync(commentId);
+                if (comment != null)
+                {
+                    comment.NumberOfLikes++;
+                    _db.Comments.Update(comment);
+                    await _db.SaveChangesAsync();
+
+                    response.IsSuccess = true;
+                    response.Result = comment;
+                    response.Message = "Increased like count successfully.";
+                }
+                else
+                {
+                    response.IsSuccess = false;
+                    response.Message = "Comment not found.";
+                }
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+            }
+            return response;
+        }
+
+        public async Task<ResponseModel> DecreaseLike(string commentId)
+        {
+            ResponseModel response = new();
+            try
+            {
+                var comment = await _db.Comments.FindAsync(commentId);
+                if (comment != null)
+                {
+                    // Tăng số lượng dislike thay vì giảm số lượng like
+                    comment.NumberOfDisLikes++;
+                    _db.Comments.Update(comment);
+                    await _db.SaveChangesAsync();
+
+                    response.IsSuccess = true;
+                    response.Result = comment;
+                    response.Message = "Increased dislike count successfully.";
+                }
+                else
+                {
+                    response.IsSuccess = false;
+                    response.Message = "Comment not found.";
+                }
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+            }
+            return response;
+        }
+
+
+
         #region method
 
         private readonly List<string> _bannedWords = new List<string>

@@ -15,6 +15,12 @@ namespace CommentMicroservice.Repositories
         Task<ResponseModel> Search(string searchstring, int page, int pageSize);
         Task<ResponseModel> GetByproductId(string productId, int page, int pageSize);
         Task<ResponseModel> GetByParentId(string Parentid, int page, int pageSize);
-       
+
+        // Phương thức tăng lượt thích cho bình luận
+        Task<ResponseModel> IncreaseLike(string commentId);
+
+        // Phương thức giảm lượt thích cho bình luận
+        Task<ResponseModel> DecreaseLike(string commentId);
+
     }
 }
