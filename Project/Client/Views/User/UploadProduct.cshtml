@@ -4,6 +4,8 @@
 @{
     List<string> Images = ViewBag.ImageFiles;
     IFormFile gameImages = ViewBag.gameFile;
+    var gameFileName = ViewBag.GameFileName;
+    var gameFileSize = ViewBag.GameFileSize;
 }
 
 <style>
@@ -166,7 +168,7 @@
         <div class="col-md-4">
             <div class="text-center">
                 <!-- Hình ảnh hiển thị -->
-                @if (Images.Count != 0)
+                @if (Images != null)
                 {
                     <img id="coverImagePreview" src="@Images[0]" alt="Cover Image" class="border mb-3" style="width:200px; height:200px;" />
                 }
@@ -270,13 +272,17 @@
         }
     });
 
-
-
-    // Hàm hiển thị thông tin của file từ phía server (nếu có)
     function showUploadedGameFileFromServer() {
-        // Lấy thông tin file từ Razor (nếu có từ server)
-        var fileNameFromServer = ViewBag.GameFileName;
-        var fileSizeFromServer = ViewBag.GameFileSize;
+        // Ghi log để kiểm tra xem hàm này có được gọi không
+        console.log("Function showUploadedGameFileFromServer is called");
+
+        // Lấy thông tin file từ Razor (được truyền từ ViewBag)
+        var fileNameFromServer = '@gameFileName';
+        var fileSizeFromServer = '@gameFileSize';
+
+        // Ghi log giá trị từ Razor
+        console.log("File name from server:", fileNameFromServer);
+        console.log("File size from server:", fileSizeFromServer);
 
         // Nếu có dữ liệu từ server, hiển thị thông tin file
         if (fileNameFromServer && fileSizeFromServer > 0) {
@@ -297,11 +303,15 @@
                 </div>
             `;
             document.getElementById('fileInfo').innerHTML = fileInfo;
+
+            // Log khi thông tin được hiển thị thành công
+            console.log("File information is displayed successfully.");
         }
     }
 
     // Gọi hàm khi trang load để hiển thị file từ server nếu có
     window.onload = function () {
+        console.log("Window loaded, calling showUploadedGameFileFromServer");
         showUploadedGameFileFromServer();
     };
 
