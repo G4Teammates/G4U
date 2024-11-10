@@ -350,6 +350,8 @@ namespace Client.Controllers
             }
             return View();
         }
+
+        [HttpGet]
         public async Task<IActionResult> EditProduct(string id)
         {
             try
@@ -519,10 +521,6 @@ namespace Client.Controllers
         }
 
         public IActionResult DownloadProduct()
-        {
-            return View();
-        }
-        public IActionResult UserDashboard()
         {
             return View();
         }
