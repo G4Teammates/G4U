@@ -227,5 +227,52 @@ namespace CommentMicroService.Controllers
                 return StatusCode(500, _responseModel); // Trả về mã lỗi 500 với thông báo lỗi chi tiết
             }
         }
+
+        [HttpPut("IncreaseLike/{commentId}")]
+        public async Task<IActionResult> IncreaseLike([FromRoute] string commentId)
+        {
+            try
+            {
+                var result = await _db.IncreaseLike(commentId);
+                if (result.IsSuccess)
+                {
+                    _responseModel.Result = result.Result;
+                    _responseModel.Message = "Like count increased successfully.";
+                    return Ok(_responseModel);
+                }
+                _responseModel.Message = result.Message;
+                return BadRequest(_responseModel.Message);
+            }
+            catch (Exception ex)
+            {
+                _responseModel.IsSuccess = false;
+                _responseModel.Message = "An error occurred while increasing the like count: " + ex.Message;
+                return StatusCode(500, _responseModel);
+            }
+        }
+
+        [HttpPut("DecreaseLike/{commentId}")]
+        public async Task<IActionResult> DecreaseLike([FromRoute] string commentId)
+        {
+            try
+            {
+                var result = await _db.DecreaseLike(commentId);
+                if (result.IsSuccess)
+                {
+                    _responseModel.Result = result.Result;
+                    _responseModel.Message = "Like count decreased successfully.";
+                    return Ok(_responseModel);
+                }
+                _responseModel.Message = result.Message;
+                return BadRequest(_responseModel.Message);
+            }
+            catch (Exception ex)
+            {
+                _responseModel.IsSuccess = false;
+                _responseModel.Message = "An error occurred while decreasing the like count: " + ex.Message;
+                return StatusCode(500, _responseModel);
+            }
+        }
+
     }
 }

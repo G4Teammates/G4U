@@ -283,6 +283,60 @@ namespace Client.Controllers
             }
 
         }
+        [HttpPost]
+        public async Task<IActionResult> IncreaseLike(string commentID, string productID)
+        {
+            try
+            {
+                // Gọi service để tăng like cho comment
+                ResponseModel? response = await _commentService.IncreaseLike(commentID);
+
+                if (response != null && response.IsSuccess)
+                {
+                    TempData["success"] = "Like increased successfully!";
+                }
+                else
+                {
+                    TempData["error"] = response?.Message ?? "An unknown error occurred.";
+                }
+
+                // Chuyển hướng về trang chi tiết sản phẩm
+                return RedirectToAction(nameof(ProductDetail), new { id = productID });
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = $"An error occurred: {ex.Message}";
+                return RedirectToAction(nameof(ProductDetail), new { id = productID });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DecreaseLike(string commentID, string productID)
+        {
+            try
+            {
+                // Gọi service để giảm like cho comment
+                ResponseModel? response = await _commentService.DecreaseLike(commentID);
+
+                if (response != null && response.IsSuccess)
+                {
+                    TempData["success"] = "Like decreased successfully!";
+                }
+                else
+                {
+                    TempData["error"] = response?.Message ?? "An unknown error occurred.";
+                }
+
+                // Chuyển hướng về trang chi tiết sản phẩm
+                return RedirectToAction(nameof(ProductDetail), new { id = productID });
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = $"An error occurred: {ex.Message}";
+                return RedirectToAction(nameof(ProductDetail), new { id = productID });
+            }
+        }
+
 
 
         public async Task<IActionResult> Collection()

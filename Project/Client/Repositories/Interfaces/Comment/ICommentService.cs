@@ -16,5 +16,7 @@ namespace Client.Repositories.Interfaces.Comment
         Task<ResponseModel> DeleteCommentAsync(string id);
         Task<ResponseModel?> SearchCmtAsync(string searchString, int? pageNumber, int pageSize);
         Task<ResponseModel> GetByParentIdAsync(string parentId , int? pageNumber, int pageSize);
+        Task<ResponseModel> IncreaseLike(string commentId);
+        Task<ResponseModel> DecreaseLike(string commentId);
     }
 }
