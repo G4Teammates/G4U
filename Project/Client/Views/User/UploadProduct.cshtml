@@ -1,6 +1,11 @@
 ﻿@using Client.Models.ProductDTO
 @model CreateProductModel
 
+@{
+    List<string> Images = ViewBag.ImageFiles;
+    IFormFile gameImages = ViewBag.gameFile;
+}
+
 <style>
     h4 {
         max-width: 900px;
@@ -161,7 +166,14 @@
         <div class="col-md-4">
             <div class="text-center">
                 <!-- Hình ảnh hiển thị -->
-                <img id="coverImagePreview" src="~/Image/avatar.jpeg" alt="Cover Image" class="border mb-3" style="width:200px; height:200px;" />
+                @if (Images.Count != 0)
+                {
+                    <img id="coverImagePreview" src="@Images[0]" alt="Cover Image" class="border mb-3" style="width:200px; height:200px;" />
+                }
+                else
+                {
+                    <img id="coverImagePreview" src="~/Image/avatar.jpeg" alt="Cover Image" class="border mb-3" style="width:200px; height:200px;" />
+                }
                 <!-- Input file ẩn -->
                 <input type="file"  class="d-none" asp-for="imageFiles" id="coverImageInput" accept="image/*" />
                 <!-- Nút để kích hoạt chọn file -->
@@ -189,13 +201,13 @@
             <span class="text-danger"></span>
             </div> *@
         </div>
-         <div class="col-md-4">
+         @* <div class="col-md-4">
             <div class="text-center">
                 <img src="~/image/avatar.jpeg" alt="Cover Image" class="border mb-3" style="width:200px; height:200px;" />
                 <input type="file" name="coverImage" class="d-none" id="coverImageInput" accept="image/*" />
                 <button type="button" class="btn btn-outline-dark mt-2 w-100" onclick="document.getElementById('coverImageInput').click()">Upload Cover Image</button>
             </div>
-        </div>
+        </div> *@
 
         <!-- Nút tạo sản phẩm -->
         <div class="col-12 text-end m-4">
@@ -258,11 +270,48 @@
         }
     });
 
+
+
+    // Hàm hiển thị thông tin của file từ phía server (nếu có)
+    function showUploadedGameFileFromServer() {
+        // Lấy thông tin file từ Razor (nếu có từ server)
+        var fileNameFromServer = ViewBag.GameFileName;
+        var fileSizeFromServer = ViewBag.GameFileSize;
+
+        // Nếu có dữ liệu từ server, hiển thị thông tin file
+        if (fileNameFromServer && fileSizeFromServer > 0) {
+            const fileInfo = `
+                <strong>File Name:</strong> ${fileNameFromServer} <br>
+                <strong>File Size:</strong> ${(fileSizeFromServer / 1024 / 1024).toFixed(2)} MB <br>
+                <strong>File Type:</strong> (from server)
+                <div class="m-2">
+                    <label class="p-2 border border-1">
+                        <input type="radio" value="Windows" name="Platforms" /> Windows
+                    </label>
+                    <label class="p-2 border border-1">
+                        <input type="radio" value="MacOS" name="Platforms" /> MacOS
+                    </label>
+                    <label class="p-2 border border-1">
+                        <input type="radio" value="Linux" name="Platforms" /> Linux
+                    </label>
+                </div>
+            `;
+            document.getElementById('fileInfo').innerHTML = fileInfo;
+        }
+    }
+
+    // Gọi hàm khi trang load để hiển thị file từ server nếu có
+    window.onload = function () {
+        showUploadedGameFileFromServer();
+    };
+
+    // Sự kiện thay đổi khi người dùng chọn file mới
     function displayFileInfo() {
         const input = document.getElementById('fileInput');
-        const file = input.files[0]; // Lấy file đầu tiên (vì người dùng có thể chọn nhiều file)
+        const file = input.files[0]; // Lấy file đầu tiên (người dùng có thể chọn nhiều file)
+
         if (file) {
-                // Kiểm tra kích thước file (ví dụ 1GB = 1073741824 bytes)
+            // Kiểm tra kích thước file (ví dụ 1GB = 1073741824 bytes)
             if (file.size > 1073741824) {
                 alert('File quá lớn, hãy chọn file dưới 1 GB.');
                 return;
@@ -270,24 +319,28 @@
 
             // Hiển thị thông tin file
             const fileInfo = `
-                                        <strong>File Name:</strong> ${file.name} <br>
-                                        <strong>File Size:</strong> ${(file.size / 1024 / 1024).toFixed(2)} MB <br>
-                                        <strong>File Type:</strong> ${file.type}
-                                        <div class="m-2">
-                                            <label class="p-2 border border-1">
-                                                <input type="radio" value="Windows" name="Platforms" /> Windows
-                                            </label>
-                                            <label class="p-2 border border-1">
-                                                <input type="radio" value="MacOS" name="Platforms" /> MacOS
-                                            </label>
-                                            <label class="p-2 border border-1">
-                                                <input type="radio" value="Linux" name="Platforms" /> Linux
-                                            </label>
-                                            </div>
-                                    `;
+                <strong>File Name:</strong> ${file.name} <br>
+                <strong>File Size:</strong> ${(file.size / 1024 / 1024).toFixed(2)} MB <br>
+                <strong>File Type:</strong> ${file.type}
+                <div class="m-2">
+                    <label class="p-2 border border-1">
+                        <input type="radio" value="Windows" name="Platforms" /> Windows
+                    </label>
+                    <label class="p-2 border border-1">
+                        <input type="radio" value="MacOS" name="Platforms" /> MacOS
+                    </label>
+                    <label class="p-2 border border-1">
+                        <input type="radio" value="Linux" name="Platforms" /> Linux
+                    </label>
+                </div>
+            `;
             document.getElementById('fileInfo').innerHTML = fileInfo;
         }
     }
+
+    // Sự kiện khi chọn file mới từ input
+    document.getElementById('fileInput').addEventListener('change', displayFileInfo);
+
 
     // Sự kiện khi người dùng chọn tệp mới
     document.getElementById('coverImageInput').addEventListener('change', function (event) {
