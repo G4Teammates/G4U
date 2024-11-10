@@ -1,0 +1,75 @@
+﻿/* Định dạng chung cho các nút */
+.sci-fi-btn {
+    background: linear-gradient(45deg, #00A97F, #004D2C);
+    border: 2px solid #00A97F;
+    border-radius: 50%;
+    padding: 15px;
+    width: 60px;
+    height: 60px;
+    font-size: 24px;
+    color: white;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 15px rgba(0, 169, 127, 0.7);
+    outline: none;
+}
+
+    /* Hiệu ứng khi hover */
+    .sci-fi-btn:hover {
+        background: linear-gradient(45deg, #004D2C, #00A97F);
+        border-color: #FFEA00;
+        box-shadow: 0 0 25px rgba(255, 234, 0, 0.8), 0 0 15px rgba(0, 169, 127, 0.7);
+        transform: scale(1.1);
+    }
+
+    /* Hiệu ứng khi nhấn nút */
+    .sci-fi-btn:active {
+        background: #00A97F;
+        box-shadow: 0 0 10px rgba(0, 169, 127, 0.9);
+        transform: scale(0.95);
+    }
+
+    /* Tạo hiệu ứng glow cho icon */
+    .sci-fi-btn i {
+        animation: glow 1.5s infinite alternate;
+    }
+
+/* Hiệu ứng phát sáng cho icon */
+@keyframes glow {
+    0% {
+        text-shadow: 0 0 5px #00A97F, 0 0 10px #00A97F, 0 0 15px #00A97F;
+    }
+
+    100% {
+        text-shadow: 0 0 20px #00A97F, 0 0 30px #00A97F, 0 0 40px #00A97F;
+    }
+}
+
+/* Nút Like có hiệu ứng đặc biệt */
+.like-btn {
+    background: linear-gradient(45deg, #00A97F, #004D2C);
+}
+
+/* Nút Dislike có hiệu ứng khác */
+.dislike-btn {
+    background: linear-gradient(45deg, #F44336, #D32F2F);
+}
+
+/* Flexbox cho form để các nút nằm cùng hàng */
+form {
+    display: flex;
+    justify-content: space-between; /* Chia đều không gian giữa các nút */
+    gap: 10px; /* Khoảng cách giữa hai nút */
+}
+
+/* Sửa lại vị trí của số lượt like */
+.like-count {
+    margin-left: 5px;
+    font-size: 16px;
+    color: white;
+    display: inline-block;
+    vertical-align: middle;
+}
