@@ -11,6 +11,7 @@ namespace OrderMicroservice.Repositories.Interfaces
         Task<ResponseModel> GetOrderById(string id);
         Task<ResponseModel> GetOrderByTransaction(string id);
         Task<ResponseModel> Create(OrderModel order);
+        Task<ResponseModel> UpdateTransId(string orderId, string transId);
         Task<ResponseModel> UpdateStatus(string id, PaymentStatusModel status);
         Task<ResponseModel> GetOrderItems(string id);
         Task<ResponseModel> TotalRequest();
