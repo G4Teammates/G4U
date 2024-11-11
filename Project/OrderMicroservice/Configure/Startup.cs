@@ -21,6 +21,11 @@ namespace OrderMicroservice.Configure
         /// <returns>service in IServiceCollection</returns>
         public static IServiceCollection AddStartupService(this IServiceCollection services, IConfiguration config)
         {
+            PayOSOptionModel.ClientId = config["18"]!;
+            PayOSOptionModel.ApiKey = config["19"]!;
+            PayOSOptionModel.ChecksumKey = config["20"]!;
+
+
             #region Register Database
             #region SQL
             //_ = services.AddDbContext<OrderDbContext>(options =>

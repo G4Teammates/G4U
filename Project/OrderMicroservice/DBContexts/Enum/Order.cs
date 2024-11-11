@@ -4,8 +4,7 @@
     {
         Pending,
         Processing,
-        Shipping,
-        Delivered,
+        Paid,
         Cancelled
     }
     public enum PaymentStatus

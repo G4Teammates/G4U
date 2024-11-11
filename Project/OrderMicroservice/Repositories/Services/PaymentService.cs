@@ -11,19 +11,27 @@ using Net.payOS.Types;
 using Net.payOS;
 using OrderMicroservice.Models.OrderModel;
 using Newtonsoft.Json.Converters;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using Azure.Core;
+using OrderMicroservice.DBContexts.Entities;
+using static MongoDB.Driver.WriteConcern;
+using OrderMicroservice.Models.PaymentModel.MoMo;
+using OrderMicroservice.DBContexts.Enum;
 
 namespace OrderMicroservice.Repositories.Services
 {
-    public class PaymentService : IPaymentService
+    public class PaymentService(IOrderService orderService) : IPaymentService
     {
+        private readonly IOrderService _orderService = orderService;
         private static readonly HttpClient client = new();
         private static readonly string Gateway = "https://localhost:7296";
+        private static readonly string MoMoGateway = "https://test-payment.momo.vn/v2/gateway/api/create";
+        private static readonly string IpnMomo = "https://localhost:7296/payment/ipn/momo";
 
-        public async Task<ResponseModel> MoMoPayment(string orderId, long amount)
+        public async Task<ResponseModel> MoMoPayment(string id, long amount)
         {
             ResponseModel response = new();
-            Guid myuuid = Guid.NewGuid();
-            string myuuidAsString = myuuid.ToString();
+            string requestId = Guid.NewGuid().ToString();
             try
             {
                 string accessKey = MoMoOptionModel.AccessKey!;
@@ -33,11 +41,11 @@ namespace OrderMicroservice.Repositories.Services
                 {
                     orderInfo = "Pay with MoMo",
                     partnerCode = "MOMO",
-                    redirectUrl = "https://",
-                    ipnUrl = "https://webhook.site/b3088a6a-2d17-4f8d-a383-71389a6c600b",
+                    redirectUrl = $"{Gateway}/Order/PaymentSuccess",
+                    ipnUrl = IpnMomo,
                     amount = amount,
-                    orderId = orderId,
-                    requestId = myuuidAsString,
+                    orderId = id,
+                    requestId = requestId,
                     extraData = "",
                     partnerName = "MoMo Payment",
                     storeId = "G4T Store",
@@ -46,7 +54,8 @@ namespace OrderMicroservice.Repositories.Services
                     lang = "vi",
                     requestType = "captureWallet",
                 };
-                request.signature = request.MakeSignature(accessKey, secretKey);
+
+                request.signature = GenarateSignatureRequestMoMo(request, secretKey, accessKey);
 
                 StringContent httpContent = new StringContent(JsonConvert.SerializeObject(request), System.Text.Encoding.UTF8, "application/json");
                 var quickPayResponse = await client.PostAsync("https://test-payment.momo.vn/v2/gateway/api/create", httpContent);
@@ -57,8 +66,8 @@ namespace OrderMicroservice.Repositories.Services
                 MoMoResponse? parsedResponse = JsonConvert.DeserializeObject<MoMoResponse>(contents);
                 if (parsedResponse != null)
                 {
-                    response.Result = parsedResponse.payUrl;  // Only return payUrl
-                    response.IsSuccess = quickPayResponse.IsSuccessStatusCode;
+                    response.Result = parsedResponse.payUrl;
+                    response.IsSuccess = parsedResponse.resultCode == 0;
                     response.Message = parsedResponse.message;
                 }
                 else
@@ -77,30 +86,27 @@ namespace OrderMicroservice.Repositories.Services
             return response;
         }
 
-        public async Task<ResponseModel> VierQRPayment(OrderModel model)
+        public async Task<ResponseModel> VierQRPayment(string id, int amount, ICollection<OrderItemModel> items)
         {
-            string clientId = "e706845a-6c2d-49a1-8d3c-735bbe98df4a";
-            string apiKey = "caefb61c-cc8c-4236-bd9d-75b58a606660";
-            string checksumKey = "9a1a07556ff46320987f1e13c8f175c52d17fe010739a123cab0451141fc55ad";
+
             ResponseModel response = new();
             try
             {
-                PayOS payOS = new PayOS(clientId, apiKey, checksumKey);
+                PayOS payOS = new PayOS(PayOSOptionModel.ClientId!, PayOSOptionModel.ApiKey!, PayOSOptionModel.ChecksumKey!);
                 Random random = new Random();
                 long orderId = ((long)random.Next(int.MinValue, int.MaxValue) << 32) | (long)random.Next(int.MinValue, int.MaxValue);
 
-                List<ItemData> items = model.Items.Select(i => new ItemData(i.ProductName, i.Quantity, (int)i.Price)).ToList();
+                List<ItemData> itemData = items.Select(i => new ItemData(i.ProductName, i.Quantity, (int)i.Price)).ToList();
 
-                PaymentData paymentData = new PaymentData(orderId, (int)model.TotalPrice, $"Payment for order: {model.Id}",
-                     items, cancelUrl: $"{Gateway}/Order/PaymentFailure", returnUrl: $"{Gateway}/Order/PaymentSuccess");
+                PaymentData paymentData = new PaymentData(orderId, amount, $"Payment for order: {id}",
+                     itemData, cancelUrl: $"{Gateway}/Order/PaymentFailure", returnUrl: $"{Gateway}/Order/PaymentSuccess");
 
                 CreatePaymentResult createPayment = await payOS.createPaymentLink(paymentData);
 
-
-                response.Result = new VietQRResponse 
-                { 
-                    CheckoutUrl = createPayment.checkoutUrl, 
-                    PaymentTransactionId = orderId.ToString() 
+                response.Result = new VietQRResponse
+                {
+                    CheckoutUrl = createPayment.checkoutUrl,
+                    PaymentTransactionId = orderId.ToString()
                 };
                 response.Message = "Create VietQR payment success";
             }
@@ -111,5 +117,151 @@ namespace OrderMicroservice.Repositories.Services
             }
             return response;
         }
+
+        public async Task<ResponseModel> IpnMoMo(MoMoIPNResquest request)
+        {
+            ResponseModel response = new();
+            try
+            {
+                string accessKey = MoMoOptionModel.AccessKey!;
+                string secretKey = MoMoOptionModel.SecretKey!;
+
+                ResponseModel orderResult = await _orderService.GetOrderById(request.OrderId);
+                OrderModel order = JsonConvert.DeserializeObject<OrderModel>(orderResult.Result.ToString());
+                MoMoSignature orderSignature = new MoMoSignature()
+                {
+                    AccessKey = accessKey,
+                    Amount = (long)order.TotalPrice,
+                    PartnerCode = "MOMO",
+                    OrderId = order.Id
+                };
+
+                string signature = GenarateSignatureResponseMoMo(orderSignature, secretKey);
+
+                if (request.Signature == signature)
+                {
+                    response.IsSuccess = true;
+                    response.Message = "IPN signature MoMo is valid";
+                    response = await Paid(new PaidModel
+                    {
+                        OrderId = request.OrderId,
+                        TransactionId = request.TransId.ToString()
+                    }); 
+                }
+                else
+                {
+                    response.IsSuccess = false;
+                    response.Message = "IPN signature MoMo is invalid";
+                }
+
+
+
+
+
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = $"Error: {ex.Message}";
+            }
+            return response;
+        }
+
+
+        public async Task<ResponseModel> Paid(PaidModel model)
+        {
+            ResponseModel response = new();
+            try
+            {
+                ResponseModel findOrder = await _orderService.GetOrderById(model.OrderId);
+                if (!findOrder.IsSuccess)
+                {
+                    response.IsSuccess = false;
+                    response.Message = "Order not found";
+                    return response;
+                }
+
+                ResponseModel updateTransId = await _orderService.UpdateTransId(model.OrderId, model.TransactionId);
+                if (!updateTransId.IsSuccess)
+                {
+                    response.IsSuccess = false;
+                    response.Message = "Failed to update transaction id";
+                    return response;
+                }
+
+                ResponseModel updateStatus = await _orderService.UpdateStatus(model.OrderId, new PaymentStatusModel
+                {
+                    PaymentStatus = PaymentStatus.Paid,
+                    OrderStatus = OrderStatus.Paid
+                });
+
+                if (!updateStatus.IsSuccess)
+                {
+                    response.IsSuccess = false;
+                    response.Message = "Failed to update order status";
+                    return response;
+                }
+                response.IsSuccess = true;
+                response.Message = "Order paid successfully";
+
+
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = $"Error: {ex.Message}";
+            }
+            return response;
+        }
+
+
+
+
+
+
+
+
+
+        private string GenarateSignatureRequestMoMo(MoMoRequest signature, string secretKey, string accessKey)
+        {
+            // Tạo chuỗi `rawHash` từ các giá trị cần có trong chữ ký
+            string rawHash = "accessKey=" + accessKey +
+                             "&amount=" + signature.amount +
+                             "&extraData=" + (signature.extraData ?? "") +
+                             "&orderId=" + signature.orderId +
+                             "&orderInfo=" + signature.orderInfo +
+                             "&partnerCode=" + signature.partnerCode +
+                             "&requestId=" + signature.requestId;
+            return HashSHA256(rawHash, secretKey);
+        }
+
+        private string GenarateSignatureResponseMoMo(MoMoSignature signature, string secretKey)
+        {
+            // Tạo chuỗi `rawHash` từ các giá trị cần có trong chữ ký
+            string rawHash = "accessKey=" + signature.AccessKey +
+                             "&amount=" + signature.Amount +
+                             "&orderId=" + signature.OrderId +
+                             "&partnerCode=" + signature.PartnerCode;
+            return HashSHA256(rawHash, secretKey);
+        }
+
+        private string HashSHA256(string rawHash, string secretKey)
+        {
+            UTF8Encoding encoding = new UTF8Encoding();
+
+            // Chuyển đổi chuỗi `rawHash` và `secretKey` thành mảng byte
+            byte[] textBytes = encoding.GetBytes(rawHash);
+            byte[] keyBytes = encoding.GetBytes(secretKey);
+
+            byte[] hashBytes;
+
+            // Sử dụng HMACSHA256 để tính chữ ký
+            using (HMACSHA256 hash = new HMACSHA256(keyBytes))
+                hashBytes = hash.ComputeHash(textBytes);
+
+            // Trả về chuỗi `signature` dưới dạng hexadecimal, tất cả chữ thường
+            return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
+        }
+
     }
 }

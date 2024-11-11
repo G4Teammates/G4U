@@ -116,6 +116,23 @@ namespace OrderMicroService.Controllers
                 return StatusCode(500, new { message = "An unexpected error occurred. Detail" + ex.Message });
             }
         }
+        
+        [HttpPut("transid")]
+        public async Task<ActionResult> UpdateTrandsId(string orderId, string transId)
+        {
+            try
+            {
+                ResponseModel response = await _orderService.UpdateTransId(orderId, transId);
+                if (response.IsSuccess)
+                    return Ok(response);
+                return BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                // Trả về lỗi 500 cho các lỗi chưa dự đoán
+                return StatusCode(500, new { message = "An unexpected error occurred. Detail" + ex.Message });
+            }
+        }
 
 
 
