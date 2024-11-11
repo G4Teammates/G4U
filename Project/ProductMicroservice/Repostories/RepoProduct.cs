@@ -157,7 +157,7 @@ namespace ProductMicroservice.Repostories
 
                 while (retryCount2 < maxRetryAttempts2 && !isCompleted2)
                 {
-                    _message.SendingMessageCheckExistCategory(Product.UserName); // Gửi message
+                    _message.SendingMessageCheckExistUserName(Product.UserName); // Gửi message
 
                     var tcs2 = new TaskCompletionSource<bool>(); // Tạo TaskCompletionSource
 
