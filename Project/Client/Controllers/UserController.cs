@@ -335,7 +335,6 @@ namespace Client.Controllers
             return View();
         }
 
-        
         [HttpPost]
         public async Task<IActionResult> PasswordSecurity(ChangePasswordModel model)
         {
@@ -351,31 +350,138 @@ namespace Client.Controllers
             }
             return View();
         }
-       [HttpGet]
-        public async Task<IActionResult> UploadProduct(CreateProductModel model)
-        {
-            CreateProductModel createProductModel = new CreateProductModel();
 
-            var response = await _categoriesService.GetAllCategoryAsync(1, 99);
-            //createProductModel.Categories = (List<string>)response.Result;
-            ICollection<CategoriesModel>? haha = JsonConvert.DeserializeObject<ICollection<CategoriesModel>>(Convert.ToString(response.Result.ToString()!));
-            List<string> kha = new List<string>();
-            if (haha == null)
+        public async Task<IFormFile> DownloadFileAsIFormFile(string fileUrl)
+        {
+            using (HttpClient client = new HttpClient())
             {
-                TempData["error"] = "Category Không có dữ liệu";
-            }
-            else
-            {
-                foreach (var hi in haha)
+                var response = await client.GetAsync(fileUrl);
+
+                if (response.IsSuccessStatusCode)
                 {
-                    kha.Add(hi.Name);
+                    var stream = await response.Content.ReadAsStreamAsync();
+
+                    // Tạo một đối tượng IFormFile từ stream
+                    var fileName = Path.GetFileName(fileUrl);
+                    return new FormFile(stream, 0, stream.Length, null, fileName);
+                }
+                else
+                {
+                    throw new Exception("Failed to download file.");
                 }
             }
+        }
 
-            createProductModel.Categories.Add(kha[0]);
-            ViewBag.Categories = kha;
+        [HttpGet]
+        public async Task<IActionResult> EditProduct(string id)
+        {
+            try
+            {
+                ResponseModel? responsee = await _productService.GetProductByIdAsync(id);
+                if (responsee == null)
+                {
+                    throw new Exception("Không thấy game nào có ID vậy hết");
+                }
+                ProductModel? model = JsonConvert.DeserializeObject<ProductModel>(Convert.ToString(responsee.Result));
 
-            return View(createProductModel);
+                CreateProductModel createProductModel = new CreateProductModel();
+
+                createProductModel.Name = model.Name;
+                createProductModel.Description = model.Description;
+                createProductModel.Price = model.Price;
+                createProductModel.Discount = model.Discount;
+                createProductModel.Categories = model.Categories.Select(x => x.CategoryName).ToList();
+                createProductModel.Platform = (int)model.Platform;
+                createProductModel.Status = (int)model.Status;
+
+                if (model.Links != null)
+                {
+                    foreach (var link in model.Links)
+                    {
+                        if (link.Url.Contains("cloudinary"))
+                        {
+                            // Sử dụng trong CreateProductModel
+                            var file = await DownloadFileAsIFormFile(link.Url);
+                            createProductModel.imageFiles.Add(file);
+                            List<string> files = new List<string>();
+                            files.Add(link.Url);
+                            ViewBag.ImageFiles = files;
+                        }
+                        else if (link.Url.Contains("drive.google.com"))
+                        {
+                            var file = await DownloadFileAsIFormFile(link.Url);
+                            createProductModel.gameFile = file;
+                            ViewBag.GameFileName = file.FileName;
+                            ViewBag.GameFileSize = file.Length;
+                        }
+                    }
+                }
+
+                var responseCategory = await _categoriesService.GetAllCategoryAsync(1, 99);
+                //createProductModel.Categories = (List<string>)response.Result;
+                ICollection<CategoriesModel>? haha = JsonConvert.DeserializeObject<ICollection<CategoriesModel>>(Convert.ToString(responseCategory.Result.ToString()!));
+                List<string> kha = new List<string>();
+                if (haha == null)
+                {
+                    TempData["error"] = "Category Không có dữ liệu";
+                }
+                else
+                {
+                    foreach (var hi in haha)
+                    {
+                        kha.Add(hi.Name);
+                    }
+                }
+
+                ViewBag.Categories = kha;
+
+                return View(nameof(UploadProduct), createProductModel);
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = $"An error occurred: {ex.Message}";
+                return View(nameof(UserDashboard));
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> UploadProduct()
+        {
+            try
+            {
+                // Lay du lieu category
+                var response = await _categoriesService.GetAllCategoryAsync(1, 99);
+                ICollection<CategoriesModel>? cate = JsonConvert.DeserializeObject<ICollection<CategoriesModel>>(Convert.ToString(response.Result.ToString()!));
+                List<string> listCate = new List<string>();
+                if (cate == null)
+                {
+                    throw new Exception("Category Không có dữ liệu");
+                }
+                else
+                {
+                    foreach (var item in cate)
+                    {
+                        listCate.Add(item.Name);
+                    }
+                }
+
+                ViewBag.Categories = listCate;
+
+                CreateProductModel createProductModel = new CreateProductModel();
+                createProductModel.Categories.Add(listCate[0]);
+
+                //if (model != null)
+                //{
+                //    createProductModel = model;
+                //}
+
+                return View(createProductModel);
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = $"An error occurred: {ex.Message}";
+                return View();
+            }
         }
 
         [HttpPost]
@@ -417,7 +523,7 @@ namespace Client.Controllers
                 if (response != null && response.IsSuccess)
                 {
                     TempData["success"] = "Product created successfully";
-                    return View("UserDashboard");
+                    return View("UploadProduct");
                 }
                 else
                 {
@@ -428,7 +534,7 @@ namespace Client.Controllers
             catch (Exception ex)
             {
                 TempData["error"] = $"An error occurred: {ex.Message}";
-                return View("Register");
+                return View("UploadProduct");
             }
         }
 

@@ -1,4 +1,42 @@
-﻿/*Cai nay là chu Other Product nhe*/
+﻿/*Cai nay là filter ne*/
+.filter-container {
+    border: 3px solid transparent; /* Đặt border là trong suốt để chỉ dùng gradient */
+    border-radius: 10px;
+    background: linear-gradient(#fff, #fff) padding-box, linear-gradient(135deg, #00A97F, #800080) border-box;
+    box-shadow: 0 0 10px rgba(0, 169, 127, 0.8), 0 0 20px rgba(128, 0, 128, 0.5);
+    color: #00A97F; /* Màu chữ phù hợp với phong cách */
+    transition: 0.3s ease-in-out;
+}
+
+    .filter-container:hover {
+        box-shadow: 0 0 15px rgba(0, 169, 127, 1), 0 0 25px rgba(128, 0, 128, 0.8);
+        transform: scale(1.02); /* Nhấn mạnh viền khi hover */
+    }
+
+
+.filter-title {
+    color: #00A97F;
+    font-weight: bold;
+}
+
+.btn-primary {
+    background-color: #00A97F;
+    border: none;
+    box-shadow: 0 0 10px rgba(0, 169, 127, 0.5);
+    transition: 0.3s ease;
+}
+
+    .btn-primary:hover {
+        background-color: #007C60;
+        box-shadow: 0 0 15px rgba(0, 169, 127, 1), 0 0 25px rgba(0, 169, 127, 0.8);
+    }
+
+
+
+
+
+
+/*Cai nay là chu Other Product nhe*/
 .modern-heading {
     font-family: 'Poppins', sans-serif;
     font-size: 36px;
