@@ -716,6 +716,22 @@
       "UpstreamPathTemplate": "/Order/{id}/items",
       "UpstreamHttpMethod": [ "Get" ]
     },
+
+      //Get order items by customer id
+    {
+      "DownstreamPathTemplate": "/api/Order/customer/{id}/items",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7297
+        }
+      ],
+      "UpstreamPathTemplate": "/Order/customer/{id}/items",
+      "UpstreamHttpMethod": [ "Get" ]
+    },
+
+
     //Update order status
     {
       "DownstreamPathTemplate": "/api/Order",

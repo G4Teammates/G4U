@@ -317,5 +317,45 @@ namespace OrderMicroservice.Repositories.Services
 
         }
 
+        public async Task<ResponseModel> GetItemsByCustomerId(string id)
+        {
+            ResponseModel response = new();
+            try
+            {
+                // Tìm đơn hàng theo ID
+                var order = await _context.Orders.SingleOrDefaultAsync(i => i.CustomerId == id);
+
+                // Kiểm tra nếu không tìm thấy đơn hàng
+                if (order == null)
+                {
+                    response.IsSuccess = false;
+                    response.Message = $"Order with CustomerId '{id}' not found.";
+                    return response;
+                }
+
+                // Lấy các mục của đơn hàng
+                var orderItems = order.Items;
+
+                // Kiểm tra nếu đơn hàng không có mục nào
+                if (orderItems == null || !orderItems.Any())
+                {
+                    response.IsSuccess = false;
+                    response.Message = $"Order with CustomerId '{id}' does not contain any items.";
+                    return response;
+                }
+
+                // Map danh sách orderItems sang mô hình OrderItemModel
+                response.Result = _mapper.Map<ICollection<OrderItemModel>>(orderItems);
+                response.IsSuccess = true;
+                response.Message = $"Order items for CustomerId '{id}' retrieved successfully.";
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = $"Failed to retrieve items for CustomerId '{id}'. Error: {ex.Message}";
+            }
+
+            return response;
+        }
     }
 }
