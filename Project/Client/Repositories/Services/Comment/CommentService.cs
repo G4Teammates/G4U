@@ -125,5 +125,23 @@ namespace Client.Repositories.Services.Comment
                 Url = $"{StaticTypeApi.APIGateWay}/Comment/ParentId/{parentId}?page=" + pageNumber.ToString() + "&pageSize=" + pageSize.ToString()
             });
         }
+
+        public async Task<ResponseModel> IncreaseLike(string commentId)
+        {
+            return await _baseService.SendAsync(new RequestModel()
+            {
+                ApiType = StaticTypeApi.ApiType.PUT,
+                Url = $"{StaticTypeApi.APIGateWay}/Comment/IncreaseLike/{commentId}"
+            });
+        }
+
+        public async Task<ResponseModel> DecreaseLike(string commentId)
+        {
+            return await _baseService.SendAsync(new RequestModel()
+            {
+                ApiType = StaticTypeApi.ApiType.PUT,
+                Url = $"{StaticTypeApi.APIGateWay}/Comment/DecreaseLike/{commentId}"
+            });
+        }
     }
 }

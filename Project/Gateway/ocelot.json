@@ -624,6 +624,34 @@
       "UpstreamHttpMethod": [ "Get" ]
     },
 
+    //Like
+    {
+      "DownstreamPathTemplate": "/api/Comment/IncreaseLike/{commentId}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7250
+        }
+      ],
+      "UpstreamPathTemplate": "/Comment/IncreaseLike/{commentId}",
+      "UpstreamHttpMethod": [ "Put" ]
+    },
+
+    //dislike
+    {
+      "DownstreamPathTemplate": "/api/Comment/DecreaseLike/{commentId}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7250
+        }
+      ],
+      "UpstreamPathTemplate": "/Comment/DecreaseLike/{commentId}",
+      "UpstreamHttpMethod": [ "Put" ]
+    },
+
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
