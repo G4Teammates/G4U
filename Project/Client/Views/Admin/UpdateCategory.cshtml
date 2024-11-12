@@ -7,51 +7,97 @@
 @{
     ViewData["Title"] = "Update Category";
 }
+<style>
+    .system-form {
+        border: 1px solid #00A97F;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 169, 127, 0.2);
+    }
 
+    .system-label {
+        color: #00A97F;
+        font-weight: bold;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .system-input, .system-select {
+        background-color: #f8f9fa;
+        border: 1px solid #00A97F;
+        border-radius: 4px;
+        color: #333;
+        font-family: 'Poppins', sans-serif;
+    }
+
+        .system-input:focus, .system-select:focus {
+            border-color: #00A97F;
+            box-shadow: 0 0 5px rgba(0, 169, 127, 0.5);
+        }
+
+    .system-btn {
+        background-color: #00A97F;
+        border: none;
+        color: #fff;
+        font-family: 'Poppins', sans-serif;
+        font-weight: bold;
+        transition: background-color 0.3s ease;
+    }
+
+        .system-btn:hover {
+            background-color: #007f5f;
+            box-shadow: 0 0 10px rgba(0, 169, 127, 0.5);
+        }
+
+</style>
 <h2>Update Category</h2>
 
-<form asp-action="UpdateCategoryConfirm" method="post">
-    <div class="form-group">
-        <label asp-for="Id">Category ID</label>
-        <input asp-for="Id" class="form-control" readonly="readonly" />
-        <span asp-validation-for="Id" class="text-danger"></span>
+<form asp-action="UpdateCategoryConfirm" method="post" class="system-form">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group ">
+                <label asp-for="Id" class="system-label">Category ID</label>
+                <input asp-for="Id" class="form-control system-input" readonly="readonly" />
+                <span asp-validation-for="Id" class="text-danger"></span>
+            </div>
+            <div class="form-group mt-2">
+                <label asp-for="Name" class="system-label">Category Name</label>
+                <input asp-for="Name" class="form-control system-input" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group mt-2">
+                <label asp-for="Type" class="system-label">Type</label>
+                <select asp-for="Type" class="form-select system-select" aria-label="Type">
+                    <option value="0">Tag</option>
+                    <option value="1">Category</option>
+                    <option value="2">Genre</option>
+                </select>
+                <span asp-validation-for="Type" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group mt-2">
+                <label asp-for="Status" class="system-label">Status</label>
+                <select asp-for="Status" class="form-select system-select" aria-label="Status">
+                    <option value="0">Active</option>
+                    <option value="1">Inactive</option>
+                    <option value="2">Block</option>
+                    <option value="3">Deleted</option>
+                </select>
+                <span asp-validation-for="Status" class="text-danger"></span>
+            </div>
+            <div class="form-group mt-2">
+                <label asp-for="Description" class="system-label">Description</label>
+                <textarea asp-for="Description" class="form-control system-input" rows="3"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+        </div>
     </div>
+    
 
-    <div class="form-group">
-        <label asp-for="Name">Category Name</label>
-        <input asp-for="Name" class="form-control" />
-        <span asp-validation-for="Name" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="Type" class="form-label">Type</label>
-        <select asp-for="Type" class="form-select" aria-label="Type">
-            <option value="0">Tag</option>
-            <option value="1">Category</option>
-            <option value="2">Genre</option>
-        </select>
-        <span asp-validation-for="Type" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="Description">Description</label>
-        <textarea asp-for="Description" class="form-control" rows="3"></textarea>
-        <span asp-validation-for="Description" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="Status" class="form-label">Status</label>
-        <select asp-for="Status" class="form-select" aria-label="Status">
-            <option value="0">Active</option>
-            <option value="1">Inactive</option>
-            <option value="2">Block</option>
-            <option value="3">Deleted</option>
-        </select>
-        <span asp-validation-for="Status" class="text-danger"></span>
-    </div>
-
-    <button type="submit" class="btn btn-primary">Update Category</button>
+    <button type="submit" class="btn system-btn" style="margin-top:1.5vw;">Update</button>
 </form>
+
 
 @section Scripts {
 

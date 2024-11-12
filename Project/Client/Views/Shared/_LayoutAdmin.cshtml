@@ -77,7 +77,7 @@
             <hr />
             <ul class="navbar-nav flex-grow-1">
                 <li class="nav-item m-2">
-                    <form action="AdminDashboard" method="get">
+                    <form asp-action="AdminDashboard" method="get">
                         <button id="dashboard-btn" class="nav-link active text-start border-0 w-100">
                             <span class="p-2 fs-6 fw-bold">Dashboard</span>
                         </button>
@@ -85,7 +85,7 @@
                 </li>
 
                 <li class="nav-item m-2">
-                    <form action="UsersManager" method="get">
+                    <form asp-controller="Admin" asp-action="UsersManager" method="get">
                         <button id="users-manager-btn" class="nav-link text-start border-0 w-100">
                             <span class="p-2 fs-6 fw-bold">Users Manager</span>
                         </button>
@@ -93,7 +93,7 @@
                 </li>
 
                 <li class="nav-item m-2">
-                    <form asp-action="ProductsManager" method="get">
+                    <form asp-controller="Admin" asp-action="ProductsManager" method="get">
                         <button id="products-manager-btn" class="nav-link text-start border-0 w-100">
                             <span class="p-2 fs-6 fw-bold">Products Manager</span>
                         </button>
@@ -101,7 +101,7 @@
                 </li>
 
                 <li class="nav-item m-2">
-                    <form action="OrdersManager" method="get">
+                    <form asp-controller="Admin" asp-action="OrdersManager" method="get">
                         <button id="orders-manager-btn" class="nav-link text-start border-0 w-100">
                             <span class="p-2 fs-6 fw-bold">Orders Manager</span>
                         </button>
@@ -109,7 +109,7 @@
                 </li>
 
                 <li class="nav-item m-2">
-                    <form action="CategoriesManager" method="get">
+                    <form asp-controller="Admin" asp-action="CategoriesManager" method="get">
                         <button id="categories-manager-btn" class="nav-link text-start border-0 w-100">
                             <span class="p-2 fs-6 fw-bold">Categories Manager</span>
                         </button>
@@ -117,7 +117,7 @@
                 </li>
 
                 <li class="nav-item m-2">
-                    <form action="CommentManager" method="get">
+                    <form asp-controller="Admin" asp-action="CommentManager" method="get">
                         <button id="comment-manager-btn" class="nav-link text-start border-0 w-100">
                             <span class="p-2 fs-6 fw-bold">Comment Manager</span>
                         </button>
