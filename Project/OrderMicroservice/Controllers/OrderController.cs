@@ -83,6 +83,23 @@ namespace OrderMicroService.Controllers
             }
         }
 
+        [HttpGet("customer/{id}/items")]
+        public async Task<ActionResult> GetItemsByCustomerId(string id)
+        {
+            try
+            {
+                ResponseModel response = await _orderService.GetItemsByCustomerId(id);
+                if (response.IsSuccess)
+                    return Ok(response);
+                return BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                // Trả về lỗi 500 cho các lỗi chưa dự đoán
+                return StatusCode(500, new { message = "An unexpected error occurred. Detail" + ex.Message });
+            }
+        }
+
         [HttpPost]
         public async Task<ActionResult> Create([FromBody]OrderModel order)
         {
@@ -106,6 +123,23 @@ namespace OrderMicroService.Controllers
             try
             {
                 ResponseModel response = await _orderService.UpdateStatus(id, status);
+                if (response.IsSuccess)
+                    return Ok(response);
+                return BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                // Trả về lỗi 500 cho các lỗi chưa dự đoán
+                return StatusCode(500, new { message = "An unexpected error occurred. Detail" + ex.Message });
+            }
+        }
+        
+        [HttpPut("transid")]
+        public async Task<ActionResult> UpdateTrandsId(string orderId, string transId)
+        {
+            try
+            {
+                ResponseModel response = await _orderService.UpdateTransId(orderId, transId);
                 if (response.IsSuccess)
                     return Ok(response);
                 return BadRequest(response);

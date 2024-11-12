@@ -12,19 +12,17 @@ using OrderMicroservice.Repositories.Interfaces;
 
 namespace OrderMicroservice.Repositories.Services
 {
-    public class OrderService(OrderDbContext context, IMapper mapper, IPaymentService paymentService,IMessage message) : IOrderService
+    public class OrderService(OrderDbContext context, IMapper mapper, IMessage message) : IOrderService
     {
         OrderDbContext _context = context;
         IMapper _mapper = mapper;
-        IPaymentService _paymentService = paymentService;
-        IMessage _message=message;
+        IMessage _message = message;
 
         public async Task<ResponseModel> Create(OrderModel orderModel)
         {
             ResponseModel response = new();
             try
             {
-                _paymentService.MoMoPayment(orderModel.Id, (long)orderModel.TotalPrice);
 
 
                 Order orderEntity = _mapper.Map<Order>(orderModel);
@@ -241,6 +239,8 @@ namespace OrderMicroservice.Repositories.Services
             return response;
         }
 
+
+
         public async Task<ResponseModel> TotalRequest()
         {
             ResponseModel response = new();
@@ -269,6 +269,92 @@ namespace OrderMicroservice.Repositories.Services
                 response.IsSuccess = false;
                 response.Message = ex.Message;
             }
+            return response;
+        }
+
+        public async Task<ResponseModel> UpdateTransId(string orderId, string transId)
+        {
+            ResponseModel response = new();
+            try
+            {
+                // Tìm đơn hàng
+                Order? order = await _context.Orders.SingleOrDefaultAsync(i => i.Id == orderId);
+                if (order == null)
+                {
+                    response.IsSuccess = false;
+                    response.Message = $"Order with ID '{orderId}' not found.";
+                    return response;
+                }
+                if (order.PaymentTransactionId == null)
+                {
+                    order.PaymentTransactionId = transId;
+                    // Cập nhật thời gian sửa đổi
+                    order.UpdatedAt = DateTime.UtcNow;
+
+                    // Cập nhật dữ liệu trong database
+                    _context.Attach(order);
+                    _context.Entry(order).Property(u => u.PaymentTransactionId).IsModified = true; // Chỉ cập nhật trường cần thiết
+                    await _context.SaveChangesAsync();
+
+                    response.Result = _mapper.Map<OrderModel>(order);
+                    response.IsSuccess = true;
+                }
+                else
+                {
+                    // Nếu không có sự thay đổi nào
+                    response.IsSuccess = false;
+                    response.Message = "No changes made as both Payment status and Order status are unchanged.";
+                }
+            }
+            catch (Exception ex)
+            {
+                // Xử lý ngoại lệ và trả về thông báo lỗi
+                response.IsSuccess = false;
+                response.Message = $"Failed to update order with ID '{orderId}'. Error: {ex.Message}";
+            }
+
+            return response;
+
+        }
+
+        public async Task<ResponseModel> GetItemsByCustomerId(string id)
+        {
+            ResponseModel response = new();
+            try
+            {
+                // Tìm đơn hàng theo ID
+                var order = await _context.Orders.SingleOrDefaultAsync(i => i.CustomerId == id);
+
+                // Kiểm tra nếu không tìm thấy đơn hàng
+                if (order == null)
+                {
+                    response.IsSuccess = false;
+                    response.Message = $"Order with CustomerId '{id}' not found.";
+                    return response;
+                }
+
+                // Lấy các mục của đơn hàng
+                var orderItems = order.Items;
+
+                // Kiểm tra nếu đơn hàng không có mục nào
+                if (orderItems == null || !orderItems.Any())
+                {
+                    response.IsSuccess = false;
+                    response.Message = $"Order with CustomerId '{id}' does not contain any items.";
+                    return response;
+                }
+
+                // Map danh sách orderItems sang mô hình OrderItemModel
+                response.Result = _mapper.Map<ICollection<OrderItemModel>>(orderItems);
+                response.IsSuccess = true;
+                response.Message = $"Order items for CustomerId '{id}' retrieved successfully.";
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = $"Failed to retrieve items for CustomerId '{id}'. Error: {ex.Message}";
+            }
+
             return response;
         }
     }

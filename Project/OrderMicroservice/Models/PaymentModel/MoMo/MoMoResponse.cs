@@ -1,4 +1,4 @@
-﻿namespace OrderMicroservice.Models.PaymentModel
+﻿namespace OrderMicroservice.Models.PaymentModel.MoMo
 {
     public class MoMoResponse
     {

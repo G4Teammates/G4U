@@ -716,6 +716,22 @@
       "UpstreamPathTemplate": "/Order/{id}/items",
       "UpstreamHttpMethod": [ "Get" ]
     },
+
+      //Get order items by customer id
+    {
+      "DownstreamPathTemplate": "/api/Order/customer/{id}/items",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7297
+        }
+      ],
+      "UpstreamPathTemplate": "/Order/customer/{id}/items",
+      "UpstreamHttpMethod": [ "Get" ]
+    },
+
+
     //Update order status
     {
       "DownstreamPathTemplate": "/api/Order",
@@ -728,7 +744,68 @@
       ],
       "UpstreamPathTemplate": "/Order",
       "UpstreamHttpMethod": [ "Put" ]
+    }, 
+    //Update trans id
+    {
+      "DownstreamPathTemplate": "/api/Order/transid",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7297
+        }
+      ],
+      "UpstreamPathTemplate": "/Order/transid",
+      "UpstreamHttpMethod": [ "Put" ]
     },
+
+
+    //-----------------Payment-----------------
+
+    //payment momo
+    {
+      "DownstreamPathTemplate": "/api/Payment/momo",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7297
+        }
+      ],
+      "UpstreamPathTemplate": "/Payment/momo",
+      "UpstreamHttpMethod": [ "Post" ]
+    },
+
+       //payment vietqr
+    {
+      "DownstreamPathTemplate": "/api/Payment/vietqr",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7297
+        }
+      ],
+      "UpstreamPathTemplate": "/Payment/vietqr",
+      "UpstreamHttpMethod": [ "Post" ]
+    },
+
+
+        //ipn momo
+    {
+      "DownstreamPathTemplate": "/api/Payment/ipn/momo",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7297
+        }
+      ],
+      "UpstreamPathTemplate": "/Payment/ipn/momo",
+      "UpstreamHttpMethod": [ "Post" ]
+    },
+
+
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

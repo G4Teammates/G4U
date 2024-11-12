@@ -53,7 +53,7 @@ namespace OrderMicroservice.Models.OrderModel
         /// <br/>
         /// Tên phương thức thanh toán (ví dụ: Momo, Vnpay, ViettinBank).
         /// </summary>
-        public required string PaymentName { get; set; }
+        public string PaymentName { get; set; } = "Pending";
 
         /// <summary>
         /// Status of the payment, including: Pending, Paid, Failed.
