@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ProductMicroservice.DBContexts.Entities;
+using ProductMicroservice.Models;
 using ProductMicroservice.Models.DTO;
 using ProductMicroservice.Models.Message;
 
@@ -23,5 +24,11 @@ namespace ProductMicroservice.Repostories
         Task<ResponseDTO> TotalRequest();
 
         Task<ResponseDTO> GetAllProductsByUserName(string userName);
+
+        // Phương thức tăng lượt thích cho bình luận
+        Task<ResponseDTO> IncreaseLike(string productId,UserLikesModel userLike);
+
+        // Phương thức giảm lượt thích cho bình luận
+        Task<ResponseDTO> DecreaseLike(string productId, UserDisLikesModel userDisLike);
     }
 }

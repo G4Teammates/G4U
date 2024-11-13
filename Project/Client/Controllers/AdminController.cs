@@ -26,6 +26,7 @@ using static Client.Models.Enum.UserEnum.User;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using Client.Repositories.Interfaces.Stastistical;
 using Client.Models.Statistical;
+using System.Security.Claims;
 
 
 namespace Client.Controllers
@@ -118,7 +119,7 @@ namespace Client.Controllers
                     var user = _helperService.GetUserFromJwtToken((JwtSecurityToken)response.Result);
                     ViewBag.User = user;
                     ViewData["IsLogin"] = true;
-                    TempData["success"] = "Welcome to admin dashboarch "+user;
+                    TempData["success"] = "Welcome to admin dashboarch "+user.Username;
                 }
                 else
                 {
@@ -553,6 +554,7 @@ namespace Client.Controllers
             {
                 var numOfView = model.Interactions.NumberOfViews;
                 var numOfLike = model.Interactions.NumberOfLikes;
+                var numOfDisLike = model.Interactions.NumberOfDisLikes;
 
                 // Tạo đối tượng ScanFileRequest
                 var request = new ScanFileRequest
@@ -563,10 +565,10 @@ namespace Client.Controllers
                 // Gọi service UpdateProduct từ phía Client
                 var response = await _productService.UpdateProductAsync(
                     model.Id, model.Name, model.Description, model.Price, model.Sold,
-                   numOfView, numOfLike, model.Discount,
+                   numOfView, numOfLike,numOfDisLike, model.Discount,
                     model.Links, model.Categories, (int)model.Platform,
                     (int)model.Status, model.CreatedAt, model.ImageFiles,
-                    request, model.UserName);
+                    request, model.UserName, model.Interactions.UserLikes, model.Interactions.UserDisLikes);
 
                 if (response.IsSuccess)
                 {
@@ -599,6 +601,8 @@ namespace Client.Controllers
 
             try
             {
+                IEnumerable<Claim> claim = HttpContext.User.Claims;
+                model.Username = claim.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value!;
                 // Tạo đối tượng ScanFileRequest
                 var request = new ScanFileRequest
                 {
@@ -1314,12 +1318,13 @@ namespace Client.Controllers
         }
         public async Task<IActionResult> CommentDelete(string id)
         {
-            ResponseModel? response = await _commentService.GetListByIdAsync(id);
+            ResponseModel? response = await _commentService.GetByIdAsync(id);
+
             if (response != null && response.IsSuccess)
             {
-                ProductModel? model = JsonConvert.DeserializeObject<ProductModel>(Convert.ToString(response.Result));
-                TempData["success"] = "Get comment for delete successfully";
-                // Trả về model UsersDTO để sử dụng trong View
+                CommentDTOModel? model = JsonConvert.DeserializeObject<CommentDTOModel>(Convert.ToString(response.Result));
+                TempData["success"] = "Get comment for update successfully";
+                
                 return View(model);
             }
             else

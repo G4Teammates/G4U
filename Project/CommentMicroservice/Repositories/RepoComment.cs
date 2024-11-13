@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Azure;
 using CommentMicroservice.DBContexts;
 using CommentMicroservice.DBContexts.Entities;
 using CommentMicroservice.Models;
@@ -107,6 +108,8 @@ namespace CommentMicroservice.Repositories
                         Content = Comment.Content,
                         NumberOfLikes = 0,
                         NumberOfDisLikes = 0,
+                        UserLikes =  new List<UserLikesModel>(),
+                        UserDisLikes = new List<UserDisLikesModel>(),
                         UserName = Comment.UserName,
                         Status = Comment.Status,
                         ProductId = Comment.ProductId,
@@ -140,6 +143,8 @@ namespace CommentMicroservice.Repositories
                     upComm.Content = Comment.Content;
                     upComm.NumberOfLikes = Comment.NumberOfLikes;
                     upComm.NumberOfDisLikes = Comment.NumberOfDisLikes;
+                    upComm.UserLikes = _mapper.Map<ICollection<UserLikes>>(Comment.UserLikes);
+                    upComm.UserDisLikes = _mapper.Map<ICollection<UserDisLikes>>(Comment.UserDisLikes);
                     upComm.UserName = Comment.UserName;
                     upComm.Status = Comment.Status;
                     upComm.ProductId = Comment.ProductId;
@@ -293,65 +298,90 @@ namespace CommentMicroservice.Repositories
             return response;
         }
 
-        public async Task<ResponseModel> IncreaseLike(string commentId)
+        public async Task<ResponseModel> IncreaseLike(string commentId, UserLikesModel userLike)
         {
             ResponseModel response = new();
-            try
+            var comment = await _db.Comments.FindAsync(commentId);
+            var checkExitUser = comment?.UserLikes.FirstOrDefault(ul => ul.UserName == userLike.UserName);
+            if (checkExitUser == null)
             {
-                var comment = await _db.Comments.FindAsync(commentId);
-                if (comment != null)
+                try
                 {
-                    comment.NumberOfLikes++;
-                    _db.Comments.Update(comment);
-                    await _db.SaveChangesAsync();
+                    if (comment != null)
+                    {
+                        comment.NumberOfLikes++;
+                        comment.UserLikes.Add(_mapper.Map<UserLikes>(userLike));
+                        _db.Comments.Update(comment);
+                        await _db.SaveChangesAsync();
 
-                    response.IsSuccess = true;
-                    response.Result = comment;
-                    response.Message = "Increased like count successfully.";
+                        response.IsSuccess = true;
+                        response.Result = comment.NumberOfLikes;
+                        response.Message = "Increased like count successfully.";
+                    }
+                    else
+                    {
+                        response.IsSuccess = false;
+                        response.Message = "Comment not found.";
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
                     response.IsSuccess = false;
-                    response.Message = "Comment not found.";
+                    response.Message = ex.Message;
                 }
+                return response;
             }
-            catch (Exception ex)
+            else
             {
-                response.IsSuccess = false;
-                response.Message = ex.Message;
+                response.IsSuccess = true;
+                response.Result = comment.NumberOfLikes;
+                response.Message = "You liked this comment before.";
+                return response;
             }
-            return response;
         }
 
-        public async Task<ResponseModel> DecreaseLike(string commentId)
+        public async Task<ResponseModel> DecreaseLike(string commentId , UserDisLikesModel userDisLike)
         {
             ResponseModel response = new();
-            try
+            var comment = await _db.Comments.FindAsync(commentId);
+            var checkExitUser = comment?.UserDisLikes.FirstOrDefault(ul => ul.UserName == userDisLike.UserName);
+            if (checkExitUser == null)
             {
-                var comment = await _db.Comments.FindAsync(commentId);
-                if (comment != null)
+                try
                 {
-                    // Tăng số lượng dislike thay vì giảm số lượng like
-                    comment.NumberOfDisLikes++;
-                    _db.Comments.Update(comment);
-                    await _db.SaveChangesAsync();
+                    if (comment != null)
+                    {
+                        // Tăng số lượng dislike thay vì giảm số lượng like
+                        comment.NumberOfDisLikes++;
+                        comment.UserDisLikes.Add(_mapper.Map<UserDisLikes>(userDisLike));
+                        _db.Comments.Update(comment);
+                        await _db.SaveChangesAsync();
 
-                    response.IsSuccess = true;
-                    response.Result = comment;
-                    response.Message = "Increased dislike count successfully.";
+                        response.IsSuccess = true;
+                        response.Result = comment.NumberOfDisLikes;
+                        response.Message = "Increased dislike count successfully.";
+                    }
+                    else
+                    {
+                        response.IsSuccess = false;
+                        response.Message = "Comment not found.";
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
                     response.IsSuccess = false;
-                    response.Message = "Comment not found.";
+                    response.Message = ex.Message;
                 }
+                return response;
             }
-            catch (Exception ex)
+            else
             {
-                response.IsSuccess = false;
-                response.Message = ex.Message;
+                response.IsSuccess = true;
+                response.Result = comment.NumberOfDisLikes;
+                response.Message = "You disliked this comment before.";
+                return response;
             }
-            return response;
+
         }
 
 

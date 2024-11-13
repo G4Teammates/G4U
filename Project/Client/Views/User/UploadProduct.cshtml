@@ -1,11 +1,22 @@
 ﻿@using Client.Models.ProductDTO
-@model CreateProductModel
+@model UpdateProductModel
 
 @{
     List<string> Images = ViewBag.ImageFiles;
     IFormFile gameImages = ViewBag.gameFile;
     var gameFileName = ViewBag.GameFileName;
     var gameFileSize = ViewBag.GameFileSize;
+
+    string saveBtn = string.Empty;
+
+    @if (Model.Id != null)
+    {
+        saveBtn = "UpdateProduct";
+    }
+    else
+    {
+        saveBtn = "UploadProductPost";
+    }
 }
 
 <style>
@@ -47,10 +58,12 @@
 }
 
 <div class="container container-custom px-5">
-    <form asp-action="UploadProductPost" asp-controller="User" method="post" class="row mt-2" enctype="multipart/form-data">
+    <form asp-action="@saveBtn" asp-controller="User" method="post" class="row mt-2" enctype="multipart/form-data">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
         <!-- Phần bên trái chứa các input chính -->
+        <input asp-for="@Model.Id" class="form-control" type="hidden" />
+
         <div class="col-md-8 pe-5">
             <div class="mb-3">
                 <label class="form-label fw-bold fs-5">Title</label>
@@ -89,7 +102,7 @@
                 <div class="border p-2 mb-2">
                     <p id="fileInfo">No file uploaded</p>
                 </div>
-                <input asp-for="@Model.gameFile" type="file" name="gameFile" id="fileInput" class="d-none" accept=".rar, .zip" onchange="displayFileInfo()" />
+                <input asp-for="gameFile" type="file" name="gameFile" id="fileInput" class="d-none" accept=".rar, .zip" onchange="displayFileInfo()" />
                 <button type="button" class="btn btn-danger" onclick="document.getElementById('fileInput').click()">Upload</button>
                 <span asp-validation-for="@Model.gameFile" class="m-2">File size limit: 1 GB</span>
             </div>
@@ -147,7 +160,7 @@
 
                 <div class="mb-2">
                     <label class="form-label fw-bold fs-6">Platform</label>
-                    <select class="form-select">
+                    <select asp-for="@Model.Platform" class="form-select">
                         <option value="0">Unknown</option>
                         <option value="1">Downloadable</option>
                         <option value="2">HTML</option>
@@ -171,13 +184,14 @@
                 @if (Images != null)
                 {
                     <img id="coverImagePreview" src="@Images[0]" alt="Cover Image" class="border mb-3" style="width:200px; height:200px;" />
+                    <input type="file" class="d-none" asp-for="ImageFiles" id="coverImageInput" accept="image/*" src="@Images[0]" />
                 }
                 else
                 {
                     <img id="coverImagePreview" src="~/Image/avatar.jpeg" alt="Cover Image" class="border mb-3" style="width:200px; height:200px;" />
+                    <input type="file" class="d-none" asp-for="ImageFiles" id="coverImageInput" accept="image/*" />
                 }
                 <!-- Input file ẩn -->
-                <input type="file"  class="d-none" asp-for="imageFiles" id="coverImageInput" accept="image/*" />
                 <!-- Nút để kích hoạt chọn file -->
                 <button type="button" class="btn btn-outline-dark mt-2 w-100" onclick="document.getElementById('coverImageInput').click()">Upload Cover Image</button>
             </div>

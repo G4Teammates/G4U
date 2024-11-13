@@ -22,10 +22,12 @@ using Client.Repositories.Interfaces.Product;
 using Client.Repositories.Interfaces.Categories;
 using Client.Models.CategorisDTO;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
+using Client.Repositories.Interfaces.Order;
+using Client.Models.OrderModel;
 
 namespace Client.Controllers
 {
-    public class UserController(IAuthenticationService authenService, IUserService userService, ITokenProvider tokenProvider, IHelperService helperService, IRepoProduct repoProduct, ICategoriesService categoriesService) : Controller
+    public class UserController(IAuthenticationService authenService, IUserService userService, ITokenProvider tokenProvider, IHelperService helperService, IRepoProduct repoProduct, ICategoriesService categoriesService, IOrderService orderService) : Controller
     {
         private readonly IAuthenticationService _authenService = authenService;
         public readonly IUserService _userService = userService;
@@ -33,7 +35,9 @@ namespace Client.Controllers
         public readonly IHelperService _helperService = helperService;
         public readonly IRepoProduct _productService = repoProduct;
         public readonly ICategoriesService _categoriesService = categoriesService;
+        public readonly IOrderService _orderService = orderService;
 
+        private ICollection<ProductModel> ListProduct;
 
 
         [HttpGet]
@@ -74,10 +78,19 @@ namespace Client.Controllers
                     };
                     await _helperService.UpdateClaim(userClaim, HttpContext);
 
-                    TempData["success"] = "Login successfully";
-
                     TempData["success"] = "Login success";
-                    return RedirectToAction("Index", "Home");
+                    if (userClaim.Role == "Admin")
+                    {
+                        return RedirectToAction("AdminDashboard", "Admin");
+                    }
+                    else if (userClaim.Role == "User")
+                    {
+                        return RedirectToAction("Index", "Home");
+                    }
+                    else
+                    {
+                        return RedirectToAction("Index", "Home");
+                    }
                 }
                 TempData["error"] = "Login fail, check your username(or email) and password";
             }
@@ -273,7 +286,7 @@ namespace Client.Controllers
                         stream.Position = 0;
                         var imageUrl = await _helperService.UploadImageAsync(stream, updateUser.AvatarFile.FileName);
 
-                        // Lưu URL của avatar vào model
+                        // Lưu URL của avatar vào updateProductModel
                         updateUser.Avatar = imageUrl;
                     }
                 }
@@ -309,7 +322,7 @@ namespace Client.Controllers
                 }
             }
 
-            // Nếu ModelState không hợp lệ, trả về lại model để hiển thị lỗi
+            // Nếu ModelState không hợp lệ, trả về lại updateProductModel để hiển thị lỗi
             return View(updateUser);
         }
 
@@ -327,6 +340,34 @@ namespace Client.Controllers
         public IActionResult Cart()
         {
             return View();
+        }
+
+
+        public IActionResult Cart(ProductViewModel product)
+        {
+            ListProduct.Add(product.Prod);
+            CartModel cart = new();
+            cart.Products = ListProduct;
+            cart.Order.CustomerId = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)!.Value;
+            cart.Order.Items = ListProduct.Select(x => new OrderItemModel
+            {
+                ProductId = x.Id,
+                ProductName = x.Name,
+                Price = x.Price,
+                PublisherName = x.UserName,
+                Quantity = 1
+            }).ToList();
+            cart.Order.TotalPrice = ListProduct.Sum(x => x.Price);
+            
+            return RedirectToAction("Payment","Order", cart);
+        }
+        public IActionResult CartRemoveProduct(ProductModel product)
+        {
+            ListProduct.Remove(product);
+            CartModel cart = new();
+            cart.Products = ListProduct;
+
+            return View(cart);
         }
 
         [HttpGet]
@@ -372,6 +413,72 @@ namespace Client.Controllers
             }
         }
 
+        [HttpPost]
+        [RequestSizeLimit(60 * 1024 * 1024)] // 50MB
+        [RequestFormLimits(MultipartBodyLengthLimit = 60 * 1024 * 1024)] // Đặt giới hạn cho form multipart
+        public async Task<IActionResult> UpdateProduct(UpdateProductModel updateProductModel)
+        {
+            //if (!ModelState.IsValid)
+            //{
+            //    var errors = ModelState.Values.SelectMany(v => v.Errors)
+            //                                  .Select(e => e.ErrorMessage);
+            //    return BadRequest(new { Errors = errors });
+            //}
+
+            try
+            {
+                ResponseModel? responsee = await _productService.GetProductByIdAsync(updateProductModel.Id);
+                if (responsee == null)
+                {
+                    throw new Exception("Không thấy game nào có ID vậy hết");
+                }
+                ProductModel? product = JsonConvert.DeserializeObject<ProductModel>(Convert.ToString(responsee.Result));
+                
+                if (updateProductModel.Links == null)
+                {
+                    updateProductModel.Links = product.Links.ToList();
+                }
+
+                if (updateProductModel.UserName == null)
+                {
+                    updateProductModel.UserName = product.UserName;
+                }
+
+                var numOfView = updateProductModel.Interactions.NumberOfViews;
+                var numOfLike = updateProductModel.Interactions.NumberOfLikes;
+                var numOfDisLike = updateProductModel.Interactions.NumberOfDisLikes;
+                // Tạo đối tượng ScanFileRequest
+                var request = new ScanFileRequest
+                {
+                    gameFile = updateProductModel.gameFile
+                };
+
+                // Gọi service UpdateProduct từ phía Client
+                var response = await _productService.UpdateProductAsync(
+                    updateProductModel.Id, updateProductModel.Name, updateProductModel.Description, updateProductModel.Price, updateProductModel.Sold,
+                   numOfView, numOfLike,numOfDisLike, updateProductModel.Discount,
+                    updateProductModel.Links, updateProductModel.Categories, (int)updateProductModel.Platform,
+                    (int)updateProductModel.Status, updateProductModel.CreatedAt, updateProductModel.ImageFiles,
+                    request, updateProductModel.UserName,updateProductModel.Interactions.UserLikes, updateProductModel.Interactions.UserDisLikes);
+
+                if (response.IsSuccess)
+                {
+                    TempData["success"] = "Product updated successfully";
+                    return RedirectToAction(nameof(EditProduct), updateProductModel.Id);
+                }
+                else
+                {
+                    TempData["error"] = response?.Message ?? "An unknown error occurred.";
+                    return RedirectToAction(nameof(EditProduct), updateProductModel.Id);
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = $"An error occurred: {ex.Message}";
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
+        }
+
         [HttpGet]
         public async Task<IActionResult> EditProduct(string id)
         {
@@ -384,15 +491,15 @@ namespace Client.Controllers
                 }
                 ProductModel? model = JsonConvert.DeserializeObject<ProductModel>(Convert.ToString(responsee.Result));
 
-                CreateProductModel createProductModel = new CreateProductModel();
-
-                createProductModel.Name = model.Name;
-                createProductModel.Description = model.Description;
-                createProductModel.Price = model.Price;
-                createProductModel.Discount = model.Discount;
-                createProductModel.Categories = model.Categories.Select(x => x.CategoryName).ToList();
-                createProductModel.Platform = (int)model.Platform;
-                createProductModel.Status = (int)model.Status;
+                UpdateProductModel updateProductModel = new UpdateProductModel();
+                updateProductModel.Id = model.Id;
+                updateProductModel.Name = model.Name;
+                updateProductModel.Description = model.Description;
+                updateProductModel.Price = model.Price;
+                updateProductModel.Discount = model.Discount;
+                updateProductModel.Categories = model.Categories.Select(x => x.CategoryName).ToList();
+                updateProductModel.Platform = model.Platform;
+                updateProductModel.Status = model.Status;
 
                 if (model.Links != null)
                 {
@@ -402,7 +509,7 @@ namespace Client.Controllers
                         {
                             // Sử dụng trong CreateProductModel
                             var file = await DownloadFileAsIFormFile(link.Url);
-                            createProductModel.imageFiles.Add(file);
+                            updateProductModel.ImageFiles.Add(file);
                             List<string> files = new List<string>();
                             files.Add(link.Url);
                             ViewBag.ImageFiles = files;
@@ -410,7 +517,7 @@ namespace Client.Controllers
                         else if (link.Url.Contains("drive.google.com"))
                         {
                             var file = await DownloadFileAsIFormFile(link.Url);
-                            createProductModel.gameFile = file;
+                            updateProductModel.gameFile = file;
                             ViewBag.GameFileName = file.FileName;
                             ViewBag.GameFileSize = file.Length;
                         }
@@ -418,7 +525,7 @@ namespace Client.Controllers
                 }
 
                 var responseCategory = await _categoriesService.GetAllCategoryAsync(1, 99);
-                //createProductModel.Categories = (List<string>)response.Result;
+                //updateProductModel.Categories = (List<string>)response.Result;
                 ICollection<CategoriesModel>? haha = JsonConvert.DeserializeObject<ICollection<CategoriesModel>>(Convert.ToString(responseCategory.Result.ToString()!));
                 List<string> kha = new List<string>();
                 if (haha == null)
@@ -435,7 +542,7 @@ namespace Client.Controllers
 
                 ViewBag.Categories = kha;
 
-                return View(nameof(UploadProduct), createProductModel);
+                return View(nameof(UploadProduct), updateProductModel);
             }
             catch (Exception ex)
             {
@@ -467,15 +574,15 @@ namespace Client.Controllers
 
                 ViewBag.Categories = listCate;
 
-                CreateProductModel createProductModel = new CreateProductModel();
-                createProductModel.Categories.Add(listCate[0]);
+                UpdateProductModel updateProductModel = new UpdateProductModel();
+                updateProductModel.Categories.Add(listCate[0]);
 
-                //if (model != null)
+                //if (updateProductModel != null)
                 //{
-                //    createProductModel = model;
+                //    updateProductModel = updateProductModel;
                 //}
 
-                return View(createProductModel);
+                return View(updateProductModel);
             }
             catch (Exception ex)
             {
@@ -487,7 +594,7 @@ namespace Client.Controllers
         [HttpPost]
         [RequestSizeLimit(60 * 1024 * 1024)] // 50MB
         [RequestFormLimits(MultipartBodyLengthLimit = 60 * 1024 * 1024)] // Đặt giới hạn cho form multipart
-        public async Task<IActionResult> UploadProductPost(CreateProductModel createProductModel)
+        public async Task<IActionResult> UploadProductPost(UpdateProductModel updateProductModel)
         {
             try
             {
@@ -500,41 +607,41 @@ namespace Client.Controllers
                     Role = claim.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value!,
                 };
 
-                createProductModel.Username = userClaim.Username;
+                updateProductModel.UserName = userClaim.Username;
                 // Tạo đối tượng ScanFileRequest
                 var request = new ScanFileRequest
                 {
-                    gameFile = createProductModel.gameFile
+                    gameFile = updateProductModel.gameFile
                 };
 
                 // Gọi API CreateProductAsync
                 var response = await _productService.CreateProductAsync(
-                    createProductModel.Name,
-                    createProductModel.Description,
-                    createProductModel.Price,
-                    createProductModel.Discount,
-                    createProductModel.Categories,
-                    createProductModel.Platform,
-                    createProductModel.Status,
-                    createProductModel.imageFiles,
+                    updateProductModel.Name,
+                    updateProductModel.Description,
+                    updateProductModel.Price,
+                    updateProductModel.Discount,
+                    updateProductModel.Categories,
+                    (int)updateProductModel.Platform,
+                    (int)updateProductModel.Status,
+                    updateProductModel.ImageFiles,
                     request,
-                    createProductModel.Username);
+                    updateProductModel.UserName);
 
                 if (response != null && response.IsSuccess)
                 {
                     TempData["success"] = "Product created successfully";
-                    return View("UploadProduct");
+                    return RedirectToAction(nameof(EditProduct), updateProductModel.Id);
                 }
                 else
                 {
                     TempData["error"] = response?.Message ?? "An unknown error occurred.";
-                    return View("UploadProduct");
+                    return RedirectToAction(nameof(UploadProduct));
                 }
             }
             catch (Exception ex)
             {
                 TempData["error"] = $"An error occurred: {ex.Message}";
-                return View("UploadProduct");
+                return RedirectToAction(nameof(UserDashboard));
             }
         }
 

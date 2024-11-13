@@ -258,6 +258,10 @@ namespace ProductMicroservice.Repostories.Helper
                 upProduct.Sold = Product.Sold;
                 upProduct.Interactions.NumberOfViews = Product.Interactions.NumberOfViews;
                 upProduct.Interactions.NumberOfLikes = Product.Interactions.NumberOfLikes;
+                upProduct.Interactions.NumberOfDisLikes = Product.Interactions.NumberOfDisLikes;
+                upProduct.Interactions.UserDisLikes = _mapper.Map<ICollection<UserDisLikes>>(Product.Interactions.UserDisLikes);
+                   
+                upProduct.Interactions.UserLikes = _mapper.Map<ICollection<UserLikes>>(Product.Interactions.UserLikes);
                 upProduct.Discount = Product.Discount;
                 // Chuyển đổi danh sách categories
                 upProduct.Categories = Product.Categories

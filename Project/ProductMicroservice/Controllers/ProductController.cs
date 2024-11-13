@@ -212,6 +212,7 @@ namespace ProductMicroService.Controllers
                                                     [FromForm] int sold,
                                                     [FromForm] int numOfView,
                                                     [FromForm] int numOfLike,
+                                                    [FromForm] int numOfDisLike,
                                                     [FromForm] float discount,
                                                     [FromForm] List<string> categories,
                                                     [FromForm] int platform,
@@ -220,14 +221,18 @@ namespace ProductMicroService.Controllers
                                                     [FromForm] List<string>? links, // Thay đổi kiểu thành List<string>
                                                     [FromForm] List<IFormFile>? imageFiles,
                                                     [FromForm] ScanFileRequest? request,
-                                                    [FromForm] string username)
+                                                    [FromForm] string username,
+                                                    [FromForm] List<string> userLikes,
+                                                    [FromForm] List<string> userDisLike)
         {
             try
             {
-                // Chuyển đổi danh sách chuỗi thành danh sách CategoryModel
+                // Chuyển đổi danh sách chuỗi thành danh sách Model
                 var categoryModels = categories.Select(c => new CategoryModel { CategoryName = c }).ToList();
-                var gameFile = request?.gameFile;
+                var userLikeModel = userLikes.Select(c => new UserLikesModel { UserName = c }).ToList();
+                var userDisLikeModel = userDisLike.Select(c => new UserDisLikesModel { UserName = c }).ToList();
 
+                var gameFile = request?.gameFile;
                 // Tạo danh sách links mới từ các chuỗi JSON
                 var linkModels = links.Select(linkJson => JsonConvert.DeserializeObject<LinkModel>(linkJson)).ToList();
 
@@ -238,7 +243,7 @@ namespace ProductMicroService.Controllers
                     Description = description,
                     Price = price,
                     Sold = sold,
-                    Interactions = new InteractionModel { NumberOfLikes = numOfLike, NumberOfViews = numOfView },
+                    Interactions = new InteractionModel { NumberOfLikes = numOfLike, NumberOfViews = numOfView , NumberOfDisLikes = numOfDisLike, UserDisLikes =userDisLikeModel, UserLikes = userLikeModel},
                     Discount = discount,
                     Categories = categoryModels,
                     Platform = (PlatformType)platform,
@@ -395,6 +400,52 @@ namespace ProductMicroService.Controllers
                 _responseDTO.Message = "An error occurred while GetAllProductsByUserName the Products: " + ex.Message;
 
                 return StatusCode(500, _responseDTO); // Trả về mã lỗi 500 với thông báo lỗi chi tiết
+            }
+        }
+
+        [HttpPut("IncreaseLike/{productId}")]
+        public async Task<IActionResult> IncreaseLike([FromRoute] string productId, [FromBody] UserLikesModel userLikes)
+        {
+            try
+            {
+                var result = await _repoProduct.IncreaseLike(productId, userLikes);
+                if (result.IsSuccess)
+                {
+                    _responseDTO.Result = result.Result;
+                    _responseDTO.Message = result.Message;
+                    return Ok(_responseDTO);
+                }
+                _responseDTO.Message = result.Message;
+                return BadRequest(_responseDTO.Message);
+            }
+            catch (Exception ex)
+            {
+                _responseDTO.IsSuccess = false;
+                _responseDTO.Message = "An error occurred while increasing the like count: " + ex.Message;
+                return StatusCode(500, _responseDTO);
+            }
+        }
+
+        [HttpPut("DecreaseLike/{productId}")]
+        public async Task<IActionResult> DecreaseLike([FromRoute] string productId, [FromBody] UserDisLikesModel userDisLikes)
+        {
+            try
+            {
+                var result = await _repoProduct.DecreaseLike(productId, userDisLikes);
+                if (result.IsSuccess)
+                {
+                    _responseDTO.Result = result.Result;
+                    _responseDTO.Message = result.Message;
+                    return Ok(_responseDTO);
+                }
+                _responseDTO.Message = result.Message;
+                return BadRequest(_responseDTO.Message);
+            }
+            catch (Exception ex)
+            {
+                _responseDTO.IsSuccess = false;
+                _responseDTO.Message = "An error occurred while decreasing the like count: " + ex.Message;
+                return StatusCode(500, _responseDTO);
             }
         }
     }

@@ -1,4 +1,6 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
+﻿using Microsoft.AspNetCore.Mvc;
+using MongoDB.Bson.Serialization.Attributes;
+using ProductMicroservice.DBContexts.Entities;
 using System.ComponentModel.DataAnnotations;
 
 namespace ProductMicroservice.Models
@@ -37,5 +39,10 @@ namespace ProductMicroservice.Models
         [Range(0, int.MaxValue, ErrorMessage = "The {0} must be greater or equal than {1}")]
         public int NumberOfLikes { get; set; } = 0;
 
+
+        public int NumberOfDisLikes { get; set; } = 0;
+
+        public ICollection<UserDisLikesModel>? UserDisLikes { get; set; } = new List<UserDisLikesModel>();
+        public ICollection<UserLikesModel>? UserLikes { get; set; } = new List<UserLikesModel>();
     }
 }

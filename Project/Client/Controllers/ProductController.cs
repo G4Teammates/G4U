@@ -3,14 +3,19 @@ using Client.Models;
 using Client.Models.AuthenModel;
 using Client.Models.CategorisDTO;
 using Client.Models.ComentDTO;
+using Client.Models.OrderModel;
 using Client.Models.ProductDTO;
 using Client.Models.UserDTO;
 using Client.Repositories.Interfaces;
 using Client.Repositories.Interfaces.Categories;
 using Client.Repositories.Interfaces.Comment;
+using Client.Repositories.Interfaces.Order;
 using Client.Repositories.Interfaces.Product;
 using Client.Repositories.Interfaces.User;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.ViewEngines;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Newtonsoft.Json;
 
 using System.IdentityModel.Tokens.Jwt;
@@ -18,7 +23,7 @@ using System.Security.Claims;
 
 namespace Client.Controllers
 {
-    public class ProductController(IHelperService helperService, IRepoProduct repoProduct, ICategoriesService categoryService, ICommentService commentService, IUserService userService) : Controller
+    public class ProductController(ICompositeViewEngine viewEngine ,IHelperService helperService, IRepoProduct repoProduct, ICategoriesService categoryService, ICommentService commentService, IUserService userService, IOrderService orderService) : Controller
     {
 
         private readonly IHelperService _helperService = helperService;
@@ -26,6 +31,8 @@ namespace Client.Controllers
         public readonly ICategoriesService _categoryService = categoryService;
         public readonly ICommentService _commentService = commentService;
         public readonly IUserService _userService = userService;
+        private readonly ICompositeViewEngine _viewEngine = viewEngine;
+        public readonly IOrderService _orderService = orderService;
         public async Task<IActionResult> ProductIndex()
         {
             return View();
@@ -253,87 +260,114 @@ namespace Client.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateComment(CreateCommentDTOModel model)
         {
+            if (model.UserName == null)
+            {
+                TempData["error"] = "Please login first";
+                return Json(new { success = false, message = TempData["error"] });
+            }
             if (!ModelState.IsValid)
             {
                 var errors = ModelState.Values.SelectMany(v => v.Errors)
                                               .Select(e => e.ErrorMessage);
-                return BadRequest(new { Errors = errors });
+                TempData["error"] = string.Join(", ", errors);
+                return Json(new { success = false, message = TempData["error"] });
             }
-
             try
             {
                 // Gọi service CreateCommentAsync
                 var response = await _commentService.CreateCommentAsync(model);
-
+                var modelCmt = JsonConvert.DeserializeObject<CommentDTOModel>(Convert.ToString(response.Result.ToString()!));
                 if (response != null && response.IsSuccess)
                 {
-                    TempData["success"] = "Category created successfully";
-                    return RedirectToAction("ProductDetail", new { id = model.ProductId });
+                    TempData["success"] = "Comment created successfully";
+
+                    // Render PartialView to string
+                    var html = await RenderViewAsync("_CommentPartial", modelCmt);
+
+                    return Json(new { success = true, html = html , message = TempData["success"] });
                 }
                 else
                 {
                     TempData["error"] = response?.Message ?? "An unknown error occurred.";
-                    return RedirectToAction("ProductDetail", new { id = model.ProductId });
+                    return Json(new { success = false, message = TempData["error"] });
                 }
             }
             catch (Exception ex)
             {
                 TempData["error"] = $"An error occurred: {ex.Message}";
-                return RedirectToAction("ProductDetail", new { id = model.ProductId });
+                return Json(new { success = false, message = TempData["error"] });
             }
 
         }
         [HttpPost]
-        public async Task<IActionResult> IncreaseLike(string commentID, string productID)
+        public async Task<IActionResult> IncreaseLike(string commentID)
         {
             try
             {
-                // Gọi service để tăng like cho comment
-                ResponseModel? response = await _commentService.IncreaseLike(commentID);
-
-                if (response != null && response.IsSuccess)
+                IEnumerable<Claim> claim = HttpContext.User.Claims;
+                var userName = claim.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value!;
+                // Tạo model UserLikesModel và gán userName
+                var userLikes = new Models.ComentDTO.UserLikesModel
                 {
-                    TempData["success"] = "Like increased successfully!";
+                    UserName = userName
+                };
+                if(userName != null)
+                {
+                    ResponseModel? response = await _commentService.IncreaseLike(commentID, userLikes);
+                    if (response != null && response.IsSuccess)
+                    {
+                        return Json(new { success = true, commentId = commentID, newLikeCount = response.Result , message = response.Message });
+                    }
+                    else
+                    {
+                        return Json(new { success = false, message = response?.Message ?? "Đã xảy ra lỗi không xác định." });
+                    }
                 }
                 else
                 {
-                    TempData["error"] = response?.Message ?? "An unknown error occurred.";
+                    return Json(new { success = false, message = "Please login first" });
                 }
-
-                // Chuyển hướng về trang chi tiết sản phẩm
-                return RedirectToAction(nameof(ProductDetail), new { id = productID });
+               
             }
             catch (Exception ex)
             {
-                TempData["error"] = $"An error occurred: {ex.Message}";
-                return RedirectToAction(nameof(ProductDetail), new { id = productID });
+                return Json(new { success = false, message = $"Đã xảy ra lỗi: {ex.Message}" });
             }
         }
 
+
         [HttpPost]
-        public async Task<IActionResult> DecreaseLike(string commentID, string productID)
+        public async Task<IActionResult> DecreaseLike(string commentID)
         {
             try
             {
-                // Gọi service để giảm like cho comment
-                ResponseModel? response = await _commentService.DecreaseLike(commentID);
-
-                if (response != null && response.IsSuccess)
+                IEnumerable<Claim> claim = HttpContext.User.Claims;
+                var userName = claim.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value!;
+                // Tạo model UserLikesModel và gán userName
+                var userDisLikes = new Models.ComentDTO.UserDisLikesModel
                 {
-                    TempData["success"] = "Like decreased successfully!";
+                    UserName = userName
+                };
+                if (userName != null)
+                {
+                    ResponseModel? response = await _commentService.DecreaseLike(commentID, userDisLikes);
+                    if (response != null && response.IsSuccess)
+                    {
+                        return Json(new { success = true, commentId = commentID, newDislikeCount = response.Result , message = response.Message });
+                    }
+                    else
+                    {
+                        return Json(new { success = false, message = response?.Message ?? "Đã xảy ra lỗi không xác định." });
+                    }
                 }
                 else
                 {
-                    TempData["error"] = response?.Message ?? "An unknown error occurred.";
+                    return Json(new { success = false, message = "Please login first" });
                 }
-
-                // Chuyển hướng về trang chi tiết sản phẩm
-                return RedirectToAction(nameof(ProductDetail), new { id = productID });
             }
             catch (Exception ex)
             {
-                TempData["error"] = $"An error occurred: {ex.Message}";
-                return RedirectToAction(nameof(ProductDetail), new { id = productID });
+                return Json(new { success = false, message = $"Đã xảy ra lỗi: {ex.Message}" });
             }
         }
 
@@ -346,22 +380,24 @@ namespace Client.Controllers
             string un = claim.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value!;
             string i = claim.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value!;
             ResponseModel? ProResponese = await _productService.GetAllProductsByUserName(un);
+            ResponseModel? ItemResponse = await _orderService.GetItemsByCustomerId(i);
             ResponseModel? WishListResponse = await _userService.GetAllProductsInWishList(i);
             /*ResponseModel? response2 = await _userService.GetUserAsync(i);*/
 
             if (ProResponese != null && ProResponese.IsSuccess)
             {
                 // Deserialize vào lớp trung gian với kiểu ProductModel
-                //ProductModel? model = JsonConvert.DeserializeObject<ProductModel>(Convert.ToString(response.Result));
+                //ProductModel? updateProductModel = JsonConvert.DeserializeObject<ProductModel>(Convert.ToString(response.Result));
                 List<ProductModel>? ListProduct = JsonConvert.DeserializeObject<List<ProductModel>>(Convert.ToString(ProResponese.Result));
                 /*List<UsersDTO>? model1 = JsonConvert.DeserializeObject<List<UsersDTO>>(Convert.ToString(response1.Result));*/
+                List<OrderItemModel>? Item = JsonConvert.DeserializeObject<List<OrderItemModel>>(Convert.ToString(ItemResponse.Result));
                 List<WishlistModel>? Wishlist = JsonConvert.DeserializeObject<List<WishlistModel>>(Convert.ToString(WishListResponse.Result));
-
                 if (ListProduct != null)
                 {
 
                     productViewModel.Product = ListProduct ?? new List<ProductModel>();
                     /*productViewModel.User = model1 ?? new List<UsersDTO>();*/
+                    productViewModel.oderitem = Item ?? new List<OrderItemModel>();
                     productViewModel.Wishlist = Wishlist ?? new List<WishlistModel>();
                     productViewModel.userName = claim.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value!;
                     productViewModel.userID = claim.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value!;
@@ -369,12 +405,114 @@ namespace Client.Controllers
             }
             else
             {
-                TempData["error"] = ProResponese?.Message + WishListResponse .Message?? "Đã có lỗi xảy ra khi lấy thông tin sản phẩm.";
+                TempData["error"] = ProResponese?.Message + ItemResponse.Message + WishListResponse.Message ?? "Đã có lỗi xảy ra khi lấy thông tin sản phẩm.";
                 return NotFound();
             }
 
             // Trả về View với ProductViewModel
             return View(productViewModel);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> IncreaseLikeProduct(string productID)
+        {
+            try
+            {
+                IEnumerable<Claim> claim = HttpContext.User.Claims;
+                var userName = claim.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value!;
+                // Tạo model UserLikesModel và gán userName
+                var userLikes = new Models.ProductDTO.UserLikesModel
+                {
+                    UserName = userName
+                };
+                if (userName != null)
+                {
+                    ResponseModel? response = await _productService.IncreaseLike(productID, userLikes);
+                    if (response != null && response.IsSuccess)
+                    {
+                        return Json(new { success = true, productId = productID, newLikeCount = response.Result, message = response.Message });
+                    }
+                    else
+                    {
+                        return Json(new { success = false, message = response?.Message ?? "Đã xảy ra lỗi không xác định." });
+                    }
+                }
+                else
+                {
+                    return Json(new { success = false, message = "Please login first" });
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"Đã xảy ra lỗi: {ex.Message}" });
+            }
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> DecreaseLikeProduct(string productID)
+        {
+            try
+            {
+                IEnumerable<Claim> claim = HttpContext.User.Claims;
+                var userName = claim.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value!;
+                // Tạo model UserLikesModel và gán userName
+                var userDisLikes = new Models.ProductDTO.UserDisLikesModel
+                {
+                    UserName = userName
+                };
+                if (userName != null)
+                {
+                    ResponseModel? response = await _productService.DecreaseLike(productID, userDisLikes);
+                    if (response != null && response.IsSuccess)
+                    {
+                        return Json(new { success = true, productId = productID, newDislikeCount = response.Result, message = response.Message });
+                    }
+                    else
+                    {
+                        return Json(new { success = false, message = response?.Message ?? "Đã xảy ra lỗi không xác định." });
+                    }
+                }
+                else
+                {
+                    return Json(new { success = false, message = "Please login first" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"Đã xảy ra lỗi: {ex.Message}" });
+            }
+        }
+            // Phương thức hỗ trợ để render PartialView thành chuỗi HTML
+            private async Task<string> RenderViewAsync(string viewName, object model)
+        {
+            ViewData.Model = model;
+            using (var writer = new StringWriter())
+            {
+                // Thay đổi này sẽ tránh việc render layout khi gọi PartialView
+                var viewResult = _viewEngine.FindView(ControllerContext, viewName, isMainPage: false); // Đặt là false để không dùng layout
+
+                if (viewResult.View == null)
+                {
+                    throw new ArgumentNullException($"{viewName} does not match any available view");
+                }
+
+                var viewContext = new ViewContext(
+                    ControllerContext,
+                    viewResult.View,
+                    ViewData,
+                    TempData,
+                    writer,
+                    new HtmlHelperOptions()
+                );
+
+                // Render view mà không có layout
+                await viewResult.View.RenderAsync(viewContext);
+
+                return writer.GetStringBuilder().ToString();
+            }
+        }
+
     }
 }

@@ -86,7 +86,7 @@ namespace Client.Controllers
                     var user = _helperService.GetUserFromJwtToken((JwtSecurityToken)response.Result);
                     ViewBag.User = user;
                     ViewData["IsLogin"] = true;
-                    TempData["success"] = "Welcome back "+ user;
+                    TempData["success"] = "Welcome back "+ user.Username;
                 }
                 else
                 {

@@ -14,12 +14,16 @@ namespace Client.Controllers
             return View();
         }
 
-        public IActionResult Cart()
+        public IActionResult Payment()
         {
             return View();
         }
 
         public IActionResult PaymentSuccess()
+        {
+            return View();
+        } 
+        public IActionResult PaymentFailure()
         {
             return View();
         }

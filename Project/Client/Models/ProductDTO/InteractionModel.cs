@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using MongoDB.Bson.Serialization.Attributes;
+using System.ComponentModel.DataAnnotations;
 
 namespace Client.Models.ProductDTO
 {
@@ -28,5 +29,9 @@ namespace Client.Models.ProductDTO
         /// </summary>
         [Range(0, int.MaxValue, ErrorMessage = "The {0} must be greater or equal than {1}")]
         public int NumberOfLikes { get; set; } = 0;
+
+        public int NumberOfDisLikes { get; set; }
+        public ICollection<UserDisLikesModel>? UserDisLikes { get; set; } 
+        public ICollection<UserLikesModel>? UserLikes { get; set; } 
     }
 }

@@ -112,77 +112,42 @@
             foreach (var product in Model.Product)
             {
                 <div class="project-item">
-                    @if (product.Links != null)
-                    {
-                        string firstImageUrl = null; // Biến để lưu URL hình ảnh đầu tiên
+                @if (product.Links != null)
+                {
+                    string secondImageUrl = null; // Biến để lưu URL hình ảnh thứ hai
+                    int imageCount = 0; // Biến đếm hình ảnh
 
-                        foreach (var link in product.Links) // Lặp qua từng đối tượng LinkModel
+                    foreach (var link in product.Links) // Lặp qua từng đối tượng LinkModel
+                    {
+                        if (link.Url.Contains("cloudinary"))
                         {
-                            if (link.Url.Contains("cloudinary"))
+                            imageCount++; // Tăng biến đếm khi gặp hình ảnh
+
+                            if (imageCount == 2) // Kiểm tra nếu đây là hình ảnh thứ hai
                             {
-                                firstImageUrl = link.Url; // Lưu URL hình ảnh đầu tiên
-                                break; // Thoát khỏi vòng lặp khi đã tìm thấy
+                                secondImageUrl = link.Url; // Lưu URL của hình ảnh thứ hai
+                                break; // Thoát khỏi vòng lặp khi đã tìm thấy hình ảnh thứ hai
                             }
                         }
-
-                        // Hiển thị hình ảnh đầu tiên nếu có
-                        if (firstImageUrl != null)
-                        {
-                            <img src="@firstImageUrl" alt="Cloudinary Image" />
-                        }
-
-
                     }
-                    <div class="project-info">
-                        <strong class="d-inline-block text-truncate" style="max-width: 150px;">@product.Name</strong>
-                        <div><small style="min-width: 150px"><a asp-controller="User" asp-action="EditProduct" asp-route-id="@product.Id">Edit</a> | <a href="">Analytics</a> | <a href="">Widget</a> | <a href="">More</a></small></div>
-                    </div>
-                    <span class="badge bg-secondary">DRAFT</span>
+
+                    // Hiển thị hình ảnh thứ hai nếu có
+                    if (secondImageUrl != null)
+                    {
+                        <img src="@secondImageUrl" alt="Cloudinary Image" />
+                    }
+                        <div class="project-info">
+                            <strong class="d-inline-block text-truncate" style="max-width: 150px;">@product.Name</strong>
+                            <div><small style="min-width: 150px"><a asp-controller="User" asp-action="EditProduct" asp-route-id="">Edit</a> | <a href="">Analytics</a> | <a href="">Widget</a> | <a href="">More</a></small></div>
+                        </div>
+                        <span class="badge bg-secondary">DRAFT</span>
+                }
                 </div>
             }
         }
-        @* <div class="project-item">
-            <img src="~/Image/game.jpg" alt="Project">
-            <div class="project-info">
-                <strong class="d-inline-block text-truncate" style="max-width: 150px;">Meow Battle Battle Battle</strong>
-                <div><small style="min-width: 150px"><a asp-controller="User" asp-action="EditProduct">Edit</a> | <a href="">Analytics</a> | <a href="">Widget</a> | <a href="">More</a></small></div>
-            </div>
-            <span class="badge bg-secondary">DRAFT</span>
-        </div>
-        <div class="project-item">
-            <img src="https://via.placeholder.com/50" alt="Project">
-            <div class="project-info">
-                <strong>Project 2</strong>
-                <div><small>Edit | Analytics | Widget | More</small></div>
-            </div>
-            <span class="badge bg-secondary">DRAFT</span>
-        </div>
-        <div class="project-item">
-            <img src="https://via.placeholder.com/50" alt="Project">
-            <div class="project-info">
-                <strong>Project 2</strong>
-                <div><small>Edit | Analytics | Widget | More</small></div>
-            </div>
-            <span class="badge bg-secondary">DRAFT</span>
-        </div>
-        <div class="project-item">
-            <img src="https://via.placeholder.com/50" alt="Project">
-            <div class="project-info">
-                <strong>Project 2</strong>
-                <div><small>Edit | Analytics | Widget | More</small></div>
-            </div>
-            <span class="badge bg-secondary">DRAFT</span>
-        </div>
-        <div class="project-item">
-            <img src="https://via.placeholder.com/50" alt="Project">
-            <div class="project-info">
-                <strong>Project 2</strong>
-                <div><small>Edit | Analytics | Widget | More</small></div>
-            </div>
-            <span class="badge bg-secondary">DRAFT</span>
-        </div> *@
         <a asp-controller="User" asp-action="UploadProduct" class="btn btn-danger w-100">Create New Project</a>
     </div>
+
 
     <!-- Summary Section -->
     <div class="summary-section">

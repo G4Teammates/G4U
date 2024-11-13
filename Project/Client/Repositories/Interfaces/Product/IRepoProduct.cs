@@ -25,6 +25,7 @@ namespace Client.Repositories.Interfaces.Product
                                                      int sold,
                                                      int numOfView,
                                                      int numOfLike,
+                                                     int numOfDisLike,
                                                      float discount,
                                                      List<LinkModel> links,
                                                      List<string> categories,
@@ -33,7 +34,9 @@ namespace Client.Repositories.Interfaces.Product
                                                      DateTime createdAt,
                                                      List<IFormFile> imageFiles,
                                                      ScanFileRequest? request,
-                                                     string username);
+                                                     string username,
+                                                     List<string> userLikes,
+                                                     List<string> userDisLike);
 
         Task<ResponseModel> CreateProductAsync(string name,
             string description,
@@ -46,6 +49,8 @@ namespace Client.Repositories.Interfaces.Product
             ScanFileRequest request,
             string username);
         Task<ResponseModel> DeleteProductAsync(string Id);
+        Task<ResponseModel> IncreaseLike(string productId, UserLikesModel userLikes);
+        Task<ResponseModel> DecreaseLike(string productId, UserDisLikesModel userDisLikes);
 
         string GenerateQRCode(string productId);
 

@@ -21,6 +21,13 @@ namespace OrderMicroservice.Configure
         /// <returns>service in IServiceCollection</returns>
         public static IServiceCollection AddStartupService(this IServiceCollection services, IConfiguration config)
         {
+            MoMoOptionModel.AccessKey = config["16"];
+            MoMoOptionModel.SecretKey = config["17"];
+            PayOSOptionModel.ClientId = config["18"]!;
+            PayOSOptionModel.ApiKey = config["19"]!;
+            PayOSOptionModel.ChecksumKey = config["20"]!;
+
+
             #region Register Database
             #region SQL
             //_ = services.AddDbContext<OrderDbContext>(options =>
@@ -34,9 +41,6 @@ namespace OrderMicroservice.Configure
             #endregion
 
             #region noSQL
-
-            MoMoOptionModel.AccessKey = config["16"];
-            MoMoOptionModel.SecretKey = config["17"];
 
             //Connect MongoDb by connection string
             var client = new MongoClient(config["1"]!);

@@ -17,10 +17,10 @@ namespace CommentMicroservice.Repositories
         Task<ResponseModel> GetByParentId(string Parentid, int page, int pageSize);
 
         // Phương thức tăng lượt thích cho bình luận
-        Task<ResponseModel> IncreaseLike(string commentId);
+        Task<ResponseModel> IncreaseLike(string commentId, UserLikesModel userLike);
 
         // Phương thức giảm lượt thích cho bình luận
-        Task<ResponseModel> DecreaseLike(string commentId);
+        Task<ResponseModel> DecreaseLike(string commentId, UserDisLikesModel userDisLike);
 
     }
 }

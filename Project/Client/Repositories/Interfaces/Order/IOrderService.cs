@@ -11,5 +11,7 @@ namespace Client.Repositories.Interfaces.Order
         //Task<ResponseModel> CreateOrder(OrderDTO order);
         Task<ResponseModel> UpdateStatus(string id, PaymentStatusModel order);
         Task<ResponseModel> GetOrderItems(string id);
+        Task<ResponseModel> GetItemsByCustomerId(string id);
+        
     }
 }
