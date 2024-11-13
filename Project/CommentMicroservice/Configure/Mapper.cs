@@ -17,8 +17,8 @@ namespace CommentMicroservice.Configure
                 //Register mapper here⬇️
 
                 cfg.CreateMap<Comment, CommentModel>().ReverseMap();
-
-
+                cfg.CreateMap<UserDisLikes, UserDisLikesModel>().ReverseMap();
+                cfg.CreateMap<UserLikes, UserLikesModel>().ReverseMap();
                 //Register mapper here⬆️
             });
         }

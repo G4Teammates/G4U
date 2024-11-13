@@ -299,6 +299,26 @@ namespace Client.Repositories.Services.Product
             });
         }
 
+        public async Task<ResponseModel> IncreaseLike(string productId, UserLikesModel userLikes)
+        {
+            return await _baseService.SendAsync(new RequestModel()
+            {
+                ApiType = StaticTypeApi.ApiType.PUT,
+                Data = userLikes,
+                Url = $"{StaticTypeApi.APIGateWay}/Product/IncreaseLike/{productId}"
+            });
+        }
+
+        public async Task<ResponseModel> DecreaseLike(string productId, UserDisLikesModel userDisLikes)
+        {
+            return await _baseService.SendAsync(new RequestModel()
+            {
+                ApiType = StaticTypeApi.ApiType.PUT,
+                Data = userDisLikes,
+                Url = $"{StaticTypeApi.APIGateWay}/Product/DecreaseLike/{productId}"
+            });
+        }
+
         /*public string GenerateBarCode(long barCodeUrl)
         {
             if (barCodeUrl != null)

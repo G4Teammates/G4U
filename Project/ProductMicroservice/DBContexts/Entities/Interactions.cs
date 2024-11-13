@@ -20,5 +20,15 @@ namespace ProductMicroservice.DBContexts.Entities
         [BsonElement("numberOfLikes")]
         public int NumberOfLikes { get; set; }
 
+
+        [BsonElement("numberOfDisLikes")]
+        public int NumberOfDisLikes { get; set; }
+
+
+        [BsonElement("userDisLikes")]
+        public ICollection<UserDisLikes>? UserDisLikes { get; set; }
+
+        [BsonElement("userLikes")]
+        public ICollection<UserLikes>? UserLikes { get; set; }
     }
 }

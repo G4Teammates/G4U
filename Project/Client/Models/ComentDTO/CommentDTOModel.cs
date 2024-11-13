@@ -93,5 +93,11 @@ namespace Client.Models.ComentDTO
         [BsonElement("numberOfDisLikes")]
         public int NumberOfDisLikes { get; set; }
 
+        [BsonElement("userDisLike")]
+        public ICollection<UserDisLikesModel>? UserDisLikes { get; set; } = null;
+
+        [BsonElement("userLike")]
+        public ICollection<UserLikesModel>? UserLikes { get; set; } = null;
+
     }
 }
