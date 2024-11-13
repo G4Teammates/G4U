@@ -796,7 +796,7 @@ namespace Client.Controllers
                 if (response != null && response.IsSuccess)
                 {
                     productViewModel.Product = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response.Result.ToString()!));
-                    productViewModel.CategoriesModel = JsonConvert.DeserializeObject<ICollection<CategoriesModel>>(Convert.ToString(response.Result.ToString()!));
+                    productViewModel.CategoriesModel = JsonConvert.DeserializeObject<ICollection<CategoriesModel>>(Convert.ToString(response3.Result.ToString()!));
                     var data = productViewModel.Product;
                     productViewModel.pageNumber = pageNumber;
                     productViewModel.totalItem = data.Count;
