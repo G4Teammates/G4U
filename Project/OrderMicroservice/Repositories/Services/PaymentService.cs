@@ -1,20 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using OrderMicroservice.Models;
+﻿using OrderMicroservice.Models;
 using OrderMicroservice.Repositories.Interfaces;
-using static System.Net.Mime.MediaTypeNames;
 using System.Security.Cryptography;
 using System.Text;
 using OrderMicroservice.Models.PaymentModel;
-using System.Text.Json;
 using Newtonsoft.Json;
 using Net.payOS.Types;
 using Net.payOS;
 using OrderMicroservice.Models.OrderModel;
-using Newtonsoft.Json.Converters;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-using Azure.Core;
-using OrderMicroservice.DBContexts.Entities;
-using static MongoDB.Driver.WriteConcern;
 using OrderMicroservice.Models.PaymentModel.MoMo;
 using OrderMicroservice.DBContexts.Enum;
 
@@ -26,7 +18,7 @@ namespace OrderMicroservice.Repositories.Services
         private static readonly HttpClient client = new();
         private static readonly string Gateway = "https://localhost:7296";
         private static readonly string MoMoGateway = "https://test-payment.momo.vn/v2/gateway/api/create";
-        private static readonly string IpnMomo = "https://localhost:7296/payment/ipn/momo";
+        private static readonly string IpnMomo = "https://8629-1-53-97-163.ngrok-free.app" + "/api/payment/ipn/momo";
 
         public async Task<ResponseModel> MoMoPayment(string id, long amount)
         {
@@ -127,18 +119,19 @@ namespace OrderMicroservice.Repositories.Services
                 string secretKey = MoMoOptionModel.SecretKey!;
 
                 ResponseModel orderResult = await _orderService.GetOrderById(request.OrderId);
-                OrderModel order = JsonConvert.DeserializeObject<OrderModel>(orderResult.Result.ToString());
-                MoMoSignature orderSignature = new MoMoSignature()
-                {
-                    AccessKey = accessKey,
-                    Amount = (long)order.TotalPrice,
-                    PartnerCode = "MOMO",
-                    OrderId = order.Id
-                };
 
-                string signature = GenarateSignatureResponseMoMo(orderSignature, secretKey);
+                OrderModel order = (OrderModel)orderResult.Result;
+                //MoMoSignature orderSignature = new MoMoSignature()
+                //{
+                //    AccessKey = accessKey,
+                //    Amount = (long)order.TotalPrice,
+                //    PartnerCode = "MOMO",
+                //    OrderId = order.Id
+                //};
 
-                if (request.Signature == signature)
+                //string signature = GenarateSignatureResponseMoMo(orderSignature, secretKey);
+
+                if (request.Amount == order.TotalPrice && request.PartnerCode == "MOMO" && request.OrderId == order.Id)
                 {
                     response.IsSuccess = true;
                     response.Message = "IPN signature MoMo is valid";
@@ -192,7 +185,10 @@ namespace OrderMicroservice.Repositories.Services
                 ResponseModel updateStatus = await _orderService.UpdateStatus(model.OrderId, new PaymentStatusModel
                 {
                     PaymentStatus = PaymentStatus.Paid,
-                    OrderStatus = OrderStatus.Paid
+                    OrderStatus = OrderStatus.Paid,
+                    PaymentMethod = PaymentMethod.Wallet,
+                    PaymentName = "MoMo"
+                    
                 });
 
                 if (!updateStatus.IsSuccess)
@@ -226,13 +222,18 @@ namespace OrderMicroservice.Repositories.Services
         {
             // Tạo chuỗi `rawHash` từ các giá trị cần có trong chữ ký
             string rawHash = "accessKey=" + accessKey +
-                             "&amount=" + signature.amount +
-                             "&extraData=" + (signature.extraData ?? "") +
-                             "&orderId=" + signature.orderId +
-                             "&orderInfo=" + signature.orderInfo +
-                             "&partnerCode=" + signature.partnerCode +
-                             "&requestId=" + signature.requestId;
+                 "&amount=" + signature.amount +
+                 "&extraData=" + (signature.extraData ?? "") +
+                 "&ipnUrl=" + signature.ipnUrl +
+                 "&orderId=" + signature.orderId +
+                 "&orderInfo=" + signature.orderInfo +
+                 "&partnerCode=" + signature.partnerCode +
+                 "&redirectUrl=" + signature.redirectUrl +
+                 "&requestId=" + signature.requestId +
+                 "&requestType=" + signature.requestType;
+
             return HashSHA256(rawHash, secretKey);
+
         }
 
         private string GenarateSignatureResponseMoMo(MoMoSignature signature, string secretKey)
