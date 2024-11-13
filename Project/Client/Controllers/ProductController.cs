@@ -514,5 +514,44 @@ namespace Client.Controllers
             }
         }
 
+        public async Task<IActionResult> ViewAll(string viewString)
+        {
+            IEnumerable<Claim> claim = HttpContext.User.Claims;
+            ProductViewModel productViewModel = new ProductViewModel();
+
+            ResponseModel? productReponse = await _productService.ViewMore(viewString);
+
+
+            if (productReponse != null && productReponse.IsSuccess)
+            {
+                List<ProductModel>? ProductsModel = JsonConvert.DeserializeObject<List<ProductModel>>(Convert.ToString(productReponse.Result));
+                var total = ProductsModel.Count;
+                int pageSize = 5;
+                if (ProductsModel != null)
+                {
+                    
+
+                    productViewModel.Product = ProductsModel ?? new List<ProductModel>();
+                    // Gán danh sách comments vào ProductViewModel
+                   
+                    productViewModel.userName = claim.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value!;
+                    var data = productViewModel.Product;
+                    productViewModel.pageNumber = 1;
+                    productViewModel.totalItem = data.Count;
+                    productViewModel.pageSize = pageSize;
+                    productViewModel.pageCount = (int)Math.Ceiling(total / (double)pageSize);
+                    TempData["success"] = "Sort Products successfully";
+                }
+            }
+            else
+            {
+                TempData["error"] = productReponse?.Message ?? "Đã có lỗi xảy ra khi lấy thông tin sản phẩm.";
+                return NotFound();
+            }
+
+            // Trả về View với ProductViewModel
+            return View("Product",productViewModel);
+        }
+
     }
 }

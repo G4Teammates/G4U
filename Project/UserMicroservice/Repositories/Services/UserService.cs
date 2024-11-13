@@ -16,6 +16,7 @@ using UserMicroservice.DBContexts.Enum;
 using static Google.Apis.Requests.BatchRequest;
 using X.PagedList.Extensions;
 using UserMicroservice.Models.Message;
+using ZstdSharp.Unsafe;
 
 namespace UserMicroservice.Repositories.Services
 {
@@ -414,6 +415,37 @@ namespace UserMicroservice.Repositories.Services
             bool userExists = await _context.Users
             .AnyAsync(u => u.Username.Equals(userName, StringComparison.OrdinalIgnoreCase));
             return userExists;
+        }
+
+        public async Task<ResponseModel> AddToWishList(UserWishlistModel userWishlistModel, string userName)
+        {
+            ResponseModel response = new();
+            try
+            {
+                var user = await _context.Users.FirstOrDefaultAsync(x => x.Username == userName);
+
+                if (user != null)
+                {
+
+                    user.Wishlist.Add(_mapper.Map<UserWishlist>(userWishlistModel));
+                    _context.Update(user);  
+                    _context.SaveChanges();
+                    response.Result = user;
+                    return response;
+                }
+                else
+                {
+                    response.IsSuccess = false;
+                    response.Message = "Not found any User";
+                }
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+            }
+
+            return response;
         }
 
 

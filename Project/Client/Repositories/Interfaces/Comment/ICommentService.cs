@@ -10,7 +10,7 @@ namespace Client.Repositories.Interfaces.Comment
         Task<ResponseModel> GetByIdAsync(string id);
         Task<ResponseModel> GetByproductId(string productId, int page, int pageSize);
         Task<ResponseModel> GetAllCommentAsync(int pageNumber, int pageSize);
-        Task<ResponseModel> GetListByIdAsync(string id);
+        Task<ResponseModel> GetListByIdAsync(string id, int page, int pageSize);
         Task<ResponseModel> CreateCommentAsync(CreateCommentDTOModel Comment);
         Task<ResponseModel> UpdateCommentAsync(CommentDTOModel Comment);
         Task<ResponseModel> DeleteCommentAsync(string id);
