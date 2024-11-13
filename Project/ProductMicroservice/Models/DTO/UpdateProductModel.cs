@@ -5,7 +5,7 @@ namespace ProductMicroservice.Models.DTO
 {
     public class UpdateProductModel
     {
-        public string Id { get; set; } 
+        public string Id { get; set; }
 
         [Required(ErrorMessage = "Name is required")]
         [StringLength(256, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 2)]
