@@ -102,7 +102,7 @@
             </div>
             <!-- Cập nhật các userlike/dislike sản phẩm -->
 
-            <div class="form-group mt-2">
+            <div class="form-group mt-2" hidden>
                 <label class="fw-bold">UserLikes</label>
                 <div >
                     @if (Model.Interactions.UserLikes != null && Model.Interactions.UserLikes.Any())
@@ -119,7 +119,7 @@
                 </div>
             </div>
 
-            <div class="form-group mt-2">
+            <div class="form-group mt-2" hidden>
                 <label class="fw-bold">UserDisLikes</label>
                 <div>
                     @if (Model.Interactions.UserDisLikes != null && Model.Interactions.UserDisLikes.Any())
@@ -138,12 +138,7 @@
 
         </div>
         <div class="col-md-6">
-            <div class="form-group mt-2">
-                <label class="fw-bold text-[#00A97F]" for="qrCode">QR Code</label>
-                <div style="text-align: center; width: 200px; margin: 0 auto;">
-                    <img src="@Model.QrCode" alt="QR Code" style="width: 100%; height: auto; border: 1px solid #00A97F; border-radius: 8px;" />
-                </div>
-            </div>
+            
             <div class="form-group mt-2">
                 <label class="fw-bold text-[#00A97F]" for="description">Description</label>
                 <textarea class="form-control bg-white text-[#00A97F] border-[#00A97F]" asp-for="Description" rows="4" required style="border: 1px solid #00A97F;"></textarea>
@@ -265,11 +260,14 @@
                         </div>
 
                         <!-- Provider Name -->
-                        <div class="text-center">
+                        <div class="text-center" >
                             <label class="d-block" style="font-weight: bold; color: #00A97F; padding-bottom: 5px;">Provider</label>
                             <input type="text" name="Links[@i].ProviderName" value="@link.ProviderName" class="form-control bg-white text-[#00A97F] border-[#00A97F] text-center" style="width: 100%; border: 1px solid #00A97F;" />
                         </div>
-
+                        <div class="text-center" hidden>
+                            <label class="d-block" style="font-weight: bold; color: #00A97F; padding-bottom: 5px;"></label>
+                            <input type="text" name="Links[@i].Url" value="@link.Url" class="form-control bg-white text-[#00A97F] border-[#00A97F] text-center" style="width: 100%; border: 1px solid #00A97F;" />
+                        </div>
                         <!-- Remove Button -->
                         <div class="text-center">
                             <button type="button" class="btn btn-outline-danger remove-link text-center mt-3" style="border-radius: 12px; color: #ff4d4d; border: 1px solid #ff4d4d; width: 100%; max-width: 100px;">Remove</button>

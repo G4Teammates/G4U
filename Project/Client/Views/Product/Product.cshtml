@@ -21,9 +21,10 @@
                     <div class="filter-section mb-4">
                         <h5 class="filter-title">Price</h5>
                         <div class="d-flex gap-2">
-                            <input type="number" class="form-control price-input" name="minRange" placeholder="Min price">
-                            <input type="number" class="form-control price-input" name="maxRange" placeholder="Max price">
+                            <input type="number" class="form-control price-input" name="minRange" placeholder="Min price" min="0" oninput="validatePrice(this)">
+                            <input type="number" class="form-control price-input" name="maxRange" placeholder="Max price" min="0" oninput="validatePrice(this)">
                         </div>
+                        <div id="priceError" style="color: red; display: none;">Price cannot be less than 0.</div>
                     </div>
 
                     <!-- Category Filter -->
@@ -129,14 +130,14 @@
                 <!-- Sort -->
                 <form class="col-md-5 d-inline-flex align-items-center ms-2" asp-action="SortProducts" asp-controller="Product" method="post" style="gap: 10px;">
                     <select name="sort" class="form-select me-2 w-75" aria-label="Type" style="height: 2.5em; background-color: #00A97F; color: white; border: 1px solid #ccc; display: flex; align-items: center;">
-                        <option value="ascPrice" style="background-color: white; color: #00A97F;">Giá tăng dần</option>
-                        <option value="descPrice" style="background-color: white; color: #00A97F;">Giá giảm dần</option>
-                        <option value="ascView" style="background-color: white; color: #00A97F;">View tăng dần</option>
-                        <option value="descView" style="background-color: white; color: #00A97F;">View giảm dần</option>
-                        <option value="ascLike" style="background-color: white; color: #00A97F;">Like tăng dần</option>
-                        <option value="descLike" style="background-color: white; color: #00A97F;">Like giảm dần</option>
-                        <option value="ascSold" style="background-color: white; color: #00A97F;">Lượt mua tăng dần</option>
-                        <option value="descSold" style="background-color: white; color: #00A97F;">Lượt mua giảm dần</option>
+                        <option value="ascPrice" style="background-color: white; color: #00A97F;">Price Ascending</option>
+                        <option value="descPrice" style="background-color: white; color: #00A97F;">Price Descending</option>
+                        <option value="ascView" style="background-color: white; color: #00A97F;">View Ascending</option>
+                        <option value="descView" style="background-color: white; color: #00A97F;">View Descending</option>
+                        <option value="ascLike" style="background-color: white; color: #00A97F;">Like Ascending</option>
+                        <option value="descLike" style="background-color: white; color: #00A97F;">Like Descending</option>
+                        <option value="ascSold" style="background-color: white; color: #00A97F;">Purchase Count Ascending</option>
+                        <option value="descSold" style="background-color: white; color: #00A97F;">Purchase Count Descending</option>
                     </select>
                     <button type="submit" class="btn btn-primary" style="height: 2.5em; width: 100px; background-color: #00A97F; color: white; border: 1px solid #ccc; display: flex; align-items: center; justify-content: center;">
                         Sort
@@ -154,9 +155,9 @@
                                 <i class="fa-regular fa-rectangle-list"></i>
                             </a>
                             <ul class="dropdown-menu p-0" style="min-width: auto; width: auto;">
-                                <li><button class="dropdown-item" style="background-color: white; color:#00A97F" type="button" onclick="document.querySelector('[name=\'pageSize\']').value='3'; this.form.submit()">3 bản ghi mỗi trang</button></li>
-                                <li><button class="dropdown-item" style="background-color: white; color:#00A97F" type="button" onclick="document.querySelector('[name=\'pageSize\']').value='5'; this.form.submit()">5 bản ghi mỗi trang</button></li>
-                                <li><button class="dropdown-item" style="background-color: white; color:#00A97F" type="button" onclick="document.querySelector('[name=\'pageSize\']').value='10'; this.form.submit()">10 bản ghi mỗi trang</button></li>
+                                <li><button class="dropdown-item" style="background-color: white; color:#00A97F" type="button" onclick="document.querySelector('[name=\'pageSize\']').value='3'; this.form.submit()">3 records per page</button></li>
+                                <li><button class="dropdown-item" style="background-color: white; color:#00A97F" type="button" onclick="document.querySelector('[name=\'pageSize\']').value='5'; this.form.submit()">5 records per page</button></li>
+                                <li><button class="dropdown-item" style="background-color: white; color:#00A97F" type="button" onclick="document.querySelector('[name=\'pageSize\']').value='10'; this.form.submit()">10 records per page</button></li>
                             </ul>
                             <input type="hidden" name="pageSize" value="" />
                             <input type="hidden" name="page" value="1" />
@@ -213,10 +214,10 @@
                                             : product.Description)
                                     </p>
                                     <div class="row d-flex align-items-center justify-content-between">
-                                        <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@product.Id" class="col-md-6 btn_orther">Read More</a>
+                                        <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@product.Id" class="ms-2 text-center col-md-6 btn_orther">Read More</a>
                                         <div class="col-md-3"></div>
                                         @* Day la trai tym ne *@
-                                        <div title="Wishlist" class="col-md-3 heart-container">
+                                        <div title="Wishlist" class="col-md-3 heart-container" >
                                             <input id="Give-It-An-Id" class="checkbox" type="checkbox">
                                             <div class="svg-container">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="svg-outline" viewBox="0 0 24 24">
@@ -240,6 +241,26 @@
                                     </div>
                                     
 
+                                </div>
+                                <!-- Thêm phần số lượt view -->
+                                <div class="view-count">
+                                    <i class="fa-solid fa-eye" style="color:black;  width:20px;height:20px;"></i>
+                                    <span style="color:black;">@product.Interactions.NumberOfViews</span>
+                                </div>
+
+                                <div class="like-dislike-container">
+                                    <!-- Like và Dislike -->
+                                    <form asp-action="IncreaseLikeProduct" asp-controller="Product" method="post" style="display:inline;">
+                                        <input type="hidden" name="productID" value="@product.Id" />
+                                        <span id="like-count-@product.Id" class="like-count" style="color:black;">@product.Interactions.NumberOfLikes</span>
+                                        <i class="fa-solid fa-thumbs-up like-icon" style="color:black; width:20px;height:20px;"></i>
+                                    </form>
+
+                                    <form asp-action="DecreaseLikeProduct" asp-controller="Product" method="post" style="display:inline;">
+                                        <input type="hidden" name="productID" value="@product.Id" />
+                                        <span id="dislike-count-@product.Id" class="dislike-count" style="color:black;">@product.Interactions.NumberOfDisLikes</span>
+                                        <i class="fa-solid fa-thumbs-down dislike-icon" style="color:black; width:20px;height:20px;"></i>
+                                    </form>
                                 </div>
                             </div>
                         }
@@ -299,3 +320,14 @@
 </div>
 
 
+@* Thông báo lỗi nhập giá dưới 0 *@
+<script>
+    function validatePrice(input) {
+        const errorDiv = document.getElementById("priceError");
+        if (input.value < 0) {
+            errorDiv.style.display = "block";
+        } else {
+            errorDiv.style.display = "none";
+        }
+    }
+</script>
