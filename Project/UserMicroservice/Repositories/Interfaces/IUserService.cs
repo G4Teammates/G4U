@@ -20,9 +20,12 @@ namespace UserMicroservice.Repositories.Interfaces
         Task<ResponseModel> TotalRequest();
 
         Task<ResponseModel> GetAllProductsInWishList(string id);
+        Task<ResponseModel> AddToWishList(UserWishlistModel userWishlistModel, string userName);
 
         //Task<ICollection<UserModel>> FindUsersCriteria(SearchCriteria criteria);
         Task<bool> CheckUserByUserNameAsync(string userName);
+
+        Task<ResponseModel> AddToWishList(UserWishlistModel userWishlistModel, string userName);
 
     }
 

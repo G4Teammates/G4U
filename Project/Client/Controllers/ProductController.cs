@@ -136,7 +136,64 @@ namespace Client.Controllers
             return View("Product", productViewModel); // Trả về view ProductsManager với danh sách sản phẩm đã lọc
         }
 
-     
+        //public async Task<IActionResult> ProductDetailLibrary(string id)
+        //{
+        //    IEnumerable<Claim> claim = HttpContext.User.Claims;
+        //    ProductViewModel productViewModel = new ProductViewModel();
+
+        //    ResponseModel? productReponse = await _productService.GetDetailByIdAsync(id);
+        //    ResponseModel? cmtResponse = await _commentService.GetByproductId(id, 1, 9999);
+        //    ResponseModel? productsReponse = await _productService.GetAllProductAsync(1, 99);
+
+
+        //    if (productReponse != null && productReponse.IsSuccess)
+        //    {
+
+        //        ProductModel? ProductModel = JsonConvert.DeserializeObject<ProductModel>(Convert.ToString(productReponse.Result));
+
+        //        List<ProductModel>? ProductsModel = JsonConvert.DeserializeObject<List<ProductModel>>(Convert.ToString(productsReponse.Result));
+
+        //        List<CommentDTOModel>? commentsModel = JsonConvert.DeserializeObject<List<CommentDTOModel>>(Convert.ToString(cmtResponse.Result));
+
+        //        if (ProductModel != null)
+        //        {
+        //            // Gán model vào ProductViewModel
+        //            productViewModel.Prod = new ProductModel
+        //            {
+        //                Name = ProductModel.Name,
+        //                Price = ProductModel.Price,
+        //                UserName = ProductModel.UserName,
+        //                Description = ProductModel.Description,
+        //                Categories = ProductModel.Categories,
+        //                CreatedAt = ProductModel.CreatedAt,
+        //                UpdatedAt = ProductModel.UpdatedAt,
+        //                Platform = ProductModel.Platform,
+        //                Interactions = ProductModel.Interactions,
+        //                Links = ProductModel.Links,
+        //                Sold = ProductModel.Sold,
+        //                Status = ProductModel.Status,
+        //                Id = ProductModel.Id,
+        //                Discount = ProductModel.Discount,
+        //                QrCode = ProductModel.QrCode
+        //            };
+
+        //            productViewModel.Product = ProductsModel ?? new List<ProductModel>();
+        //            // Gán danh sách comments vào ProductViewModel
+        //            productViewModel.CommentDTOModels = commentsModel ?? new List<CommentDTOModel>();
+
+        //            productViewModel.userName = claim.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value!;
+        //        }
+        //    }
+        //    else
+        //    {
+        //        TempData["error"] = productReponse?.Message ?? "Đã có lỗi xảy ra khi lấy thông tin sản phẩm.";
+        //        return NotFound();
+        //    }
+
+        //    // Trả về View với ProductViewModel
+        //    return View(productViewModel);
+        //}
+
         public async Task<IActionResult> ProductDetail(string id)
         {
             IEnumerable<Claim> claim = HttpContext.User.Claims;
@@ -146,6 +203,9 @@ namespace Client.Controllers
             ResponseModel? cmtResponse = await _commentService.GetByproductId(id, 1, 9999);
             ResponseModel? productsReponse = await _productService.GetAllProductAsync(1,99);
 
+            string un = claim.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value!;
+            string i = claim.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value!;
+            ResponseModel? ItemResponse = await _orderService.GetItemsByCustomerId(i);
 
             if (productReponse != null && productReponse.IsSuccess)
             {
@@ -180,6 +240,31 @@ namespace Client.Controllers
                     productViewModel.CommentDTOModels = commentsModel ?? new List<CommentDTOModel>();
 
                     productViewModel.userName = claim.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value!;
+
+                }
+
+                if (ItemResponse != null && ItemResponse.IsSuccess)
+                {
+                    List<OrderItemModel>? orderProducts = JsonConvert.DeserializeObject<List<OrderItemModel>>(Convert.ToString(ItemResponse.Result));
+
+                    ViewBag.HasOwned = false;
+                    foreach (var item in orderProducts)
+                    {
+                        if (item.ProductId == id)
+                        {
+                            ViewBag.HasOwned = true;
+                            List<string> urls = new List<string>();
+                            foreach (var link in productViewModel.Prod.Links)
+                            {
+                                if (link.Url.Contains("drive.google.com"))
+                                {
+                                    urls.Add(link.Url);
+                                }
+                            }
+                            ViewBag.UrlsDownLoad = urls;
+                            break;
+                        }
+                    }
                 }
             }
             else
@@ -512,6 +597,45 @@ namespace Client.Controllers
 
                 return writer.GetStringBuilder().ToString();
             }
+        }
+
+        public async Task<IActionResult> ViewAll(string viewString)
+        {
+            IEnumerable<Claim> claim = HttpContext.User.Claims;
+            ProductViewModel productViewModel = new ProductViewModel();
+
+            ResponseModel? productReponse = await _productService.ViewMore(viewString);
+
+
+            if (productReponse != null && productReponse.IsSuccess)
+            {
+                List<ProductModel>? ProductsModel = JsonConvert.DeserializeObject<List<ProductModel>>(Convert.ToString(productReponse.Result));
+                var total = ProductsModel.Count;
+                int pageSize = 5;
+                if (ProductsModel != null)
+                {
+                    
+
+                    productViewModel.Product = ProductsModel ?? new List<ProductModel>();
+                    // Gán danh sách comments vào ProductViewModel
+                   
+                    productViewModel.userName = claim.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value!;
+                    var data = productViewModel.Product;
+                    productViewModel.pageNumber = 1;
+                    productViewModel.totalItem = data.Count;
+                    productViewModel.pageSize = pageSize;
+                    productViewModel.pageCount = (int)Math.Ceiling(total / (double)pageSize);
+                    TempData["success"] = "Sort Products successfully";
+                }
+            }
+            else
+            {
+                TempData["error"] = productReponse?.Message ?? "Đã có lỗi xảy ra khi lấy thông tin sản phẩm.";
+                return NotFound();
+            }
+
+            // Trả về View với ProductViewModel
+            return View("Product",productViewModel);
         }
 
     }

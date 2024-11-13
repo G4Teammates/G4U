@@ -73,12 +73,12 @@ namespace Client.Repositories.Services.Comment
             });
         }
 
-        public async Task<ResponseModel> GetListByIdAsync(string id)
+        public async Task<ResponseModel> GetListByIdAsync(string id, int page, int pageSize)
         {
             return await _baseService.SendAsync(new RequestModel()
             {
                 ApiType = StaticTypeApi.ApiType.GET,
-                Url = StaticTypeApi.APIGateWay + "/Comment/List/" + id
+                Url = $"{StaticTypeApi.APIGateWay}/Comment/List/{id}?page=" + page.ToString() + "&pageSize=" + pageSize.ToString()
             });
         }
 
