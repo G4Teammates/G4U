@@ -55,7 +55,7 @@ namespace OrderMicroservice.Repositories.Services
                 response.IsSuccess = true;
                 response.Message = "Retrieved all orders successfully.";
 
-                
+
             }
             catch (Exception ex)
             {
@@ -340,32 +340,51 @@ namespace OrderMicroservice.Repositories.Services
             ResponseModel response = new();
             try
             {
-                // Tìm đơn hàng theo ID
-                var order = await _context.Orders.SingleOrDefaultAsync(i => i.CustomerId == id);
+                // Tìm tất cả đơn hàng của khách hàng dựa trên CustomerId
+                var orders = await _context.Orders
+                    .Where(i => i.CustomerId == id)
+                    .ToListAsync();
 
-                // Kiểm tra nếu không tìm thấy đơn hàng
-                if (order == null)
+                // Kiểm tra nếu không tìm thấy đơn hàng nào
+                if (orders == null || !orders.Any())
                 {
                     response.IsSuccess = false;
-                    response.Message = $"Order with CustomerId '{id}' not found.";
+                    response.Message = $"No orders found for CustomerId '{id}'.";
                     return response;
                 }
 
-                // Lấy các mục của đơn hàng
-                var orderItems = order.Items;
+                // Lấy tất cả các items từ danh sách đơn hàng
+                var allOrderItems = orders
+                    .SelectMany(o => o.Items) // Lấy tất cả items từ tất cả orders
+                    .ToList();
 
-                // Kiểm tra nếu đơn hàng không có mục nào
-                if (orderItems == null || !orderItems.Any())
+                // Kiểm tra nếu không có item nào
+                if (allOrderItems == null || !allOrderItems.Any())
                 {
                     response.IsSuccess = false;
-                    response.Message = $"Order with CustomerId '{id}' does not contain any items.";
+                    response.Message = $"No items found in orders for CustomerId '{id}'.";
                     return response;
                 }
 
-                // Map danh sách orderItems sang mô hình OrderItemModel
-                response.Result = _mapper.Map<ICollection<OrderItemModel>>(orderItems);
+                // Nhóm các items theo ProductId để gộp các sản phẩm trùng nhau
+                var groupedItems = allOrderItems
+                    .GroupBy(item => item.ProductId)
+                    .Select(group => new OrderItemModel
+                    {
+                        ProductId = group.Key,
+                        ProductName = group.First().ProductName, // Lấy tên từ một item trong nhóm
+                        PublisherName = group.First().PublisherName, // Lấy tên người đăng từ một item trong nhóm
+                        ImageUrl = group.First().ImageUrl, // Lấy URL hình ảnh từ một item
+                        Quantity = group.Sum(item => item.Quantity), // Tổng số lượng
+                        Price = group.First().Price, // Lấy giá từ một item (giả định giá giống nhau)
+                                                     // Các thuộc tính TotalPrice và TotalProfit được tính toán tự động trong OrderItemModel
+                    })
+                    .ToList();
+
+                // Map kết quả sang Result và thiết lập thông báo trả về
+                response.Result = groupedItems;
                 response.IsSuccess = true;
-                response.Message = $"Order items for CustomerId '{id}' retrieved successfully.";
+                response.Message = $"Order items for CustomerId '{id}' retrieved and consolidated successfully.";
             }
             catch (Exception ex)
             {
@@ -375,5 +394,7 @@ namespace OrderMicroservice.Repositories.Services
 
             return response;
         }
+
+
     }
 }

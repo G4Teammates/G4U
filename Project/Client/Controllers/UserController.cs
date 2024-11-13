@@ -340,21 +340,31 @@ namespace Client.Controllers
         }
 
 
-        public IActionResult Cart(ProductModel product)
+        public IActionResult Cart(ProductViewModel product)
         {
-            ListProduct.Add(product);
+            ListProduct.Add(product.Prod);
             CartModel cart = new();
             cart.Products = ListProduct;
+            cart.Order.CustomerId = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)!.Value;
+            cart.Order.Items = ListProduct.Select(x => new OrderItemModel
+            {
+                ProductId = x.Id,
+                ProductName = x.Name,
+                Price = x.Price,
+                PublisherName = x.UserName,
+                Quantity = 1
+            }).ToList();
+            cart.Order.TotalPrice = ListProduct.Sum(x => x.Price);
             
-            return View(ListProduct);
+            return RedirectToAction("Payment","Order", cart);
         }
         public IActionResult CartRemoveProduct(ProductModel product)
         {
             ListProduct.Remove(product);
             CartModel cart = new();
             cart.Products = ListProduct;
-            
-            return View(ListProduct);
+
+            return View(cart);
         }
 
         [HttpGet]
