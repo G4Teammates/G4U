@@ -94,18 +94,16 @@
         {
             foreach (var image in Model.oderitem)
             {
-                <div class="collection-card">
-                    <img src="@image.ImageUrl" alt="Favorites">
-                    <div class="text">
-                        <p class="title text-white">@image.ProductName</p>
+                <a asp-controller="Product" asp-action="ProductDetail" asp-route-id="@image.ProductId">
+                    <div class="collection-card">
+                        <img src="@image.ImageUrl" alt="Favorites">
+                        <div class="text">
+                            <p class="title text-danger text-decoration-none">@image.ProductName</p>
+                        </div>
                     </div>
-                </div>
-
+                </a>
             }
-
         }
-        
-
     </div>
 </div>
 
