@@ -1015,5 +1015,74 @@ namespace ProductMicroservice.Repostories
             }
 
         }
+
+        public async Task<ResponseDTO> ViewMore(string viewString)
+        {
+            ResponseDTO response = new();
+            try
+            {
+                List<Products> products;
+
+                switch (viewString.ToLower())
+                {
+                    case "discount":
+                        // Lấy ra các sản phẩm có discount khác 0 và sắp xếp giảm dần theo discount
+                        products = await _db.Products
+                            .Where(p => p.Discount != 0)
+                            .OrderByDescending(p => p.Discount)
+                            .ToListAsync();
+                        break;
+
+                    case "popular":
+                        // Lấy ra các sản phẩm có numOfViews khác 0 và sắp xếp giảm dần theo numOfViews
+                        products = await _db.Products
+                            .Where(p => p.Interactions.NumberOfViews != 0)
+                            .OrderByDescending(p => p.Interactions.NumberOfViews)
+                            .ToListAsync();
+                        break;
+
+                    case "free":
+                        // Lấy ra các sản phẩm có price bằng 0
+                        products = await _db.Products
+                            .Where(p => p.Price == 0)
+                            .ToListAsync();
+                        break;
+
+                    case "new":
+                        // Lấy ra các sản phẩm được tạo trong tháng hiện tại và sắp xếp theo ngày tạo (mới nhất trước)
+                        var currentMonth = DateTime.Now.Month;
+                        var currentYear = DateTime.Now.Year;
+                        products = await _db.Products
+                            .Where(p => p.CreatedAt.Month == currentMonth && p.CreatedAt.Year == currentYear)
+                            .OrderByDescending(p => p.CreatedAt)
+                            .ToListAsync();
+                        break;
+
+                    default:
+                        // Nếu không khớp với bất kỳ điều kiện nào, trả về thông báo không tìm thấy
+                        response.IsSuccess = false;
+                        response.Message = "Invalid view type";
+                        return response;
+                }
+
+                if (products != null && products.Any())
+                {
+                    response.Result = _mapper.Map<List<Products>>(products);
+                    response.IsSuccess = true;
+                }
+                else
+                {
+                    response.IsSuccess = false;
+                    response.Message = "No products found based on the filter criteria";
+                }
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+            }
+            return response;
+        }
+
     }
 }

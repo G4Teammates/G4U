@@ -416,7 +416,34 @@ namespace UserMicroservice.Repositories.Services
             return userExists;
         }
 
+        public async Task<ResponseModel> AddToWishList(UserWishlistModel userWishlistModel, string userName)
+        {
+            ResponseModel response = new();
+            try
+            {
+                var user = await _context.Users.FirstOrDefaultAsync(x => x.Username == userName);
 
+                if (user != null)
+                {
+
+                    user.Wishlist.Add(_mapper.Map<UserWishlist>(userWishlistModel));
+                    response.Result = user;
+                    return response;
+                }
+                else
+                {
+                    response.IsSuccess = false;
+                    response.Message = "Not found any User";
+                }
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+            }
+
+            return response;
+        }
 
         //public async Task<ICollection<UserModel>> FindUsers(SearchCriteria criteria)
         //{

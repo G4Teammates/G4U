@@ -448,5 +448,27 @@ namespace ProductMicroService.Controllers
                 return StatusCode(500, _responseDTO);
             }
         }
+        [HttpGet("ViewMore/{viewString}")]
+        public async Task<IActionResult> ViewMore([FromRoute] string viewString)
+        {
+            try
+            {
+                var result = await _repoProduct.ViewMore(viewString);
+                if (result.IsSuccess)
+                {
+                    _responseDTO.Result = result.Result;
+                    _responseDTO.Message = result.Message;
+                    return Ok(_responseDTO);
+                }
+                _responseDTO.Message = result.Message;
+                return BadRequest(_responseDTO.Message);
+            }
+            catch (Exception ex)
+            {
+                _responseDTO.IsSuccess = false;
+                _responseDTO.Message = "An error occurred while get view more: " + ex.Message;
+                return StatusCode(500, _responseDTO);
+            }
+        }
     }
 }
