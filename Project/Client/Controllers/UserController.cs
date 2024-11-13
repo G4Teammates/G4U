@@ -22,10 +22,12 @@ using Client.Repositories.Interfaces.Product;
 using Client.Repositories.Interfaces.Categories;
 using Client.Models.CategorisDTO;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
+using Client.Repositories.Interfaces.Order;
+using Client.Models.OrderModel;
 
 namespace Client.Controllers
 {
-    public class UserController(IAuthenticationService authenService, IUserService userService, ITokenProvider tokenProvider, IHelperService helperService, IRepoProduct repoProduct, ICategoriesService categoriesService) : Controller
+    public class UserController(IAuthenticationService authenService, IUserService userService, ITokenProvider tokenProvider, IHelperService helperService, IRepoProduct repoProduct, ICategoriesService categoriesService, IOrderService orderService) : Controller
     {
         private readonly IAuthenticationService _authenService = authenService;
         public readonly IUserService _userService = userService;
@@ -33,6 +35,7 @@ namespace Client.Controllers
         public readonly IHelperService _helperService = helperService;
         public readonly IRepoProduct _productService = repoProduct;
         public readonly ICategoriesService _categoriesService = categoriesService;
+        public readonly IOrderService _orderService = orderService;
 
 
 
@@ -636,7 +639,7 @@ namespace Client.Controllers
             string un = claim.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value!;
             string i = claim.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value!;
             ResponseModel? ProResponese = await _productService.GetAllProductsByUserName(un);
-            ResponseModel? WishListResponse = await _userService.GetAllProductsInWishList(i);
+            ResponseModel? ItemResponse = await _orderService.GetItemsByCustomerId(i);
             /*ResponseModel? response2 = await _userService.GetUserAsync(i);*/
 
             if (ProResponese != null && ProResponese.IsSuccess)
@@ -645,21 +648,21 @@ namespace Client.Controllers
                 //ProductModel? updateProductModel = JsonConvert.DeserializeObject<ProductModel>(Convert.ToString(response.Result));
                 List<ProductModel>? ListProduct = JsonConvert.DeserializeObject<List<ProductModel>>(Convert.ToString(ProResponese.Result));
                 /*List<UsersDTO>? model1 = JsonConvert.DeserializeObject<List<UsersDTO>>(Convert.ToString(response1.Result));*/
-                List<WishlistModel>? Wishlist = JsonConvert.DeserializeObject<List<WishlistModel>>(Convert.ToString(WishListResponse.Result));
+                List<OrderItemModel>? Item = JsonConvert.DeserializeObject<List<OrderItemModel>>(Convert.ToString(ItemResponse.Result));
 
                 if (ListProduct != null)
                 {
 
                     productViewModel.Product = ListProduct ?? new List<ProductModel>();
                     /*productViewModel.User = model1 ?? new List<UsersDTO>();*/
-                    productViewModel.Wishlist = Wishlist ?? new List<WishlistModel>();
+                    productViewModel.oderitem = Item ?? new List<OrderItemModel>();
                     productViewModel.userName = claim.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value!;
                     productViewModel.userID = claim.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value!;
                 }
             }
             else
             {
-                TempData["error"] = ProResponese?.Message + WishListResponse.Message ?? "Đã có lỗi xảy ra khi lấy thông tin sản phẩm.";
+                TempData["error"] = ProResponese?.Message + ItemResponse.Message ?? "Đã có lỗi xảy ra khi lấy thông tin sản phẩm.";
                 return NotFound();
             }
 
