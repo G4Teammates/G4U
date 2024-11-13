@@ -667,6 +667,9 @@ hr {
     }
 
 
+
+
+
 .card_gamemonth .footeer_card{
     padding:20px;
     padding-top:0;
@@ -741,6 +744,8 @@ hr {
             color: #00A97F; /* Màu mũi tên xanh khi hover */
             text-decoration: none;
         }
+
+
 
 
 /*Trai Tym nè*/
@@ -986,12 +991,46 @@ hr {
     box-shadow: 0px 7px 10px rgba(0, 0, 0, 0.5);
     transition: 0.5s ease-in-out;
     margin: 5px; /* Thêm khoảng cách giữa các card */
+    overflow: hidden;
 }
+
+/* Số lượt view - Ẩn mặc định */
+.view-count {
+    display: none;
+    position: absolute;
+    top: 10px; /* Khoảng cách từ trên */
+    left: 10px; /* Khoảng cách từ trái */
+    z-index: 10;
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+/* Hiển thị số lượt view khi hover vào card */
+.card_other:hover .view-count {
+    display: block;
+}
+
+.like-dislike-container {
+    display: none;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 10;
+}
+
+.card_other:hover .like-dislike-container {
+    display: block;
+}
+
+
+
+
 
 @media (max-width: 768px) {
     .card_other {
         width: calc(50% - 10px); /* 2 card cho mỗi hàng */
-    }
+}
 }
 
 @media (max-width: 576px) {
