@@ -1317,12 +1317,13 @@ namespace Client.Controllers
         }
         public async Task<IActionResult> CommentDelete(string id)
         {
-            ResponseModel? response = await _commentService.GetListByIdAsync(id);
+            ResponseModel? response = await _commentService.GetByIdAsync(id);
+
             if (response != null && response.IsSuccess)
             {
-                ProductModel? model = JsonConvert.DeserializeObject<ProductModel>(Convert.ToString(response.Result));
-                TempData["success"] = "Get comment for delete successfully";
-                // Trả về model UsersDTO để sử dụng trong View
+                CommentDTOModel? model = JsonConvert.DeserializeObject<CommentDTOModel>(Convert.ToString(response.Result));
+                TempData["success"] = "Get comment for update successfully";
+                
                 return View(model);
             }
             else
