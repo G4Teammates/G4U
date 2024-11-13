@@ -5,75 +5,91 @@
 @{
     Layout = "_LayoutAdmin";
 }
+
+
 <h2>Update Product</h2>
 
 <form asp-action="UpdateProduct" method="post" enctype="multipart/form-data">
     <input type="hidden" name="_method" value="PUT" /> <!-- Giả lập PUT method -->
     <!-- Các trường cơ bản của sản phẩm -->
-    <div class="row">
+    <div class="row py-2">
         <div class="col-md-6">
-            <div class="form-group mt-2">
-                <label class="fw-bold" for="id">Product ID</label>
-                <input type="text" class="form-control" asp-for="Id" readonly />
-                <span asp-validation-for="Id" class="text-danger"></span>
+            <div class="row">
+                <div class="col-md-7">
+                    <div class="form-group mt-2">
+                        <label class="fw-bold text-[#00A97F]" for="id">Product ID</label>
+                        <input type="text" class="form-control bg-white text-[#00A97F] border-[#00A97F]" asp-for="Id" readonly style="border: 1px solid #00A97F;" />
+                        <span asp-validation-for="Id" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    <div class="form-group mt-2">
+                        <label class="fw-bold text-[#00A97F]" for="price">Price</label>
+                        <input type="number" class="form-control bg-white text-[#00A97F] border-[#00A97F]" asp-for="Price" required style="border: 1px solid #00A97F;" />
+                        <span asp-validation-for="Price" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-md-7">
+                    <div class="form-group mt-2">
+                        <label class="fw-bold text-[#00A97F]" for="name">Product Name</label>
+                        <input type="text" class="form-control bg-white text-[#00A97F] border-[#00A97F]" asp-for="Name" required style="border: 1px solid #00A97F;" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    <div class="form-group mt-2">
+                        <label class="fw-bold text-[#00A97F]" for="sold">Sold</label>
+                        <input type="number" class="form-control bg-white text-[#00A97F] border-[#00A97F]" asp-for="Sold" required style="border: 1px solid #00A97F;" />
+                        <span asp-validation-for="Sold" class="text-danger"></span>
+                    </div>
+                </div>
             </div>
 
-            <div class="form-group mt-2">
-                <label class="fw-bold" for="name">Product Name</label>
-                <input type="text" class="form-control" asp-for="Name" required />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-            <div class="form-group mt-2">
-                <label class="fw-bold" for="price">Price</label>
-                <input type="number" class="form-control" asp-for="Price" required />
-                <span asp-validation-for="Price" class="text-danger"></span>
-            </div>
+            <div class="row mt-3">
+                <div class="col-md-4">
+                    <div class="form-group mt-2">
+                        <label class="fw-bold text-[#00A97F]" for="numOfView">Number of Views</label>
+                        <input type="number" class="form-control bg-white text-[#00A97F] border-[#00A97F]" asp-for="Interactions.NumberOfViews" required style="border: 1px solid #00A97F;" />
+                        <span asp-validation-for="Interactions.NumberOfViews" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group mt-2">
+                        <label class="fw-bold text-[#00A97F]" for="numOfLike">Number of Likes</label>
+                        <input type="number" class="form-control bg-white text-[#00A97F] border-[#00A97F]" asp-for="Interactions.NumberOfLikes" required style="border: 1px solid #00A97F;" />
+                        <span asp-validation-for="Interactions.NumberOfLikes" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group mt-2">
+                        <label class="fw-bold text-[#00A97F]" for="discount">Discount (%)</label>
+                        <input type="number" class="form-control bg-white text-[#00A97F] border-[#00A97F]" asp-for="Discount" step="0.01" required style="border: 1px solid #00A97F;" />
+                        <span asp-validation-for="Discount" class="text-danger"></span>
+                    </div>
+                </div>
 
-            <div class="form-group mt-2">
-                <label class="fw-bold" for="sold">Sold</label>
-                <input type="number" class="form-control" asp-for="Sold" required />
-                <span asp-validation-for="Sold" class="text-danger"></span>
             </div>
+            
+            
             <div class="form-group mt-2">
-                <label for="numOfView">Number of Views</label>
-                <input type="number" class="form-control" asp-for="Interactions.NumberOfViews" required />
-                <span asp-validation-for="Interactions.NumberOfViews" class="text-danger"></span>
-            </div>
-
-            <div class="form-group mt-2">
-                <label class="fw-bold" for="numOfLike">Number of Likes</label>
-                <input type="number" class="form-control" asp-for="Interactions.NumberOfLikes" required />
-                <span asp-validation-for="Interactions.NumberOfLikes" class="text-danger"></span>
-            </div>
-
-            <div class="form-group mt-2">
-                <label class="fw-bold" for="numOfLike">Number of Likes</label>
-                <input type="number" class="form-control" asp-for="Interactions.NumberOfDisLikes" required />
-                <span asp-validation-for="Interactions.NumberOfLikes" class="text-danger"></span>
-            </div>
-
-            <div class="form-group mt-2">
-                <label class="fw-bold" for="discount">Discount (%)</label>
-                <input type="number" class="form-control" asp-for="Discount" step="0.01" required />
-                <span asp-validation-for="Discount" class="text-danger"></span>
-            </div>
-            <div class="form-group mt-2">
-                <label class="fw-bold" for="createAt">Created At</label>
-                <input type="datetime-local" class="form-control" asp-for="CreatedAt" required />
+                <label class="fw-bold text-[#00A97F]" for="createAt">Created At</label>
+                <input type="datetime-local" class="form-control bg-white text-[#00A97F] border-[#00A97F]" asp-for="CreatedAt" required style="border: 1px solid #00A97F;" />
                 <span asp-validation-for="CreatedAt" class="text-danger"></span>
             </div>
             <!-- Cập nhật các danh mục sản phẩm -->
             <div class="form-group mt-2">
-                <label class="fw-bold">Categories</label>
+                <label class="fw-bold text-[#00A97F]">Categories</label>
                 <div id="categories-list">
                     @if (Model.Categories != null && Model.Categories.Any())
                     {
                         int i = 0;
                         @foreach (var category in Model.Categories)
                         {
-                            <div class="input-group mb-2 category-item" data-index="@i">
-                                <input type="text" name="Categories[@i]" value="@category.CategoryName" class="form-control" placeholder="Enter category" />
-                                <div class="input-group-append">
+                            <div class="row input-group mb-2 category-item" data-index="@i">
+                                <input type="text" name="Categories[@i]" value="@category.CategoryName" class="col-md-8 form-control bg-white text-[#00A97F] border-[#00A97F]" placeholder="Enter category" style="border: 1px solid #00A97F; border-radius:5px;margin-left:0.75rem" />
+                                <div class="col-md-3 input-group-append">
                                     <button type="button" class="btn btn-danger remove-category">Remove</button>
                                 </div>
                             </div>
@@ -123,37 +139,48 @@
         </div>
         <div class="col-md-6">
             <div class="form-group mt-2">
-                <label class="fw-bold" for="description">Description</label>
-                <textarea class="form-control" asp-for="Description" rows="4" required></textarea>
+                <label class="fw-bold text-[#00A97F]" for="qrCode">QR Code</label>
+                <div style="text-align: center; width: 200px; margin: 0 auto;">
+                    <img src="@Model.QrCode" alt="QR Code" style="width: 100%; height: auto; border: 1px solid #00A97F; border-radius: 8px;" />
+                </div>
+            </div>
+            <div class="form-group mt-2">
+                <label class="fw-bold text-[#00A97F]" for="description">Description</label>
+                <textarea class="form-control bg-white text-[#00A97F] border-[#00A97F]" asp-for="Description" rows="4" required style="border: 1px solid #00A97F;"></textarea>
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
-            <div class="form-group mt-3">
-                <label class="fw-bold" for="platform">Platform</label>
-                @foreach (Client.Models.Enum.ProductEnum.PlatformType platform in Enum.GetValues(typeof(Client.Models.Enum.ProductEnum.PlatformType)))
-                {
-                    <div class="form-check">
-                        <input type="radio" class="form-check-input" id="platform_@(platform.ToString())" name="Platform" value="@(platform)" @(platform == Model.Platform ? "checked" : "") />
-                        <label class="form-check-label" for="platform_@(platform.ToString())">@platform</label>
-                    </div>
-                }
+            <div class="row">
+                <div class="col-md-6 form-group mt-3">
+                    <label class="fw-bold text-[#00A97F]" for="platform">Platform</label>
+                    @foreach (Client.Models.Enum.ProductEnum.PlatformType platform in Enum.GetValues(typeof(Client.Models.Enum.ProductEnum.PlatformType)))
+                    {
+                        <div class="form-check">
+                            <input type="radio" class="form-check-input" id="platform_@(platform.ToString())" name="Platform" value="@(platform)" @(platform == Model.Platform ? "checked" : "") />
+                            <label class="form-check-label" for="platform_@(platform.ToString())">@platform</label>
+                        </div>
+                    }
+                </div>
 
-            </div>
-
-            <div class="form-group mt-3">
-                <label class="fw-bold" for="status">Status</label>
-                @foreach (Client.Models.Enum.ProductEnum.ProductStatus status in Enum.GetValues(typeof(Client.Models.Enum.ProductEnum.ProductStatus)))
-                {
-                    <div class="form-check">
-                        <input type="radio" class="form-check-input" id="status_@(status.ToString())" name="Status" value="@(status)" @(status == Model.Status ? "checked" : "") />
-                        <label class="form-check-label" for="status_@(status.ToString())">@status</label>
-                    </div>
-                }
+                <div class="col-md-6 form-group mt-3">
+                    <label class="fw-bold text-[#00A97F]" for="status">Status</label>
+                    @foreach (Client.Models.Enum.ProductEnum.ProductStatus status in Enum.GetValues(typeof(Client.Models.Enum.ProductEnum.ProductStatus)))
+                    {
+                        <div class="form-check">
+                            <input type="radio" class="form-check-input" id="status_@(status.ToString())" name="Status" value="@(status)" @(status == Model.Status ? "checked" : "") />
+                            <label class="form-check-label" for="status_@(status.ToString())">@status</label>
+                        </div>
+                    }
+                </div>
             </div>
         </div>
-        
     </div>
+
+
+
+    @* Đoạn code trước khi sửa, comment lại thôi *@
+
     <!-- Cập nhật các đường dẫn (Links) -->
-    <div class="form-group mt-2">
+    @* <div class="form-group mt-2">
         <label class="fw-bold">Images and Game</label>
         <div id="links-list">
             @if (Model.Links != null)
@@ -192,28 +219,105 @@
             }
         </div>
         <span asp-validation-for="Links" class="text-danger"></span>
+    </div> *@
+    <div class="form-group" style="margin-top:2vw;">
+        <label class="fw-bold text-[#00A97F]" style="font-weight: bold;">Images and Game</label>
+        <div id="links-list" class="p-3 rounded" style="background: #f9f9f9; border: 1px solid #00A97F;">
+            @if (Model.Links != null)
+            {
+                int i = 0;
+                @foreach (var link in Model.Links)
+                {
+                    <div class="links-item p-3 rounded mb-4" style="background: #ffffff; box-shadow: 0 0 10px rgba(0, 169, 127, 0.3); border: 1px solid #00A97F; display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr auto; gap: 15px; align-items: center;">
+                        <!-- Image or Link Display -->
+                        <div class="text-center" style="text-align: right;">
+                            @if (link.Url.Contains("cloudinary"))
+                            {
+                                <label class="d-block" style="font-weight: bold; color: #00A97F;">Images</label>
+                                <img src="@link.Url" alt="Cloudinary Image" style="width: 100px; height: auto; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 169, 127, 0.2);" />
+                            }
+                            else if (link.Url.Contains("drive.google.com"))
+                            {
+                                <label class="d-block" style="font-weight: bold; color: #00A97F;">Game</label>
+                                <a href="@link.Url" target="_blank" class="text-[#00A97F]" style="display: inline-block; padding-left: 10px;">View on Google Drive</a>
+                            }
+                            else
+                            {
+                                <a href="@link.Url" target="_blank" class="text-[#00A97F]" style="display: inline-block; padding-left: 10px;">@link.Url</a>
+                            }
+                        </div>
+
+                        <!-- Censorship Status -->
+                        <div class="text-center">
+                            <label class="d-block" style="font-weight: bold; color: #00A97F; padding-bottom: 5px;">Censorship Status</label>
+                            <input type="text" name="Links[@i].Censorship.Status" value="@link.Censorship.Status" class="form-control bg-white text-[#00A97F] border-[#00A97F] text-center" style="width: 100%; border: 1px solid #00A97F;" />
+                        </div>
+
+                        <!-- Censorship Provider Name -->
+                        <div class="text-center">
+                            <label class="d-block" style="font-weight: bold; color: #00A97F; padding-bottom: 5px;">Provider Name</label>
+                            <input type="text" name="Links[@i].Censorship.ProviderName" value="@link.Censorship.ProviderName" class="form-control bg-white text-[#00A97F] border-[#00A97F] text-center" style="width: 100%; border: 1px solid #00A97F;" />
+                        </div>
+
+                        <!-- Censorship Description -->
+                        <div class="text-center">
+                            <label class="d-block" style="font-weight: bold; color: #00A97F; padding-bottom: 5px;">Description</label>
+                            <input type="text" name="Links[@i].Censorship.Description" value="@link.Censorship.Description" class="form-control bg-white text-[#00A97F] border-[#00A97F] text-center" style="width: 100%; border: 1px solid #00A97F;" />
+                        </div>
+
+                        <!-- Provider Name -->
+                        <div class="text-center">
+                            <label class="d-block" style="font-weight: bold; color: #00A97F; padding-bottom: 5px;">Provider</label>
+                            <input type="text" name="Links[@i].ProviderName" value="@link.ProviderName" class="form-control bg-white text-[#00A97F] border-[#00A97F] text-center" style="width: 100%; border: 1px solid #00A97F;" />
+                        </div>
+
+                        <!-- Remove Button -->
+                        <div class="text-center">
+                            <button type="button" class="btn btn-outline-danger remove-link text-center mt-3" style="border-radius: 12px; color: #ff4d4d; border: 1px solid #ff4d4d; width: 100%; max-width: 100px;">Remove</button>
+                        </div>
+                    </div>
+                    i++;
+                }
+            }
+
+            <!-- Upload hình ảnh và file game -->
+            <div class="row mt-3">
+                <div class=col-md-4>
+                    <div class="form-group" style="border: 1px solid #00A97F; border-radius: 8px; padding: 10px;">
+                        <label for="ImageFiles" class="d-block" style="font-weight: bold; color: #00A97F;">Upload Images</label>
+                        <input type="file" class="form-control" name="ImageFiles" multiple style="border: 1px solid #00A97F; padding-left: 10px; padding-right: 10px;" />
+                    </div>
+                </div>
+                <div class=col-md-4>
+                    <div class="form-group" style="border: 1px solid #00A97F; border-radius: 8px; padding: 10px;">
+                        <label for="gameFile" class="d-block" style="font-weight: bold; color: #00A97F;">Upload Game File</label>
+                        <input type="file" class="form-control" name="gameFile" style="border: 1px solid #00A97F; padding-left: 10px; padding-right: 10px;" />
+                    </div>
+                </div>
+                <div class=col-md-4>
+                    <div class="form-group" style="border: 1px solid #00A97F; border-radius: 8px; padding: 10px;">
+                        <label for="UserName" class="d-block" style="font-weight: bold; color: #00A97F;">UserName</label>
+                        <input type="text" class="form-control" asp-for="UserName" style="border: 1px solid #00A97F; padding-left: 10px; padding-right: 10px;" />
+                        <span asp-validation-for="UserName" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            
+            
+
+            
+
+            
+
+        </div>
+        <span asp-validation-for="Links" class="text-danger"></span>
     </div>
 
-    <!-- Upload hình ảnh và file game -->
-    <div class="form-group">
-        <label for="ImageFiles">Upload Images</label>
-        <input type="file" class="form-control" name="ImageFiles" multiple />
-        
+    <div style="margin-top:2vw;">
+        <button type="submit" class="btn btn-primary">Update</button>
+        <a asp-action="ProductsManager" class="btn btn-secondary">Back To List</a>
     </div>
-
-    <div class="form-group">
-        <label for="gameFile">Upload Game File</label>
-        <input type="file" class="form-control" name="gameFile" />
-    </div>
-
-    <div class="form-group">
-        <label for="UserName">UserName</label>
-        <input type="text" class="form-control" asp-for="UserName"/>
-        <span asp-validation-for="UserName" class="text-danger"></span>
-    </div>
-
-    <button type="submit" class="btn btn-primary">Update Product</button>
-    <a asp-action="ProductsManager" class="btn btn-secondary">Back To List</a>
+    
 </form>
 
 @section Scripts {
