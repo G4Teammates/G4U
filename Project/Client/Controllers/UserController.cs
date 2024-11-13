@@ -37,6 +37,7 @@ namespace Client.Controllers
         public readonly ICategoriesService _categoriesService = categoriesService;
         public readonly IOrderService _orderService = orderService;
 
+        private ICollection<ProductModel> ListProduct;
 
 
         [HttpGet]
@@ -77,10 +78,19 @@ namespace Client.Controllers
                     };
                     await _helperService.UpdateClaim(userClaim, HttpContext);
 
-                    TempData["success"] = "Login successfully";
-
                     TempData["success"] = "Login success";
-                    return RedirectToAction("Index", "Home");
+                    if (userClaim.Role == "Admin")
+                    {
+                        return RedirectToAction("AdminDashboard", "Admin");
+                    }
+                    else if (userClaim.Role == "User")
+                    {
+                        return RedirectToAction("Index", "Home");
+                    }
+                    else
+                    {
+                        return RedirectToAction("Index", "Home");
+                    }
                 }
                 TempData["error"] = "Login fail, check your username(or email) and password";
             }
@@ -330,6 +340,34 @@ namespace Client.Controllers
         public IActionResult Cart()
         {
             return View();
+        }
+
+
+        public IActionResult Cart(ProductViewModel product)
+        {
+            ListProduct.Add(product.Prod);
+            CartModel cart = new();
+            cart.Products = ListProduct;
+            cart.Order.CustomerId = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)!.Value;
+            cart.Order.Items = ListProduct.Select(x => new OrderItemModel
+            {
+                ProductId = x.Id,
+                ProductName = x.Name,
+                Price = x.Price,
+                PublisherName = x.UserName,
+                Quantity = 1
+            }).ToList();
+            cart.Order.TotalPrice = ListProduct.Sum(x => x.Price);
+            
+            return RedirectToAction("Payment","Order", cart);
+        }
+        public IActionResult CartRemoveProduct(ProductModel product)
+        {
+            ListProduct.Remove(product);
+            CartModel cart = new();
+            cart.Products = ListProduct;
+
+            return View(cart);
         }
 
         [HttpGet]
@@ -639,30 +677,30 @@ namespace Client.Controllers
             string un = claim.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value!;
             string i = claim.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value!;
             ResponseModel? ProResponese = await _productService.GetAllProductsByUserName(un);
-            ResponseModel? ItemResponse = await _orderService.GetItemsByCustomerId(i);
+            ResponseModel? WishListResponse = await _userService.GetAllProductsInWishList(i);
             /*ResponseModel? response2 = await _userService.GetUserAsync(i);*/
 
             if (ProResponese != null && ProResponese.IsSuccess)
             {
                 // Deserialize vào lớp trung gian với kiểu ProductModel
-                //ProductModel? updateProductModel = JsonConvert.DeserializeObject<ProductModel>(Convert.ToString(response.Result));
+                //ProductModel? model = JsonConvert.DeserializeObject<ProductModel>(Convert.ToString(response.Result));
                 List<ProductModel>? ListProduct = JsonConvert.DeserializeObject<List<ProductModel>>(Convert.ToString(ProResponese.Result));
                 /*List<UsersDTO>? model1 = JsonConvert.DeserializeObject<List<UsersDTO>>(Convert.ToString(response1.Result));*/
-                List<OrderItemModel>? Item = JsonConvert.DeserializeObject<List<OrderItemModel>>(Convert.ToString(ItemResponse.Result));
+                List<WishlistModel>? Wishlist = JsonConvert.DeserializeObject<List<WishlistModel>>(Convert.ToString(WishListResponse.Result));
 
                 if (ListProduct != null)
                 {
 
                     productViewModel.Product = ListProduct ?? new List<ProductModel>();
                     /*productViewModel.User = model1 ?? new List<UsersDTO>();*/
-                    productViewModel.oderitem = Item ?? new List<OrderItemModel>();
+                    productViewModel.Wishlist = Wishlist ?? new List<WishlistModel>();
                     productViewModel.userName = claim.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value!;
                     productViewModel.userID = claim.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value!;
                 }
             }
             else
             {
-                TempData["error"] = ProResponese?.Message + ItemResponse.Message ?? "Đã có lỗi xảy ra khi lấy thông tin sản phẩm.";
+                TempData["error"] = ProResponese?.Message + WishListResponse.Message ?? "Đã có lỗi xảy ra khi lấy thông tin sản phẩm.";
                 return NotFound();
             }
 

@@ -60,6 +60,7 @@ namespace Client.Models.OrderModel
         [Required(ErrorMessage = "Name is required")]
         [StringLength(256, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 2)]
         public required string PublisherName { get; set; }
+        public string ImageUrl { get; set; }
 
         /// <summary>
         /// The quantity of the product ordered.

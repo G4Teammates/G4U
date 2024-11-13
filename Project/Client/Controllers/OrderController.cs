@@ -14,7 +14,7 @@ namespace Client.Controllers
             return View();
         }
 
-        public IActionResult Cart()
+        public IActionResult Payment()
         {
             return View();
         }

@@ -88,38 +88,21 @@
     <h1 class="text-success"><i class="fas fa-heart"></i> Your Library</h1>
     <div class="collections">
         <div class="collection-card add-new">
-            + CREATE A NEW WISHLIST
+            + CREATE A NEW LIBRARY
         </div>
-        @if (Model.Product != null)
-        { foreach (var product in Model.Product)
+        @if (Model.oderitem != null)
+        {
+            foreach (var image in Model.oderitem)
             {
                 <div class="collection-card">
-                    @if (product.Links != null)
-                    {
-                        string firstImageUrl = null; // Biến để lưu URL hình ảnh đầu tiên
-
-                        foreach (var link in product.Links) // Lặp qua từng đối tượng LinkModel
-                        {
-                            if (link.Url.Contains("cloudinary"))
-                            {
-                                firstImageUrl = link.Url; // Lưu URL hình ảnh đầu tiên
-                                break; // Thoát khỏi vòng lặp khi đã tìm thấy
-                            }
-                        }
-
-                        // Hiển thị hình ảnh đầu tiên nếu có
-                        if (firstImageUrl != null)
-                        {
-                            <img src="@firstImageUrl" alt="Cloudinary Image" />
-                        }
-
-
-                    }
+                    <img src="@image.ImageUrl" alt="Favorites">
                     <div class="text">
-                        <p class="title text-white">@product.Name</p>
+                        <p class="title text-danger">@image.ProductName</p>
                     </div>
                 </div>
+
             }
+
         }
         
 

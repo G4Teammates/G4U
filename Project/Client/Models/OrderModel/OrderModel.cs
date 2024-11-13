@@ -39,7 +39,7 @@ namespace Client.Models.OrderModel
         /// <br/>
         /// Tổng lợi nhuận từ đơn hàng.
         /// </summary>
-        public decimal TotalProfit => TotalPrice;
+        public decimal TotalProfit => TotalPrice - (TotalPrice * 0.1m);
 
         /// <summary>
         /// Status of the order, including: Pending, Processing, Shipping, Completed, Cancelled.
