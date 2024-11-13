@@ -37,6 +37,7 @@ namespace Client.Controllers
         public readonly ICategoriesService _categoriesService = categoriesService;
         public readonly IOrderService _orderService = orderService;
 
+        private ICollection<ProductModel> ListProduct;
 
 
         [HttpGet]
@@ -77,10 +78,19 @@ namespace Client.Controllers
                     };
                     await _helperService.UpdateClaim(userClaim, HttpContext);
 
-                    TempData["success"] = "Login successfully";
-
                     TempData["success"] = "Login success";
-                    return RedirectToAction("Index", "Home");
+                    if (userClaim.Role == "Admin")
+                    {
+                        return RedirectToAction("AdminDashboard", "Admin");
+                    }
+                    else if (userClaim.Role == "User")
+                    {
+                        return RedirectToAction("Index", "Home");
+                    }
+                    else
+                    {
+                        return RedirectToAction("Index", "Home");
+                    }
                 }
                 TempData["error"] = "Login fail, check your username(or email) and password";
             }
@@ -332,6 +342,34 @@ namespace Client.Controllers
             return View();
         }
 
+
+        public IActionResult Cart(ProductViewModel product)
+        {
+            ListProduct.Add(product.Prod);
+            CartModel cart = new();
+            cart.Products = ListProduct;
+            cart.Order.CustomerId = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)!.Value;
+            cart.Order.Items = ListProduct.Select(x => new OrderItemModel
+            {
+                ProductId = x.Id,
+                ProductName = x.Name,
+                Price = x.Price,
+                PublisherName = x.UserName,
+                Quantity = 1
+            }).ToList();
+            cart.Order.TotalPrice = ListProduct.Sum(x => x.Price);
+            
+            return RedirectToAction("Payment","Order", cart);
+        }
+        public IActionResult CartRemoveProduct(ProductModel product)
+        {
+            ListProduct.Remove(product);
+            CartModel cart = new();
+            cart.Products = ListProduct;
+
+            return View(cart);
+        }
+
         [HttpGet]
         public IActionResult PasswordSecurity()
         {
@@ -408,7 +446,7 @@ namespace Client.Controllers
 
                 var numOfView = updateProductModel.Interactions.NumberOfViews;
                 var numOfLike = updateProductModel.Interactions.NumberOfLikes;
-
+                var numOfDisLike = updateProductModel.Interactions.NumberOfDisLikes;
                 // Tạo đối tượng ScanFileRequest
                 var request = new ScanFileRequest
                 {
@@ -418,10 +456,10 @@ namespace Client.Controllers
                 // Gọi service UpdateProduct từ phía Client
                 var response = await _productService.UpdateProductAsync(
                     updateProductModel.Id, updateProductModel.Name, updateProductModel.Description, updateProductModel.Price, updateProductModel.Sold,
-                   numOfView, numOfLike, updateProductModel.Discount,
+                   numOfView, numOfLike,numOfDisLike, updateProductModel.Discount,
                     updateProductModel.Links, updateProductModel.Categories, (int)updateProductModel.Platform,
                     (int)updateProductModel.Status, updateProductModel.CreatedAt, updateProductModel.ImageFiles,
-                    request, updateProductModel.UserName);
+                    request, updateProductModel.UserName,updateProductModel.Interactions.UserLikes, updateProductModel.Interactions.UserDisLikes);
 
                 if (response.IsSuccess)
                 {
