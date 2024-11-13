@@ -61,7 +61,7 @@ namespace Client.Repositories.Services.Product
             var formData = new MultipartFormDataContent();
 
             formData.Add(new StringContent(name), "name");
-            formData.Add(new StringContent(description ?? string.Empty), "description");
+            formData.Add(new StringContent(description), "description");
             formData.Add(new StringContent(price.ToString()), "price");
             formData.Add(new StringContent(discount.ToString()), "discount");
             formData.Add(new StringContent(platform.ToString()), "platform");
