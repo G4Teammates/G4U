@@ -25,6 +25,10 @@ namespace ProductMicroservice.Configure
                 cfg.CreateMap<Link, LinkModel>().ReverseMap();
 
                 cfg.CreateMap<Censorship, CensorshipModel>().ReverseMap();
+
+                cfg.CreateMap<UserLikes, UserLikesModel>().ReverseMap();
+
+                cfg.CreateMap<UserDisLikes, UserDisLikesModel>().ReverseMap();
                 //Register mapper here⬆️
             });
         }

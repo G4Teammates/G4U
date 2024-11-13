@@ -155,6 +155,35 @@
       "UpstreamHttpMethod": [ "Get" ]
     },
 
+    //Like
+    {
+      "DownstreamPathTemplate": "/api/Product/IncreaseLike/{productId}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7159
+        }
+      ],
+      "UpstreamPathTemplate": "/Product/IncreaseLike/{productId}",
+      "UpstreamHttpMethod": [ "Put" ]
+    },
+
+    //dislike
+    {
+      "DownstreamPathTemplate": "/api/Product/DecreaseLike/{productId}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7159
+        }
+      ],
+      "UpstreamPathTemplate": "/Product/DecreaseLike/{productId}",
+      "UpstreamHttpMethod": [ "Put" ]
+    },
+
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //                                                                                                                    //
     //                                                User                                                                //

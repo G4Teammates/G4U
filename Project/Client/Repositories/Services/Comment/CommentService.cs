@@ -126,20 +126,22 @@ namespace Client.Repositories.Services.Comment
             });
         }
 
-        public async Task<ResponseModel> IncreaseLike(string commentId)
+        public async Task<ResponseModel> IncreaseLike(string commentId, UserLikesModel userLikes)
         {
             return await _baseService.SendAsync(new RequestModel()
             {
                 ApiType = StaticTypeApi.ApiType.PUT,
+                Data = userLikes,
                 Url = $"{StaticTypeApi.APIGateWay}/Comment/IncreaseLike/{commentId}"
             });
         }
 
-        public async Task<ResponseModel> DecreaseLike(string commentId)
+        public async Task<ResponseModel> DecreaseLike(string commentId, UserDisLikesModel userDisLikes)
         {
             return await _baseService.SendAsync(new RequestModel()
             {
                 ApiType = StaticTypeApi.ApiType.PUT,
+                Data = userDisLikes,
                 Url = $"{StaticTypeApi.APIGateWay}/Comment/DecreaseLike/{commentId}"
             });
         }

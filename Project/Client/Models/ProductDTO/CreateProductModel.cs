@@ -36,7 +36,7 @@ namespace Client.Models.ProductDTO
 
 
 
-        public string Username { get; set; } // Tên người dùng
+        public string? Username { get; set; } // Tên người dùng
 
 
     }

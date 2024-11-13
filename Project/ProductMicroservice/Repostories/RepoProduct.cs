@@ -157,7 +157,7 @@ namespace ProductMicroservice.Repostories
 
                 while (retryCount2 < maxRetryAttempts2 && !isCompleted2)
                 {
-                    _message.SendingMessageCheckExistCategory(Product.UserName); // Gửi message
+                    _message.SendingMessageCheckExistUserName(Product.UserName); // Gửi message
 
                     var tcs2 = new TaskCompletionSource<bool>(); // Tạo TaskCompletionSource
 
@@ -928,6 +928,92 @@ namespace ProductMicroservice.Repostories
                 response.Message = ex.Message;
             }
             return response;
+        }
+
+        public async Task<ResponseDTO> IncreaseLike(string productId, UserLikesModel userLike)
+        {
+            ResponseDTO response = new();
+            var product = await _db.Products.FindAsync(productId);
+            var checkExitUser = product?.Interactions.UserLikes.FirstOrDefault(ul => ul.UserName == userLike.UserName);
+            if (checkExitUser == null)
+            {
+                try
+                {
+                    if (product != null)
+                    {
+                        product.Interactions.NumberOfLikes++;
+                        product.Interactions.UserLikes.Add(_mapper.Map<UserLikes>(userLike));
+                        _db.Products.Update(product);
+                        await _db.SaveChangesAsync();
+
+                        response.IsSuccess = true;
+                        response.Result = product.Interactions.NumberOfLikes;
+                        response.Message = "Increased like count successfully.";
+                    }
+                    else
+                    {
+                        response.IsSuccess = false;
+                        response.Message = "product not found.";
+                    }
+                }
+                catch (Exception ex)
+                {
+                    response.IsSuccess = false;
+                    response.Message = ex.Message;
+                }
+                return response;
+            }
+            else
+            {
+                response.IsSuccess = true;
+                response.Result = product.Interactions.NumberOfLikes;
+                response.Message = "You liked this product before.";
+                return response;
+            }
+        }
+
+        public async Task<ResponseDTO> DecreaseLike(string productId, UserDisLikesModel userDisLike)
+        {
+            ResponseDTO response = new();
+            var product = await _db.Products.FindAsync(productId);
+            var checkExitUser = product?.Interactions.UserDisLikes.FirstOrDefault(ul => ul.UserName == userDisLike.UserName);
+            if (checkExitUser == null)
+            {
+                try
+                {
+                    if (product != null)
+                    {
+                        // Tăng số lượng dislike thay vì giảm số lượng like
+                        product.Interactions.NumberOfDisLikes++;
+                        product.Interactions.UserDisLikes.Add(_mapper.Map<UserDisLikes>(userDisLike));
+                        _db.Products.Update(product);
+                        await _db.SaveChangesAsync();
+
+                        response.IsSuccess = true;
+                        response.Result = product.Interactions.NumberOfDisLikes;
+                        response.Message = "Increased dislike count successfully.";
+                    }
+                    else
+                    {
+                        response.IsSuccess = false;
+                        response.Message = "product not found.";
+                    }
+                }
+                catch (Exception ex)
+                {
+                    response.IsSuccess = false;
+                    response.Message = ex.Message;
+                }
+                return response;
+            }
+            else
+            {
+                response.IsSuccess = true;
+                response.Result = product.Interactions.NumberOfDisLikes;
+                response.Message = "You disliked this product before.";
+                return response;
+            }
+
         }
     }
 }
