@@ -137,6 +137,7 @@ namespace Client.Repositories.Services.Product
                                                     int sold,
                                                     int numOfView,
                                                     int numOfLike,
+                                                    int numOfDisLike,
                                                     float discount,
                                                     List<LinkModel> links,
                                                     List<string> categories,
@@ -145,7 +146,9 @@ namespace Client.Repositories.Services.Product
                                                     DateTime createdAt,
                                                     List<IFormFile>? imageFiles,
                                                     ScanFileRequest? request,
-                                                    string username)
+                                                    string username,
+                                                    List<string> userLikes,
+                                                    List<string> userDisLike)
         {
             var formData = new MultipartFormDataContent();
 
@@ -157,6 +160,7 @@ namespace Client.Repositories.Services.Product
             formData.Add(new StringContent(sold.ToString()), "sold");
             formData.Add(new StringContent(numOfView.ToString()), "numOfView");
             formData.Add(new StringContent(numOfLike.ToString()), "numOfLike");
+            formData.Add(new StringContent(numOfDisLike.ToString()), "numOfDisLike");
             formData.Add(new StringContent(discount.ToString()), "discount");
             formData.Add(new StringContent(platform.ToString()), "platform");
             formData.Add(new StringContent(status.ToString()), "status");
@@ -169,6 +173,21 @@ namespace Client.Repositories.Services.Product
                 for (int i = 0; i < categories.Count; i++)
                 {
                     formData.Add(new StringContent(categories[i]), $"categories[{i}]");
+                }
+            }
+
+            if (userLikes != null && userLikes.Count > 0)
+            {
+                for (int i = 0; i < userLikes.Count; i++)
+                {
+                    formData.Add(new StringContent(userLikes[i]), $"userLikes[{i}]");
+                }
+            }
+            if (userDisLike != null && userDisLike.Count > 0)
+            {
+                for (int i = 0; i < userDisLike.Count; i++)
+                {
+                    formData.Add(new StringContent(userDisLike[i]), $"userDisLike[{i}]");
                 }
             }
 

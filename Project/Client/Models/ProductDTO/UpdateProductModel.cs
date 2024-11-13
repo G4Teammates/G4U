@@ -12,7 +12,7 @@ namespace Client.Models.ProductDTO
         public string? Description { get; set; }
         public decimal Price { get; set; }
         public int Sold { get; set; }
-        public InteractionModel? Interactions { get; set; } = new InteractionModel();
+        public UpdateInteractionModel? Interactions { get; set; } = new UpdateInteractionModel();
         public float Discount { get; set; }
         public List<LinkModel> Links { get; set; }
         public List<string> Categories { get; set; } = new List<string>();
