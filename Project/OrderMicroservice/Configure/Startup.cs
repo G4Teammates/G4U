@@ -1,13 +1,13 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Identity.Client;
-using OrderMicroservice.DBContexts.Entities;
 using OrderMicroservice.DBContexts;
 using Microsoft.EntityFrameworkCore;
-using Azure.Identity;
 using MongoDB.Driver;
-using MongoDB.Bson;
 using OrderMicroservice.Models;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.Google;
 
 namespace OrderMicroservice.Configure
 {
@@ -21,6 +21,46 @@ namespace OrderMicroservice.Configure
         /// <returns>service in IServiceCollection</returns>
         public static IServiceCollection AddStartupService(this IServiceCollection services, IConfiguration config)
         {
+            #region Register Authentication
+            JwtOptionModel.Secret = config["9"]!;
+            JwtOptionModel.Issuer = config["10"]!;
+            JwtOptionModel.Audience = config["11"]!;
+
+            GoogleOptionModel.ClientId = config["12"]!;
+            GoogleOptionModel.ClientSecret = config["13"]!;
+
+            services.AddAuthentication(options =>
+            {
+                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            })
+            .AddCookie("Cookies", options =>
+            {
+                options.LoginPath = "/User/Login"; // Đường dẫn tới trang đăng nhập
+            })
+            .AddJwtBearer(options =>
+            {
+                options.RequireHttpsMetadata = false; // Để dev test, disable HTTPS
+                options.SaveToken = true;
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = JwtOptionModel.Issuer,
+                    ValidAudience = JwtOptionModel.Audience,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtOptionModel.Secret)),
+                    ClockSkew = TimeSpan.Zero,
+                    RoleClaimType = ClaimTypes.Role
+                };
+            });
+
+
+            #endregion
+
+             
+
             MoMoOptionModel.AccessKey = config["16"];
             MoMoOptionModel.SecretKey = config["17"];
             PayOSOptionModel.ClientId = config["18"]!;
