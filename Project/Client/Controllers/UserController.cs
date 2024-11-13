@@ -24,6 +24,7 @@ using Client.Models.CategorisDTO;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
 using Client.Repositories.Interfaces.Order;
 using Client.Models.OrderModel;
+using MongoDB.Bson;
 
 namespace Client.Controllers
 {
@@ -444,9 +445,9 @@ namespace Client.Controllers
                     updateProductModel.UserName = product.UserName;
                 }
 
-                var numOfView = updateProductModel.Interactions.NumberOfViews;
-                var numOfLike = updateProductModel.Interactions.NumberOfLikes;
-                var numOfDisLike = updateProductModel.Interactions.NumberOfDisLikes;
+                var numOfView = product.Interactions.NumberOfViews;
+                var numOfLike = product.Interactions.NumberOfLikes;
+                var numOfDisLike = product.Interactions.NumberOfDisLikes;
                 // Tạo đối tượng ScanFileRequest
                 var request = new ScanFileRequest
                 {
@@ -464,12 +465,12 @@ namespace Client.Controllers
                 if (response.IsSuccess)
                 {
                     TempData["success"] = "Product updated successfully";
-                    return RedirectToAction(nameof(EditProduct), updateProductModel.Id);
+                    return RedirectToAction(nameof(EditProduct), new { id = updateProductModel.Id });
                 }
                 else
                 {
                     TempData["error"] = response?.Message ?? "An unknown error occurred.";
-                    return RedirectToAction(nameof(EditProduct), updateProductModel.Id);
+                    return RedirectToAction(nameof(EditProduct), new { id = updateProductModel.Id });
                 }
             }
             catch (Exception ex)
@@ -503,23 +504,26 @@ namespace Client.Controllers
 
                 if (model.Links != null)
                 {
+                    List<string> filesImage = new List<string>();
+                    List<IFormFile> filesGame = new List<IFormFile>();
                     foreach (var link in model.Links)
                     {
-                        if (link.Url.Contains("cloudinary"))
+                        if (link.ProviderName.Contains("Cloudinary"))
                         {
                             // Sử dụng trong CreateProductModel
                             var file = await DownloadFileAsIFormFile(link.Url);
                             updateProductModel.ImageFiles.Add(file);
-                            List<string> files = new List<string>();
-                            files.Add(link.Url);
-                            ViewBag.ImageFiles = files;
+                            filesImage.Add(link.Url);
+                            ViewBag.ImageFiles = filesImage;
                         }
-                        else if (link.Url.Contains("drive.google.com"))
+                        else if (link.ProviderName.Contains("Google Drive"))
                         {
                             var file = await DownloadFileAsIFormFile(link.Url);
                             updateProductModel.gameFile = file;
-                            ViewBag.GameFileName = file.FileName;
-                            ViewBag.GameFileSize = file.Length;
+                            //ViewBag.GameFileName = file.FileName;
+                            //ViewBag.GameFileSize = file.Length;
+                            filesGame.Add(file);
+                            ViewBag.Games = filesGame;
                         }
                     }
                 }
@@ -547,12 +551,12 @@ namespace Client.Controllers
             catch (Exception ex)
             {
                 TempData["error"] = $"An error occurred: {ex.Message}";
-                return View(nameof(UserDashboard));
+                return RedirectToAction(nameof(UserDashboard));
             }
         }
 
         [HttpGet]
-        public async Task<IActionResult> UploadProduct()
+        public async Task<IActionResult> UploadProduct(UpdateProductModel updateProductModel)
         {
             try
             {
@@ -574,7 +578,6 @@ namespace Client.Controllers
 
                 ViewBag.Categories = listCate;
 
-                UpdateProductModel updateProductModel = new UpdateProductModel();
                 updateProductModel.Categories.Add(listCate[0]);
 
                 //if (updateProductModel != null)
@@ -598,6 +601,8 @@ namespace Client.Controllers
         {
             try
             {
+                updateProductModel.Id = ObjectId.GenerateNewId().ToString();
+
                 IEnumerable<Claim> claim = HttpContext.User.Claims;
                 UserClaimModel userClaim = new UserClaimModel
                 {
@@ -630,12 +635,12 @@ namespace Client.Controllers
                 if (response != null && response.IsSuccess)
                 {
                     TempData["success"] = "Product created successfully";
-                    return RedirectToAction(nameof(EditProduct), updateProductModel.Id);
+                    return RedirectToAction(nameof(UserDashboard));
                 }
                 else
                 {
                     TempData["error"] = response?.Message ?? "An unknown error occurred.";
-                    return RedirectToAction(nameof(UploadProduct));
+                    return RedirectToAction(nameof(UploadProduct), new {updateProductModel = updateProductModel});
                 }
             }
             catch (Exception ex)

@@ -3,9 +3,10 @@
 
 @{
     List<string> Images = ViewBag.ImageFiles;
+    List<IFormFile> Games = ViewBag.Games;
     IFormFile gameImages = ViewBag.gameFile;
-    var gameFileName = ViewBag.GameFileName;
-    var gameFileSize = ViewBag.GameFileSize;
+    // var gameFileName = ViewBag.GameFileName;
+    // var gameFileSize = ViewBag.GameFileSize;
 
     string saveBtn = string.Empty;
 
@@ -64,7 +65,7 @@
         <!-- Phần bên trái chứa các input chính -->
         <input asp-for="@Model.Id" class="form-control" type="hidden" />
 
-        <div class="col-md-8 pe-5">
+        <div class="col-md-7 pe-5">
             <div class="mb-3">
                 <label class="form-label fw-bold fs-5">Title</label>
                 <input asp-for="@Model.Name" class="form-control" />
@@ -99,12 +100,46 @@
             <!-- Upload -->
             <div class="mb-3">
                 <label class="form-label fw-bold fs-5">Uploads</label>
-                <div class="border p-2 mb-2">
-                    <p id="fileInfo">No file uploaded</p>
-                </div>
+                @if (Games != null)
+                {
+                    @if (Games.Count > 0)
+                    {
+                        int index = 1;
+                        foreach (var item in Games)
+                        {
+                            <div class="border p-2 mb-2">
+                                <p>
+                                    <strong>File Name:</strong> ${@item.FileName} <br>
+                                    <strong>File Size:</strong> @(Math.Round(item.Length / 1024.0 / 1024.0, 2)) MB <br>
+                                    <strong>File Type:</strong> (from server)
+                                    <div class="m-2">
+                                        <label class="p-2 border border-1">
+                                            <input type="radio" value="Windows" name="@index" /> Windows
+                                        </label>
+                                        <label class="p-2 border border-1">
+                                            <input type="radio" value="MacOS" name="@index" /> MacOS
+                                        </label>
+                                        <label class="p-2 border border-1">
+                                            <input type="radio" value="Linux" name="@index" /> Linux
+                                        </label>
+                                    </div>
+                                </p>
+                            </div>
+
+                            index++;
+                        }
+                    }
+                }
+                else
+                {
+                    <div class="border p-2 mb-2">
+                        <p id="fileInfo">No file uploaded</p>
+                    </div>
+                }
+
                 <input asp-for="gameFile" type="file" name="gameFile" id="fileInput" class="d-none" accept=".rar, .zip" onchange="displayFileInfo()" />
                 <button type="button" class="btn btn-danger" onclick="document.getElementById('fileInput').click()">Upload</button>
-                <span asp-validation-for="@Model.gameFile" class="m-2">File size limit: 1 GB</span>
+                <span asp-validation-for="gameFile" class="m-2">File size limit: 1 GB</span>
             </div>
             <!-- Game File (Upload game file) -->
             @*   <div class="form-group">
@@ -178,18 +213,20 @@
         </div>
 
         <!-- Phần bên phải cho hình ảnh cover -->
-        <div class="col-md-4">
+        <div class="col-md-5">
             <div class="text-center">
                 <!-- Hình ảnh hiển thị -->
                 @if (Images != null)
                 {
-                    <img id="coverImagePreview" src="@Images[0]" alt="Cover Image" class="border mb-3" style="width:200px; height:200px;" />
-                    <input type="file" class="d-none" asp-for="ImageFiles" id="coverImageInput" accept="image/*" src="@Images[0]" />
+                    <img id="coverImagePreview" src="@Images[0]" alt="Cover Image" class="border mb-3" style="min-width:200px; max-height:200px; min-height:150px; max-width:300px" />
+                    <input type="file" class="d-none" asp-for="ImageFiles" id="coverImageInput" accept="image/*" />
+                    <span class="text-danger" asp-validation-for="ImageFiles"></span>
                 }
                 else
                 {
-                    <img id="coverImagePreview" src="~/Image/avatar.jpeg" alt="Cover Image" class="border mb-3" style="width:200px; height:200px;" />
+                    <img id="coverImagePreview" src="~/Image/avatar.jpeg" alt="Cover Image" class="border mb-3" style="min-width:200px; max-height:200px; min-height:150px; max-width:300px" />
                     <input type="file" class="d-none" asp-for="ImageFiles" id="coverImageInput" accept="image/*" />
+                    <span class="text-danger" asp-validation-for="ImageFiles"></span>
                 }
                 <!-- Input file ẩn -->
                 <!-- Nút để kích hoạt chọn file -->
@@ -199,10 +236,24 @@
             <div class="mt-3">
                 <div class="form-group">
                     <label class="form-label fw-bold fs-6">Image</label>
+                    @if (Images != null)
+                    {
+                        @if (Images.Count > 0)
+                        {
+                            @foreach (var item in Images)
+                            {
+                                <div>
+                                    <img src="@item" class="border mb-3" style="min-width:200px; max-height:200px; min-height:150px; max-width:300px" />
+                                    @* <input type="file" multiple class="form-control mb-2" asp-for="@item" src="@item.FileName" /> *@
+                                </div>
+                                <span class="text-danger" asp-validation-for="@item"></span>
+                            }
+                        }
+                    }
+
                     <div id="image-container">
-                        <input type="file" multiple class="form-control mb-2" />
+                        <input type="file" multiple class="form-control mb-2" asp-for="ImageFiles" />
                     </div>
-                    <span class="text-danger"></span>
                     <div>
                         <a href="javascript:void(0)" id="add-image" class="m-2"><i class="fa-solid fa-plus"></i></a>
                         <a href="javascript:void(0)" id="remove-image" class="m-2"><i class="fa-solid fa-minus"></i></a>
@@ -217,17 +268,17 @@
             <span class="text-danger"></span>
             </div> *@
         </div>
-         @* <div class="col-md-4">
-            <div class="text-center">
-                <img src="~/image/avatar.jpeg" alt="Cover Image" class="border mb-3" style="width:200px; height:200px;" />
-                <input type="file" name="coverImage" class="d-none" id="coverImageInput" accept="image/*" />
-                <button type="button" class="btn btn-outline-dark mt-2 w-100" onclick="document.getElementById('coverImageInput').click()">Upload Cover Image</button>
-            </div>
+        @* <div class="col-md-4">
+        <div class="text-center">
+        <img src="~/image/avatar.jpeg" alt="Cover Image" class="border mb-3" style="width:200px; height:200px;" />
+        <input type="file" name="coverImage" class="d-none" id="coverImageInput" accept="image/*" />
+        <button type="button" class="btn btn-outline-dark mt-2 w-100" onclick="document.getElementById('coverImageInput').click()">Upload Cover Image</button>
+        </div>
         </div> *@
 
         <!-- Nút tạo sản phẩm -->
         <div class="col-12 text-end m-4">
-            <a asp-controller="Product" asp-action="ProductDetail" class="mx-3 text-secondary">View Page</a>
+            <a asp-controller="Product" asp-action="ProductDetail" asp-route-id="@Model.Id" class="mx-3 text-secondary">View Page</a>
             <input type="submit" value="Public" class="btn btn-danger" />
         </div>
     </form>
@@ -236,10 +287,10 @@
 <script type="text/javascript">
     // Sự kiện khi nhấn vào nút "+" để thêm select mới
     document.getElementById('add-category').addEventListener('click', function () {
-            // Lấy select đầu tiên hiện có để clone
+        // Lấy select đầu tiên hiện có để clone
         var selectElement = document.querySelector('.category-select');
 
-            // Tạo bản sao của select hiện tại
+        // Tạo bản sao của select hiện tại
         var newSelect = selectElement.cloneNode(true);  // True để sao chép cả các option
 
         // Đặt lại giá trị mặc định
@@ -255,7 +306,7 @@
         var container = document.getElementById('category-container');
         var selects = container.getElementsByTagName('select');
 
-            // Chỉ xóa nếu còn nhiều hơn 1 select
+        // Chỉ xóa nếu còn nhiều hơn 1 select
         if (selects.length > 1) {
             container.removeChild(selects[selects.length - 1]);
         }
@@ -264,7 +315,7 @@
     // Sự kiện khi nhấn vào nút "+" để thêm ô input mới
     document.getElementById('add-image').addEventListener('click', function () {
         // Tạo phần tử input file mới
-            var newInput = document.createElement('input');
+        var newInput = document.createElement('input');
         newInput.type = 'file';
         newInput.name = 'imageFiles[]';  // Để name là dạng mảng để có thể upload nhiều file
         newInput.multiple = true;  // Cho phép chọn nhiều file cùng lúc
@@ -280,54 +331,54 @@
         var container = document.getElementById('image-container');
         var inputs = container.getElementsByTagName('input');
 
-            // Chỉ xóa nếu còn nhiều hơn 1 input
+        // Chỉ xóa nếu còn nhiều hơn 1 input
         if (inputs.length > 1) {
             container.removeChild(inputs[inputs.length - 1]);
         }
     });
 
-    function showUploadedGameFileFromServer() {
-        // Ghi log để kiểm tra xem hàm này có được gọi không
-        console.log("Function showUploadedGameFileFromServer is called");
+    // function showUploadedGameFileFromServer() {
+    //     // Ghi log để kiểm tra xem hàm này có được gọi không
+    //     console.log("Function showUploadedGameFileFromServer is called");
 
-        // Lấy thông tin file từ Razor (được truyền từ ViewBag)
-        var fileNameFromServer = '@gameFileName';
-        var fileSizeFromServer = '@gameFileSize';
+    //     // Lấy thông tin file từ Razor (được truyền từ ViewBag)
+    //     var fileNameFromServer = 'gameFileName';
+    //     var fileSizeFromServer = 'gameFileSize';
 
-        // Ghi log giá trị từ Razor
-        console.log("File name from server:", fileNameFromServer);
-        console.log("File size from server:", fileSizeFromServer);
+    //     // Ghi log giá trị từ Razor
+    //     console.log("File name from server:", fileNameFromServer);
+    //     console.log("File size from server:", fileSizeFromServer);
 
-        // Nếu có dữ liệu từ server, hiển thị thông tin file
-        if (fileNameFromServer && fileSizeFromServer > 0) {
-            const fileInfo = `
-                <strong>File Name:</strong> ${fileNameFromServer} <br>
-                <strong>File Size:</strong> ${(fileSizeFromServer / 1024 / 1024).toFixed(2)} MB <br>
-                <strong>File Type:</strong> (from server)
-                <div class="m-2">
-                    <label class="p-2 border border-1">
-                        <input type="radio" value="Windows" name="Platforms" /> Windows
-                    </label>
-                    <label class="p-2 border border-1">
-                        <input type="radio" value="MacOS" name="Platforms" /> MacOS
-                    </label>
-                    <label class="p-2 border border-1">
-                        <input type="radio" value="Linux" name="Platforms" /> Linux
-                    </label>
-                </div>
-            `;
-            document.getElementById('fileInfo').innerHTML = fileInfo;
+    //     // Nếu có dữ liệu từ server, hiển thị thông tin file
+    //     if (fileNameFromServer && fileSizeFromServer > 0) {
+    //         const fileInfo = `
+    //                 <strong>File Name:</strong> ${fileNameFromServer} <br>
+    //                 <strong>File Size:</strong> ${(fileSizeFromServer / 1024 / 1024).toFixed(2)} MB <br>
+    //                 <strong>File Type:</strong> (from server)
+    //                 <div class="m-2">
+    //                     <label class="p-2 border border-1">
+    //                         <input type="radio" value="Windows" name="Platforms" /> Windows
+    //                     </label>
+    //                     <label class="p-2 border border-1">
+    //                         <input type="radio" value="MacOS" name="Platforms" /> MacOS
+    //                     </label>
+    //                     <label class="p-2 border border-1">
+    //                         <input type="radio" value="Linux" name="Platforms" /> Linux
+    //                     </label>
+    //                 </div>
+    //             `;
+    //         document.getElementById('fileInfo').innerHTML = fileInfo;
 
-            // Log khi thông tin được hiển thị thành công
-            console.log("File information is displayed successfully.");
-        }
-    }
+    //         // Log khi thông tin được hiển thị thành công
+    //         console.log("File information is displayed successfully.");
+    //     }
+    // }
 
-    // Gọi hàm khi trang load để hiển thị file từ server nếu có
-    window.onload = function () {
-        console.log("Window loaded, calling showUploadedGameFileFromServer");
-        showUploadedGameFileFromServer();
-    };
+    // // Gọi hàm khi trang load để hiển thị file từ server nếu có
+    // window.onload = function () {
+    //     console.log("Window loaded, calling showUploadedGameFileFromServer");
+    //     showUploadedGameFileFromServer();
+    // };
 
     // Sự kiện thay đổi khi người dùng chọn file mới
     function displayFileInfo() {
@@ -343,21 +394,21 @@
 
             // Hiển thị thông tin file
             const fileInfo = `
-                <strong>File Name:</strong> ${file.name} <br>
-                <strong>File Size:</strong> ${(file.size / 1024 / 1024).toFixed(2)} MB <br>
-                <strong>File Type:</strong> ${file.type}
-                <div class="m-2">
-                    <label class="p-2 border border-1">
-                        <input type="radio" value="Windows" name="Platforms" /> Windows
-                    </label>
-                    <label class="p-2 border border-1">
-                        <input type="radio" value="MacOS" name="Platforms" /> MacOS
-                    </label>
-                    <label class="p-2 border border-1">
-                        <input type="radio" value="Linux" name="Platforms" /> Linux
-                    </label>
-                </div>
-            `;
+                            <strong>File Name:</strong> ${file.name} <br>
+                            <strong>File Size:</strong> ${(file.size / 1024 / 1024).toFixed(2)} MB <br>
+                            <strong>File Type:</strong> ${file.type}
+                            <div class="m-2">
+                                <label class="p-2 border border-1">
+                                    <input type="radio" value="Windows" name="Platforms" /> Windows
+                                </label>
+                                <label class="p-2 border border-1">
+                                    <input type="radio" value="MacOS" name="Platforms" /> MacOS
+                                </label>
+                                <label class="p-2 border border-1">
+                                    <input type="radio" value="Linux" name="Platforms" /> Linux
+                                </label>
+                            </div>
+                        `;
             document.getElementById('fileInfo').innerHTML = fileInfo;
         }
     }
@@ -373,11 +424,11 @@
             const reader = new FileReader();
             reader.onload = function (e) {
                 // Thay đổi src của hình ảnh để hiển thị ảnh đã chọn
-                    document.getElementById('coverImagePreview').src = e.target.result;
-                }
-                reader.readAsDataURL(file); // Đọc file ảnh dưới dạng URL
+                document.getElementById('coverImagePreview').src = e.target.result;
             }
-        });
+            reader.readAsDataURL(file); // Đọc file ảnh dưới dạng URL
+        }
+    });
 </script>
 @section Scripts {
 
