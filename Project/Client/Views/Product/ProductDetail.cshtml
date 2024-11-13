@@ -357,24 +357,24 @@
                         }
                         else
                         {
-                            <span class="discount-rate">@Model.Prod.Discount</span>
+                            <span class="discount-rate">@Model.Prod.Discount%</span>
                             <div class="price-section">
                                 <span class="original-price">
-                                    <input type="text" readonly asp-for="@Model.Prod.Price" />
-                                    @Model.Prod.Price
+                                    <input type="text" hidden asp-for="@Model.Prod.Price" />
+                                    @Model.Prod.Price vnđ
                                 </span>
-                                <span class="discounted-price">@Model.Prod.Price - (@Model.Prod.Price*@Model.Prod.Discount/100)</span>
+                                <span class="discounted-price">@(Model.Prod.Price - (Model.Prod.Price * (decimal)Model.Prod.Discount / 100m)) vnđ</span>
                             </div>
                         }
                     </div>
-                    <form asp-action="Cart" asp-controller="User">
+                    <form asp-action="Cart" asp-controller="User" class="align-content-center w-25 fw-bold">
                         <input type="text" hidden asp-for="Prod.Id" />
                         <input type="text" hidden asp-for="Prod.Name" />
                         <input type="text" hidden asp-for="Prod.UserName" />
                         <input type="text" hidden asp-for="Prod.Discount" />
                         <input type="text" hidden asp-for="Prod.Price" />
 
-                        <button type="submit" class="btn btn-success align-content-center w-25 fw-bold">Add To Cart</button>
+                        <button type="submit" class="btn btn-success ">Add To Cart</button>
                     </form>
 
                 </div>

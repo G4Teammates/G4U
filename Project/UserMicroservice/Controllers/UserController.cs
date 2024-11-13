@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using UserMicroservice.Models.UserManagerModel;
 using UserMicroservice.DBContexts.Enum;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 namespace UserMicroService.Controllers
 {
     [ApiController]
@@ -22,7 +23,7 @@ namespace UserMicroService.Controllers
         private readonly IUserService _userService = userService;
 
 
-        //[Authorize(Roles = "User")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,Roles = "User")]
         [HttpGet]
         public async Task<ActionResult> GetAll(int? page, int pageSize)
         {
@@ -77,7 +78,7 @@ namespace UserMicroService.Controllers
         }
 
 
-        /*[Authorize(Roles = "User")]*/
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         [HttpGet("{id}")]
         public async Task<ActionResult> GetUser(string id)
         {

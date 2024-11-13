@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OrderMicroservice.DBContexts;
 using OrderMicroservice.DBContexts.Entities;
@@ -15,6 +17,7 @@ namespace OrderMicroService.Controllers
     {
         IOrderService _orderService = orderService;
 
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         [HttpGet]
         public async Task<ActionResult> GetOrders()
         {
@@ -31,7 +34,7 @@ namespace OrderMicroService.Controllers
                 return StatusCode(500, new { message = "An unexpected error occurred. Detail" + ex.Message });
             }
         }
-
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "User")]
         [HttpGet("search/{id}")]
         public async Task<ActionResult> GetOrderById(string id)
         {

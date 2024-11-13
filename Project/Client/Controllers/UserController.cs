@@ -25,10 +25,18 @@ using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pag
 using Client.Repositories.Interfaces.Order;
 using Client.Models.OrderModel;
 using MongoDB.Bson;
+using System.Collections.ObjectModel;
 
 namespace Client.Controllers
 {
-    public class UserController(IAuthenticationService authenService, IUserService userService, ITokenProvider tokenProvider, IHelperService helperService, IRepoProduct repoProduct, ICategoriesService categoriesService, IOrderService orderService) : Controller
+    public class UserController(
+        IAuthenticationService authenService, 
+        IUserService userService, 
+        ITokenProvider tokenProvider, 
+        IHelperService helperService, 
+        IRepoProduct repoProduct, 
+        ICategoriesService categoriesService, 
+        IOrderService orderService) : Controller
     {
         private readonly IAuthenticationService _authenService = authenService;
         public readonly IUserService _userService = userService;
@@ -38,7 +46,8 @@ namespace Client.Controllers
         public readonly ICategoriesService _categoriesService = categoriesService;
         public readonly IOrderService _orderService = orderService;
 
-        private ICollection<ProductModel> ListProduct;
+        ICollection<ProductModel> productsAtCart = new List<ProductModel>();
+
 
 
         [HttpGet]
@@ -338,35 +347,40 @@ namespace Client.Controllers
             return View();
         }
 
-        public IActionResult Cart()
+        [HttpGet]
+        public IActionResult Cart(CartModel model)
         {
             return View();
         }
 
-
+        [HttpPost]
         public IActionResult Cart(ProductViewModel product)
         {
-            ListProduct.Add(product.Prod);
+            productsAtCart.Add(product.Prod);
             CartModel cart = new();
-            cart.Products = ListProduct;
-            cart.Order.CustomerId = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)!.Value;
-            cart.Order.Items = ListProduct.Select(x => new OrderItemModel
+            cart.Products = productsAtCart;
+            cart.Order = new OrderModel
             {
-                ProductId = x.Id,
-                ProductName = x.Name,
-                Price = x.Price,
-                PublisherName = x.UserName,
-                Quantity = 1
-            }).ToList();
-            cart.Order.TotalPrice = ListProduct.Sum(x => x.Price);
-            
+                CustomerId = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)!.Value,
+                TotalPrice = productsAtCart.Sum(x => x.Price),
+                Items = productsAtCart.Select(x => new OrderItemModel
+                {
+                    ProductId = x.Id,
+                    ProductName = x.Name,
+                    Price = x.Price,
+                    PublisherName = x.UserName,
+                    Quantity = 1
+                }).ToList()
+            };
             return RedirectToAction("Payment","Order", cart);
         }
+
+
         public IActionResult CartRemoveProduct(ProductModel product)
         {
-            ListProduct.Remove(product);
+            productsAtCart.Remove(product);
             CartModel cart = new();
-            cart.Products = ListProduct;
+            cart.Products = productsAtCart;
 
             return View(cart);
         }
