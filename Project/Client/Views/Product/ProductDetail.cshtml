@@ -426,78 +426,7 @@
                         {
                             @await Html.PartialAsync("_CommentPartial", comment)
 
-                            <div class="comment">
-                                <div class="row">
-                                    <div class="col-md-1 comment-icon d-flex justify-content-center mt-5">
-                                        <i class="fa-solid fa-user-secret"></i>
-                                    </div>
-                                    <div class="col-md-11 comment-body">
-                                        <div class="comment-header">
-                                            <p><strong>@comment.UserName</strong></p>
-                                            <p class="created-at">@comment.CreatedAt.ToString("g")</p>
-                                        </div>
-                                        <div class="comment-content">
-                                            <p>@comment.Content</p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <!-- Nút "Xem thêm" -->
-                                    <div class="col-md-6 text-start">
-                                        <a id="toggleButton-@comment.Id"
-                                           class="link-action"
-                                           onclick="toggleReplies('@comment.Id')"
-                                           style="width:50%; text-decoration:none; color:black; padding:5px; border-radius:5px; transition: all 0.3s;">
-                                            Xem thêm
-                                        </a>
-                                        |
-                                        <a class="link-action"
-                                           onclick="scrollToReplyForm('@comment.Id')"
-                                           style="width:50%; text-decoration:none; color:black; padding:5px; border-radius:5px; transition: all 0.3s;">
-                                            Reply
-                                        </a>
-                                    </div>
-
-                                    <div class="col-md-6 comment-footer text-end">
-                                        <p class="likes">
-                                            <small>
-                                                <span id="like-count-@comment.Id">@comment.NumberOfLikes</span>
-
-                                                <!-- Form for Increasing Like -->
-                                                <form asp-action="IncreaseLike" asp-controller="Product" method="post" style="display:inline;">
-                                                    <!-- Hidden input to send the comment ID -->
-                                                    <input type="hidden" name="commentID" value="@comment.Id" />
-                                                    <!-- Hidden input to send the product ID -->
-                                                    <input type="hidden" name="productID" value="@product.Id" />
-                                                    <button type="submit" class="like-button" style="background:none; border:none; cursor:pointer;">
-                                                        <i class="fa-solid fa-thumbs-up"></i>
-                                                    </button>
-                                                </form>
-
-                                                <span id="dislike-count-@comment.Id">@comment.NumberOfDisLikes</span>
-
-                                                <!-- Form for Decreasing Like -->
-                                                <form asp-action="DecreaseLike" asp-controller="Product" method="post" style="display:inline;">
-                                                    <!-- Hidden input to send the comment ID -->
-                                                    <input type="hidden" name="commentID" value="@comment.Id" />
-                                                    <!-- Hidden input to send the product ID -->
-                                                    <input type="hidden" name="productID" value="@product.Id" />
-                                                    <button type="submit" class="dislike-button" style="background:none; border:none; cursor:pointer;">
-                                                        <i class="fa-solid fa-thumbs-down"></i>
-                                                    </button>
-                                                </form>
-                                            </small>
-
-
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <!-- Phần chứa các bình luận con -->
-                                <div id="replies-@comment.Id" class="ms-5" style="display: none;"></div>
-
-                            </div>
+                            
                         }
                     }
                     else
@@ -594,7 +523,53 @@
                                                             ? products.Description.Substring(0, 100) + "..."
                                                             : products.Description)
                                                     </p>
-                                                    <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@products.Id" class="btn_orther">Read More</a>
+                                                   @*  <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@products.Id" class="btn_orther">Read More</a> *@
+                                                    <div class="row d-flex align-items-center justify-content-between">
+                                                        <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@product.Id" class="ms-3 col-md-5 text-center btn_orther">Read More</a>
+                                                        <div class="col-md-3"></div>
+                                                        @* Day la trai tym ne *@
+                                                        <div title="Wishlist" class="col-md-3 heart-container" style="width:30px;height:30px;">
+                                                            <input id="Give-It-An-Id" class="checkbox" type="checkbox">
+                                                            <div class="svg-container">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" class="svg-outline" viewBox="0 0 24 24">
+                                                                    <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Zm-3.585,18.4a2.973,2.973,0,0,1-3.83,0C4.947,16.006,2,11.87,2,8.967a4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,11,8.967a1,1,0,0,0,2,0,4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,22,8.967C22,11.87,19.053,16.006,13.915,20.313Z">
+                                                                    </path>
+                                                                </svg>
+                                                                <svg xmlns="http://www.w3.org/2000/svg" class="svg-filled" viewBox="0 0 24 24">
+                                                                    <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Z">
+                                                                    </path>
+                                                                </svg>
+                                                                <svg xmlns="http://www.w3.org/2000/svg" height="100" width="100" class="svg-celebrate">
+                                                                    <polygon points="10,10 20,20"></polygon>
+                                                                    <polygon points="10,50 20,50"></polygon>
+                                                                    <polygon points="20,80 30,70"></polygon>
+                                                                    <polygon points="90,10 80,20"></polygon>
+                                                                    <polygon points="90,50 80,50"></polygon>
+                                                                    <polygon points="80,80 70,70"></polygon>
+                                                                </svg>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!-- Thêm phần số lượt view -->
+                                                <div class="view-count">
+                                                    <i class="fa-solid fa-eye" style="color:black;  width:30px;height:30px;"></i>
+                                                    <span style="color:black;">@product.Interactions.NumberOfViews</span>
+                                                </div>
+
+                                                <div class="like-dislike-container">
+                                                    <!-- Like và Dislike -->
+                                                    <form asp-action="IncreaseLikeProduct" asp-controller="Product" method="post" style="display:inline;">
+                                                        <input type="hidden" name="productID" value="@product.Id" />
+                                                        <span id="like-count-@product.Id" class="like-count" style="color:black;">@product.Interactions.NumberOfLikes</span>
+                                                        <i class="fa-solid fa-thumbs-up like-icon" style="color:black; width:30px;height:30px;"></i>
+                                                    </form>
+
+                                                    <form asp-action="DecreaseLikeProduct" asp-controller="Product" method="post" style="display:inline;">
+                                                        <input type="hidden" name="productID" value="@product.Id" />
+                                                        <span id="dislike-count-@product.Id" class="dislike-count" style="color:black;">@product.Interactions.NumberOfDisLikes</span>
+                                                        <i class="fa-solid fa-thumbs-down dislike-icon" style="color:black; width:30px;height:30px;"></i>
+                                                    </form>
                                                 </div>
                                             </div>
                                         </div>
