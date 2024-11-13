@@ -5,6 +5,6 @@ namespace ProductMicroservice.DBContexts.Entities
     public class UserLikes
     {
         [BsonElement("userName")]
-        public string UserName { get; set; }
+        public string? UserName { get; set; }
     }
 }

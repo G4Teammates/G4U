@@ -5,9 +5,99 @@
 }
 
 @model ProductViewModel
+<style>
+    /* Căn giữa nội dung của các ô trong bảng */
+    .table td, .table th {
+        text-align: center; /* Căn giữa cho văn bản */
+        vertical-align: middle; /* Căn giữa theo chiều dọc */
+    }
 
+        /* Căn giữa hình ảnh trong các ô */
+        .table td img {
+            display: block; /* Đảm bảo hình ảnh chiếm toàn bộ không gian */
+            text-align:center;
+            justify-content:center;
+        }
 
+        /* Căn giữa nội dung của các phần tử ul, li trong bảng */
+        .table td ul {
+            list-style-type: none; /* Loại bỏ dấu chấm đầu dòng */
+            padding: 0;
+            text-align: center; /* Căn giữa văn bản trong danh sách */
+        }
 
+        .table td li {
+            text-align: center; /* Căn giữa văn bản trong mỗi mục danh sách */
+        }
+
+        /* Căn giữa cho các icon trong các liên kết */
+        .table td a i {
+            display: inline-block; /* Đảm bảo icon được căn giữa */
+            text-align: center;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+    /* Cải tiến border cho thead và tbody */
+    .table thead {
+        background-color: #f8f9fa; /* Màu nền sáng cho thead */
+        border-radius: 10px 10px 0 0; /* Làm tròn góc trên của thead */
+        box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); /* Thêm bóng nhẹ cho thead */
+    }
+
+    .table tbody {
+        border-radius: 0 0 10px 10px; /* Làm tròn góc dưới của tbody */
+        box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.1); /* Thêm bóng nhẹ cho tbody */
+    }
+
+        /* Chỉnh sửa khi hover vào dòng */
+        .table tbody tr:hover {
+            background-color: #00A97F; /* Nền màu #00A97F khi hover vào dòng */
+            color: white !important; /* Chữ trắng khi hover vào dòng */
+            cursor: pointer; /* Thêm hiệu ứng con trỏ khi hover */
+            border-top: 2px solid #00A97F; /* Viền trên của tr khi hover */
+            border-bottom: 2px solid #00A97F; /* Viền dưới của tr khi hover */
+        }
+
+        /* Giữ nguyên màu nền và chữ trong các ô mặc định */
+        .table tbody tr td {
+            background-color: transparent; /* Nền của các ô là trong suốt */
+            color: inherit; /* Màu chữ kế thừa từ dòng */
+        }
+
+    /* Hiệu ứng chuyển động khi hover vào hình ảnh */
+    .table td img {
+        border-radius: 8px; /* Làm tròn góc hình ảnh */
+        box-shadow: 0 0 10px rgba(0, 169, 127, 0.7); /* Bóng cho hình ảnh */
+        transition: all 0.3s ease; /* Chuyển tiếp hiệu ứng */
+    }
+
+        .table td img:hover {
+            transform: scale(1.05); /* Tăng kích thước hình ảnh khi hover */
+        }
+
+    /* Chỉnh sửa liên kết trong bảng */
+    .table td a {
+        color: inherit; /* Màu liên kết kế thừa từ dòng */
+        text-decoration: none; /* Loại bỏ gạch dưới */
+        transition: color 0.3s ease;
+    }
+
+        .table td a:hover {
+            color: #00A97F; /* Màu chữ của liên kết khi hover */
+        }
+
+        /* Hiệu ứng hover cho các icon trong bảng */
+        .table td a i {
+            transition: transform 0.5s ease; /* Thêm hiệu ứng chuyển động cho icon */
+        }
+
+        /* Khi hover vào icon */
+        .table td a:hover i {
+            transform: scale(1.5); /* Tăng kích thước icon lên 20% khi hover */
+        }
+
+</style>
 <div class="pt-3 pb-4">
     <span class="titleManager bg-success py-3 px-5 rounded-4 fw-bold text-white">Products Manager</span>
 </div>
@@ -153,16 +243,11 @@
             </a>
         </div>
     </div>
-    <table class="table table-bordered table-hover align-middle">
+    <table class="table table-bordered table-hover align-middle" style="border-radius:5px;">
         <thead class="table-light">
             <tr>
-                @* <th scope="col"><input type="checkbox" id="selectAll"></th> *@
                 <th scope="col">Qr Code</th>
-               @*  <th scope="col">Bar Code</th> *@
-
                 <th scope="col">Name</th>
-                @* <th scope="col">Description</th> *@
-
                 <th scope="col">Price</th>
                 <th scope="col">Sold</th>
                 <th scope="col">Interactions</th>
@@ -171,55 +256,46 @@
                 <th scope="col">Image Product</th>
                 <th scope="col">Categories</th>
                 <th scope="col">Status</th>
-
-                @* <th scope="col">CreatedAt</th> *@
-                @* <th scope="col">UpdatedAt</th> *@
-
                 <th scope="col"></th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var product in Model.Product) // Giả sử 'Products' là danh sách các sản phẩm
+            @foreach (var product in Model.Product)
             {
                 <tr>
-                    @* <td><input type="checkbox" class="product-checkbox"></td> *@
-                    <td>
-                        <img src="@product.QrCode" alt="QR Code" width="100" height="100" />
+                    <!-- QR Code Column -->
+                    <td class="text-center">
+                        <img src="@product.QrCode" alt="QR Code" width="100" height="100" class="qr-thumbnail" data-bs-toggle="modal" data-bs-target="#qrModal" data-qr="@product.QrCode" style="cursor:pointer;" />
                     </td>
-                   @*  <td>
-                        <img src="@product.BarCode" alt="Bar Code" width="100" height="100" />
-                    </td> *@
-                    <td>@product.Name</td>
-                    @* <td>@product.Description</td> *@
-                    <td>@product.Price.ToString("C")</td>
-                    <td>@product.Sold</td>
-                    <td>
+                    <td class="text-center">@product.Name</td>
+                    <td class="text-center">@product.Price.ToString("C")</td>
+                    <td class="text-center">@product.Sold</td>
+                    <td class="text-center">
                         <div>Likes: @product.Interactions?.NumberOfLikes</div>
                         <div>Views: @product.Interactions?.NumberOfViews</div>
                     </td>
-                    <td>@product.Discount %</td>
-                    <td>@product.Platform</td>
-                    <td>
+                    <td class="text-center">@product.Discount %</td>
+                    <td class="text-center">@product.Platform</td>
+                    <td class="text-center">
                         @if (product.Links != null)
                         {
-                            string secondImageUrl = null; // Biến để lưu URL hình ảnh thứ hai
-                            int cloudinaryImageCount = 0; // Đếm số lượng hình ảnh từ cloudinary đã tìm thấy
+                            string secondImageUrl = null;
+                            int cloudinaryImageCount = 0;
 
-                            foreach (var link in product.Links) // Lặp qua từng đối tượng LinkModel
+                            foreach (var link in product.Links)
                             {
                                 if (link.Url.Contains("cloudinary"))
                                 {
-                                    cloudinaryImageCount++; // Tăng đếm mỗi khi tìm thấy ảnh từ cloudinary
+                                    cloudinaryImageCount++;
 
-                                    if (cloudinaryImageCount == 2) // Chọn hình ảnh thứ hai
+                                    if (cloudinaryImageCount == 2)
                                     {
                                         secondImageUrl = link.Url;
-                                        break; // Thoát khỏi vòng lặp khi đã tìm thấy ảnh thứ hai
+                                        break;
                                     }
                                 }
                             }
 
-                            // Hiển thị hình ảnh thứ hai nếu có
                             if (secondImageUrl != null)
                             {
                                 <div style="width: 50px; height: 50px;">
@@ -232,10 +308,8 @@
                             }
                         }
                     </td>
-
-                    <td>
+                    <td class="text-center">
                         @if (product.Categories != null)
-
                         {
                             <ul>
                                 @foreach (var category in product.Categories)
@@ -244,34 +318,37 @@
                                 }
                             </ul>
                         }
-
                     </td>
-
-                    <td>@product.Status</td>
-                    @* <td>@product.CreatedAt.ToString("dd/MM/yyyy")</td> *@
-                    @* <td>@product.UpdatedAt.ToString("dd/MM/yyyy")</td> *@
-
-                   
-
-                    <td>
+                    <td class="text-center">@product.Status</td>
+                    <td class="text-center">
                         <a asp-action="UpdateProduct" asp-route-id="@product.Id" class="text-danger mx-2">
                             <i class="fa-regular fa-pen-to-square"></i>
                         </a>
                     </td>
-                    <td>
-                        @* <form asp-action="UsersDelete" >
-                    <input type="submit" value="Delete" class="btn btn-danger" />
-                    </form> *@
-                        <a asp-action="DeleteProduct" asp-route-Id="@product.Id" class="text-danger mx-2"> <i class="fas fa-trash"></i></a>
-                        @* <a asp-action="UsersDelete" asp-route-Id="@user.Id"> <i class="fas fa-trash"></i></a> *@
+                    <td class="text-center">
+                        <a asp-action="DeleteProduct" asp-route-Id="@product.Id" class="text-danger mx-2">
+                            <i class="fas fa-trash"></i>
+                        </a>
                     </td>
-
                 </tr>
             }
-            <!-- Thêm các dòng dữ liệu tương tự -->
-
         </tbody>
     </table>
+
+    <!-- Modal for QR Code: Nhấn vào QRcode thì lấy hình ảnh phóng to đó -->
+    <div class="modal fade" id="qrModal" tabindex="-1" aria-labelledby="qrModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header" style="border:none; padding-bottom:0;">
+                    <!-- Giữ lại chỉ nút đóng -->
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <img id="qrModalImage" src="" alt="QR Code" style="width: 100%; height: auto;" />
+                </div>
+            </div>
+        </div>
+    </div>
 
 
     <!-- Phân trang -->
@@ -317,9 +394,14 @@
 
     </div> *@
 
-    <div class="d-flex justify-content-between mt-3">
-        <div>Total: @(Model.totalItem) items</div>
-        <div>
+    <div class="d-flex justify-content-between" style="margin-top:1.5vw;">
+        @* <div>Total: @(Model.totalItem) items</div> *@
+        <div style=";font-size: 1em; font-weight: bold; color: #00A97F; display: flex; align-items: center; justify-content: center; padding: 15px 30px; background-color: transparent; border: 2px solid #00A97F; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 169, 127, 0.4), 0 0 15px rgba(0, 169, 127, 0.3); position: relative; text-align: center; transition: all 0.3s;">
+            <i class="fas fa-rocket" style="margin-right: 15px; color: #00A97F;"></i>
+            Total: <span style="color: #00A97F; padding-left: 5px; padding-right: 5px;">@(Model.totalItem)</span> items
+            <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(135deg, #00A97F, #800080); border-radius: 8px; opacity: 0.2; z-index: -1;"></div>
+        </div>
+        <div style="display: flex; align-items: center; justify-content: center;">
             <form method="get" asp-controller="Admin" asp-action="ProductsManager" class="d-inline">
                 <select name="pageSize" class="form-select form-select-sm w-auto d-inline-block" onchange="this.form.submit()">
                     <option>Select records per page</option>
@@ -539,5 +621,16 @@
         });
     </script>
 
+    <script>
+        $(document).ready(function () {
+            // Event listener for QR code thumbnail click
+            $('.qr-thumbnail').on('click', function () {
+                var qrCodeUrl = $(this).data('qr');
+                $('#qrModalImage').attr('src', qrCodeUrl); // Set image URL for modal
+            });
+        });
+    </script>
+
 }
+
 
