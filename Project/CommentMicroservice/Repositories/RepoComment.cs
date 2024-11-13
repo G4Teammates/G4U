@@ -143,16 +143,8 @@ namespace CommentMicroservice.Repositories
                     upComm.Content = Comment.Content;
                     upComm.NumberOfLikes = Comment.NumberOfLikes;
                     upComm.NumberOfDisLikes = Comment.NumberOfDisLikes;
-                    upComm.UserLikes = Comment.UserLikes
-                         .Select(userName => new UserLikes
-                         {
-                             UserName = userName.UserName
-                         }).ToList();
-                    upComm.UserDisLikes = Comment.UserDisLikes
-                     .Select(userName => new UserDisLikes
-                      {
-                          UserName = userName.UserName
-                      }).ToList();
+                    upComm.UserLikes = _mapper.Map<ICollection<UserLikes>>(Comment.UserLikes);
+                    upComm.UserDisLikes = _mapper.Map<ICollection<UserDisLikes>>(Comment.UserDisLikes);
                     upComm.UserName = Comment.UserName;
                     upComm.Status = Comment.Status;
                     upComm.ProductId = Comment.ProductId;

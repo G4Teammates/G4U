@@ -1,9 +1,9 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using Xunit.Abstractions;
 
 namespace Client.Models.ProductDTO
 {
-    public class InteractionModel
+    public class UpdateInteractionModel
     {
         /// <summary>
         /// The number of times the item has been played or accessed.
@@ -31,7 +31,7 @@ namespace Client.Models.ProductDTO
         public int NumberOfLikes { get; set; } = 0;
 
         public int NumberOfDisLikes { get; set; }
-        public ICollection<UserDisLikesModel>? UserDisLikes { get; set; } 
-        public ICollection<UserLikesModel>? UserLikes { get; set; } 
+        public List<string>? UserDisLikes { get; set; } = null;
+        public List<string>? UserLikes { get; set; } = null;
     }
 }

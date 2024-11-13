@@ -408,7 +408,7 @@ namespace Client.Controllers
 
                 var numOfView = updateProductModel.Interactions.NumberOfViews;
                 var numOfLike = updateProductModel.Interactions.NumberOfLikes;
-
+                var numOfDisLike = updateProductModel.Interactions.NumberOfDisLikes;
                 // Tạo đối tượng ScanFileRequest
                 var request = new ScanFileRequest
                 {
@@ -418,10 +418,10 @@ namespace Client.Controllers
                 // Gọi service UpdateProduct từ phía Client
                 var response = await _productService.UpdateProductAsync(
                     updateProductModel.Id, updateProductModel.Name, updateProductModel.Description, updateProductModel.Price, updateProductModel.Sold,
-                   numOfView, numOfLike, updateProductModel.Discount,
+                   numOfView, numOfLike,numOfDisLike, updateProductModel.Discount,
                     updateProductModel.Links, updateProductModel.Categories, (int)updateProductModel.Platform,
                     (int)updateProductModel.Status, updateProductModel.CreatedAt, updateProductModel.ImageFiles,
-                    request, updateProductModel.UserName);
+                    request, updateProductModel.UserName,updateProductModel.Interactions.UserLikes, updateProductModel.Interactions.UserDisLikes);
 
                 if (response.IsSuccess)
                 {
