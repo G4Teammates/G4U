@@ -55,8 +55,7 @@ namespace OrderMicroservice.Repositories.Services
                 response.IsSuccess = true;
                 response.Message = "Retrieved all orders successfully.";
 
-                var totalRequest = await TotalRequest();
-                _message.SendingMessageStatistiscal(totalRequest.Result);
+                
             }
             catch (Exception ex)
             {
@@ -176,67 +175,86 @@ namespace OrderMicroservice.Repositories.Services
         public async Task<ResponseModel> UpdateStatus(string id, PaymentStatusModel status)
         {
             ResponseModel response = new();
+
             try
             {
                 // Tìm đơn hàng
                 Order? order = await _context.Orders.SingleOrDefaultAsync(i => i.Id == id);
                 if (order == null)
                 {
-                    response.IsSuccess = false;
-                    response.Message = $"Order with ID '{id}' not found.";
-                    return response;
+                    return CreateErrorResponse($"Order with ID '{id}' not found.");
                 }
 
-                // Kiểm tra sự thay đổi trạng thái
-                bool isPaymentStatusChanged = order.PaymentStatus != status.PaymentStatus;
-                bool isOrderStatusChanged = order.OrderStatus != status.OrderStatus;
+                // Kiểm tra và cập nhật trạng thái nếu có thay đổi
+                bool isUpdated = false;
+                List<string> updateMessages = new();
 
-                // Nếu có thay đổi trạng thái
-                if (isPaymentStatusChanged || isOrderStatusChanged)
+                if (order.PaymentStatus != status.PaymentStatus)
                 {
-                    // Cập nhật trạng thái nếu thay đổi
-                    if (isPaymentStatusChanged)
-                    {
-                        order.PaymentStatus = status.PaymentStatus;
-                    }
-
-                    if (isOrderStatusChanged)
-                    {
-                        order.OrderStatus = status.OrderStatus;
-                    }
-
-                    // Cập nhật thời gian sửa đổi
-                    order.UpdatedAt = DateTime.UtcNow;
-
-                    // Cập nhật dữ liệu trong database
-                    _context.Orders.Update(order);
-                    await _context.SaveChangesAsync();
-
-                    // Thêm thông báo dựa trên các thay đổi
-                    List<string> updateMessages = new();
-                    if (isPaymentStatusChanged) updateMessages.Add("Payment status updated successfully");
-                    if (isOrderStatusChanged) updateMessages.Add("Order status updated successfully");
-
-                    // Ghép các thông báo lại
-                    response.Message = string.Join(" and ", updateMessages);
-                    response.Result = _mapper.Map<OrderModel>(order);
-                    response.IsSuccess = true;
+                    order.PaymentStatus = status.PaymentStatus;
+                    updateMessages.Add("Payment status updated successfully.");
+                    isUpdated = true;
                 }
-                else
+
+                if (order.OrderStatus != status.OrderStatus)
                 {
-                    // Nếu không có sự thay đổi nào
-                    response.IsSuccess = false;
-                    response.Message = "No changes made as both Payment status and Order status are unchanged.";
+                    order.OrderStatus = status.OrderStatus;
+                    updateMessages.Add("Order status updated successfully.");
+                    isUpdated = true;
                 }
+
+                if (order.PaymentName != status.PaymentName)
+                {
+                    order.PaymentName = status.PaymentName;
+                    updateMessages.Add("Payment name updated successfully.");
+                    isUpdated = true;
+                }
+
+                if (order.PaymentMethod != status.PaymentMethod)
+                {
+                    order.PaymentMethod = status.PaymentMethod;
+                    updateMessages.Add("Payment method updated successfully.");
+                    isUpdated = true;
+                }
+
+                // Nếu không có thay đổi nào
+                if (!isUpdated)
+                {
+                    return CreateErrorResponse("No changes made as all values are unchanged.");
+                }
+
+                // Cập nhật thời gian sửa đổi
+                order.UpdatedAt = DateTime.UtcNow;
+
+                // Lưu dữ liệu
+                _context.Orders.Update(order);
+                await _context.SaveChangesAsync();
+
+                // Trả về thông báo cập nhật
+                response.Message = string.Join(" and ", updateMessages);
+                response.Result = _mapper.Map<OrderModel>(order);
+                response.IsSuccess = true;
+
+                // Gửi thông điệp thống kê
+                var totalRequest = await TotalRequest();
+                _message.SendingMessageStatistiscal(totalRequest.Result);
+
+                return response;
             }
             catch (Exception ex)
             {
-                // Xử lý ngoại lệ và trả về thông báo lỗi
-                response.IsSuccess = false;
-                response.Message = $"Failed to update order with ID '{id}'. Error: {ex.Message}";
+                return CreateErrorResponse($"Failed to update order with ID '{id}'. Error: {ex.Message}");
             }
+        }
 
-            return response;
+        // Tạo phản hồi lỗi
+        private ResponseModel CreateErrorResponse(string message)
+        {
+            return new ResponseModel
+            {
+                IsSuccess = false,
+                Message = message
+            };
         }
 
 
@@ -261,7 +279,7 @@ namespace OrderMicroservice.Repositories.Services
                 else
                 {
                     response.IsSuccess = false;
-                    response.Message = "Not found any Product";
+                    response.Message = "Not found any Order";
                 }
             }
             catch (Exception ex)

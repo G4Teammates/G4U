@@ -22,6 +22,7 @@ using Client.Repositories.Interfaces.Product;
 using Client.Repositories.Interfaces.Categories;
 using Client.Models.CategorisDTO;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
+using Client.Models.OrderModel;
 
 namespace Client.Controllers
 {
@@ -33,7 +34,7 @@ namespace Client.Controllers
         public readonly IHelperService _helperService = helperService;
         public readonly IRepoProduct _productService = repoProduct;
         public readonly ICategoriesService _categoriesService = categoriesService;
-
+        private ICollection<ProductModel> ListProduct;
 
 
         [HttpGet]
@@ -74,10 +75,19 @@ namespace Client.Controllers
                     };
                     await _helperService.UpdateClaim(userClaim, HttpContext);
 
-                    TempData["success"] = "Login successfully";
-
                     TempData["success"] = "Login success";
-                    return RedirectToAction("Index", "Home");
+                    if (userClaim.Role == "Admin")
+                    {
+                        return RedirectToAction("AdminDashboard", "Admin");
+                    }
+                    else if (userClaim.Role == "User")
+                    {
+                        return RedirectToAction("Index", "Home");
+                    }
+                    else
+                    {
+                        return RedirectToAction("Index", "Home");
+                    }
                 }
                 TempData["error"] = "Login fail, check your username(or email) and password";
             }
@@ -327,6 +337,24 @@ namespace Client.Controllers
         public IActionResult Cart()
         {
             return View();
+        }
+
+
+        public IActionResult Cart(ProductModel product)
+        {
+            ListProduct.Add(product);
+            CartModel cart = new();
+            cart.Products = ListProduct;
+            
+            return View(ListProduct);
+        }
+        public IActionResult CartRemoveProduct(ProductModel product)
+        {
+            ListProduct.Remove(product);
+            CartModel cart = new();
+            cart.Products = ListProduct;
+            
+            return View(ListProduct);
         }
 
         [HttpGet]

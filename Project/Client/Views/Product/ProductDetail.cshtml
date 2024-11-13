@@ -136,7 +136,6 @@
 
         .img-fluid:hover {
             transform: scale(1.2); /* Zoom nhẹ khi hover */
- 
         }
 
 
@@ -157,7 +156,7 @@
     <div class="row">
         <div class="col-12">
             <div id="anh-bia">
-                @if (Model.Prod != null )
+                @if (Model.Prod != null)
                 {
                     var Prod = Model.Prod;
                     var secondImageUrl = Prod.Links?
@@ -216,7 +215,7 @@
                                 <div class="col">
                                     <strong>Discount: </strong>
                                     <span style="padding-left: 5px;">
-                                        @(product.Discount == 0 ? " None" :  product.Discount.ToString() + "%")
+                                        @(product.Discount == 0 ? " None" : product.Discount.ToString() + "%")
                                     </span>
                                 </div>
                             </div>
@@ -228,7 +227,7 @@
                                 <div class="col">
                                     <strong>Likes: </strong>
                                     <span style="padding-left: 5px;">
-                                        @(product.Interactions.NumberOfLikes == 0 ? " None" :  product.Interactions.NumberOfLikes.ToString())
+                                        @(product.Interactions.NumberOfLikes == 0 ? " None" : product.Interactions.NumberOfLikes.ToString())
                                     </span>
                                 </div>
                             </div>
@@ -293,7 +292,7 @@
 
 
                 </div>
-                
+
 
                 <br />
 
@@ -302,24 +301,61 @@
                 //Pay
                 <div class="product-price-container">
                     <div class="discount-section">
-                        <span class="discount-rate">-50%</span>
-                        <div class="price-section">
-                            <span class="original-price">500.000đ</span>
-                            <span class="discounted-price">250.000đ</span>
-                        </div>
+                        @* Free *@
+                        @if (Model.Prod.Discount == 100)
+                        {
+                            <div class="product-price-container">
+                                <div class="discount-section">
+                                    <div class="price-section">
+                                        <span class="discounted-price">Free</span>
+                                    </div>
+                                </div>
+                                <a href="#" class="btn btn-success align-content-center w-25 fw-bold">Play</a>
+                            </div>
+                        }
+                        else if (Model.Prod.Discount == 0)
+                        {
+                            <div class="price-section">
+                                <span class="original-price">
+                                    <input type="text" readonly asp-for="@Model.Prod.Price" />
+                                    @Model.Prod.Price
+                                </span>
+                                <span class="discounted-price">@Model.Prod.Price - (@Model.Prod.Price*@Model.Prod.Discount/100)</span>
+                            </div>
+                        }
+                        else
+                        {
+                            <span class="discount-rate">@Model.Prod.Discount</span>
+                            <div class="price-section">
+                                <span class="original-price">
+                                    <input type="text" readonly asp-for="@Model.Prod.Price" />
+                                    @Model.Prod.Price
+                                </span>
+                                <span class="discounted-price">@Model.Prod.Price - (@Model.Prod.Price*@Model.Prod.Discount/100)</span>
+                            </div>
+                        }
                     </div>
-                    <a href="#" class="btn btn-success align-content-center w-25 fw-bold">Add To Cart</a>
+                    <form asp-action="Cart" asp-controller="User">
+                        <input type="text" hidden asp-for="Prod.Id" />
+                        <input type="text" hidden asp-for="Prod.Name" />
+                        <input type="text" hidden asp-for="Prod.UserName" />
+                        <input type="text" hidden asp-for="Prod.Discount" />
+                        <input type="text" hidden asp-for="Prod.Price" />
+
+                        <button type="submit" class="btn btn-success align-content-center w-25 fw-bold">Add To Cart</button>
+                    </form>
+
                 </div>
 
                 //Free
                 @* <div class="product-price-container">
-                    <div class="discount-section">
-                        <div class="price-section">
-                            <span class="discounted-price">Free</span>
-                        </div>
-                    </div>
-                    <a href="#" class="btn btn-success align-content-center w-25 fw-bold">Play</a>
-                </div> *@
+            <div class="discount-section">
+            <div class="price-section">
+            <span class="discounted-price">Free</span>
+            </div>
+            </div>
+            <a href="#" class="btn btn-success align-content-center w-25 fw-bold">Play</a>
+            </div> *@
 
 
 
@@ -382,7 +418,7 @@
                                            class="link-action"
                                            onclick="toggleReplies('@comment.Id')"
                                            style="width:50%; text-decoration:none; color:black; padding:5px; border-radius:5px; transition: all 0.3s;">
-                                            Xem thêm 
+                                            Xem thêm
                                         </a>
                                         |
                                         <a class="link-action"
