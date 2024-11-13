@@ -54,5 +54,14 @@ namespace Client.Repositories.Services.Order
                 Url = StaticTypeApi.APIGateWay + "/Order/" + id + "/items"
             });
         }
+
+        public async Task<ResponseModel> GetItemsByCustomerId(string id)
+        {
+            return await _baseService.SendAsync(new RequestModel()
+            {
+                ApiType = StaticTypeApi.ApiType.GET,
+                Url = StaticTypeApi.APIGateWay + "/Order/customer/" + id + "/items"
+            });
+        }
     }
 }
