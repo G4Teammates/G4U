@@ -1,6 +1,11 @@
 ﻿@using Client.Models.ProductDTO
 @model ProductViewModel
 
+@{
+    var HasOwned = ViewBag.HasOwned;
+    List<string> LinkDownload = ViewBag.UrlsDownLoad as List<string>;
+}
+
 <style>
     .liked {
         color: blue;
@@ -280,21 +285,21 @@
                     </div>
                     <!-- Nút Like và Dislike nằm ở phía trên bên phải -->
                     @* <form asp-controller="Product" method="post" class="col-md-2 d-flex justify-content-between" style="margin-top:2vw;">
-                        <input type="hidden" name="ProductId" value="@product.Id" />
+                <input type="hidden" name="ProductId" value="@product.Id" />
 
-                        <!-- Nút Like với số lượt like -->
-                        <button type="submit" name="action" value="like" class="sci-fi-btn like-btn  ">
-                            <i class="fas fa-thumbs-up"></i>
-                            <span class="like-count">
-                                @(product.Interactions.NumberOfLikes == 0 ? "0" : product.Interactions.NumberOfLikes.ToString())
-                            </span>
-                        </button>
+                <!-- Nút Like với số lượt like -->
+                <button type="submit" name="action" value="like" class="sci-fi-btn like-btn  ">
+                <i class="fas fa-thumbs-up"></i>
+                <span class="like-count">
+                @(product.Interactions.NumberOfLikes == 0 ? "0" : product.Interactions.NumberOfLikes.ToString())
+                </span>
+                </button>
 
-                        <!-- Nút Dislike -->
-                        <button type="submit" name="action" value="dislike" class="sci-fi-btn dislike-btn ms-2  ">
-                            <i class="fas fa-thumbs-down"></i>
-                        </button>
-                    </form> *@
+                <!-- Nút Dislike -->
+                <button type="submit" name="action" value="dislike" class="sci-fi-btn dislike-btn ms-2  ">
+                <i class="fas fa-thumbs-down"></i>
+                </button>
+                </form> *@
 
                     <div class="col-md-2 d-flex justify-content-between" style="margin-top:2vw;">
                         <!-- Form for Increasing Like -->
@@ -330,55 +335,71 @@
 
                 <p>by @product.Platform</p>
 
-                //Pay
-                <div class="product-price-container">
-                    <div class="discount-section">
-                        @* Free *@
-                        @if (Model.Prod.Discount == 100)
-                        {
-                            <div class="product-price-container">
-                                <div class="discount-section">
-                                    <div class="price-section">
-                                        <span class="discounted-price">Free</span>
-                                    </div>
+                @if (LinkDownload != null)
+                {
+                    @if (LinkDownload.Count != 0)
+                    {
+                        <div class="product-price-container">
+                            <div class="discount-section">
+                                <div class="price-section">
+                                    <span class="discounted-price">Owned</span>
                                 </div>
-                                <a href="#" class="btn btn-success align-content-center w-25 fw-bold">Play</a>
                             </div>
-                        }
-                        else if (Model.Prod.Discount == 0)
-                        {
-                            <div class="price-section">
-                                <span class="original-price">
-                                    <input type="text" readonly asp-for="@Model.Prod.Price" />
-                                    @Model.Prod.Price
-                                </span>
-                                <span class="discounted-price">@Model.Prod.Price - (@Model.Prod.Price*@Model.Prod.Discount/100)</span>
-                            </div>
-                        }
-                        else
-                        {
-                            <span class="discount-rate">@Model.Prod.Discount%</span>
-                            <div class="price-section">
-                                <span class="original-price">
-                                    <input type="text" hidden asp-for="@Model.Prod.Price" />
-                                    @Model.Prod.Price vnđ
-                                </span>
-                                <span class="discounted-price">@(Model.Prod.Price - (Model.Prod.Price * (decimal)Model.Prod.Discount / 100m)) vnđ</span>
-                            </div>
-                        }
+                            <a href="@LinkDownload[0]" class="btn btn-success align-content-center w-25 fw-bold">Play</a>
+                        </div>
+                    }
+                }
+                else
+                {
+                    //Pay
+                    <div class="product-price-container">
+                        <div class="discount-section">
+                            @* Free *@
+                            @if (Model.Prod.Discount == 100)
+                            {
+                                <div class="product-price-container">
+                                    <div class="discount-section">
+                                        <div class="price-section">
+                                            <span class="discounted-price">Free</span>
+                                        </div>
+                                    </div>
+                                    <a href="#" class="btn btn-success align-content-center w-25 fw-bold">Play</a>
+                                </div>
+                            }
+                            else if (Model.Prod.Discount == 0)
+                            {
+                                <div class="price-section">
+                                    <span class="original-price">
+                                        <input type="text" readonly asp-for="@Model.Prod.Price" />
+                                        @Model.Prod.Price
+                                    </span>
+                                    <span class="discounted-price">@Model.Prod.Price - (@Model.Prod.Price*@Model.Prod.Discount/100)</span>
+                                </div>
+                            }
+                            else
+                            {
+                                <span class="discount-rate">@Model.Prod.Discount%</span>
+                                <div class="price-section">
+                                    <span class="original-price">
+                                        <input type="text" hidden asp-for="@Model.Prod.Price" />
+                                        @Model.Prod.Price vnđ
+                                    </span>
+                                    <span class="discounted-price">@(Model.Prod.Price - (Model.Prod.Price * (decimal)Model.Prod.Discount / 100m)) vnđ</span>
+                                </div>
+                            }
+                        </div>
+                        <form asp-action="Cart" asp-controller="User" class="align-content-center w-25 fw-bold">
+                            <input type="text" hidden asp-for="Prod.Id" />
+                            <input type="text" hidden asp-for="Prod.Name" />
+                            <input type="text" hidden asp-for="Prod.UserName" />
+                            <input type="text" hidden asp-for="Prod.Discount" />
+                            <input type="text" hidden asp-for="Prod.Price" />
+
+                            <button type="submit" class="btn btn-success ">Add To Cart</button>
+                        </form>
+
                     </div>
-                    <form asp-action="Cart" asp-controller="User" class="align-content-center w-25 fw-bold">
-                        <input type="text" hidden asp-for="Prod.Id" />
-                        <input type="text" hidden asp-for="Prod.Name" />
-                        <input type="text" hidden asp-for="Prod.UserName" />
-                        <input type="text" hidden asp-for="Prod.Discount" />
-                        <input type="text" hidden asp-for="Prod.Price" />
-
-                        <button type="submit" class="btn btn-success ">Add To Cart</button>
-                    </form>
-
-                </div>
-
+                }
                 //Free
                 @* <div class="product-price-container">
             <div class="discount-section">
@@ -388,6 +409,7 @@
             </div>
             <a href="#" class="btn btn-success align-content-center w-25 fw-bold">Play</a>
             </div> *@
+
 
 
 
@@ -666,202 +688,105 @@
     @*  ajax tang like.dislike *@
 
     @* ajax hien thi reply *@
-    function toggleReplies(parentId) {
-        var repliesContainer = $('#replies-' + parentId);
-        var button = $('#toggleButton-' + parentId);
-        var replyLink = $('#replyLink-' + parentId); // Nút Reply
+        function toggleReplies(parentId) {
+            var repliesContainer = $('#replies-' + parentId);
+            var button = $('#toggleButton-' + parentId);
+            var replyLink = $('#replyLink-' + parentId); // Nút Reply
 
-        if (repliesContainer.is(':visible')) {
-            // Nếu bình luận con đang hiển thị, ẩn và thay đổi văn bản nút thành "Xem thêm"
-            repliesContainer.hide();
-            button.text('Xem thêm');
-            replyLink.show();  // Hiện lại nút Reply
-        } else {
-            // Nếu bình luận con đang ẩn, tải bình luận con nếu chưa có và đổi văn bản nút thành "Ẩn bớt"
-            if (repliesContainer.html().trim() === '') {
-                $.ajax({
-                    url: '/Product/GetReply',
-                    type: 'GET',
-                    data: { parentId: parentId },
-                    success: function (data) {
-                        repliesContainer.html(data).show();
-                        button.text('Ẩn bớt');
-                        replyLink.hide();  // Ẩn nút Reply khi có bình luận con
-                    },
-                    error: function () {
-                        alert('Không thể tải phản hồi. Vui lòng thử lại sau.');
-                    }
-                });
+            if (repliesContainer.is(':visible')) {
+                // Nếu bình luận con đang hiển thị, ẩn và thay đổi văn bản nút thành "Xem thêm"
+                repliesContainer.hide();
+                button.text('Xem thêm');
+                replyLink.show();  // Hiện lại nút Reply
             } else {
-                repliesContainer.show();
-                button.text('Ẩn bớt');
-                replyLink.hide();  // Ẩn nút Reply khi có bình luận con
+                // Nếu bình luận con đang ẩn, tải bình luận con nếu chưa có và đổi văn bản nút thành "Ẩn bớt"
+                if (repliesContainer.html().trim() === '') {
+                    $.ajax({
+                        url: '/Product/GetReply',
+                        type: 'GET',
+                        data: { parentId: parentId },
+                        success: function (data) {
+                            repliesContainer.html(data).show();
+                            button.text('Ẩn bớt');
+                            replyLink.hide();  // Ẩn nút Reply khi có bình luận con
+                        },
+                        error: function () {
+                            alert('Không thể tải phản hồi. Vui lòng thử lại sau.');
+                        }
+                    });
+                } else {
+                    repliesContainer.show();
+                    button.text('Ẩn bớt');
+                    replyLink.hide();  // Ẩn nút Reply khi có bình luận con
+                }
             }
         }
-    }
     @*ajax hien thi reply *@
 
     @* scroll xuong createcomment *@
-    function scrollToReplyForm(parentId) {
-        // Cuộn xuống phần form nhập bình luận
-        $('html, body').animate({
-            scrollTop: $('#comment-form').offset().top
-        }, 500);
+        function scrollToReplyForm(parentId) {
+            // Cuộn xuống phần form nhập bình luận
+            $('html, body').animate({
+                scrollTop: $('#comment-form').offset().top
+            }, 500);
 
-        // Điền ParentId vào form
-        $('input[name="ParentId"]').val(parentId);
-    }
+            // Điền ParentId vào form
+            $('input[name="ParentId"]').val(parentId);
+        }
     @* scroll xuong createcomment *@
 
     @* DOM Doi mau nut like.dislike *@
-    document.addEventListener('DOMContentLoaded', function () {
-        // Lấy tất cả các form like và dislike
-        const likeForms = document.querySelectorAll('.like-form');
-        const dislikeForms = document.querySelectorAll('.dislike-form');
+        document.addEventListener('DOMContentLoaded', function () {
+            // Lấy tất cả các form like và dislike
+            const likeForms = document.querySelectorAll('.like-form');
+            const dislikeForms = document.querySelectorAll('.dislike-form');
 
-        likeForms.forEach(form => {
-            form.addEventListener('submit', function (event) {
-                event.preventDefault(); // Ngăn form submit để xử lý màu sắc
+            likeForms.forEach(form => {
+                form.addEventListener('submit', function (event) {
+                    event.preventDefault(); // Ngăn form submit để xử lý màu sắc
 
-                const likeIcon = form.querySelector('.fa-thumbs-up');
-                if (likeIcon) {
-                    likeIcon.style.color = 'green'; // Đổi màu nút like thành xanh
-                }
-
-                // Tìm form dislike liên quan
-                const dislikeForm = form.closest('form').nextElementSibling; // Tìm form kế tiếp nếu có
-                if (dislikeForm && dislikeForm.querySelector('.fa-thumbs-down')) {
-                    const dislikeIcon = dislikeForm.querySelector('.fa-thumbs-down');
-                    if (dislikeIcon) {
-                        dislikeIcon.style.color = ''; // Đặt lại màu dislike về mặc định
-                    }
-                }
-            });
-        });
-
-        dislikeForms.forEach(form => {
-            form.addEventListener('submit', function (event) {
-                event.preventDefault(); // Ngăn form submit để xử lý màu sắc
-
-                const dislikeIcon = form.querySelector('.fa-thumbs-down');
-                if (dislikeIcon) {
-                    dislikeIcon.style.color = 'red'; // Đổi màu nút dislike thành đỏ
-                }
-
-                // Tìm form like liên quan
-                const likeForm = form.previousElementSibling.previousElementSibling; // Tìm form trước đó nếu có
-                if (likeForm && likeForm.querySelector('.fa-thumbs-up')) {
-                    const likeIcon = likeForm.querySelector('.fa-thumbs-up');
+                    const likeIcon = form.querySelector('.fa-thumbs-up');
                     if (likeIcon) {
-                        likeIcon.style.color = ''; // Đặt lại màu like về mặc định
+                        likeIcon.style.color = 'green'; // Đổi màu nút like thành xanh
                     }
-                }
+
+                    // Tìm form dislike liên quan
+                    const dislikeForm = form.closest('form').nextElementSibling; // Tìm form kế tiếp nếu có
+                    if (dislikeForm && dislikeForm.querySelector('.fa-thumbs-down')) {
+                        const dislikeIcon = dislikeForm.querySelector('.fa-thumbs-down');
+                        if (dislikeIcon) {
+                            dislikeIcon.style.color = ''; // Đặt lại màu dislike về mặc định
+                        }
+                    }
+                });
+            });
+
+            dislikeForms.forEach(form => {
+                form.addEventListener('submit', function (event) {
+                    event.preventDefault(); // Ngăn form submit để xử lý màu sắc
+
+                    const dislikeIcon = form.querySelector('.fa-thumbs-down');
+                    if (dislikeIcon) {
+                        dislikeIcon.style.color = 'red'; // Đổi màu nút dislike thành đỏ
+                    }
+
+                    // Tìm form like liên quan
+                    const likeForm = form.previousElementSibling.previousElementSibling; // Tìm form trước đó nếu có
+                    if (likeForm && likeForm.querySelector('.fa-thumbs-up')) {
+                        const likeIcon = likeForm.querySelector('.fa-thumbs-up');
+                        if (likeIcon) {
+                            likeIcon.style.color = ''; // Đặt lại màu like về mặc định
+                        }
+                    }
+                });
             });
         });
-    });
     @* DOM Doi mau nut like.dislike *@
 
-       @*  ajax tang like.dislike *@
-    $(document).ready(function () {
-        // Sự kiện khi submit form like
-        $('.like-form').on('submit', function (e) {
-            e.preventDefault();
-            const form = $(this);
-            $.ajax({
-                url: form.attr('action'),
-                type: form.attr('method'),
-                data: form.serialize(),
-                success: function (response) {
-                    if (response.success) {
-                        // Cập nhật số lượt like
-                        $(`#like-count-${response.commentId}`).text(response.newLikeCount);
-                            toastr.success(response.message || 'Like Bình luận đã thành công!')
-                    } else {
-                            toastr.error(response.message || 'Đã xảy ra lỗi không xác định.');
-                    }
-                },
-                error: function (xhr) {
-                        toastr.error('Đã xảy ra lỗi: ' + xhr.responseText);
-                }
-            });
-        });
-
-        // Sự kiện khi submit form dislike
-        $('.dislike-form').on('submit', function (e) {
-            e.preventDefault();
-            const form = $(this);
-            $.ajax({
-                url: form.attr('action'),
-                type: form.attr('method'),
-                data: form.serialize(),
-                success: function (response) {
-                    if (response.success) {
-                        // Cập nhật số lượt dislike
-                        $(`#dislike-count-${response.commentId}`).text(response.newDislikeCount);
-                            toastr.success(response.message || 'DisLike Bình luận đã thành công!')
-                    } else {
-                            toastr.error(response.message || 'Đã xảy ra lỗi không xác định.');
-                    }
-                },
-                error: function (xhr) {
-                        toastr.error('Đã xảy ra lỗi: ' + xhr.responseText);
-                }
-            });
-        });
-    });
     @*  ajax tang like.dislike *@
-
-    @*  ajax hien thi comment moi *@
-    $(document).ready(function () {
-        // Xử lý khi gửi form bình luận
-        $('#comment-form').submit(function (e) {
-            e.preventDefault(); // Ngừng gửi form theo cách thông thường
-
-            var formData = new FormData(this);
-
-            $.ajax({
-                url: '@Url.Action("CreateComment", "Product")',
-                type: 'POST',
-                data: formData,
-                contentType: false,
-                processData: false,
-                success: function (response) {
-                    if (response.success) {
-                        // Xử lý khi bình luận thành công
-                        var parentCommentId = $('#comment-form input[name="ParentId"]').val();
-                        if (parentCommentId) {
-                            var repliesContainer = $('#replies-' + parentCommentId);
-                            if (repliesContainer.is(':hidden')) {
-                                repliesContainer.show();
-                            }
-                            repliesContainer.prepend(response.html);
-                        } else {
-                            $('#comments-section').prepend(response.html);
-                        }
-                        $('#comment-form')[0].reset();
-                        @* alert('Bình luận đã được gửi thành công!'); *@
-                                toastr.success(response.message)
-                        @* // Gắn lại sự kiện like và dislike cho bình luận mới *@
-                        bindLikeDislikeEvents();
-                        bindLikeDislikeEvents2()
-                    } else {
-                        if (response.message) {
-                            toastr.error(response.message);
-                        } else {
-                            toastr.error('Có lỗi xảy ra, vui lòng thử lại.');
-                        }
-                    }
-                },
-                error: function () {
-                    toastr.error('Có lỗi xảy ra, vui lòng thử lại.');
-                }
-            });
-        });
-
-       @*  // Hàm để gắn sự kiện like/dislike cho tất cả các bình luận *@
-        function bindLikeDislikeEvents() {
-            // Xử lý khi submit form like (cho các bình luận cũ và mới)
-            $('.like-form').off('submit').on('submit', function (e) {
+        $(document).ready(function () {
+            // Sự kiện khi submit form like
+            $('.like-form').on('submit', function (e) {
                 e.preventDefault();
                 const form = $(this);
                 $.ajax({
@@ -872,21 +797,19 @@
                         if (response.success) {
                             // Cập nhật số lượt like
                             $(`#like-count-${response.commentId}`).text(response.newLikeCount);
-                                    toastr.success( response.message ||'Like Bình luận đã thành công!')
+                            toastr.success(response.message || 'Like Bình luận đã thành công!')
                         } else {
-                            
-                                    toastr.error(response.message || 'Đã xảy ra lỗi không xác định.');
+                            toastr.error(response.message || 'Đã xảy ra lỗi không xác định.');
                         }
                     },
                     error: function (xhr) {
-             
-                                toastr.error('Đã xảy ra lỗi: ' + xhr.responseText);
+                        toastr.error('Đã xảy ra lỗi: ' + xhr.responseText);
                     }
                 });
             });
 
-            // Xử lý khi submit form dislike (cho các bình luận cũ và mới)
-            $('.dislike-form').off('submit').on('submit', function (e) {
+            // Sự kiện khi submit form dislike
+            $('.dislike-form').on('submit', function (e) {
                 e.preventDefault();
                 const form = $(this);
                 $.ajax({
@@ -897,71 +820,170 @@
                         if (response.success) {
                             // Cập nhật số lượt dislike
                             $(`#dislike-count-${response.commentId}`).text(response.newDislikeCount);
-                                    toastr.success( response.message ||'DisLike Bình luận đã thành công!')
+                            toastr.success(response.message || 'DisLike Bình luận đã thành công!')
                         } else {
-                                    toastr.error(response.message || 'Đã xảy ra lỗi không xác định.');
+                            toastr.error(response.message || 'Đã xảy ra lỗi không xác định.');
                         }
                     },
                     error: function (xhr) {
-                                toastr.error('Đã xảy ra lỗi: ' + xhr.responseText);
+                        toastr.error('Đã xảy ra lỗi: ' + xhr.responseText);
                     }
                 });
             });
-        }
+        });
+    @*  ajax tang like.dislike *@
 
-       @*  // Hàm để gắn sự kiện đổi màu like/dislike cho các form *@
-        function bindLikeDislikeEvents2() {
-            // Lấy tất cả các form like và dislike
-            const likeForms = document.querySelectorAll('.like-form');
-            const dislikeForms = document.querySelectorAll('.dislike-form');
+    @*  ajax hien thi comment moi *@
+        $(document).ready(function () {
+            // Xử lý khi gửi form bình luận
+            $('#comment-form').submit(function (e) {
+                e.preventDefault(); // Ngừng gửi form theo cách thông thường
 
-            // Gắn sự kiện cho các form like
-            likeForms.forEach(form => {
-                form.addEventListener('submit', function (event) {
-                    event.preventDefault(); // Ngăn form submit để xử lý màu sắc
-                    handleLikeDislikeSubmit(form, 'like');
+                var formData = new FormData(this);
+
+                $.ajax({
+                    url: '@Url.Action("CreateComment", "Product")',
+                    type: 'POST',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function (response) {
+                        if (response.success) {
+                            // Xử lý khi bình luận thành công
+                            var parentCommentId = $('#comment-form input[name="ParentId"]').val();
+                            if (parentCommentId) {
+                                var repliesContainer = $('#replies-' + parentCommentId);
+                                if (repliesContainer.is(':hidden')) {
+                                    repliesContainer.show();
+                                }
+                                repliesContainer.prepend(response.html);
+                            } else {
+                                $('#comments-section').prepend(response.html);
+                            }
+                            $('#comment-form')[0].reset();
+    @* alert('Bình luận đã được gửi thành công!'); *@
+                                toastr.success(response.message)
+    @* // Gắn lại sự kiện like và dislike cho bình luận mới *@
+                                bindLikeDislikeEvents();
+                            bindLikeDislikeEvents2()
+                        } else {
+                            if (response.message) {
+                                toastr.error(response.message);
+                            } else {
+                                toastr.error('Có lỗi xảy ra, vui lòng thử lại.');
+                            }
+                        }
+                    },
+                    error: function () {
+                        toastr.error('Có lỗi xảy ra, vui lòng thử lại.');
+                    }
                 });
             });
 
-            // Gắn sự kiện cho các form dislike
-            dislikeForms.forEach(form => {
-                form.addEventListener('submit', function (event) {
-                    event.preventDefault(); // Ngăn form submit để xử lý màu sắc
-                    handleLikeDislikeSubmit(form, 'dislike');
-                });
-            });
-        }
+    @*  // Hàm để gắn sự kiện like/dislike cho tất cả các bình luận *@
+                function bindLikeDislikeEvents() {
+                    // Xử lý khi submit form like (cho các bình luận cũ và mới)
+                    $('.like-form').off('submit').on('submit', function (e) {
+                        e.preventDefault();
+                        const form = $(this);
+                        $.ajax({
+                            url: form.attr('action'),
+                            type: form.attr('method'),
+                            data: form.serialize(),
+                            success: function (response) {
+                                if (response.success) {
+                                    // Cập nhật số lượt like
+                                    $(`#like-count-${response.commentId}`).text(response.newLikeCount);
+                                    toastr.success(response.message || 'Like Bình luận đã thành công!')
+                                } else {
 
-           @*  // Hàm xử lý submit đổi màu form like/dislike *@
-        function handleLikeDislikeSubmit(form, type) {
-            const iconSelector = type === 'like' ? '.fa-thumbs-up' : '.fa-thumbs-down';
-            const icon = form.querySelector(iconSelector);
+                                    toastr.error(response.message || 'Đã xảy ra lỗi không xác định.');
+                                }
+                            },
+                            error: function (xhr) {
 
-            if (icon) {
-                // Thay đổi màu sắc dựa trên loại hành động (like/dislike)
-                if (type === 'like') {
-                    icon.style.color = 'green'; // Đổi màu nút like thành xanh
-                } else {
-                    icon.style.color = 'red'; // Đổi màu nút dislike thành đỏ
+                                toastr.error('Đã xảy ra lỗi: ' + xhr.responseText);
+                            }
+                        });
+                    });
+
+                    // Xử lý khi submit form dislike (cho các bình luận cũ và mới)
+                    $('.dislike-form').off('submit').on('submit', function (e) {
+                        e.preventDefault();
+                        const form = $(this);
+                        $.ajax({
+                            url: form.attr('action'),
+                            type: form.attr('method'),
+                            data: form.serialize(),
+                            success: function (response) {
+                                if (response.success) {
+                                    // Cập nhật số lượt dislike
+                                    $(`#dislike-count-${response.commentId}`).text(response.newDislikeCount);
+                                    toastr.success(response.message || 'DisLike Bình luận đã thành công!')
+                                } else {
+                                    toastr.error(response.message || 'Đã xảy ra lỗi không xác định.');
+                                }
+                            },
+                            error: function (xhr) {
+                                toastr.error('Đã xảy ra lỗi: ' + xhr.responseText);
+                            }
+                        });
+                    });
                 }
-            }
 
-            // Tìm form liên quan
-            const relatedFormSelector = type === 'like' ? 'nextElementSibling' : 'previousElementSibling.previousElementSibling';
-            const relatedForm = form.closest('form')[relatedFormSelector];
+    @*  // Hàm để gắn sự kiện đổi màu like/dislike cho các form *@
+                function bindLikeDislikeEvents2() {
+                    // Lấy tất cả các form like và dislike
+                    const likeForms = document.querySelectorAll('.like-form');
+                    const dislikeForms = document.querySelectorAll('.dislike-form');
 
-            if (relatedForm && relatedForm.querySelector(type === 'like' ? '.fa-thumbs-down' : '.fa-thumbs-up')) {
-                const relatedIcon = relatedForm.querySelector(type === 'like' ? '.fa-thumbs-down' : '.fa-thumbs-up');
-                if (relatedIcon) {
-                    relatedIcon.style.color = ''; // Đặt lại màu của form ngược lại về mặc định
+                    // Gắn sự kiện cho các form like
+                    likeForms.forEach(form => {
+                        form.addEventListener('submit', function (event) {
+                            event.preventDefault(); // Ngăn form submit để xử lý màu sắc
+                            handleLikeDislikeSubmit(form, 'like');
+                        });
+                    });
+
+                    // Gắn sự kiện cho các form dislike
+                    dislikeForms.forEach(form => {
+                        form.addEventListener('submit', function (event) {
+                            event.preventDefault(); // Ngăn form submit để xử lý màu sắc
+                            handleLikeDislikeSubmit(form, 'dislike');
+                        });
+                    });
                 }
-            }
-        }
 
-        @* // Gọi hàm gắn sự kiện like/dislike khi trang được tải *@
-        bindLikeDislikeEvents();
-        bindLikeDislikeEvents2()
-    });
+    @*  // Hàm xử lý submit đổi màu form like/dislike *@
+                function handleLikeDislikeSubmit(form, type) {
+                    const iconSelector = type === 'like' ? '.fa-thumbs-up' : '.fa-thumbs-down';
+                    const icon = form.querySelector(iconSelector);
+
+                    if (icon) {
+                        // Thay đổi màu sắc dựa trên loại hành động (like/dislike)
+                        if (type === 'like') {
+                            icon.style.color = 'green'; // Đổi màu nút like thành xanh
+                        } else {
+                            icon.style.color = 'red'; // Đổi màu nút dislike thành đỏ
+                        }
+                    }
+
+                    // Tìm form liên quan
+                    const relatedFormSelector = type === 'like' ? 'nextElementSibling' : 'previousElementSibling.previousElementSibling';
+                    const relatedForm = form.closest('form')[relatedFormSelector];
+
+                    if (relatedForm && relatedForm.querySelector(type === 'like' ? '.fa-thumbs-down' : '.fa-thumbs-up')) {
+                        const relatedIcon = relatedForm.querySelector(type === 'like' ? '.fa-thumbs-down' : '.fa-thumbs-up');
+                        if (relatedIcon) {
+                            relatedIcon.style.color = ''; // Đặt lại màu của form ngược lại về mặc định
+                        }
+                    }
+                }
+
+    @* // Gọi hàm gắn sự kiện like/dislike khi trang được tải *@
+                bindLikeDislikeEvents();
+            bindLikeDislikeEvents2()
+        });
     @*  ajax hien thi comment moi *@
 
 </script>

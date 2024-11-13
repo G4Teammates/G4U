@@ -107,9 +107,9 @@
                         int index = 1;
                         foreach (var item in Games)
                         {
-                            <div class="border p-2 mb-2">
+                            <div class="border p-2 mb-2" id="item-@index">
                                 <p>
-                                    <strong>File Name:</strong> ${@item.FileName} <br>
+                                    <strong>File Name:</strong> ${@item.Name} <br>
                                     <strong>File Size:</strong> @(Math.Round(item.Length / 1024.0 / 1024.0, 2)) MB <br>
                                     <strong>File Type:</strong> (from server)
                                     <div class="m-2">
@@ -124,18 +124,19 @@
                                         </label>
                                     </div>
                                 </p>
+
+                                <!-- Nút Xóa -->
+                                @* <button type="button" class="btn btn-danger" onclick="removeItem(@index)">Delete</button> *@
                             </div>
 
                             index++;
                         }
                     }
                 }
-                else
-                {
-                    <div class="border p-2 mb-2">
-                        <p id="fileInfo">No file uploaded</p>
-                    </div>
-                }
+
+                <div class="border p-2 mb-2">
+                    <p id="fileInfo">No file uploaded</p>
+                </div>
 
                 <input asp-for="gameFile" type="file" name="gameFile" id="fileInput" class="d-none" accept=".rar, .zip" onchange="displayFileInfo()" />
                 <button type="button" class="btn btn-danger" onclick="document.getElementById('fileInput').click()">Upload</button>
@@ -394,21 +395,21 @@
 
             // Hiển thị thông tin file
             const fileInfo = `
-                            <strong>File Name:</strong> ${file.name} <br>
-                            <strong>File Size:</strong> ${(file.size / 1024 / 1024).toFixed(2)} MB <br>
-                            <strong>File Type:</strong> ${file.type}
-                            <div class="m-2">
-                                <label class="p-2 border border-1">
-                                    <input type="radio" value="Windows" name="Platforms" /> Windows
-                                </label>
-                                <label class="p-2 border border-1">
-                                    <input type="radio" value="MacOS" name="Platforms" /> MacOS
-                                </label>
-                                <label class="p-2 border border-1">
-                                    <input type="radio" value="Linux" name="Platforms" /> Linux
-                                </label>
-                            </div>
-                        `;
+                                <strong>File Name:</strong> ${file.name} <br>
+                                <strong>File Size:</strong> ${(file.size / 1024 / 1024).toFixed(2)} MB <br>
+                                <strong>File Type:</strong> ${file.type}
+                                <div class="m-2">
+                                    <label class="p-2 border border-1">
+                                        <input type="radio" value="Windows" name="Platforms" /> Windows
+                                    </label>
+                                    <label class="p-2 border border-1">
+                                        <input type="radio" value="MacOS" name="Platforms" /> MacOS
+                                    </label>
+                                    <label class="p-2 border border-1">
+                                        <input type="radio" value="Linux" name="Platforms" /> Linux
+                                    </label>
+                                </div>
+                            `;
             document.getElementById('fileInfo').innerHTML = fileInfo;
         }
     }
@@ -429,6 +430,11 @@
             reader.readAsDataURL(file); // Đọc file ảnh dưới dạng URL
         }
     });
+
+    function removeItem(index) {
+        // Xóa phần tử khỏi giao diện
+        document.getElementById("item-" + index).remove();
+    }
 </script>
 @section Scripts {
 
