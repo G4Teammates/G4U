@@ -58,8 +58,8 @@ namespace OrderMicroservice.DBContexts.Entities
         /// <br/>
         /// Mã định danh của người đăng game
         /// </summary>
-        [BsonElement("publisherId")]
-        public required string PublisherId { get; set; }
+        //[BsonElement("publisherId")]
+        //public required string PublisherId { get; set; }
         
         /// <summary>
         /// Username of publisher
@@ -67,6 +67,9 @@ namespace OrderMicroservice.DBContexts.Entities
         /// Username của người đăng game
         /// </summary>
         public required string PublisherName { get; set; }
+
+
+        public string ImageUrl { get; set; }
 
 
         /// <summary>
