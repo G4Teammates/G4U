@@ -26,6 +26,7 @@ using static Client.Models.Enum.UserEnum.User;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using Client.Repositories.Interfaces.Stastistical;
 using Client.Models.Statistical;
+using System.Security.Claims;
 
 
 namespace Client.Controllers
@@ -118,7 +119,7 @@ namespace Client.Controllers
                     var user = _helperService.GetUserFromJwtToken((JwtSecurityToken)response.Result);
                     ViewBag.User = user;
                     ViewData["IsLogin"] = true;
-                    TempData["success"] = "Welcome to admin dashboarch "+user;
+                    TempData["success"] = "Welcome to admin dashboarch "+user.Username;
                 }
                 else
                 {
@@ -599,6 +600,8 @@ namespace Client.Controllers
 
             try
             {
+                IEnumerable<Claim> claim = HttpContext.User.Claims;
+                model.Username = claim.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value!;
                 // Tạo đối tượng ScanFileRequest
                 var request = new ScanFileRequest
                 {

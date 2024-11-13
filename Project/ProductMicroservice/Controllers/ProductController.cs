@@ -397,5 +397,51 @@ namespace ProductMicroService.Controllers
                 return StatusCode(500, _responseDTO); // Trả về mã lỗi 500 với thông báo lỗi chi tiết
             }
         }
+
+        [HttpPut("IncreaseLike/{productId}")]
+        public async Task<IActionResult> IncreaseLike([FromRoute] string productId, [FromBody] UserLikesModel userLikes)
+        {
+            try
+            {
+                var result = await _repoProduct.IncreaseLike(productId, userLikes);
+                if (result.IsSuccess)
+                {
+                    _responseDTO.Result = result.Result;
+                    _responseDTO.Message = result.Message;
+                    return Ok(_responseDTO);
+                }
+                _responseDTO.Message = result.Message;
+                return BadRequest(_responseDTO.Message);
+            }
+            catch (Exception ex)
+            {
+                _responseDTO.IsSuccess = false;
+                _responseDTO.Message = "An error occurred while increasing the like count: " + ex.Message;
+                return StatusCode(500, _responseDTO);
+            }
+        }
+
+        [HttpPut("DecreaseLike/{productId}")]
+        public async Task<IActionResult> DecreaseLike([FromRoute] string productId, [FromBody] UserDisLikesModel userDisLikes)
+        {
+            try
+            {
+                var result = await _repoProduct.DecreaseLike(productId, userDisLikes);
+                if (result.IsSuccess)
+                {
+                    _responseDTO.Result = result.Result;
+                    _responseDTO.Message = result.Message;
+                    return Ok(_responseDTO);
+                }
+                _responseDTO.Message = result.Message;
+                return BadRequest(_responseDTO.Message);
+            }
+            catch (Exception ex)
+            {
+                _responseDTO.IsSuccess = false;
+                _responseDTO.Message = "An error occurred while decreasing the like count: " + ex.Message;
+                return StatusCode(500, _responseDTO);
+            }
+        }
     }
 }

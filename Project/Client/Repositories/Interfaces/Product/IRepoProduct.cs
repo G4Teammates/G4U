@@ -46,6 +46,8 @@ namespace Client.Repositories.Interfaces.Product
             ScanFileRequest request,
             string username);
         Task<ResponseModel> DeleteProductAsync(string Id);
+        Task<ResponseModel> IncreaseLike(string productId, UserLikesModel userLikes);
+        Task<ResponseModel> DecreaseLike(string productId, UserDisLikesModel userDisLikes);
 
         string GenerateQRCode(string productId);
 

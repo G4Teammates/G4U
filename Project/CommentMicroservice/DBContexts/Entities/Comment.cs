@@ -127,6 +127,12 @@ namespace CommentMicroservice.DBContexts.Entities
         /// </summary>
         [BsonElement("numberOfDisLikes")]
         public int NumberOfDisLikes { get; set; }
+
+        [BsonElement("userDisLike")]
+        public ICollection<UserDisLikes>? UserDisLikes { get; set; }
+
+        [BsonElement("userLike")]
+        public ICollection<UserLikes>? UserLikes { get; set; }
     }
     #endregion
 

@@ -69,6 +69,9 @@ namespace OrderMicroservice.DBContexts.Entities
         public required string PublisherName { get; set; }
 
 
+        public string ImageUrl { get; set; }
+
+
         /// <summary>
         /// The quantity of the product ordered.
         /// <br/>

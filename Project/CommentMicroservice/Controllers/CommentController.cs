@@ -229,15 +229,15 @@ namespace CommentMicroService.Controllers
         }
 
         [HttpPut("IncreaseLike/{commentId}")]
-        public async Task<IActionResult> IncreaseLike([FromRoute] string commentId)
+        public async Task<IActionResult> IncreaseLike([FromRoute] string commentId, [FromBody] UserLikesModel userLikes)
         {
             try
             {
-                var result = await _db.IncreaseLike(commentId);
+                var result = await _db.IncreaseLike(commentId, userLikes);
                 if (result.IsSuccess)
                 {
                     _responseModel.Result = result.Result;
-                    _responseModel.Message = "Like count increased successfully.";
+                    _responseModel.Message = result.Message;
                     return Ok(_responseModel);
                 }
                 _responseModel.Message = result.Message;
@@ -252,15 +252,15 @@ namespace CommentMicroService.Controllers
         }
 
         [HttpPut("DecreaseLike/{commentId}")]
-        public async Task<IActionResult> DecreaseLike([FromRoute] string commentId)
+        public async Task<IActionResult> DecreaseLike([FromRoute] string commentId, [FromBody] UserDisLikesModel userDisLikes)
         {
             try
             {
-                var result = await _db.DecreaseLike(commentId);
+                var result = await _db.DecreaseLike(commentId, userDisLikes);
                 if (result.IsSuccess)
                 {
                     _responseModel.Result = result.Result;
-                    _responseModel.Message = "Like count decreased successfully.";
+                    _responseModel.Message = result.Message;
                     return Ok(_responseModel);
                 }
                 _responseModel.Message = result.Message;
