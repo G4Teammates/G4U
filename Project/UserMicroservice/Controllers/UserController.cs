@@ -180,6 +180,7 @@ namespace UserMicroService.Controllers
             }
         }
 
+
         //[HttpGet("find")]
         //public async Task<ActionResult> SearchAsync([FromQuery]SearchCriteria query)
         //{

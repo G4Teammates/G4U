@@ -428,8 +428,6 @@ namespace UserMicroservice.Repositories.Services
                 {
 
                     user.Wishlist.Add(_mapper.Map<UserWishlist>(userWishlistModel));
-                    _context.Update(user);  
-                    _context.SaveChanges();
                     response.Result = user;
                     return response;
                 }
@@ -447,8 +445,6 @@ namespace UserMicroservice.Repositories.Services
 
             return response;
         }
-
-
 
         //public async Task<ICollection<UserModel>> FindUsers(SearchCriteria criteria)
         //{
