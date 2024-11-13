@@ -53,7 +53,7 @@ namespace Client.Repositories.Interfaces.Product
         Task<ResponseModel> DecreaseLike(string productId, UserDisLikesModel userDisLikes);
 
         string GenerateQRCode(string productId);
-
+        Task<ResponseModel> ViewMore(string viewString);
         /*string GenerateBarCode(long barCodeUrl);*/
     }
 }
