@@ -3,6 +3,7 @@ using Client.Models.UserDTO;
 using Client.Repositories.Interfaces;
 using Client.Repositories.Interfaces.User;
 using Client.Utility;
+using Microsoft.Azure.CognitiveServices.ContentModerator.Models;
 using System.Net.Http;
 using System.Text;
 using static Client.Models.Enum.UserEnum.User;
@@ -91,6 +92,16 @@ namespace Client.Repositories.Services.User
             {
                 ApiType = StaticTypeApi.ApiType.GET,
                 Url = $"{StaticTypeApi.APIGateWay}/User/getAllProductsInWishList/{id}"
+            });
+        }
+
+        public async Task<ResponseModel> AddToWishList(WishlistModel WishlistModel, string userName)
+        {
+            return await _baseService.SendAsync(new RequestModel()
+            {
+                ApiType = StaticTypeApi.ApiType.PUT,
+                Data = WishlistModel,  
+                Url = $"{StaticTypeApi.APIGateWay}/User/addWishList/{userName}"
             });
         }
     }

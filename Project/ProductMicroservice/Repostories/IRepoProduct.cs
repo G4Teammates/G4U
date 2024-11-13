@@ -30,7 +30,7 @@ namespace ProductMicroservice.Repostories
 
         // Phương thức giảm lượt thích cho bình luận
         Task<ResponseDTO> DecreaseLike(string productId, UserDisLikesModel userDisLike);
-
         Task<ResponseDTO>ViewMore(string viewString);
+
     }
 }

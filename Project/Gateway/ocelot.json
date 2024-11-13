@@ -182,6 +182,23 @@
       "UpstreamPathTemplate": "/Product/DecreaseLike/{productId}",
       "UpstreamHttpMethod": [ "Put" ]
     },
+    //ViewMore
+    {
+      "DownstreamPathTemplate": "/api/Product/ViewMore/{viewString}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7159
+        }
+      ],
+      //"AuthenticationOptions": {
+      //  "AuthenticationProviderKey": "Bearer",
+      //  "AllowedScopes": []
+      //},
+      "UpstreamPathTemplate": "/Product/ViewMore/{viewString}",
+      "UpstreamHttpMethod": [ "Get" ]
+    },
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -289,6 +306,20 @@
         }
       ],
       "UpstreamPathTemplate": "/User/status/{id}",
+      "UpstreamHttpMethod": [ "Put" ]
+    },
+
+    //Update status
+    {
+      "DownstreamPathTemplate": "/api/User/addWishList/{userName}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7107
+        }
+      ],
+      "UpstreamPathTemplate": "/User/addWishList/{userName}",
       "UpstreamHttpMethod": [ "Put" ]
     },
 
@@ -746,7 +777,7 @@
       "UpstreamHttpMethod": [ "Get" ]
     },
 
-      //Get order items by customer id
+    //Get order items by customer id
     {
       "DownstreamPathTemplate": "/api/Order/customer/{id}/items",
       "DownstreamScheme": "https",
@@ -773,7 +804,7 @@
       ],
       "UpstreamPathTemplate": "/Order",
       "UpstreamHttpMethod": [ "Put" ]
-    }, 
+    },
     //Update trans id
     {
       "DownstreamPathTemplate": "/api/Order/transid",
@@ -805,7 +836,7 @@
       "UpstreamHttpMethod": [ "Post" ]
     },
 
-       //payment vietqr
+    //payment vietqr
     {
       "DownstreamPathTemplate": "/api/Payment/vietqr",
       "DownstreamScheme": "https",
@@ -820,7 +851,7 @@
     },
 
 
-        //ipn momo
+    //ipn momo
     {
       "DownstreamPathTemplate": "/api/Payment/ipn/momo",
       "DownstreamScheme": "https",

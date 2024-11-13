@@ -448,6 +448,7 @@ namespace ProductMicroService.Controllers
                 return StatusCode(500, _responseDTO);
             }
         }
+
         [HttpGet("ViewMore/{viewString}")]
         public async Task<IActionResult> ViewMore([FromRoute] string viewString)
         {

@@ -16,6 +16,7 @@ using UserMicroservice.DBContexts.Enum;
 using static Google.Apis.Requests.BatchRequest;
 using X.PagedList.Extensions;
 using UserMicroservice.Models.Message;
+using ZstdSharp.Unsafe;
 
 namespace UserMicroservice.Repositories.Services
 {

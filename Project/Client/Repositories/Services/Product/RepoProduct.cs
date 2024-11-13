@@ -338,6 +338,15 @@ namespace Client.Repositories.Services.Product
             });
         }
 
+        public async Task<ResponseModel> ViewMore(string viewString)
+        {
+            return await _baseService.SendAsync(new RequestModel()
+            {
+                ApiType = StaticTypeApi.ApiType.GET,
+                Url = $"{StaticTypeApi.APIGateWay}/Product/ViewMore/{viewString}"
+            });
+        }
+
         /*public string GenerateBarCode(long barCodeUrl)
         {
             if (barCodeUrl != null)
