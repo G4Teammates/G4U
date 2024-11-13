@@ -405,7 +405,7 @@ namespace Client.Controllers
             }
             else
             {
-                TempData["error"] = ProResponese?.Message + ItemResponse.Message ?? "Đã có lỗi xảy ra khi lấy thông tin sản phẩm.";
+                TempData["error"] = ProResponese?.Message + ItemResponse.Message + WishListResponse.Message ?? "Đã có lỗi xảy ra khi lấy thông tin sản phẩm.";
                 return NotFound();
             }
 
