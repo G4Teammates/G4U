@@ -14,7 +14,7 @@
         {
             // Lọc và lấy 4 sản phẩm mới nhất theo CreatedAt
             var latestProducts = Model.Product
-            .OrderByDescending(p => p.CreatedAt) // Sắp xếp theo CreatedAt từ mới đến cũ
+            .OrderBy(p => p.CreatedAt) // Sắp xếp theo CreatedAt từ mới đến cũ
             .Take(4); // Lấy 4 sản phẩm đầu tiên
 
             // Biến để kiểm tra xem sản phẩm đầu tiên có được đánh dấu là "active" không
@@ -379,7 +379,7 @@
             </h3>
             <div class="col-3 col-sm-3 col-md-3 footeer_card">
                 <div class="btn_card" style="display:flex;justify-content:end;" style="width:200px;font-size:font: 15px Montserrat;">
-                    <a href="#" class="btn_orther" style="width:200px;font: 15px Montserrat;">View More</a>
+                    <a asp-action="ViewAll" asp-controller="Product" asp-route-viewString="popular" value="popular" class="btn_orther" style="width:200px;font: 15px Montserrat;">View More</a>
                 </div>
             </div>
         </div>
@@ -516,7 +516,7 @@
             <h3 class="col-2 col-sm-2 col-md-2 ms-3 fw-bold text-center" style="border: 3px solid transparent; border-radius: 12px; padding: 15px 20px; background: linear-gradient(#fff, #fff) padding-box, linear-gradient(135deg, #00A97F, #800080) border-box;font-family: 'Poppins', sans-serif; text-transform:uppercase;">Free</h3>
             <div class="col-3 col-sm-3 col-md-3 footeer_card">
                 <div class="btn_card" style="display:flex;justify-content:end;" style="width:200px;font-size:font: 15px Montserrat;">
-                    <a href="#" class="btn_orther" style="width:200px;font: 15px Montserrat;">View More</a>
+                    <a asp-action="ViewAll" asp-controller="Product" asp-route-viewString="free" value="free" class="btn_orther" style="width:200px;font: 15px Montserrat;">View More</a>
                 </div>
             </div>
         </div>
@@ -652,7 +652,7 @@
             <h3 class="col-2 col-sm-2 col-md-2 ms-3 fw-bold text-center" style="border: 3px solid transparent; border-radius: 12px; padding: 15px 20px; background: linear-gradient(#fff, #fff) padding-box, linear-gradient(135deg, #00A97F, #800080) border-box;font-family: 'Poppins', sans-serif; text-transform:uppercase;">New</h3>
             <div class="col-3 col-sm-3 col-md-3 footeer_card">
                 <div class="btn_card" style="display:flex;justify-content:end;" style="width:200px;font-size:font: 15px Montserrat;">
-                    <a href="#" class="btn_orther" style="width:200px;font: 15px Montserrat;">View More</a>
+                    <a asp-action="ViewAll" asp-controller="Product" asp-route-viewString="new" value="new" class="btn_orther" style="width:200px;font: 15px Montserrat;">View More</a>
                 </div>
             </div>
         </div>
@@ -787,7 +787,7 @@
             <h3 class="col-2 `col-sm-2 col-md-2 ms-3 fw-bold text-center" style="border: 3px solid transparent; border-radius: 12px; padding: 15px 20px; background: linear-gradient(#fff, #fff) padding-box, linear-gradient(135deg, #00A97F, #800080) border-box;font-family: 'Poppins', sans-serif; text-transform:uppercase;">More</h3>
             <div class="col-3 col-sm-3 col-md-3 footeer_card">
                 <div class="btn_card" style="display:flex;justify-content:end;" style="width:200px;font-size:font: 15px Montserrat;">
-                    <a href="#" class="btn_orther" style="width:200px;font: 15px Montserrat;">View More</a>
+                    <a asp-controller="Product" asp-action="Product" class="btn_orther" style="width:200px;font: 15px Montserrat;">View More</a>
                 </div>
             </div>
         </div>
