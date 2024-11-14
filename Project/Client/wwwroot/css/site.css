@@ -751,18 +751,21 @@ hr {
 /*Trai Tym nè*/
 .heart-container {
     --heart-color: rgb(91, 255, 195);
-    position: relative;
-    width: 20px;
-    height: 20px;
+    position: absolute;
+    right: 0; /* Đặt trái tim sát bên phải */
+    width: 30px;
+    height: 30px;
     transition: .3s;
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 0 auto;
+    margin: 0;
 }
 
     .heart-container .checkbox {
         position: absolute;
+        top: 0;
+        left: 0;
         width: 100%;
         height: 100%;
         opacity: 0;
@@ -782,6 +785,8 @@ hr {
     .heart-container .svg-filled {
         fill: var(--heart-color);
         position: absolute;
+        width: 30px;
+        height: 30px; /* Đảm bảo kích thước SVG khớp với container */
     }
 
     .heart-container .svg-filled {
@@ -797,14 +802,16 @@ hr {
         stroke: var(--heart-color);
         fill: var(--heart-color);
         stroke-width: 2px;
+        width: 30px;
+        height: 30px;
     }
 
     .heart-container .checkbox:checked ~ .svg-container .svg-filled {
-        display: block
+        display: block;
     }
 
     .heart-container .checkbox:checked ~ .svg-container .svg-celebrate {
-        display: block
+        display: block;
     }
 
 @keyframes keyframes-svg-filled {
@@ -838,6 +845,7 @@ hr {
         display: none;
     }
 }
+
 
 
 
