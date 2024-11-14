@@ -25,6 +25,7 @@ namespace UserMicroservice.Repositories.Interfaces
         //Task<ICollection<UserModel>> FindUsersCriteria(SearchCriteria criteria);
         Task<bool> CheckUserByUserNameAsync(string userName);
 
+
     }
 
 }
