@@ -23,7 +23,9 @@ namespace UserMicroService.Controllers
         private readonly IUserService _userService = userService;
 
 
+
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+
         [HttpGet]
         public async Task<ActionResult> GetAll(int? page, int pageSize)
         {
@@ -78,7 +80,7 @@ namespace UserMicroService.Controllers
         }
 
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         [HttpGet("{id}")]
         public async Task<ActionResult> GetUser(string id)
         {
