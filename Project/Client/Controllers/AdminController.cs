@@ -93,7 +93,7 @@ namespace Client.Controllers
         //    return View();
         //}
         #region Admindasboard
-        public async Task<IActionResult> AdminDashboard(int? page, int pageSize = 5)
+        public async Task<IActionResult> AdminDashboard(int? page, int pageSize = 99)
         {
             int pageNumber = page ?? 1;
             AllModel statistical = new();

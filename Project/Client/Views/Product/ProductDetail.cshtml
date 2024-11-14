@@ -546,14 +546,14 @@
                                                     </p>
                                                    @*  <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@products.Id" class="btn_orther">Read More</a> *@
                                                     <div class="row d-flex align-items-center justify-content-between">
-                                                        <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@product.Id" class="ms-3 col-md-5 text-center btn_orther">Read More</a>
+                                                        <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@products.Id" class="ms-3 col-md-5 text-center btn_orther">Read More</a>
                                                         <div class="col-md-3"></div>
                                                         @* Day la trai tym ne *@
                                                         <div title="Wishlist" class="col-md-3 heart-container" style="width:20px;height:20px;transition: .3s;display: flex;justify-content: center;align-items: center;margin: 0 auto;">
                                                             <form asp-controller="Admin" asp-action="AddWishList" method="post">
-                                                                <input type="hidden" name="ProductId" value="@product.Id" />
-                                                                <input type="hidden" name="ProductName" value="@product.Name" />
-                                                                <input type="hidden" name="ProductPrice" value="@product.Price" />
+                                                                <input type="hidden" name="ProductId" value="@products.Id" />
+                                                                <input type="hidden" name="ProductName" value="@products.Name" />
+                                                                <input type="hidden" name="ProductPrice" value="@products.Price" />
 
                                                                 @{
                                                                     string secondImageUrl2 = null;
@@ -619,20 +619,20 @@
                                                 <!-- Thêm phần số lượt view -->
                                                 <div class="view-count">
                                                     <i class="fa-solid fa-eye" style="color:black;  width:30px;height:30px;"></i>
-                                                    <span style="color:black;">@product.Interactions.NumberOfViews</span>
+                                                    <span style="color:black;">@products.Interactions.NumberOfViews</span>
                                                 </div>
 
                                                 <div class="like-dislike-container">
                                                     <!-- Like và Dislike -->
                                                     <form asp-action="IncreaseLikeProduct" asp-controller="Product" method="post" style="display:inline;">
-                                                        <input type="hidden" name="productID" value="@product.Id" />
-                                                        <span id="like-count-@product.Id" class="like-count" style="color:black;">@product.Interactions.NumberOfLikes</span>
+                                                        <input type="hidden" name="productID" value="@products.Id" />
+                                                        <span id="like-count-@products.Id" class="like-count" style="color:black;">@products.Interactions.NumberOfLikes</span>
                                                         <i class="fa-solid fa-thumbs-up like-icon" style="color:black; width:30px;height:30px;"></i>
                                                     </form>
 
                                                     <form asp-action="DecreaseLikeProduct" asp-controller="Product" method="post" style="display:inline;">
-                                                        <input type="hidden" name="productID" value="@product.Id" />
-                                                        <span id="dislike-count-@product.Id" class="dislike-count" style="color:black;">@product.Interactions.NumberOfDisLikes</span>
+                                                        <input type="hidden" name="productID" value="@products.Id" />
+                                                        <span id="dislike-count-@products.Id" class="dislike-count" style="color:black;">@products.Interactions.NumberOfDisLikes</span>
                                                         <i class="fa-solid fa-thumbs-down dislike-icon" style="color:black; width:30px;height:30px;"></i>
                                                     </form>
                                                 </div>
