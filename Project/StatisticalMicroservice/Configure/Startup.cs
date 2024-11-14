@@ -72,7 +72,7 @@ namespace StatisticalMicroservice.Configure
             services.AddAuthentication(options =>
             {
                 options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                /*options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;*/
             })
             .AddCookie("Cookies", options =>
             {

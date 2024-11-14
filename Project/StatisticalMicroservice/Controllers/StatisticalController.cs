@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using StatisticalMicroservice.Model.DTO;
@@ -19,6 +20,8 @@ namespace StatisticalMicroservice.Controllers
             _responseDTO = new ResponseDTO();
             _repo = repo;
         }
+
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
 
         [HttpGet]
         public async Task<IActionResult> GetAll(int? page, int pageSize)
