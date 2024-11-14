@@ -23,7 +23,9 @@ namespace UserMicroService.Controllers
         private readonly IUserService _userService = userService;
 
 
-        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,Roles = "Admin")]
+
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+
         [HttpGet]
         public async Task<ActionResult> GetAll(int? page, int pageSize)
         {
