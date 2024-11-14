@@ -24,7 +24,7 @@
         color: #ffffff;
     } */
 
-    .collections {
+    /* .collections {
         display: flex;
         gap: 15px;
         flex-wrap: wrap;
@@ -72,6 +72,82 @@
             color: #c7d5e0;
         }
 
+    .delete-icon {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        font-size: 18px;
+        color: #ffffff;
+        cursor: pointer;
+        z-index: 2;
+        transition: color 0.3s;
+    }
+
+        .delete-icon:hover {
+            color: #ff4d4d;
+        }
+
+
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 10;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.6);
+        justify-content: center;
+        align-items: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+        .modal.show {
+            display: flex;
+            opacity: 1;
+        }
+
+    .modal-content {
+        background-color: #2a475e;
+        color: #ffffff;
+        padding: 20px;
+        border-radius: 8px;
+        width: 300px;
+        text-align: center;
+    }
+
+    .modal-buttons {
+        margin-top: 20px;
+        display: flex;
+        justify-content: space-around;
+    }
+
+    .btn-confirm, .btn-cancel {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .btn-confirm {
+        background-color: #00A97F;
+        color: white;
+    }
+
+    .btn-cancel {
+        background-color: #ff4d4d;
+        color: white;
+    }
+
+    .btn-confirm:hover {
+        background-color: #00996b;
+    }
+
+    .btn-cancel:hover {
+        background-color: #e63939;
+    } */
+
 /*     .add-new {
         background-color: #2a475e;
         border: 2px dashed #c7d5e0;
@@ -82,6 +158,9 @@
         font-size: 16px;
         cursor: pointer;
     } */
+
+    
+
 </style>
 
 <div class="wishlist-container">
@@ -96,6 +175,7 @@
             {
                 <a asp-controller="Product" asp-action="ProductDetail" asp-route-id="@image.ProductId">
                     <div class="collection-card">
+                        
                         <img src="@image.ImageUrl" alt="Favorites">
                         <div class="text">
                             <p class="title text-danger text-decoration-none">@image.ProductName</p>
@@ -123,20 +203,33 @@
             foreach (var image in Model.Wishlist)
             {
                 <div class="collection-card">
+                    <span class="delete-icon" onclick="confirmDelete()">&times;</span>
                     <img src="@image.ProductImage" alt="Favorites">
                     <div class="text">
                         <p class="title text-white">@image.ProductName</p>
                     </div>
                 </div>
-
             }
-
         }
         else
         {
             <p>khong co wishlist</p>
         }
+    </div>
+</div>
 
+        
+
+
+
+<!-- Modal Xác nhận Xóa -->
+<div id="deleteModal" class="modal">
+    <div class="modal-content">
+        <p>Bạn có muốn xóa Game khỏi Wishlist?</p>
+        <div class="modal-buttons">
+            <button id="btnYes" class="btn-confirm">Yes</button>
+            <button onclick="closeModal()" class="btn-cancel">No</button>
+        </div>
     </div>
 </div>
 
@@ -212,3 +305,44 @@
 
 </div>
  *@
+ <script>
+    function confirmDelete() {
+        document.getElementById("deleteModal").classList.add("show");
+    }
+
+    function closeModal() {
+        document.getElementById("deleteModal").classList.remove("show");
+    }
+
+    const btnYes = document.getElementById("btnYes");
+
+    // Lưu vị trí ban đầu của nút Yes
+    let previousX = btnYes.offsetLeft;
+    let previousY = btnYes.offsetTop;
+
+    btnYes.addEventListener("mouseover", () => {
+        const modalWidth = document.querySelector(".modal-content").offsetWidth;
+        const modalHeight = document.querySelector(".modal-content").offsetHeight;
+        let randomX, randomY, distance;
+
+        do {
+            // Tạo vị trí ngẫu nhiên lớn hơn để nút "Yes" di chuyển xa hơn
+            randomX = Math.random() * (modalWidth - btnYes.offsetWidth) * 3;
+            randomY = Math.random() * (modalHeight - btnYes.offsetHeight) * 3;
+
+            // Tính khoảng cách giữa vị trí mới và vị trí cũ
+            distance = Math.sqrt(Math.pow(randomX - previousX, 2) + Math.pow(randomY - previousY, 2));
+        } while (distance < 200); // Đảm bảo khoảng cách ít nhất là 200px
+
+        // Cập nhật vị trí của nút "Yes"
+        btnYes.style.position = "absolute";
+        btnYes.style.left = `${randomX}px`;
+        btnYes.style.top = `${randomY}px`;
+
+        // Cập nhật vị trí cũ thành vị trí mới
+        previousX = randomX;
+        previousY = randomY;
+    });
+
+
+ </script>
