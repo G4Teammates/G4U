@@ -19,7 +19,7 @@ namespace StatisticalMicroservice.Controllers
             _responseDTO = new ResponseDTO();
             _repo = repo;
         }
-        [Authorize(Roles = "Admin")]
+        /*[Authorize(Roles = "Admin")]*/
         [HttpGet]
         public async Task<IActionResult> GetAll(int? page, int pageSize)
         {
