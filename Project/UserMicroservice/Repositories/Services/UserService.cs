@@ -428,6 +428,8 @@ namespace UserMicroservice.Repositories.Services
                 {
 
                     user.Wishlist.Add(_mapper.Map<UserWishlist>(userWishlistModel));
+                    _context.Users.Update(user);
+                    _context.SaveChanges();
                     response.Result = user;
                     return response;
                 }
