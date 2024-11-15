@@ -47,7 +47,7 @@ namespace Client.Controllers
         public readonly IOrderService _orderService = orderService;
 
         ICollection<ProductModel> productsAtCart = new List<ProductModel>();
-
+        CartModel cart = new();
 
 
         [HttpGet]
@@ -357,7 +357,7 @@ namespace Client.Controllers
         public IActionResult Cart(ProductViewModel product)
         {
             productsAtCart.Add(product.Prod);
-            CartModel cart = new();
+            
             cart.Products = productsAtCart;
             cart.Order = new OrderModel
             {
@@ -372,17 +372,24 @@ namespace Client.Controllers
                     Quantity = 1
                 }).ToList()
             };
-            return RedirectToAction("Payment","Order", cart);
+            return View(cart);
         }
 
 
-        public IActionResult CartRemoveProduct(ProductModel product)
+        public IActionResult CartRemoveProduct(string productId)
         {
+            var product = productsAtCart.FirstOrDefault(Id => Id.Id == productId);
             productsAtCart.Remove(product);
-            CartModel cart = new();
-            cart.Products = productsAtCart;
+            cart.Order.Items = productsAtCart.Select(x => new OrderItemModel
+            {
+                ProductId = x.Id,
+                ProductName = x.Name,
+                Price = x.Price,
+                PublisherName = x.UserName,
+                Quantity = 1
+            }).ToList();
 
-            return View(cart);
+            return RedirectToAction("Cart",cart);
         }
 
         [HttpGet]
