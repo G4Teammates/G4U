@@ -1023,6 +1023,14 @@ namespace ProductMicroservice.Repostories
             {
                 List<Products> products;
 
+                var listPro = await _db.Products.Where(p => p.Categories.Any(c => c.CategoryName.Contains(viewString))).ToListAsync();
+                if (listPro != null)
+                {
+                    products = listPro;
+                    response.IsSuccess = true;
+                    response.Result = _mapper.Map<List<Products>>(products);
+                    return response;
+                }
                 switch (viewString.ToLower())
                 {
                     case "discount":
@@ -1057,8 +1065,8 @@ namespace ProductMicroservice.Repostories
                             .OrderByDescending(p => p.CreatedAt)
                             .ToListAsync();
                         break;
-
                     default:
+
                         // Nếu không khớp với bất kỳ điều kiện nào, trả về thông báo không tìm thấy
                         response.IsSuccess = false;
                         response.Message = "Invalid view type";

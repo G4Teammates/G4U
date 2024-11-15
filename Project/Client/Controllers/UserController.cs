@@ -703,32 +703,21 @@ namespace Client.Controllers
             string un = claim.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value!;
             string i = claim.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value!;
             ResponseModel? ProResponese = await _productService.GetAllProductsByUserName(un);
-            ResponseModel? WishListResponse = await _userService.GetAllProductsInWishList(i);
+            /*ResponseModel? WishListResponse = await _userService.GetAllProductsInWishList(i);*/
             /*ResponseModel? response2 = await _userService.GetUserAsync(i);*/
 
+            // Kiểm tra và gán oderitem nếu ItemResponse thành công
             if (ProResponese != null && ProResponese.IsSuccess)
             {
-                // Deserialize vào lớp trung gian với kiểu ProductModel
-                //ProductModel? model = JsonConvert.DeserializeObject<ProductModel>(Convert.ToString(response.Result));
-                List<ProductModel>? ListProduct = JsonConvert.DeserializeObject<List<ProductModel>>(Convert.ToString(ProResponese.Result));
-                /*List<UsersDTO>? model1 = JsonConvert.DeserializeObject<List<UsersDTO>>(Convert.ToString(response1.Result));*/
-                List<WishlistModel>? Wishlist = JsonConvert.DeserializeObject<List<WishlistModel>>(Convert.ToString(WishListResponse.Result));
-
-                if (ListProduct != null)
-                {
-
-                    productViewModel.Product = ListProduct ?? new List<ProductModel>();
-                    /*productViewModel.User = model1 ?? new List<UsersDTO>();*/
-                    productViewModel.Wishlist = Wishlist ?? new List<WishlistModel>();
-                    productViewModel.userName = claim.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value!;
-                    productViewModel.userID = claim.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value!;
-                }
+                productViewModel.Product = JsonConvert.DeserializeObject<List<ProductModel>>(Convert.ToString(ProResponese.Result))
+                    ?? new List<ProductModel>();
             }
             else
             {
-                TempData["error"] = ProResponese?.Message + WishListResponse.Message ?? "Đã có lỗi xảy ra khi lấy thông tin sản phẩm.";
-                return NotFound();
+                // Nếu không có ItemResponse hợp lệ, gán danh sách trống
+                productViewModel.Product = new List<ProductModel>();
             }
+
 
             // Trả về View với ProductViewModel
             return View(productViewModel);
