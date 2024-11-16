@@ -1,4 +1,6 @@
 ﻿@using Client.Models.OrderModel
+@using Newtonsoft.Json
+@using System.Web
 @model CartModel
 
 
@@ -32,14 +34,18 @@
 
 
 <div class="container mt-5">
-    <form asp-action="Payment" class="row">
+    @* id="checkoutForm" *@
+    <form asp-action="Checkout" asp-controller="Order" class="row">
         <!-- Your Order Section -->
         <div class="col-lg-7">
             <h5 class="fw-bold text-success"><i class="fas fa-user"></i>YOUR ORDER</h5>
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            
-            
-            @if(Model!=null)
+            @* <input type="hidden" id="cartJson" name="cartJson" value="@Html.Raw(JsonConvert.SerializeObject(Model.Order))" /> *@
+            @*         <input type="hidden" id="cartJson" name="cartJson"
+            value="@Html.Raw(HttpUtility.HtmlEncode(JsonConvert.SerializeObject(Model)))" />
+            *@
+            <input hidden id="orderJson" name="orderJson" value='@Html.Raw(HttpUtility.HtmlEncode(JsonConvert.SerializeObject(Model)))' />
+            @if (Model != null)
             {
                 foreach (var item in Model.Order.Items)
                 {
@@ -48,7 +54,7 @@
                             <img src="@item.ImageUrl" alt="@item.ProductName" class="p-2 me-3 img-thumbnail" />
                             <div>
                                 <p class="mb-0 fw-bold">@item.ProductName</p>
-                                <a href="#" class="text-muted">Remove</a>
+                                <a asp-action="CartRemoveProduct" asp-route-productId="@item.ProductId" class="text-muted">Remove</a>
                             </div>
                             <div class="ms-auto fw-bold p-3">@item.Price.ToString("N0") vnđ</div>
                         </div>
@@ -57,28 +63,9 @@
             }
             else
             {
-              @*   <div class="custom-bg-light mt-3 shadow-sm border">
-                    <div class="d-flex align-items-center">
-                        <img src="" alt="Resident Evil 2" class="p-2 me-3" style="width:100px; height100px;" />
-                        <div>
-                            <p class="mb-0 fw-bold">Resident Evil 2</p>
-                            <a href="#" class="text-muted">Move to wishlist</a> |
-                            <a href="#" class="text-muted">Remove</a>
-                        </div>
-                        <div class="ms-auto fw-bold p-3">12 000 vnđ</div>
-                    </div>
-                </div>  *@
                 <div class="custom-bg-light mt-3 shadow-sm border">
                     Không có sản phẩm nào trong giỏ hàng
-                 @*    <div class="d-flex align-items-center">
-                        <img src="" alt="Resident Evil 2" class="p-2 me-3" style="width:100px; height100px;" />
-                        <div>
-                            <p class="mb-0 fw-bold">Resident Evil 2</p>
-                            <a href="#" class="text-muted">Move to wishlist</a> |
-                            <a href="#" class="text-muted">Remove</a>
-                        </div>
-                        <div class="ms-auto fw-bold p-3">12 000 vnđ</div>
-                    </div> *@
+
                 </div>
             }
 
@@ -93,7 +80,7 @@
         <!-- Your Payment & Gifting Details Section -->
         <div class="col-lg-5">
             <h5 class="fw-bold text-success"><i class="fas fa-user"></i>YOUR PAYMENT & GIFTING DETAILS</h5>
-            
+
             <div class="custom-bg-light p-3 mt-3 shadow-sm border">
                 <!-- Wallet Payment Method -->
                 <div class="form-check text-secondary  d-flex align-items-center">
@@ -113,14 +100,13 @@
             <div class="custom-bg-light p-3 shadow-sm border">
                 <!-- MoMo Payment Method -->
                 <div class="form-check text-secondary d-flex align-items-center">
-                    <input asp-for="@Model.PaymentMethod" value="Wallet" type="radio" id="momo" name="PaymentMethod" class="form-check-input">
-                    <label for="momo" class="form-check-label d-flex align-items-center">
+                    <input asp-for="PaymentMethod" value="Wallet" type="radio" id="momo" class="form-check-input" checked />                    <label for="momo" class="form-check-label d-flex align-items-center">
                         <img src="~/image/Logo-MoMo-Square.webp" alt="MoMo Logo" class="mx-3 payment-icon me-2 p" />
                         MOMO
                     </label>
                 </div>
             </div>
-             <div class="custom-bg-light p-3 shadow-sm border">
+            <div class="custom-bg-light p-3 shadow-sm border">
                 <!-- Payos Payment Method -->
                 <div class="form-check text-secondary d-flex align-items-center">
                     <input asp-for="@Model.PaymentMethod" value="CreditCard" type="radio" id="payos" name="PaymentMethod" class="form-check-input">
@@ -142,11 +128,10 @@
             <div class="custom-bg-light p-3 mt-3 shadow-sm border">
                 <!-- Total and Google Pay Button -->
                 <div class="d-flex align-items-center justify-content-between">
-                    <h4>12 000 vnđ</h4>
-                    <a class="btn btn-dark px-3 py-2 rounded-3" style="width: 200px;">
-                 @*        <img src="~/image/gpay-removebg-preview.png" alt="MoMo Logo" class="me-2" style="width: 50px; height:50px" /> *@
-                 Pay
-                    </a>
+                    <h4>@Model.Order.TotalPrice.ToString("N0") vnđ</h4>
+                    <button type="submit" class="btn btn-dark px-3 py-2 rounded-3" style="width: 200px;">
+                        Pay
+                    </button>
                 </div>
             </div>
         </div>
@@ -159,3 +144,50 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 }
+
+@* <script>
+    $(document).ready(function () {
+        $('#checkoutForm').on('submit', function (e) {
+            e.preventDefault(); // Ngăn form submit theo cách thông thường
+
+            // Lấy phương thức thanh toán từ form
+            const paymentMethod = $('#paymentMethod').val();
+
+            // Lấy dữ liệu từ cookie (nếu lưu giỏ hàng trong cookie)
+            const cartJson = getCookie('cart'); // Hàm getCookie để đọc cookie
+            if (!cartJson) {
+                alert("Cart is empty!");
+                return;
+            }
+
+            const cart = JSON.parse(cartJson);
+
+            // Cập nhật phương thức thanh toán vào cart
+            cart.paymentMethod = paymentMethod;
+
+            // Gửi dữ liệu qua AJAX
+            $.ajax({
+                url: '/Order/Checkout', // URL tới controller action xử lý
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(cart), // Chuyển dữ liệu thành JSON
+                success: function (response) {
+                    console.log('Order processed:', response);
+                    alert("Order successful!");
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error:', error);
+                    alert("Failed to process order!");
+                }
+            });
+        });
+    });
+
+    // Hàm để lấy cookie
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+    }
+
+</script> *@

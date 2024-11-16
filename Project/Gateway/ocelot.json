@@ -735,6 +735,21 @@
       "UpstreamHttpMethod": [ "Get" ]
     },
 
+
+     //Create order
+    {
+      "DownstreamPathTemplate": "/api/Order",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7297
+        }
+      ],
+      "UpstreamPathTemplate": "/Order",
+      "UpstreamHttpMethod": [ "Post" ]
+    },
+
     //Get by id
     {
       "DownstreamPathTemplate": "/api/Order/search/{id}",

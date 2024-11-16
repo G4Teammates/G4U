@@ -366,16 +366,6 @@
                                     <a href="#" class="btn btn-success align-content-center w-25 fw-bold">Play</a>
                                 </div>
                             }
-                            else if (Model.Prod.Discount == 0)
-                            {
-                                <div class="price-section">
-                                    <span class="original-price">
-                                        <input type="text" readonly asp-for="@Model.Prod.Price" />
-                                        @Model.Prod.Price
-                                    </span>
-                                    <span class="discounted-price">@Model.Prod.Price - (@Model.Prod.Price*@Model.Prod.Discount/100)</span>
-                                </div>
-                            }
                             else
                             {
                                 <span class="discount-rate">@Model.Prod.Discount%</span>
@@ -388,13 +378,16 @@
                                 </div>
                             }
                         </div>
-                        <form asp-action="Cart" asp-controller="User" class="align-content-center w-25 fw-bold">
+                        <form class="align-content-center w-25 fw-bold" asp-action="Cart" asp-controller="User">
                             <input type="text" hidden asp-for="Prod.Id" />
                             <input type="text" hidden asp-for="Prod.Name" />
                             <input type="text" hidden asp-for="Prod.UserName" />
                             <input type="text" hidden asp-for="Prod.Discount" />
                             <input type="text" hidden asp-for="Prod.Price" />
-
+                            @for (int i = 0; i < Model.Prod.Links.Count; i++)
+                            {
+                                <input type="hidden" name="Prod.Links[@i].Url" value="@Model.Prod.Links.ElementAt(i).Url" />
+                            }
                             <button type="submit" class="btn btn-success ">Add To Cart</button>
                         </form>
 
@@ -543,31 +536,31 @@
                                                             <img src="@firstImageUrl" alt="Cloudinary Image" class="img-fluid" style="width: 100%;" />
                                                         }
                                                     }
-                                                
-                                                <div class="info_other">
-                                                    <h1>@products.Name</h1>
-                                                    <p>
-                                                        @(products.Description.Length > 100
-                                                            ? products.Description.Substring(0, 100) + "..."
-                                                            : products.Description)
-                                                    </p>
-                                                   @*  <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@products.Id" class="btn_orther">Read More</a> *@
-                                                    <div class="row d-flex align-items-center justify-content-between">
-                                                        <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@products.Id" class="ms-3 col-md-5 text-center btn_orther">Read More</a>
-                                                        <div class="col-md-3"></div>
-                                                        @* Day la trai tym ne *@
-                                                        <div title="Wishlist" class="col-md-3 heart-container" style="width:20px;height:20px;transition: .3s;display: flex;justify-content: center;align-items: center;margin: 0 auto;">
-                                                            <form asp-controller="Admin" asp-action="AddWishList" method="post">
-                                                                <input type="hidden" name="ProductId" value="@products.Id" />
-                                                                <input type="hidden" name="ProductName" value="@products.Name" />
-                                                                <input type="hidden" name="ProductPrice" value="@products.Price" />
 
-                                                                @{
-                                                                    string secondImageUrl2 = null;
-                                                                    int imageCount2 = 0;
-                                                                }
-                                                                @foreach (var link in product.Links)
-                                                                {
+                                                    <div class="info_other">
+                                                        <h1>@products.Name</h1>
+                                                        <p>
+                                                            @(products.Description.Length > 100
+                                                                ? products.Description.Substring(0, 100) + "..."
+                                                                : products.Description)
+                                                        </p>
+                                                        @*  <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@products.Id" class="btn_orther">Read More</a> *@
+                                                        <div class="row d-flex align-items-center justify-content-between">
+                                                            <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@products.Id" class="ms-3 col-md-5 text-center btn_orther">Read More</a>
+                                                            <div class="col-md-3"></div>
+                                                            @* Day la trai tym ne *@
+                                                            <div title="Wishlist" class="col-md-3 heart-container" style="width:20px;height:20px;transition: .3s;display: flex;justify-content: center;align-items: center;margin: 0 auto;">
+                                                                <form asp-controller="Admin" asp-action="AddWishList" method="post">
+                                                                    <input type="hidden" name="ProductId" value="@products.Id" />
+                                                                    <input type="hidden" name="ProductName" value="@products.Name" />
+                                                                    <input type="hidden" name="ProductPrice" value="@products.Price" />
+
+                                                                    @{
+                                                                        string secondImageUrl2 = null;
+                                                                        int imageCount2 = 0;
+                                                                    }
+                                                                    @foreach (var link in product.Links)
+                                                                    {
                                                                         if (link.Url.Contains("cloudinary"))
                                                                         {
                                                                             imageCount2++;
@@ -984,6 +977,11 @@
             bindLikeDislikeEvents2()
         });
     @*  ajax hien thi comment moi *@
+
+
+
+
+
 
 </script>
 

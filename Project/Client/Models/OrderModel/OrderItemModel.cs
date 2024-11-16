@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations;
 
 namespace Client.Models.OrderModel
 {
@@ -41,6 +42,7 @@ namespace Client.Models.OrderModel
         /// <br/>
         /// <see cref="TotalPrice"/> = <see cref="Price"/> * <see cref="Quantity"/>
         /// </summary>
+        [JsonIgnore]
         public decimal TotalPrice => Price * Quantity;
 
         /// <summary>
@@ -50,6 +52,7 @@ namespace Client.Models.OrderModel
         /// <br/>
         /// <see cref="TotalProfit"/> = <see cref="TotalPrice"/> * <see cref="0.9"/>
         /// </summary>
+        [JsonIgnore]
         public decimal TotalProfit => TotalPrice * (decimal)0.9;
 
         /// <summary>
@@ -60,6 +63,8 @@ namespace Client.Models.OrderModel
         [Required(ErrorMessage = "Name is required")]
         [StringLength(256, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 2)]
         public required string PublisherName { get; set; }
+
+
         public string ImageUrl { get; set; }
 
         /// <summary>

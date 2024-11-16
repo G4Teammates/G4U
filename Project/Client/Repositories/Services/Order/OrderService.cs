@@ -9,7 +9,18 @@ namespace Client.Repositories.Services.Order
     public class OrderService(IBaseService baseService) : IOrderService
     {
         private readonly IBaseService _baseService = baseService;
-        public async Task<ResponseModel> GetAll()
+        
+        public async Task<ResponseModel> CreateOrder(CreateOrderModel model)
+        {
+            return await _baseService.SendAsync(new RequestModel()
+            {
+                ApiType = StaticTypeApi.ApiType.POST,
+                Data = model,
+                Url = StaticTypeApi.APIGateWay + "/Order"
+            });
+        }
+
+          public async Task<ResponseModel> GetAll()
         {
             return await _baseService.SendAsync(new RequestModel()
             {
