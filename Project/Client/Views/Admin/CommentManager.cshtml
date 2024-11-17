@@ -158,7 +158,6 @@
         <div class="d-flex justify-content-between mb-3">
             <form asp-action="SearchCmt" asp-controller="Admin" method="post" class="d-flex gap-2">
                 <input class="form-control" type="text" placeholder="Search by username..." name="searchString" style="width: 300px;" /> <!-- Tăng width cho input tên người dùng -->
-                <input class="form-control" type="date" name="searchDate" id="searchDate" lang="en-CA" style="width: 200px;" /> <!-- Tăng width cho input ngày tháng -->
                 <button class="btn btn-primary" style="width: 150px;" type="submit">Search</button>
             </form>
 
@@ -215,7 +214,7 @@
 
                         <td>
 
-                                <a asp-action="CommentDelete" asp-route-Id="@comment.Id" class="text-danger mx-2"> <i class="fas fa-trash"></i></a>
+                                <a asp-controller="Admin" asp-action="CommentDelete" asp-route-id="@comment.Id" class="text-danger mx-2"> <i class="fas fa-trash"></i></a>
                             @* <a asp-action="UsersDelete" asp-route-Id="@user.Id"> <i class="fas fa-trash"></i></a> *@
                         </td>
                     </tr>

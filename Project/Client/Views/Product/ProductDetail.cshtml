@@ -363,16 +363,6 @@
                                     <a href="#" class="btn btn-success align-content-center w-25 fw-bold">Play</a>
                                 </div>
                             }
-                            else if (Model.Prod.Discount == 0)
-                            {
-                                <div class="price-section">
-                                    <span class="original-price">
-                                        <input type="text" readonly asp-for="@Model.Prod.Price" />
-                                        @Model.Prod.Price
-                                    </span>
-                                    <span class="discounted-price">@Model.Prod.Price - (@Model.Prod.Price*@Model.Prod.Discount/100)</span>
-                                </div>
-                            }
                             else
                             {
                                 <span class="discount-rate">@Model.Prod.Discount%</span>
@@ -385,13 +375,16 @@
                                 </div>
                             }
                         </div>
-                        <form asp-action="Cart" asp-controller="User" class="align-content-center w-25 fw-bold">
+                        <form class="align-content-center w-25 fw-bold" asp-action="Cart" asp-controller="User">
                             <input type="text" hidden asp-for="Prod.Id" />
                             <input type="text" hidden asp-for="Prod.Name" />
                             <input type="text" hidden asp-for="Prod.UserName" />
                             <input type="text" hidden asp-for="Prod.Discount" />
                             <input type="text" hidden asp-for="Prod.Price" />
-
+                            @for (int i = 0; i < Model.Prod.Links.Count; i++)
+                            {
+                                <input type="hidden" name="Prod.Links[@i].Url" value="@Model.Prod.Links.ElementAt(i).Url" />
+                            }
                             <button type="submit" class="btn btn-success ">Add To Cart</button>
                         </form>
 
@@ -564,60 +557,131 @@
             @if (Model.Prod != null)
             {
                 var product = Model.Prod;
+                var cate = product.Categories.FirstOrDefault()?.CategoryName;
                 <div class="mt-3">
                     <section id="popular">
                         <div class="d-flex justify-content-between align-items-center">
                             <h3 style="font-size:2vw;">Same category</h3>
                             <div class="col-5 col-sm-5 col-md-5 footeer_card">
                                 <div class="btn_card" style="display:flex;justify-content:flex-end;" style="width:250px;font-size:font: 15px Montserrat;">
-                                    <a href="#" class="btn_orther" style="width:200px;font: 15px Montserrat;">View More</a>
+                                    <a asp-action="ViewAll" asp-controller="Product" asp-route-viewString="@cate" value="@cate" class="btn_orther" style="width:200px;font: 15px Montserrat;">View More</a>
                                 </div>
                             </div>
                         </div>
                         <div class="wrapper_other">
                             @if (Model.Product != null)
                             {
-                                // Lấy danh sách các danh mục của sản phẩm hiện tại
-                                var currentProductCategories = product.Categories.Select(c => c.CategoryName).ToList();
+                                // Lấy một danh mục ngẫu nhiên từ sản phẩm hiện tại
+                                var randomCategory = product.Categories
+                                .OrderBy(_ => Guid.NewGuid())
+                                .FirstOrDefault()?.CategoryName;
 
-                                // Lọc ra những sản phẩm thuộc cùng danh mục với sản phẩm hiện tại
-                                var filteredProducts = Model.Product
-                                .Where(p => p.Categories.Any(c => currentProductCategories.Contains(c.CategoryName))) // Kiểm tra danh mục trùng
-                                .ToList();
+                                // Kiểm tra nếu randomCategory có giá trị
+                                if (!string.IsNullOrEmpty(randomCategory))
+                                {
+                                    // Lọc ra những sản phẩm thuộc cùng danh mục với danh mục ngẫu nhiên này
+                                    var filteredProducts = Model.Product
+                                    .Where(p => p.Categories.Any(c => c.CategoryName == randomCategory)) // Kiểm tra danh mục trùng với danh mục ngẫu nhiên
+                                    .ToList();
 
-                                // Lấy ngẫu nhiên 3 sản phẩm
-                                var randomTopViewedProducts = filteredProducts
-                                .OrderBy(_ => Guid.NewGuid()) // Sắp xếp ngẫu nhiên
-                                .Take(3); // Lấy 3 sản phẩm
+                                    // Lấy ngẫu nhiên 3 sản phẩm
+                                    var randomTopViewedProducts = filteredProducts
+                                    .OrderBy(_ => Guid.NewGuid()) // Sắp xếp ngẫu nhiên
+                                    .Take(3); // Lấy 3 sản phẩm
 
-                                <div class="row">
-                                    @foreach (var products in randomTopViewedProducts)
-                                    {
-                                        <div class="col-12">
-                                            <!-- Đảm bảo mỗi sản phẩm đứng trên một hàng riêng biệt -->
-                                            <div class="card_other mt-4" style="width: 100%; height: 450px;">
-                                                @if (products.Links != null)
-                                                {
-                                                    string firstImageUrl = products.Links.FirstOrDefault(link => link.Url.Contains("cloudinary"))?.Url;
-                                                    if (firstImageUrl != null)
+                                    <div class="row">
+                                        @foreach (var products in randomTopViewedProducts)
+                                        {
+                                            <div class="col-12">
+                                                <!-- Đảm bảo mỗi sản phẩm đứng trên một hàng riêng biệt -->
+                                                <div class="card_other mt-4" style="width: 100%; height: 450px;">
+                                                    @if (products.Links != null)
                                                     {
-                                                        <img src="@firstImageUrl" alt="Cloudinary Image" class="img-fluid" style="width: 100%;" />
+                                                        string firstImageUrl = products.Links.FirstOrDefault(link => link.Url.Contains("cloudinary"))?.Url;
+                                                        if (firstImageUrl != null)
+                                                        {
+                                                            <img src="@firstImageUrl" alt="Cloudinary Image" class="img-fluid" style="width: 100%;" />
+                                                        }
                                                     }
-                                                }
-                                                <div class="info_other">
-                                                    <h1>@products.Name</h1>
-                                                    <p>
-                                                        @(products.Description.Length > 100
-                                                            ? products.Description.Substring(0, 100) + "..."
-                                                            : products.Description)
-                                                    </p>
-                                                    <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@products.Id" class="btn_orther">Read More</a>
+
+                                                    <div class="info_other">
+                                                        <h1>@products.Name</h1>
+                                                        <p>
+                                                            @(products.Description.Length > 100
+                                                                ? products.Description.Substring(0, 100) + "..."
+                                                                : products.Description)
+                                                        </p>
+                                                        @*  <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@products.Id" class="btn_orther">Read More</a> *@
+                                                        <div class="row d-flex align-items-center justify-content-between">
+                                                            <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@products.Id" class="ms-3 col-md-5 text-center btn_orther">Read More</a>
+                                                            <div class="col-md-3"></div>
+                                                            @* Day la trai tym ne *@
+                                                            <div title="Wishlist" class="col-md-3 heart-container" style="width:20px;height:20px;transition: .3s;display: flex;justify-content: center;align-items: center;margin: 0 auto;">
+                                                                <form asp-controller="Admin" asp-action="AddWishList" method="post">
+                                                                    <input type="hidden" name="ProductId" value="@products.Id" />
+                                                                    <input type="hidden" name="ProductName" value="@products.Name" />
+                                                                    <input type="hidden" name="ProductPrice" value="@products.Price" />
+
+                                                                    @{
+                                                                        string secondImageUrl2 = null;
+                                                                        int imageCount2 = 0;
+                                                                    }
+                                                                    @foreach (var link in product.Links)
+                                                                    {
+                                                                        if (link.Url.Contains("cloudinary"))
+                                                                        {
+                                                                            imageCount2++;
+                                                                            if (imageCount2 == 2) // Lấy hình ảnh thứ hai
+                                                                            {
+                                                                                secondImageUrl2 = link.Url;
+                                                                                break; // Thoát khỏi vòng lặp khi đã tìm thấy
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                    <input type="hidden" name="ProductImage" value="@secondImageUrl2" />
+
+                                                                    <button type="submit" class="btn-heart" style="border: none; background: transparent; padding: 0;">
+                                                                        <div class="svg-container">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" class="svg-outline" viewBox="0 0 24 24">
+                                                                                <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Zm-3.585,18.4a2.973,2.973,0,0,1-3.83,0C4.947,16.006,2,11.87,2,8.967a4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,11,8.967a1,1,0,0,0,2,0,4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,22,8.967C22,11.87,19.053,16.006,13.915,20.313Z"></path>
+                                                                            </svg>
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" class="svg-filled" viewBox="0 0 24 24">
+                                                                                <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Z"></path>
+                                                                            </svg>
+                                                                        </div>
+                                                                    </button>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Thêm phần số lượt view -->
+                                                <div class="view-count">
+                                                    <i class="fa-solid fa-eye" style="color:black;  width:30px;height:30px;"></i>
+                                                    <span style="color:black;">@products.Interactions.NumberOfViews</span>
+                                                </div>
+
+                                                <div class="like-dislike-container">
+                                                    <!-- Like và Dislike -->
+                                                    <form asp-action="IncreaseLikeProduct" asp-controller="Product" method="post" style="display:inline;">
+                                                        <input type="hidden" name="productID" value="@products.Id" />
+                                                        <span id="like-count-@products.Id" class="like-count" style="color:black;">@products.Interactions.NumberOfLikes</span>
+                                                        <i class="fa-solid fa-thumbs-up like-icon" style="color:black; width:30px;height:30px;"></i>
+                                                    </form>
+
+                                                    <form asp-action="DecreaseLikeProduct" asp-controller="Product" method="post" style="display:inline;">
+                                                        <input type="hidden" name="productID" value="@products.Id" />
+                                                        <span id="dislike-count-@products.Id" class="dislike-count" style="color:black;">@products.Interactions.NumberOfDisLikes</span>
+                                                        <i class="fa-solid fa-thumbs-down dislike-icon" style="color:black; width:30px;height:30px;"></i>
+                                                    </form>
                                                 </div>
                                             </div>
-                                        </div>
-                                    }
-                                </div>
+                                        }
+                                    </div>
+                                }
                             }
+
                         </div>
                     </section>
                 </div>
@@ -978,6 +1042,11 @@
             bindLikeDislikeEvents2()
         });
     @*  ajax hien thi comment moi *@
+
+
+
+
+
 
 </script>
 

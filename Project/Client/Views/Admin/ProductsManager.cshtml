@@ -128,12 +128,15 @@
 <div id="filterSidebar">
     <a href="javascript:void(0)" class="closebtn" onclick="closeSidebar()">&times;</a>
 
-    <form asp-action="FilterProducts" asp-controller="Admin" method="post" style="width:95%;margin:auto;">
+    <form asp-action="FilterProducts" asp-controller="Admin" method="post" style="width:95%;margin:auto;" id="filterForm">
         <!-- Price Filter -->
         <div class="filter-section mb-4">
             <h5 class="filter-title">Price</h5>
-            <input type="number" class="form-range form-control price-input" name="minRange" placeholder="Min price">
-            <input type="number" class="form-range form-control price-input mt-2" name="maxRange" placeholder="Max price">
+            <input type="number" class="form-range form-control price-input" name="minRange" id="minRange" placeholder="Min price">
+            <small id="minPriceError" class="text-danger d-none">Price cannot be less than 0.</small>
+
+            <input type="number" class="form-range form-control price-input mt-2" name="maxRange" id="maxRange" placeholder="Max price">
+            <small id="maxPriceError" class="text-danger d-none">Price cannot be less than 0.</small>
         </div>
 
         <!-- Category Filter -->
@@ -216,14 +219,14 @@
         <!-- Form sắp xếp sản phẩm với viền border -->
         <form class="col-md-4 sort-form d-flex justify-content-center align-items-center" asp-action="SortProducts" asp-controller="Admin" method="post">
             <select name="sort" class="form-select me-2 w-75" aria-label="Type">
-                <option value="ascPrice">Giá tăng dần</option>
-                <option value="descPrice">Giá giảm dần</option>
-                <option value="ascView">View tăng dần</option>
-                <option value="descView">View giảm dần</option>
-                <option value="ascLike">Like tăng dần</option>
-                <option value="descLike">Like giảm dần</option>
-                <option value="ascSold">Lượt mua tăng dần</option>
-                <option value="descSold">Lượt mua giảm dần</option>
+                <option value="ascPrice">Price Ascending</option>
+                <option value="descPrice">Price Descending</option>
+                <option value="ascView">View Ascending</option>
+                <option value="descView">View Descending</option>
+                <option value="ascLike">Like Ascending</option>
+                <option value="descLike">Like Descending</option>
+                <option value="ascSold">Purchase Count Ascending</option>
+                <option value="descSold">Purchase Count Descending</option>
             </select>
             <button type="submit" class="btn btn-primary">Sort</button>
         </form>
@@ -631,6 +634,38 @@
         });
     </script>
 
+    <script>
+        // Hàm kiểm tra và hiển thị lỗi
+        function validatePriceInput(inputElement, errorElement) {
+            if (inputElement.value < 0) {
+                errorElement.classList.remove('d-none');
+            } else {
+                errorElement.classList.add('d-none');
+            }
+        }
+
+        // Lấy các phần tử input và các phần tử thông báo lỗi
+        const minRange = document.getElementById('minRange');
+        const maxRange = document.getElementById('maxRange');
+        const minPriceError = document.getElementById('minPriceError');
+        const maxPriceError = document.getElementById('maxPriceError');
+
+        // Gắn sự kiện input để kiểm tra giá trị khi người dùng nhập
+        minRange.addEventListener('input', function () {
+            validatePriceInput(minRange, minPriceError);
+        });
+
+        maxRange.addEventListener('input', function () {
+            validatePriceInput(maxRange, maxPriceError);
+        });
+
+        // Ngăn form submit nếu có lỗi
+        document.getElementById('filterForm').addEventListener('submit', function (event) {
+            if (minRange.value < 0 || maxRange.value < 0) {
+                event.preventDefault();
+            }
+        });
+    </script>
 }
 
 

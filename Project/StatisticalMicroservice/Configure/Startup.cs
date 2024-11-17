@@ -6,6 +6,11 @@ using Azure.Identity;
 using MongoDB.Driver;
 using MongoDB.Bson;
 using StatisticalMicroservice.DBContexts;
+using StatisticalMicroservice.Model;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using System.Security.Claims;
 
 namespace StatisticalMicroservice.Configure
 {
@@ -53,6 +58,44 @@ namespace StatisticalMicroservice.Configure
             #region Register DI
 
             _ = services.AddDependencyInjection();
+
+            #endregion
+
+            #region Register Authentication
+            JwtOptionModel.Secret = config["9"]!;
+            JwtOptionModel.Issuer = config["10"]!;
+            JwtOptionModel.Audience = config["11"]!;
+
+           /* GoogleOptionModel.ClientId = config["12"]!;
+            GoogleOptionModel.ClientSecret = config["13"]!;*/
+
+            services.AddAuthentication(options =>
+            {
+                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                /*options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;*/
+            })
+            .AddCookie("Cookies", options =>
+            {
+                options.LoginPath = "/User/Login"; // Đường dẫn tới trang đăng nhập
+            })
+            .AddJwtBearer(options =>
+            {
+                options.RequireHttpsMetadata = false; // Để dev test, disable HTTPS
+                options.SaveToken = true;
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = JwtOptionModel.Issuer,
+                    ValidAudience = JwtOptionModel.Audience,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtOptionModel.Secret)),
+                    ClockSkew = TimeSpan.Zero,
+                    RoleClaimType = ClaimTypes.Role
+                };
+            });
+
 
             #endregion
 

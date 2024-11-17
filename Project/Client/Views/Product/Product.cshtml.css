@@ -1,6 +1,7 @@
 ﻿/*Cai nay là filter ne*/
 .filter-container {
-    border: 3px solid transparent; /* Đặt border là trong suốt để chỉ dùng gradient */
+    width: 100%;
+    border: 3px solid transparent; 
     border-radius: 10px;
     background: linear-gradient(#fff, #fff) padding-box, linear-gradient(135deg, #00A97F, #800080) border-box;
     box-shadow: 0 0 10px rgba(0, 169, 127, 0.8), 0 0 20px rgba(128, 0, 128, 0.5);
@@ -16,8 +17,36 @@
 
 .filter-title {
     color: #00A97F;
+    font-size: 1rem;
     font-weight: bold;
+    margin-bottom: 10px;
 }
+.price-input {
+    outline: none; /* Loại bỏ outline mặc định khi nhấn vào */
+}
+
+    .price-input:focus {
+        border-color: #007bff; /* Tùy chỉnh màu viền khi nhấn vào nếu muốn */
+        box-shadow: none; /* Loại bỏ hiệu ứng đổ bóng mặc định của Bootstrap */
+        outline: none;
+    }
+
+.filter-section input,
+.filter-section select {
+    border-radius: 4px;
+    height: 38px;
+    border: 1px solid #ced4da;
+}
+
+    .filter-section input::placeholder {
+        color: #888;
+    }
+
+.form-select {
+    padding: 5px 10px;
+    border-radius: 4px;
+}
+
 
 .btn-primary {
     background-color: #00A97F;

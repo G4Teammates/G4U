@@ -29,6 +29,7 @@ using Client.Models.Statistical;
 using System.Security.Claims;
 
 
+
 namespace Client.Controllers
 {
 
@@ -92,7 +93,7 @@ namespace Client.Controllers
         //    return View();
         //}
         #region Admindasboard
-        public async Task<IActionResult> AdminDashboard(int? page, int pageSize = 5)
+        public async Task<IActionResult> AdminDashboard(int? page, int pageSize = 99)
         {
             int pageNumber = page ?? 1;
             AllModel statistical = new();
@@ -795,7 +796,7 @@ namespace Client.Controllers
                 if (response != null && response.IsSuccess)
                 {
                     productViewModel.Product = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response.Result.ToString()!));
-                    productViewModel.CategoriesModel = JsonConvert.DeserializeObject<ICollection<CategoriesModel>>(Convert.ToString(response.Result.ToString()!));
+                    productViewModel.CategoriesModel = JsonConvert.DeserializeObject<ICollection<CategoriesModel>>(Convert.ToString(response3.Result.ToString()!));
                     var data = productViewModel.Product;
                     productViewModel.pageNumber = pageNumber;
                     productViewModel.totalItem = data.Count;
@@ -1316,16 +1317,17 @@ namespace Client.Controllers
                 return StatusCode(500); // Trả về view với dữ liệu đã nhập và lỗi
             }
         }
-        public async Task<IActionResult> CommentDelete(string id)
+        public async Task<IActionResult> CommentDelete(string id, int? page, int pageSize = 999)
         {
-            ResponseModel? response = await _commentService.GetByIdAsync(id);
+            int pageNumber = (page ?? 1);
+            ResponseModel? response = await _commentService.GetListByIdAsync(id, pageNumber, pageSize);
 
             if (response != null && response.IsSuccess)
             {
-                CommentDTOModel? model = JsonConvert.DeserializeObject<CommentDTOModel>(Convert.ToString(response.Result));
+                List<CommentDTOModel>? commentsModel = JsonConvert.DeserializeObject<List<CommentDTOModel>>(Convert.ToString(response.Result));
                 TempData["success"] = "Get comment for update successfully";
-                
-                return View(model);
+                ViewBag.Comments = commentsModel;  // Gán dữ liệu vào ViewBag
+                return View();
             }
             else
             {
@@ -1392,6 +1394,37 @@ namespace Client.Controllers
             }
 
             return View("CommentManager", cmtViewModel); // Trả về view ProductsManager với danh sách sản phẩm đã tìm kiếm
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddWishList(WishlistModel wishlist)
+        {
+            IEnumerable<Claim> claim = HttpContext.User.Claims;
+            string un = claim.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value!;
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors)
+                                              .Select(e => e.ErrorMessage);
+                return Json(new { success = false, errors = errors });
+            }
+
+            try
+            {
+                var response = await _userService.AddToWishList(wishlist, un);
+
+                if (response != null && response.IsSuccess)
+                {
+                    return Json(new { success = true, message = "Add Wishlist successfully" });
+                }
+                else
+                {
+                    return Json(new { success = false, message = response?.Message ?? "An unknown error occurred." });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"An error occurred: {ex.Message}" });
+            }
         }
         #endregion
     }

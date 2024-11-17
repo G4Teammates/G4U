@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Client.Models.OrderModel;
 
 namespace Client.Configure
 {
@@ -22,7 +23,7 @@ namespace Client.Configure
                 //Register mapper here⬇️
 
                 //cfg.AllowNullCollections = true;
-                //cfg.CreateMap<User, UserModel>().ReverseMap();
+                cfg.CreateMap<OrderModel, CreateOrderModel>().ReverseMap();
                 //Register mapper here⬆️
             });
         }

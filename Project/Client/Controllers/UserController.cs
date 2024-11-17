@@ -48,8 +48,6 @@ namespace Client.Controllers
 
         ICollection<ProductModel> productsAtCart = new List<ProductModel>();
 
-
-
         [HttpGet]
         public IActionResult Login()
         {
@@ -348,41 +346,113 @@ namespace Client.Controllers
         }
 
         [HttpGet]
-        public IActionResult Cart(CartModel model)
+        public IActionResult Cart()
         {
+            // Đọc cookie giỏ hàng
+            string cartJson = HttpContext.Request.Cookies["cart"];
+            CartModel cart = new();
+            if (!string.IsNullOrEmpty(cartJson))
+            {
+                // Chuyển đổi JSON thành đối tượng CartViewModel
+                cart = JsonConvert.DeserializeObject<CartModel>(cartJson);
+
+                return View(cart);
+            }
+
             return View();
+            // Truyền dữ liệu vào View
         }
+
 
         [HttpPost]
         public IActionResult Cart(ProductViewModel product)
         {
-            productsAtCart.Add(product.Prod);
+            // Đọc cookie giỏ hàng
+            string cartJsonCookie = HttpContext.Request.Cookies["cart"];
             CartModel cart = new();
-            cart.Products = productsAtCart;
-            cart.Order = new OrderModel
+
+            if (!string.IsNullOrEmpty(cartJsonCookie))
             {
-                CustomerId = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)!.Value,
-                TotalPrice = productsAtCart.Sum(x => x.Price),
-                Items = productsAtCart.Select(x => new OrderItemModel
+                // Chuyển đổi JSON thành đối tượng CartModel
+                cart = JsonConvert.DeserializeObject<CartModel>(cartJsonCookie);
+            }
+            // Nếu giỏ hàng chưa được khởi tạo thì khởi tạo mới
+            if (cart.Order == null)
+            {
+                cart.Order = new OrderModel
                 {
-                    ProductId = x.Id,
-                    ProductName = x.Name,
-                    Price = x.Price,
-                    PublisherName = x.UserName,
-                    Quantity = 1
-                }).ToList()
+                    Items = new List<OrderItemModel>(),
+                    TotalPrice = 0,
+                    CustomerId = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value
+                };
+            }
+
+            // Thêm sản phẩm vào giỏ hàng
+            var newItem = new OrderItemModel
+            {
+                ProductId = product.Prod.Id,
+                ProductName = product.Prod.Name,
+                Price = product.Prod.Price,
+                PublisherName = product.Prod.UserName,
+                Quantity = 1,
+                ImageUrl = product.Prod.Links.FirstOrDefault(link => link.Url.Contains("cloudinary"))?.Url
             };
+
+            // Kiểm tra xem sản phẩm đã tồn tại trong giỏ hàng chưa
+            var existingItem = cart.Order.Items.FirstOrDefault(x => x.ProductId == newItem.ProductId);
+            if (existingItem != null)
+            {
+                // Nếu đã tồn tại, tăng số lượng
+                existingItem.Quantity += 1;
+            }
+            else
+            {
+                // Nếu chưa, thêm mới vào danh sách
+                cart.Order.Items.Add(newItem);
+            }
+
+            // Cập nhật tổng giá
+            cart.Order.TotalPrice = cart.Order.Items.Sum(x => x.Price * x.Quantity);
+
+            // Lưu giỏ hàng vào cookie
+            string cartJson = JsonConvert.SerializeObject(cart);
+            HttpContext.Response.Cookies.Append("cart", cartJson, new CookieOptions
+            {
+                HttpOnly = true // Bảo vệ cookie không bị truy cập bởi JavaScript
+            });
+
+            // Trả về dữ liệu giỏ hàng dạng JSON
+            return View(cart);
             return RedirectToAction("Payment", "Order", cart);
         }
 
 
-        public IActionResult CartRemoveProduct(ProductModel product)
-        {
-            productsAtCart.Remove(product);
-            CartModel cart = new();
-            cart.Products = productsAtCart;
 
-            return View(cart);
+
+        public IActionResult CartRemoveProduct(string productId)
+        {
+            string cartJsonCookie = HttpContext.Request.Cookies["cart"];
+            CartModel cart = new();
+
+            if (!string.IsNullOrEmpty(cartJsonCookie))
+            {
+                // Chuyển đổi JSON thành đối tượng CartModel
+                cart = JsonConvert.DeserializeObject<CartModel>(cartJsonCookie);
+            }
+            var itemDelele = cart.Order.Items.FirstOrDefault(id => id.ProductId == productId);
+            if(itemDelele!=null)
+            cart.Order.Items.Remove(itemDelele);
+
+            cart.Order.TotalPrice = cart.Order.Items.Sum(x => x.Price * x.Quantity);
+
+            // Lưu giỏ hàng vào cookie
+            string cartJson = JsonConvert.SerializeObject(cart);
+            HttpContext.Response.Cookies.Append("cart", cartJson, new CookieOptions
+            {
+                HttpOnly = true // Bảo vệ cookie không bị truy cập bởi JavaScript
+            });
+
+            return RedirectToAction("Cart");
         }
 
         [HttpGet]
@@ -718,32 +788,21 @@ namespace Client.Controllers
             string un = claim.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value!;
             string i = claim.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value!;
             ResponseModel? ProResponese = await _productService.GetAllProductsByUserName(un);
-            ResponseModel? WishListResponse = await _userService.GetAllProductsInWishList(i);
+            /*ResponseModel? WishListResponse = await _userService.GetAllProductsInWishList(i);*/
             /*ResponseModel? response2 = await _userService.GetUserAsync(i);*/
 
+            // Kiểm tra và gán oderitem nếu ItemResponse thành công
             if (ProResponese != null && ProResponese.IsSuccess)
             {
-                // Deserialize vào lớp trung gian với kiểu ProductModel
-                //ProductModel? model = JsonConvert.DeserializeObject<ProductModel>(Convert.ToString(response.Result));
-                List<ProductModel>? ListProduct = JsonConvert.DeserializeObject<List<ProductModel>>(Convert.ToString(ProResponese.Result));
-                /*List<UsersDTO>? model1 = JsonConvert.DeserializeObject<List<UsersDTO>>(Convert.ToString(response1.Result));*/
-                List<WishlistModel>? Wishlist = JsonConvert.DeserializeObject<List<WishlistModel>>(Convert.ToString(WishListResponse.Result));
-
-                if (ListProduct != null)
-                {
-
-                    productViewModel.Product = ListProduct ?? new List<ProductModel>();
-                    /*productViewModel.User = model1 ?? new List<UsersDTO>();*/
-                    productViewModel.Wishlist = Wishlist ?? new List<WishlistModel>();
-                    productViewModel.userName = claim.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value!;
-                    productViewModel.userID = claim.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value!;
-                }
+                productViewModel.Product = JsonConvert.DeserializeObject<List<ProductModel>>(Convert.ToString(ProResponese.Result))
+                    ?? new List<ProductModel>();
             }
             else
             {
-                TempData["error"] = ProResponese?.Message + WishListResponse.Message ?? "Đã có lỗi xảy ra khi lấy thông tin sản phẩm.";
-                return NotFound();
+                // Nếu không có ItemResponse hợp lệ, gán danh sách trống
+                productViewModel.Product = new List<ProductModel>();
             }
+
 
             // Trả về View với ProductViewModel
             return View(productViewModel);

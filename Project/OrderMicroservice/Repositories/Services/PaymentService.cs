@@ -18,9 +18,9 @@ namespace OrderMicroservice.Repositories.Services
         private static readonly HttpClient client = new();
         private static readonly string Gateway = "https://localhost:7296";
         private static readonly string MoMoGateway = "https://test-payment.momo.vn/v2/gateway/api/create";
-        private static readonly string IpnMomo = "https://5960-2402-800-63b6-b08e-5931-a421-6cbb-8c20.ngrok-free.app" + "/api/payment/ipn/momo";
+        private static readonly string IpnMomo = "https://ffc6-2402-800-63b6-f762-b8a7-7d2d-985a-a42e.ngrok-free.app" + "/api/payment/ipn/momo";
 
-        public async Task<ResponseModel> MoMoPayment(string id, long amount)
+        public async Task<ResponseModel> MoMoPayment(MoMoRequestFromClient requestClient)
         {
             ResponseModel response = new();
             string requestId = Guid.NewGuid().ToString();
@@ -35,8 +35,8 @@ namespace OrderMicroservice.Repositories.Services
                     partnerCode = "MOMO",
                     redirectUrl = $"{Gateway}/Order/PaymentSuccess",
                     ipnUrl = IpnMomo,
-                    amount = amount,
-                    orderId = id,
+                    amount = requestClient.Amount,
+                    orderId = requestClient.Id,
                     requestId = requestId,
                     extraData = "",
                     partnerName = "MoMo Payment",

@@ -115,7 +115,7 @@ namespace Client.Controllers
                 if (response != null && response.IsSuccess)
                 {
                     productViewModel.Product = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response.Result.ToString()!));
-                    productViewModel.CategoriesModel = JsonConvert.DeserializeObject<ICollection<CategoriesModel>>(Convert.ToString(response.Result.ToString()!));
+                    productViewModel.CategoriesModel = JsonConvert.DeserializeObject<ICollection<CategoriesModel>>(Convert.ToString(response3.Result.ToString()!));
                     var data = productViewModel.Product;
                     productViewModel.pageNumber = pageNumber;
                     productViewModel.totalItem = data.Count;
@@ -464,39 +464,44 @@ namespace Client.Controllers
             ProductViewModel productViewModel = new ProductViewModel();
             string un = claim.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value!;
             string i = claim.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value!;
+
+            // Lấy các response từ các service
             ResponseModel? ProResponese = await _productService.GetAllProductsByUserName(un);
             ResponseModel? ItemResponse = await _orderService.GetItemsByCustomerId(i);
             ResponseModel? WishListResponse = await _userService.GetAllProductsInWishList(i);
-            /*ResponseModel? response2 = await _userService.GetUserAsync(i);*/
 
-            if (ProResponese != null && ProResponese.IsSuccess)
+            // Kiểm tra và gán oderitem nếu ItemResponse thành công
+            if (ItemResponse != null && ItemResponse.IsSuccess)
             {
-                // Deserialize vào lớp trung gian với kiểu ProductModel
-                //ProductModel? updateProductModel = JsonConvert.DeserializeObject<ProductModel>(Convert.ToString(response.Result));
-                List<ProductModel>? ListProduct = JsonConvert.DeserializeObject<List<ProductModel>>(Convert.ToString(ProResponese.Result));
-                /*List<UsersDTO>? model1 = JsonConvert.DeserializeObject<List<UsersDTO>>(Convert.ToString(response1.Result));*/
-                List<OrderItemModel>? Item = JsonConvert.DeserializeObject<List<OrderItemModel>>(Convert.ToString(ItemResponse.Result));
-                List<WishlistModel>? Wishlist = JsonConvert.DeserializeObject<List<WishlistModel>>(Convert.ToString(WishListResponse.Result));
-                if (ListProduct != null)
-                {
-
-                    productViewModel.Product = ListProduct ?? new List<ProductModel>();
-                    /*productViewModel.User = model1 ?? new List<UsersDTO>();*/
-                    productViewModel.oderitem = Item ?? new List<OrderItemModel>();
-                    productViewModel.Wishlist = Wishlist ?? new List<WishlistModel>();
-                    productViewModel.userName = claim.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value!;
-                    productViewModel.userID = claim.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value!;
-                }
+                productViewModel.oderitem = JsonConvert.DeserializeObject<List<OrderItemModel>>(Convert.ToString(ItemResponse.Result))
+                    ?? new List<OrderItemModel>();
             }
             else
             {
-                TempData["error"] = ProResponese?.Message + ItemResponse.Message + WishListResponse.Message ?? "Đã có lỗi xảy ra khi lấy thông tin sản phẩm.";
-                return NotFound();
+                // Nếu không có ItemResponse hợp lệ, gán danh sách trống
+                productViewModel.oderitem = new List<OrderItemModel>();
             }
+
+            // Kiểm tra và gán Wishlist nếu WishListResponse thành công
+            if (WishListResponse != null && WishListResponse.IsSuccess)
+            {
+                productViewModel.Wishlist = JsonConvert.DeserializeObject<List<WishlistModel>>(Convert.ToString(WishListResponse.Result))
+                    ?? new List<WishlistModel>();
+            }
+            else
+            {
+                // Nếu không có WishListResponse hợp lệ, gán danh sách trống
+                productViewModel.Wishlist = new List<WishlistModel>();
+            }
+
+            // Thêm các thông tin khác vào ProductViewModel
+            productViewModel.userName = un;
+            productViewModel.userID = i;
 
             // Trả về View với ProductViewModel
             return View(productViewModel);
         }
+
 
         [HttpPost]
         public async Task<IActionResult> IncreaseLikeProduct(string productID)
@@ -597,6 +602,45 @@ namespace Client.Controllers
 
                 return writer.GetStringBuilder().ToString();
             }
+        }
+
+        public async Task<IActionResult> ViewAll(string viewString)
+        {
+            IEnumerable<Claim> claim = HttpContext.User.Claims;
+            ProductViewModel productViewModel = new ProductViewModel();
+
+            ResponseModel? productReponse = await _productService.ViewMore(viewString);
+
+
+            if (productReponse != null && productReponse.IsSuccess)
+            {
+                List<ProductModel>? ProductsModel = JsonConvert.DeserializeObject<List<ProductModel>>(Convert.ToString(productReponse.Result));
+                var total = ProductsModel.Count;
+                int pageSize = 5;
+                if (ProductsModel != null)
+                {
+                    
+
+                    productViewModel.Product = ProductsModel ?? new List<ProductModel>();
+                    // Gán danh sách comments vào ProductViewModel
+                   
+                    productViewModel.userName = claim.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value!;
+                    var data = productViewModel.Product;
+                    productViewModel.pageNumber = 1;
+                    productViewModel.totalItem = data.Count;
+                    productViewModel.pageSize = pageSize;
+                    productViewModel.pageCount = (int)Math.Ceiling(total / (double)pageSize);
+                    TempData["success"] = "Sort Products successfully";
+                }
+            }
+            else
+            {
+                TempData["error"] = productReponse?.Message ?? "Đã có lỗi xảy ra khi lấy thông tin sản phẩm.";
+                return NotFound();
+            }
+
+            // Trả về View với ProductViewModel
+            return View("Product",productViewModel);
         }
 
     }
