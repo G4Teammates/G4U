@@ -30,12 +30,12 @@ using System.Collections.ObjectModel;
 namespace Client.Controllers
 {
     public class UserController(
-        IAuthenticationService authenService, 
-        IUserService userService, 
-        ITokenProvider tokenProvider, 
-        IHelperService helperService, 
-        IRepoProduct repoProduct, 
-        ICategoriesService categoriesService, 
+        IAuthenticationService authenService,
+        IUserService userService,
+        ITokenProvider tokenProvider,
+        IHelperService helperService,
+        IRepoProduct repoProduct,
+        ICategoriesService categoriesService,
         IOrderService orderService) : Controller
     {
         private readonly IAuthenticationService _authenService = authenService;
@@ -372,7 +372,7 @@ namespace Client.Controllers
                     Quantity = 1
                 }).ToList()
             };
-            return RedirectToAction("Payment","Order", cart);
+            return RedirectToAction("Payment", "Order", cart);
         }
 
 
@@ -448,7 +448,7 @@ namespace Client.Controllers
                     throw new Exception("Không thấy game nào có ID vậy hết");
                 }
                 ProductModel? product = JsonConvert.DeserializeObject<ProductModel>(Convert.ToString(responsee.Result));
-                
+
                 if (updateProductModel.Links == null)
                 {
                     updateProductModel.Links = product.Links.ToList();
@@ -471,10 +471,10 @@ namespace Client.Controllers
                 // Gọi service UpdateProduct từ phía Client
                 var response = await _productService.UpdateProductAsync(
                     updateProductModel.Id, updateProductModel.Name, updateProductModel.Description, updateProductModel.Price, updateProductModel.Sold,
-                   numOfView, numOfLike,numOfDisLike, updateProductModel.Discount,
+                   numOfView, numOfLike, numOfDisLike, updateProductModel.Discount,
                     updateProductModel.Links, updateProductModel.Categories, (int)updateProductModel.Platform,
                     (int)updateProductModel.Status, updateProductModel.CreatedAt, updateProductModel.ImageFiles,
-                    request, updateProductModel.UserName,updateProductModel.Interactions.UserLikes, updateProductModel.Interactions.UserDisLikes);
+                    request, updateProductModel.UserName, updateProductModel.Interactions.UserLikes, updateProductModel.Interactions.UserDisLikes);
 
                 if (response.IsSuccess)
                 {
@@ -654,7 +654,29 @@ namespace Client.Controllers
                 else
                 {
                     TempData["error"] = response?.Message ?? "An unknown error occurred.";
-                    return RedirectToAction(nameof(UploadProduct), new {updateProductModel = updateProductModel});
+                    return RedirectToAction(nameof(UploadProduct), new { updateProductModel = updateProductModel });
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = $"An error occurred: {ex.Message}";
+                return RedirectToAction(nameof(UserDashboard));
+            }
+        }
+
+        public async Task<IActionResult> DeleteProduct(string id)
+        {
+            try
+            {
+                ResponseModel? response = await _productService.DeleteProductAsync(id);
+                if (response != null && response.IsSuccess)
+                {
+                    TempData["success"] = "Product deleted successfully";
+                    return RedirectToAction(nameof(UserDashboard));
+                }
+                else
+                {
+                    throw new Exception(response?.Message);
                 }
             }
             catch (Exception ex)
