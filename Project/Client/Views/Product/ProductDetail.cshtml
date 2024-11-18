@@ -3,7 +3,7 @@
 
 @{
     var HasOwned = ViewBag.HasOwned;
-    List<string> LinkDownload = ViewBag.UrlsDownLoad as List<string>;
+    List<LinkModel> LinkDownload = ViewBag.UrlsDownLoad as List<LinkModel>;
 }
 
 <style>
@@ -360,7 +360,7 @@
                                             <span class="discounted-price">Free</span>
                                         </div>
                                     </div>
-                                    <a href="#" class="btn btn-success align-content-center w-25 fw-bold">Play</a>
+                                    <a data-bs-toggle="modal" data-bs-target="#downloadModal" class="btn btn-success align-content-center w-25 fw-bold">Play</a>
                                 </div>
                             }
                             else
@@ -1042,12 +1042,6 @@
             bindLikeDislikeEvents2()
         });
     @*  ajax hien thi comment moi *@
-
-
-
-
-
-
 </script>
 
 
@@ -1064,20 +1058,29 @@
             </div>
             <!-- Body -->
             <div class="modal-body">
-                <div class="d-flex align-items-center">
-                    <!-- Download Button -->
-                    <button class="btn btn-success me-3">Download</button>
+                @if (LinkDownload != null)
+                {
+                    @if (LinkDownload.Count != 0)
+                    {
+                        foreach (var item in LinkDownload)
+                        {
+                            <div class="d-flex align-items-center mb-3">
+                                <!-- Download Button -->
+                                <a class="btn btn-success me-3" href="@item.Url">Download</a>
 
-                    <!-- File Info -->
-                    <div>
-                        <p class="mb-1 fw-bold">IgnitedEntry</p>
-                        <p class="mb-1 text-secondary">363 MB</p>
-                        <div>
-                            <!-- Platform Icon -->
-                            <i class="bi bi-windows fs-5 text-success" title="Windows"></i>
-                        </div>
-                    </div>
-                </div>
+                                <!-- File Info -->
+                                <div class="align-content-center"> 
+                                    <span class="d-inline-block text-truncate" style="max-width: 300px;">@item.Url</span>
+                                    @* <p class="mb-1 text-secondary">363 MB</p> *@
+@*                                     <div>
+                                        <!-- Platform Icon -->
+                                        <i class="bi bi-windows fs-5 text-success" title="Windows"></i>
+                                    </div> *@
+                                </div>
+                            </div>
+                        }
+                    }
+                }
 
                 <!-- Timestamp -->
                 <div class="mt-3">
