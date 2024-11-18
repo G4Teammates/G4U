@@ -342,7 +342,7 @@
                                     <span class="discounted-price">Owned</span>
                                 </div>
                             </div>
-                            <a href="@LinkDownload[0]" class="btn btn-success align-content-center w-25 fw-bold">Play</a>
+                            <a data-bs-toggle="modal" data-bs-target="#downloadModal" class="btn btn-success align-content-center w-25 fw-bold">Play</a>
                         </div>
                     }
                 }
@@ -1049,4 +1049,47 @@
 
 
 </script>
+
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="downloadModal" tabindex="-1" aria-labelledby="downloadModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <!-- Header -->
+            <div class="modal-header bg-light">
+                <h5 class="modal-title text-success" id="downloadModalLabel">Download File</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <!-- Body -->
+            <div class="modal-body">
+                <div class="d-flex align-items-center">
+                    <!-- Download Button -->
+                    <button class="btn btn-success me-3">Download</button>
+
+                    <!-- File Info -->
+                    <div>
+                        <p class="mb-1 fw-bold">IgnitedEntry</p>
+                        <p class="mb-1 text-secondary">363 MB</p>
+                        <div>
+                            <!-- Platform Icon -->
+                            <i class="bi bi-windows fs-5 text-success" title="Windows"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Timestamp -->
+                <div class="mt-3">
+                    <p class="mb-0 text-secondary"><i class="bi bi-clock"></i> 56 days ago</p>
+                </div>
+
+                <!-- Help Link -->
+                <div class="mt-2">
+                    <a href="#" class="text-success text-decoration-none">Download not starting?</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
