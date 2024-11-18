@@ -20,6 +20,7 @@
         DebitCard,
         NetBanking,
         UPI,
-        Wallet
+        Wallet,
+        Free
     }
 }
