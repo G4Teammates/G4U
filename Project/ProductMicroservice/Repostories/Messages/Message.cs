@@ -5,6 +5,9 @@ using System.Text;
 using System.Text.Json;
 using ProductMicroservice.DBContexts.Entities;
 using ProductMicroservice.Models.Message;
+using ProductMicroservice.Models;
+using ProductMicroservice.Models.DTO;
+using System;
 
 namespace ProductMicroservice.Repostories.Messages
 {
@@ -14,6 +17,7 @@ namespace ProductMicroservice.Repostories.Messages
         private readonly IServiceScopeFactory _scopeFactory;
         public event Action<CategoryCheckExistResponse> OnCategoryResponseReceived;
         public event Action<UserCheckExistResponse> OnUserResponseReceived;
+        public event Action<OrderItemsResponse> OnOrderItemsResponseReceived;
 
         public Message(IServiceScopeFactory scopeFactory)
         {
@@ -478,6 +482,97 @@ namespace ProductMicroservice.Repostories.Messages
         }
         #endregion
 
+        #region receive-order-to-product
+        public void ReceiveMessageSoldProduct()
+        {
+            try
+            {
+                // tên cổng
+                /*const string ExchangeName = "delete_category";*/
+                // tên queue
+                const string QueueName = "order_for_sold_product";
+
+                var connectionFactory = new ConnectionFactory
+                {
+                    UserName = "guest",
+                    Password = "guest",
+                    VirtualHost = "/",
+                    Port = 5672,
+                    HostName = "localhost"
+                };
+
+                using var connection = connectionFactory.CreateConnection();
+                using var channel = connection.CreateModel();
+
+                var queue = channel.QueueDeclare(
+                    queue: QueueName,
+                    durable: false,
+                    exclusive: false,
+                    autoDelete: false,
+                    arguments: ImmutableDictionary<string, object>.Empty);
+
+                var consumer = new EventingBasicConsumer(channel);
+
+                consumer.Received += async (model, EventArgs) =>
+                {
+                    var boby = EventArgs.Body.ToArray();
+                    var message = Encoding.UTF8.GetString(boby);
+                    // Giải quyết vấn đề chuỗi bị "escape"
+                    if (message.StartsWith("\"") && message.EndsWith("\""))
+                    {
+                        // Nếu chuỗi bắt đầu và kết thúc bằng dấu ngoặc kép, hãy giải tuần tự hóa nó
+                        message = JsonSerializer.Deserialize<string>(message);
+                    }
+                    if (!string.IsNullOrEmpty(message))
+                    {
+                        Console.WriteLine("Product received message: " + message);
+
+                        // Deserialize JSON message to CategoryDeleteResponse object
+                        var orderResponse = JsonSerializer.Deserialize<OrderItemsResponse>(message);
+
+                        // Kiểm tra nếu deserialization thành công
+                        if (orderResponse != null)
+                        {
+                            using (var scope = _scopeFactory.CreateScope())
+                            {
+                                var repo = scope.ServiceProvider.GetRequiredService<IRepoProduct>();
+
+                                // Check if cateID exists in products
+                                var update = await UpdateStastisticalOrder(repo, orderResponse);
+
+                            }
+                            // Gán dữ liệu vào model
+                            Console.WriteLine($"CateName: {orderResponse.ProductSoldModels}, IsExist: {orderResponse.IsExist}");
+                            OnOrderItemsResponseReceived?.Invoke(orderResponse); // Gọi event để thông báo có phản hồi
+                                                                                 // Thực hiện xử lý khác với categoryResponse nếu cần
+                                                                                 // Ví dụ: gọi một dịch vụ khác để xử lý response
+                        }
+
+                        else
+                        {
+                            Console.WriteLine("Failed to deserialize message to OrderItemsResponse.");
+                        }
+                    }
+                };
+
+                channel.BasicConsume(
+                    queue: queue.QueueName,
+                    autoAck: true,
+                    consumer: consumer);
+                // Giữ cho phương thức không kết thúc (lắng nghe liên tục)
+                while (true)
+                {
+                    Thread.Sleep(100); // Bạn có thể dùng cách khác thay cho Thread.Sleep để không chặn luồng
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+        }
+        #endregion
+
         #region method and private model
         private async Task<bool> CanDeleteCategoryAsync(IRepoProduct repo, string categoryName)
         {
@@ -486,6 +581,31 @@ namespace ProductMicroservice.Repostories.Messages
 
             // Return false if there are products associated with the category
             return !products.Any();
+        }
+
+
+        private async Task<ResponseDTO> UpdateStastisticalOrder(IRepoProduct repo, OrderItemsResponse message)
+        {
+            ResponseDTO response = new();
+            try
+            {
+                var Stas = await repo.UpdateRangeSoldAsync(message);
+                if (Stas != null)
+                {
+                    response.Result = Stas.Result;
+                }
+                else
+                {
+                    response.IsSuccess = false;
+                    response.Message = "Not found any Statisticals";
+                }
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+            }
+            return response;
         }
         #endregion
     }

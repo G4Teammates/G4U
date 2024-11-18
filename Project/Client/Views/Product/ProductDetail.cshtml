@@ -355,7 +355,7 @@
                     <div class="product-price-container">
                         <div class="discount-section">
                             @* Free *@
-                            @if (Model.Prod.Discount == 100)
+                            @if (Model.Prod.Discount == 100 || Model.Prod.Price == 0)
                             {
                                 <div class="product-price-container">
                                     <div class="discount-section">

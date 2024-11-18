@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using OrderMicroservice.DBContexts;
 using OrderMicroservice.DBContexts.Entities;
 using OrderMicroservice.Models;
+using OrderMicroservice.Models.Message;
 using OrderMicroservice.Models.OrderModel;
 using OrderMicroservice.Models.PaymentModel;
 using OrderMicroservice.Repositories.Interfaces;
@@ -153,8 +154,6 @@ namespace OrderMicroService.Controllers
                 return StatusCode(500, new { message = "An unexpected error occurred. Detail" + ex.Message });
             }
         }
-
-
 
     }
 }
