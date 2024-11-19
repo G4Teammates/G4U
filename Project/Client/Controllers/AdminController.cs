@@ -98,15 +98,16 @@ namespace Client.Controllers
         {
             int pageNumber = page ?? 1;
             AllModel statistical = new();
-
             try
             {
                 #region Check IsLogin Cookie and Token
-                var isLogin = HttpContext.Request.Cookies["IsLogin"];
 
+                var isLogin = HttpContext.Request.Cookies["IsLogin"];
                 if (string.IsNullOrEmpty(isLogin))
                 {
                     ViewData["IsLogin"] = false;
+                    TempData["error"] = "Please login first";
+                    return RedirectToAction("Index", "Home");
                 }
                 else
                 {
@@ -121,36 +122,46 @@ namespace Client.Controllers
                     var user = _helperService.GetUserFromJwtToken((JwtSecurityToken)response.Result);
                     ViewBag.User = user;
                     ViewData["IsLogin"] = true;
-                    TempData["success"] = "Welcome to admin dashboarch " + user.Username;
+                    if(user.Role == "Admin") 
+                    {
+                        TempData["success"] = "Welcome to admin dashboarch " + user.Username;
+                        #region Lấy dữ liệu Order
+                        // Gọi API để lấy danh sách Order dựa trên phân trang
+                        var responseModel = await _statisticalService.GetAll(pageNumber, pageSize);
+                        // Gọi API một lần nữa để lấy tổng số Order (không phân trang)
+                        var totalProductsResponse = await _statisticalService.GetAll(1, 99);
+
+                        if (responseModel != null && responseModel.IsSuccess)
+                        {
+                            // Đọc và gán dữ liệu sản phẩm cho model
+                            statistical.statis = JsonConvert.DeserializeObject<ICollection<StatisticalModel>>(responseModel.Result.ToString()!);
+                            var totalProducts = JsonConvert.DeserializeObject<ICollection<StatisticalModel>>(totalProductsResponse.Result.ToString()!);
+
+                            statistical.pageNumber = pageNumber;
+                            statistical.totalItem = totalProducts.Count;
+                            statistical.pageSize = pageSize;
+                            statistical.pageCount = (int)Math.Ceiling(totalProducts.Count / (double)pageSize);
+                        }
+                        else
+                        {
+                            TempData["error"] = responseModel?.Message;
+                        }
+                        #endregion
+                    }
+                    else if(user.Role == "User")
+                    {
+                        TempData["error"] = "You are not Admin";
+                        return RedirectToAction("Index", "Home");
+                    }
                 }
                 else
                 {
                     ViewData["IsLogin"] = false;
+
                 }
                 #endregion
 
-                #region Lấy dữ liệu Order
-                // Gọi API để lấy danh sách Order dựa trên phân trang
-                var responseModel = await _statisticalService.GetAll(pageNumber, pageSize);
-                // Gọi API một lần nữa để lấy tổng số Order (không phân trang)
-                var totalProductsResponse = await _statisticalService.GetAll(1, 99);
-
-                if (responseModel != null && responseModel.IsSuccess)
-                {
-                    // Đọc và gán dữ liệu sản phẩm cho model
-                    statistical.statis = JsonConvert.DeserializeObject<ICollection<StatisticalModel>>(responseModel.Result.ToString()!);
-                    var totalProducts = JsonConvert.DeserializeObject<ICollection<StatisticalModel>>(totalProductsResponse.Result.ToString()!);
-
-                    statistical.pageNumber = pageNumber;
-                    statistical.totalItem = totalProducts.Count;
-                    statistical.pageSize = pageSize;
-                    statistical.pageCount = (int)Math.Ceiling(totalProducts.Count / (double)pageSize);
-                }
-                else
-                {
-                    TempData["error"] = responseModel?.Message;
-                }
-                #endregion
+               
             }
             catch (Exception ex)
             {
@@ -1315,7 +1326,7 @@ namespace Client.Controllers
 
             return View(comment);
         }
-        [HttpPost]
+       /* [HttpPost]
         public async Task<IActionResult> CreateComment(CreateCommentDTOModel model)
         {
             if (!ModelState.IsValid)
@@ -1347,7 +1358,7 @@ namespace Client.Controllers
                 return RedirectToAction(nameof(CommentManager));
             }
 
-        }
+        }*/
 
         public async Task<IActionResult> UpdateComment(string id)
         {

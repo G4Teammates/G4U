@@ -1118,5 +1118,22 @@ namespace ProductMicroservice.Repostories
             }
             return response;
         }
+        public async Task<ProductGroupByUserData> Data(TotalGroupByUserResponse response)
+        {
+            var result = new ProductGroupByUserData();
+
+            // Đảm bảo response.CreateAt là UTC và có thời gian là 00:00:00
+            var startOfDayUtc = DateTime.SpecifyKind(response.CreateAt.Date, DateTimeKind.Utc);
+
+            // Query the products where UserName matches and CreateAt is less than or equal to the provided date
+            var products = await _db.Products.Where(p => p.UserName == response.UserName && p.CreatedAt <= startOfDayUtc).ToListAsync();
+
+            // Tính toán các giá trị cần thiết từ danh sách sản phẩm
+            result.Views = products.Sum(p => p.Interactions?.NumberOfViews ?? 0);  // Tổng số lượt xem
+            result.Products = products.Count();  // Số lượng sản phẩm
+            result.Solds = products.Sum(p => p.Sold);  // Tổng số sản phẩm đã bán
+
+            return result;
+        }
     }
 }

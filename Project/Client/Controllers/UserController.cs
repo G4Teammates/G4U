@@ -423,6 +423,7 @@ namespace Client.Controllers
 
             // Trả về dữ liệu giỏ hàng dạng JSON
             return View(cart);
+            return RedirectToAction("Payment", "Order", cart);
         }
 
 
@@ -500,7 +501,7 @@ namespace Client.Controllers
         [HttpPost]
         [RequestSizeLimit(60 * 1024 * 1024)] // 50MB
         [RequestFormLimits(MultipartBodyLengthLimit = 60 * 1024 * 1024)] // Đặt giới hạn cho form multipart
-        public async Task<IActionResult> UpdateProduct(UpdateProductModel updateProductModel)
+        public async Task<IActionResult> UpdateProduct(UpdateProductModel updateProductModel, string SerializedLinks)
         {
             //if (!ModelState.IsValid)
             //{
@@ -520,7 +521,10 @@ namespace Client.Controllers
 
                 if (updateProductModel.Links == null)
                 {
-                    updateProductModel.Links = product.Links.ToList();
+                    if (!string.IsNullOrEmpty(SerializedLinks))
+                    {
+                        updateProductModel.Links = Newtonsoft.Json.JsonConvert.DeserializeObject<List<LinkModel>>(SerializedLinks);
+                    }
                 }
 
                 if (updateProductModel.UserName == null)
@@ -584,32 +588,43 @@ namespace Client.Controllers
                 updateProductModel.Categories = model.Categories.Select(x => x.CategoryName).ToList();
                 updateProductModel.Platform = model.Platform;
                 updateProductModel.Status = model.Status;
+                //updateProductModel.Links = model.Links;
 
+                List<LinkModel> listLinks = new List<LinkModel>();
                 if (model.Links != null)
                 {
-                    List<string> filesImage = new List<string>();
-                    List<IFormFile> filesGame = new List<IFormFile>();
-                    foreach (var link in model.Links)
+                    foreach (var item in model.Links)
                     {
-                        if (link.ProviderName.Contains("Cloudinary"))
-                        {
-                            // Sử dụng trong CreateProductModel
-                            var file = await DownloadFileAsIFormFile(link.Url);
-                            updateProductModel.ImageFiles.Add(file);
-                            filesImage.Add(link.Url);
-                            ViewBag.ImageFiles = filesImage;
-                        }
-                        else if (link.ProviderName.Contains("Google Drive"))
-                        {
-                            var file = await DownloadFileAsIFormFile(link.Url);
-                            updateProductModel.gameFile = file;
-                            //ViewBag.GameFileName = file.FileName;
-                            //ViewBag.GameFileSize = file.Length;
-                            filesGame.Add(file);
-                            ViewBag.Games = filesGame;
-                        }
+                        listLinks.Add(item);
                     }
                 }
+                updateProductModel.Links = listLinks;
+
+                //if (model.Links != null)
+                //{
+                //    List<string> filesImage = new List<string>();
+                //    List<IFormFile> filesGame = new List<IFormFile>();
+                //    foreach (var link in model.Links)
+                //    {
+                //        if (link.ProviderName.Contains("Cloudinary"))
+                //        {
+                //            // Sử dụng trong CreateProductModel
+                //            var file = await DownloadFileAsIFormFile(link.Url);
+                //            updateProductModel.ImageFiles.Add(file);
+                //            filesImage.Add(link.Url);
+                //            ViewBag.ImageFiles = filesImage;
+                //        }
+                //        else if (link.ProviderName.Contains("Google Drive"))
+                //        {
+                //            var file = await DownloadFileAsIFormFile(link.Url);
+                //            updateProductModel.gameFile = file;
+                //            //ViewBag.GameFileName = file.FileName;
+                //            //ViewBag.GameFileSize = file.Length;
+                //            filesGame.Add(file);
+                //            ViewBag.Games = filesGame;
+                //        }
+                //    }
+                //}
 
                 var responseCategory = await _categoriesService.GetAllCategoryAsync(1, 99);
                 //updateProductModel.Categories = (List<string>)response.Result;
@@ -724,6 +739,28 @@ namespace Client.Controllers
                 {
                     TempData["error"] = response?.Message ?? "An unknown error occurred.";
                     return RedirectToAction(nameof(UploadProduct), new { updateProductModel = updateProductModel });
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = $"An error occurred: {ex.Message}";
+                return RedirectToAction(nameof(UserDashboard));
+            }
+        }
+
+        public async Task<IActionResult> DeleteProduct(string id)
+        {
+            try
+            {
+                ResponseModel? response = await _productService.DeleteProductAsync(id);
+                if (response != null && response.IsSuccess)
+                {
+                    TempData["success"] = "Product deleted successfully";
+                    return RedirectToAction(nameof(UserDashboard));
+                }
+                else
+                {
+                    throw new Exception(response?.Message);
                 }
             }
             catch (Exception ex)

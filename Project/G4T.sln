@@ -25,7 +25,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Share", "Share", "{5B36F4EB
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gateway", "Gateway\Gateway.csproj", "{34F11068-217D-4475-B018-12E00643D09E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StatisticalMicroservice", "StatisticalMicroservice\StatisticalMicroservice.csproj", "{C6D2E0CC-5228-4B93-89E8-85D19860DC90}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StatisticalMicroservice", "StatisticalMicroservice\StatisticalMicroservice.csproj", "{C6D2E0CC-5228-4B93-89E8-85D19860DC90}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

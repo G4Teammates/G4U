@@ -430,6 +430,36 @@ namespace OrderMicroservice.Repositories.Services
             return response;
         }
 
+        public async Task<bool> CheckPurchaseAsync(CheckPurchaseReceive order)
+        {
+            // Check if any order contains the specified UserId
+            var userOrder = await Task.Run(() => _context.Orders
+                .FirstOrDefault(o => o.CustomerId == order.UserId));
+            // If no order is found for the given UserId, return false
+            if (userOrder == null)
+            {
+                return false;
+            }
+
+            // Check if the ProductId exists in the items list of the order
+            bool isProductInOrder = userOrder.Items.Any(item => item.ProductId == order.ProductId);
+
+            return isProductInOrder;
+        }
+        public async Task<OrderGroupByUserData> Data(TotalGroupByUserResponse response)
+        {
+            var result = new OrderGroupByUserData();
+
+            // Đảm bảo response.CreateAt là UTC và có thời gian là 00:00:00
+            var startOfDayUtc = DateTime.SpecifyKind(response.CreateAt.Date, DateTimeKind.Utc);
+
+            var orders = await _context.Orders
+                .Where(p => p.Items.Any(x=> x.PublisherName==response.UserName)  && p.CreatedAt <= startOfDayUtc).ToListAsync();
+
+            result.Revenue =orders.Sum(x=>x.TotalProfit);
+
+            return result;
+        }
 
     }
 }

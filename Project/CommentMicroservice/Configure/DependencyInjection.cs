@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using CommentMicroservice.Models.Message;
 using CommentMicroservice.Repositories;
 
 namespace CommentMicroservice.Configure
@@ -15,7 +16,9 @@ namespace CommentMicroservice.Configure
             //Register DI here ⬇️
 
             services.AddScoped<IRepoComment, RepoComment>();
-
+            services.AddHostedService<Background>();
+            services.AddSingleton<IMessage, Message>();
+            services.AddScoped<CheckPurchasedResponse>();
             //Register DI here ⬆️
 
             return services;

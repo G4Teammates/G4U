@@ -1,4 +1,6 @@
-﻿using OrderMicroservice.Models;
+﻿using OrderMicroservice.DBContexts.Enum;
+using OrderMicroservice.Models;
+
 using OrderMicroservice.Models.Message;
 using OrderMicroservice.Models.OrderModel;
 using OrderMicroservice.Models.PaymentModel;
@@ -16,5 +18,8 @@ namespace OrderMicroservice.Repositories.Interfaces
         Task<ResponseModel> GetOrderItems(string id);
         Task<ResponseModel> GetItemsByCustomerId(string id);
         Task<ResponseModel> TotalRequest();
+        Task<bool> CheckPurchaseAsync(CheckPurchaseReceive order);
+        Task<OrderGroupByUserData> Data(TotalGroupByUserResponse Response);
+
     }
 }

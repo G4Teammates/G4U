@@ -599,7 +599,7 @@
 
     //create
     {
-      "DownstreamPathTemplate": "/api/Comment",
+      "DownstreamPathTemplate": "/api/Comment/{userId}",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
@@ -607,7 +607,7 @@
           "Port": 7250
         }
       ],
-      "UpstreamPathTemplate": "/Comment",
+      "UpstreamPathTemplate": "/Comment/{userId}",
       "UpstreamHttpMethod": [ "Post" ]
     },
 

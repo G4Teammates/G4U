@@ -426,12 +426,21 @@ namespace UserMicroservice.Repositories.Services
 
                 if (user != null)
                 {
+                    // Kiểm tra xem mục này đã tồn tại trong Wishlist của user chưa
+                    bool isItemExists = user.Wishlist.Any(w => w.ProductId == userWishlistModel.ProductId);
 
-                    user.Wishlist.Add(_mapper.Map<UserWishlist>(userWishlistModel));
-                    _context.Users.Update(user);
-                    _context.SaveChanges();
-                    response.Result = user;
-                    return response;
+                    if (!isItemExists)
+                    {
+                        user.Wishlist.Add(_mapper.Map<UserWishlist>(userWishlistModel));
+                        _context.Users.Update(user);
+                        await _context.SaveChangesAsync();
+                        response.Result = user;
+                    }
+                    else
+                    {
+                        response.IsSuccess = false;
+                        response.Message = "Item already exists in the wishlist";
+                    }
                 }
                 else
                 {
@@ -447,6 +456,7 @@ namespace UserMicroservice.Repositories.Services
 
             return response;
         }
+
 
         //public async Task<ICollection<UserModel>> FindUsers(SearchCriteria criteria)
         //{

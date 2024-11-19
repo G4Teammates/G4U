@@ -14,7 +14,7 @@ namespace Client.Repositories.Services.Comment
         {
             _baseService = baseService;
         }
-        public async Task<ResponseModel> CreateCommentAsync(CreateCommentDTOModel Comment)
+        public async Task<ResponseModel> CreateCommentAsync(CreateCommentDTOModel Comment, string userId)
         {
             var formData = new MultipartFormDataContent();
             formData.Add(new StringContent(Comment.Content), "content");
@@ -32,7 +32,7 @@ namespace Client.Repositories.Services.Comment
             {
                 ApiType = StaticTypeApi.ApiType.POST,
                 Data = formData,
-                Url = StaticTypeApi.APIGateWay + "/Comment"
+                Url = StaticTypeApi.APIGateWay + "/Comment/"+ userId
             });
         }
 
