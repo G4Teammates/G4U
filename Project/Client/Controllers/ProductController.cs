@@ -345,6 +345,7 @@ namespace Client.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateComment(CreateCommentDTOModel model)
         {
+            IEnumerable<Claim> claim = HttpContext.User.Claims;
             if (model.UserName == null)
             {
                 TempData["error"] = "Please login first";
@@ -359,9 +360,11 @@ namespace Client.Controllers
             }
             try
             {
+                var userid = claim.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value!;
                 // Gọi service CreateCommentAsync
-                var response = await _commentService.CreateCommentAsync(model);
+                var response = await _commentService.CreateCommentAsync(model, userid);
                 var modelCmt = JsonConvert.DeserializeObject<CommentDTOModel>(Convert.ToString(response.Result.ToString()!));
+                
                 if (response != null && response.IsSuccess)
                 {
                     TempData["success"] = "Comment created successfully";
@@ -464,6 +467,7 @@ namespace Client.Controllers
             ProductViewModel productViewModel = new ProductViewModel();
             string un = claim.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value!;
             string i = claim.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value!;
+
 
             // Lấy các response từ các service
             ResponseModel? ProResponese = await _productService.GetAllProductsByUserName(un);

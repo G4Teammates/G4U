@@ -4,9 +4,11 @@ using CommentMicroservice.DBContexts;
 using CommentMicroservice.DBContexts.Entities;
 using CommentMicroservice.Models;
 using CommentMicroservice.Models.DTO;
+using CommentMicroservice.Models.Message;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using X.PagedList.Extensions;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace CommentMicroservice.Repositories
 {
@@ -14,11 +16,12 @@ namespace CommentMicroservice.Repositories
     {
         private readonly CommentDbContext _db;
         private readonly IMapper _mapper;
-
-        public RepoComment(CommentDbContext db, IMapper mapper)
+        private readonly IMessage _message;
+        public RepoComment(CommentDbContext db, IMapper mapper, IMessage message)
         {
             _db = db;
             _mapper = mapper;
+            _message = message;
         }
         public async Task<ResponseModel> GetAll(int page, int pageSize)
         {
@@ -90,45 +93,125 @@ namespace CommentMicroservice.Repositories
             return response;
         }
 
-        public async Task<ResponseModel> CreateComment(CreateCommentDTO Comment)
+        public async Task<ResponseModel> CreateComment(string userId, CreateCommentDTO Comment)
         {
+            #region declaration
             ResponseModel response = new();
-            try
+            int maxRetryAttempts = 3; // Số lần thử lại tối đa
+            int retryCount = 0; // Đếm số lần thử lại
+            bool _canCreate = false; // Khởi tạo biến _canDelete
+            bool isCompleted = false; // Biến đánh dấu hoàn thành
+            #endregion
+
+            while (retryCount < maxRetryAttempts && !isCompleted)
             {
-                // Kiểm duyệt nội dung
-                if (!IsContentAppropriate(Comment.Content))
+                #region send message
+                var data = new CheckPurchasedSending
                 {
-                    response.IsSuccess = false;
-                    response.Message = "The Content is not for community";
+                    UserId = userId,
+                    ProductId = Comment.ProductId
+                };
+                _message.SendingMessageCheckPurchased(data); // Gửi message
+                #endregion
+
+                #region wait for response and process response from rabbitmq
+                var tcs = new TaskCompletionSource<bool>(); // Tạo TaskCompletionSource
+
+                // Đăng ký sự kiện để gán giá trị
+                _message.OnResponseReceived += (response) =>
+                {
+                    Console.WriteLine($"Received response: IsPurchased: {response.IsPurchased}");
+                    _canCreate = response.IsPurchased; // Gán giá trị vào biến
+
+                    // Đánh dấu task đã hoàn thành
+                    if (!tcs.Task.IsCompleted)
+                    {
+                        tcs.SetResult(_canCreate);
+                        Console.WriteLine("SetResult done");
+                    }
+                };
+                #endregion
+
+                #region handle time out
+                // Chờ cho sự kiện được kích hoạt hoặc timeout sau 5 giây
+                var timeoutTask = Task.Delay(5000); // Thời gian timeout là 5 giây
+                var completedTask = await Task.WhenAny(tcs.Task, timeoutTask);
+
+                // Nếu timeout xảy ra
+                if (completedTask == timeoutTask)
+                {
+                    Console.WriteLine($"Attempt {retryCount + 1} failed due to timeout.");
+                    retryCount++; // Tăng số lần thử lại
+
+                    if (retryCount >= maxRetryAttempts)
+                    {
+                        response.IsSuccess = false;
+                        response.Message = "The system encountered a problem while performing deletion";
+                        return response; // Trả về lỗi sau khi hết số lần thử lại
+                    }
+
+                    // Nếu chưa đạt giới hạn retry, tiếp tục vòng lặp
+                    continue;
+                }
+
+                // Nếu có phản hồi, thoát khỏi vòng lặp
+                isCompleted = true;
+                #endregion
+
+                #region Process results when there is a response from RabbitMQ
+                if (_canCreate)
+                {
+                    #region Create Comment
+                    try
+                    {
+                        // Kiểm duyệt nội dung
+                        if (!IsContentAppropriate(Comment.Content))
+                        {
+                            response.IsSuccess = false;
+                            response.Message = "The Content is not for community";
+                        }
+                        else
+                        {
+                            var newComm = new CommentModel
+                            {
+                                Content = Comment.Content,
+                                NumberOfLikes = 0,
+                                NumberOfDisLikes = 0,
+                                UserLikes = new List<UserLikesModel>(),
+                                UserDisLikes = new List<UserDisLikesModel>(),
+                                UserName = Comment.UserName,
+                                Status = Comment.Status,
+                                ProductId = Comment.ProductId,
+                                ParentId = Comment.ParentId,
+                                CreatedAt = DateTime.Now,
+                                UpdatedAt = DateTime.Now
+                            };
+                            var CommEnti = _mapper.Map<Comment>(newComm);
+                            _db.AddAsync(CommEnti);
+                            _db.SaveChangesAsync();
+                            response.Result = CommEnti;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        response.IsSuccess = false;
+                        response.Message = ex.Message;
+                    }
+                    return response;
+                    #endregion
                 }
                 else
                 {
-                    var newComm = new CommentModel
-                    {
-                        Content = Comment.Content,
-                        NumberOfLikes = 0,
-                        NumberOfDisLikes = 0,
-                        UserLikes =  new List<UserLikesModel>(),
-                        UserDisLikes = new List<UserDisLikesModel>(),
-                        UserName = Comment.UserName,
-                        Status = Comment.Status,
-                        ProductId = Comment.ProductId,
-                        ParentId = Comment.ParentId,
-                        CreatedAt = DateTime.Now,
-                        UpdatedAt = DateTime.Now
-                    };
-                    var CommEnti = _mapper.Map<Comment>(newComm);
-                    _db.AddAsync(CommEnti);
-                    _db.SaveChangesAsync();
-                    response.Result = CommEnti;
-                }                 
+                    response.IsSuccess = false;
+                    response.Message = "Error: You have not purchased this game yet.";
+                    return response; // Trả về lỗi sau khi hết số lần thử lại
+                }
+                #endregion
             }
-            catch (Exception ex)
-            {
-                response.IsSuccess = false;
-                response.Message = ex.Message;
-            }
-            return response;
+            // Nếu vòng lặp kết thúc mà không trả về
+            response.IsSuccess = false;
+            response.Message = "Unknown error occurred during deletion.";
+            return response; // Trả về lỗi sau khi hết số lần thử lại
         }
 
         public async Task<ResponseModel> UpdateComment(CommentModel Comment)
@@ -399,7 +482,12 @@ namespace CommentMicroservice.Repositories
             "đầu bò", "đần độn", "dốtttt", "thần kinh", "đầu gấu", "đồ ngớ ngẩn", "tởm lợm", "chửi tục", "cút xéo", "ngớ ngẩn",
             "tởm", "ăn hại", "ăn cắp", "vô lại", "đê tiện", "xấu xí", "mất nết", "vô tích sự", "vô giáo dục", "thô lỗ", "phản bội",
             "đụ", "đụ má", "đụ mẹ", "đụmmmm", "dụ nhau", "cu", "cu to", "cặc", "cặcccc", "c*k", "cc", "chịch", "chịch nhau", "chịcc",
-            "nứng", "nứng nà", "nứng ơi", "dâm đãng", "d*m đãng", "d*m dục", "địt", "địtttt", "đjt", "dm", "dm bạn", "ch*ch",
+            "nứng", "nứng nà", "nứng ơi", "dâm đãng", "d*m đãng", "d*m dục", "địt", "địtttt", "đjt", "dm", "dm bạn", "ch*ch","lồn",
+            "lồnnn", "vãi lồn", "cái lồn", "l*n", "loz", "lozzzz", "l*nz", "l**z", "lol", "lồllll", "cặc", "cặkkkk", "cạkkkk", "cặk",
+            "cặt", "cậtttt", "c*c", "c*k", "cc", "cặccc", "cắcccc", "cặccccc", "cứt", "cức", "cứtttt", "cứcccc", "đổ cứt", "đổ cức",
+            "óc chó", "óc ch*o", "óc chooo", "óc c*o", "chó óc", "c*n l*n", "l*l", "đồ loz", "thằng lol", "đồ lol", "ngu lol", "đồ c*o",
+            "ăn lol", "đồ l*n", "loằnn", "ngu loz", "vô loz", "ph* loz", "lốnnnn",
+
 
             // Tiếng Anh - Offensive and inappropriate words and variations
             "idiot", "idiotttttt", "stupid", "stupidddd", "moron", "moroNnnn", "jerk", "jerkkkk", "dumb", "dumBBB", "loser",
@@ -456,6 +544,7 @@ namespace CommentMicroservice.Repositories
             }
             return true; // Nội dung phù hợp
         }
+
 
 
         #endregion

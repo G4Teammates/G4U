@@ -18,6 +18,9 @@ namespace ProductMicroservice.Repostories.Messages
         //check-exist-user
         public void SendingMessageCheckExistUserName<T>(T message);
         public void ReceiveMessageCheckExistUserName();
+        //StastisticalGroupByUserToProduct
+        public void SendingMessageStastisticalGroupByUserToProduct<T>(T message);
+        public void ReceiveMessageStastisticalGroupByUserToProduct();
         //receive-order-to-product
         public void ReceiveMessageSoldProduct();
     }

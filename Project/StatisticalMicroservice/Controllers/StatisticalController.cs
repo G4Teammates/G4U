@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using StatisticalMicroservice.Model.DTO;
+using StatisticalMicroservice.Model.Message;
 using StatisticalMicroservice.Models.DTO;
 using StatisticalMicroservice.Repostories;
 using X.PagedList.Extensions;
@@ -35,8 +36,9 @@ namespace StatisticalMicroservice.Controllers
                     _responseDTO.Result = Pros.Result;
                     return Ok(_responseDTO);
                 }
+                _responseDTO.IsSuccess = false;
                 _responseDTO.Message = Pros.Message;
-                return BadRequest(_responseDTO.Message);
+                return BadRequest(_responseDTO);
             }
             catch (Exception ex)
             {
@@ -57,8 +59,32 @@ namespace StatisticalMicroservice.Controllers
                     _responseDTO.Result = stas.Result;
                     return Ok(_responseDTO);
                 }
+                _responseDTO.IsSuccess = false;
                 _responseDTO.Message = stas.Message;
-                return BadRequest(_responseDTO.Message);
+                return BadRequest(_responseDTO);
+            }
+            catch (Exception ex)
+            {
+                _responseDTO.IsSuccess = false;
+                _responseDTO.Message = "An error occurred while Creating the Stastistical: " + ex.Message;
+                return StatusCode(500, _responseDTO); // Trả về mã lỗi 500 với thông báo lỗi chi tiết
+            }
+        }
+
+        [HttpGet("GetStastisticalByUser")]
+        public async Task<IActionResult> GetStastisticalByUser([FromQuery] TotalGroupByUserRequest totalGroupByUserRequest)
+        {
+            try
+            {
+                var stas = await _repo.GetStastisticalByUser(totalGroupByUserRequest);
+                if (stas.IsSuccess)
+                {
+                    _responseDTO.Result = stas.Result;
+                    return Ok(_responseDTO);
+                }
+                _responseDTO.IsSuccess = false;
+                _responseDTO.Message = stas.Message;
+                return BadRequest(_responseDTO);
             }
             catch (Exception ex)
             {

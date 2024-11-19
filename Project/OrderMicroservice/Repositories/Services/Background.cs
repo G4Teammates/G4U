@@ -1,9 +1,11 @@
-﻿namespace StatisticalMicroservice.Repostories
+﻿using OrderMicroservice.Repositories.Interfaces;
+
+namespace OrderMicroservice.Repositories.Services
 {
-    public class Backgroud : BackgroundService
+    public class Background : BackgroundService
     {
         private readonly IMessage _messageComsumer;
-        public Backgroud(IMessage messageComsumer)
+        public Background(IMessage messageComsumer)
         {
             _messageComsumer = messageComsumer;
         }
@@ -12,13 +14,9 @@
         {
             // Chạy ReceiveMessage trong một tác vụ nền
             await Task.WhenAll(
-                Task.Run(() => _messageComsumer.ReceiveMessageProduct(), stoppingToken),
-                Task.Run(() => _messageComsumer.ReceiveMessageUser(), stoppingToken),
-                Task.Run(() => _messageComsumer.ReceiveMessageOrder(), stoppingToken),
-                Task.Run(() => _messageComsumer.ReceiveMessageStastisticalGroupByUserToOrder(), stoppingToken),
-                Task.Run(() => _messageComsumer.ReceiveMessageStastisticalGroupByUserToProduct(), stoppingToken)
+                Task.Run(() => _messageComsumer.ReceiveMessageCheckPurchased(), stoppingToken),
+                Task.Run(() => _messageComsumer.ReceiveMessageStastisticalGroupByUserToOrder(), stoppingToken)
             );
-
             // Giữ cho dịch vụ chạy liên tục
             while (!stoppingToken.IsCancellationRequested)
             {
