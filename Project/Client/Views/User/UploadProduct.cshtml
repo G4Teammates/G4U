@@ -2,9 +2,9 @@
 @model UpdateProductModel
 
 @{
-    List<string> Images = ViewBag.ImageFiles;
-    List<IFormFile> Games = ViewBag.Games;
-    IFormFile gameImages = ViewBag.gameFile;
+    List<LinkModel> Images = new List<LinkModel>();
+    // List<IFormFile> Games = ViewBag.Games;
+    // IFormFile gameImages = ViewBag.gameFile;
     // var gameFileName = ViewBag.GameFileName;
     // var gameFileSize = ViewBag.GameFileSize;
 
@@ -40,6 +40,7 @@
     .form-label {
         font-weight: bold;
     }
+
 </style>
 
 <h4 class="container mt-3 container-custom bg-success text-white p-3 align-content-center">Create a new project</h4>
@@ -100,35 +101,51 @@
             <!-- Upload -->
             <div class="mb-3">
                 <label class="form-label fw-bold fs-5">Uploads</label>
-                @if (Games != null)
+                @if (Model.Links != null)
                 {
-                    @if (Games.Count > 0)
+                    @if (Model.Links.Count > 0)
                     {
                         int index = 1;
-                        foreach (var item in Games)
+                        foreach (var item in Model.Links)
                         {
-                            <div class="border p-2 mb-2" id="item-@index">
-                                <p>
-                                    <strong>File Name:</strong> ${@item.Name} <br>
-                                    <strong>File Size:</strong> @(Math.Round(item.Length / 1024.0 / 1024.0, 2)) MB <br>
-                                    <strong>File Type:</strong> (from server)
-                                    <div class="m-2">
-                                        <label class="p-2 border border-1">
-                                            <input type="radio" value="Windows" name="@index" /> Windows
-                                        </label>
-                                        <label class="p-2 border border-1">
-                                            <input type="radio" value="MacOS" name="@index" /> MacOS
-                                        </label>
-                                        <label class="p-2 border border-1">
-                                            <input type="radio" value="Linux" name="@index" /> Linux
-                                        </label>
+                            if (item.ProviderName.Contains("Google Drive"))
+                            {
+                                <div class="border p-2 mb-2" id="item-@index">
+                                    <p>
+                                        <a href="@item.Url" class="d-inline-block text-truncate" style="max-width: 400px;">${@item.Url}</a> <br>
+                                        @* <strong>File Size:</strong> @(Math.Round(item.Length / 1024.0 / 1024.0, 2)) MB <br> *@
+                                        <strong>File Type:</strong> (@item.ProviderName)
+                                        @* <div class="m-2">
+                        <label class="p-2 border border-1">
+                        <input type="radio" value="Windows" name="@index" /> Windows
+                        </label>
+                        <label class="p-2 border border-1">
+                        <input type="radio" value="MacOS" name="@index" /> MacOS
+                        </label>
+                        <label class="p-2 border border-1">
+                        <input type="radio" value="Linux" name="@index" /> Linux
+                        </label>
+                        </div> *@
+                                    </p>
+
+                                    @*                                     <!-- Nút Xóa -->
+                    <button type="button" class="btn btn-danger" onclick="removeItem(@index)">Delete</button> *@
+                                    <!-- Nút Xóa -->
+                                    <div class="text-end">
+                                        <button onclick="removeItem(@index)" title="Delete" type="button">
+                                            <i class="fa-solid fa-delete-left text-danger"></i>
+                                        </button>
                                     </div>
-                                </p>
+                                </div>
 
-                                <!-- Nút Xóa -->
-                                @* <button type="button" class="btn btn-danger" onclick="removeItem(@index)">Delete</button> *@
-                            </div>
+                            }
+                            else if (item.ProviderName.Contains("Cloudinary"))
+                            {
+                                Images.Add(item);
+                            }
 
+                            <!-- Hidden Field -->
+                            <input type="hidden" name="SerializedLinks" id="SerializedLinks" value="@Newtonsoft.Json.JsonConvert.SerializeObject(Model.Links)" />
                             index++;
                         }
                     }
@@ -217,9 +234,9 @@
         <div class="col-md-5">
             <div class="text-center">
                 <!-- Hình ảnh hiển thị -->
-                @if (Images != null)
+                @if (Images.Count > 0)
                 {
-                    <img id="coverImagePreview" src="@Images[0]" alt="Cover Image" class="border mb-3" style="min-width:200px; max-height:200px; min-height:150px; max-width:300px" />
+                    <img id="coverImagePreview" src="@Images[0].Url" alt="Cover Image" class="border mb-3" style="min-width:200px; max-height:200px; min-height:150px; max-width:300px" />
                     <input type="file" class="d-none" asp-for="ImageFiles" id="coverImageInput" accept="image/*" />
                     <span class="text-danger" asp-validation-for="ImageFiles"></span>
                 }
@@ -237,17 +254,37 @@
             <div class="mt-3">
                 <div class="form-group">
                     <label class="form-label fw-bold fs-6">Image</label>
-                    @if (Images != null)
+
+                    @if (Model.Links != null)
                     {
-                        @if (Images.Count > 0)
+                        @if (Model.Links.Count > 0)
                         {
-                            @foreach (var item in Images)
+                            int index = 1;
+                            foreach (var item in Model.Links)
                             {
-                                <div>
-                                    <img src="@item" class="border mb-3" style="min-width:200px; max-height:200px; min-height:150px; max-width:300px" />
-                                    @* <input type="file" multiple class="form-control mb-2" asp-for="@item" src="@item.FileName" /> *@
-                                </div>
-                                <span class="text-danger" asp-validation-for="@item"></span>
+                                if (item.ProviderName.Contains("Google Drive"))
+                                {
+
+                                }
+                                else if (item.ProviderName.Contains("Cloudinary"))
+                                {
+                                    <div class="border p-2 mb-2" id="item-@index">
+                                        <div class="text-end">
+                                            <button onclick="removeItem(@index)" title="Delete" type="button">
+                                                <i class="fa-solid fa-delete-left text-danger"></i>
+                                            </button>
+                                        </div>
+                                        <div>
+                                            <img src="@item.Url" class="border mb-3" style="min-width:200px; max-height:200px; min-height:150px; max-width:300px" />
+                                            @* <input type="file" multiple class="form-control mb-2" asp-for="@item" /> *@
+                                        </div>
+                                        <span class="text-danger" asp-validation-for="@item.Url"></span>
+                                    </div>
+                                }
+
+                                <!-- Hidden Field -->
+                                <input type="hidden" name="SerializedLinks" id="SerializedLinks" value="@Newtonsoft.Json.JsonConvert.SerializeObject(Model.Links)" />
+                                index++;
                             }
                         }
                     }
@@ -356,63 +393,63 @@
     //                 <strong>File Name:</strong> ${fileNameFromServer} <br>
     //                 <strong>File Size:</strong> ${(fileSizeFromServer / 1024 / 1024).toFixed(2)} MB <br>
     //                 <strong>File Type:</strong> (from server)
-    //                 <div class="m-2">
-    //                     <label class="p-2 border border-1">
-    //                         <input type="radio" value="Windows" name="Platforms" /> Windows
-    //                     </label>
-    //                     <label class="p-2 border border-1">
-    //                         <input type="radio" value="MacOS" name="Platforms" /> MacOS
-    //                     </label>
-    //                     <label class="p-2 border border-1">
-    //                         <input type="radio" value="Linux" name="Platforms" /> Linux
-    //                     </label>
-    //                 </div>
-    //             `;
-    //         document.getElementById('fileInfo').innerHTML = fileInfo;
+    @*     //                 <div class="m-2">
+        //                     <label class="p-2 border border-1">
+        //                         <input type="radio" value="Windows" name="Platforms" /> Windows
+        //                     </label>
+        //                     <label class="p-2 border border-1">
+        //                         <input type="radio" value="MacOS" name="Platforms" /> MacOS
+        //                     </label>
+        //                     <label class="p-2 border border-1">
+        //                         <input type="radio" value="Linux" name="Platforms" /> Linux
+        //                     </label>
+        //                 </div> *@
+        //             `;
+        //         document.getElementById('fileInfo').innerHTML = fileInfo;
 
-    //         // Log khi thông tin được hiển thị thành công
-    //         console.log("File information is displayed successfully.");
-    //     }
-    // }
+        //         // Log khi thông tin được hiển thị thành công
+        //         console.log("File information is displayed successfully.");
+        //     }
+        // }
 
-    // // Gọi hàm khi trang load để hiển thị file từ server nếu có
-    // window.onload = function () {
-    //     console.log("Window loaded, calling showUploadedGameFileFromServer");
-    //     showUploadedGameFileFromServer();
-    // };
+        // // Gọi hàm khi trang load để hiển thị file từ server nếu có
+        // window.onload = function () {
+        //     console.log("Window loaded, calling showUploadedGameFileFromServer");
+        //     showUploadedGameFileFromServer();
+        // };
 
-    // Sự kiện thay đổi khi người dùng chọn file mới
-    function displayFileInfo() {
-        const input = document.getElementById('fileInput');
-        const file = input.files[0]; // Lấy file đầu tiên (người dùng có thể chọn nhiều file)
+        // Sự kiện thay đổi khi người dùng chọn file mới
+        function displayFileInfo() {
+            const input = document.getElementById('fileInput');
+            const file = input.files[0]; // Lấy file đầu tiên (người dùng có thể chọn nhiều file)
 
-        if (file) {
-            // Kiểm tra kích thước file (ví dụ 1GB = 1073741824 bytes)
-            if (file.size > 1073741824) {
-                alert('File quá lớn, hãy chọn file dưới 1 GB.');
-                return;
+            if (file) {
+                // Kiểm tra kích thước file (ví dụ 1GB = 1073741824 bytes)
+                if (file.size > 1073741824) {
+                    alert('File quá lớn, hãy chọn file dưới 1 GB.');
+                    return;
+                }
+
+                // Hiển thị thông tin file
+                const fileInfo = `
+                                                        <strong>File Name:</strong> ${file.name} <br>
+                                                        <strong>File Size:</strong> ${(file.size / 1024 / 1024).toFixed(2)} MB <br>
+                                                        <strong>File Type:</strong> ${file.type}
+    @*                                 <div class="m-2">
+                                                        <label class="p-2 border border-1">
+                                                            <input type="radio" value="Windows" name="Platforms" /> Windows
+                                                        </label>
+                                                        <label class="p-2 border border-1">
+                                                            <input type="radio" value="MacOS" name="Platforms" /> MacOS
+                                                        </label>
+                                                        <label class="p-2 border border-1">
+                                                            <input type="radio" value="Linux" name="Platforms" /> Linux
+                                                        </label>
+                                                    </div> *@
+                                                    `;
+                document.getElementById('fileInfo').innerHTML = fileInfo;
             }
-
-            // Hiển thị thông tin file
-            const fileInfo = `
-                                <strong>File Name:</strong> ${file.name} <br>
-                                <strong>File Size:</strong> ${(file.size / 1024 / 1024).toFixed(2)} MB <br>
-                                <strong>File Type:</strong> ${file.type}
-                                <div class="m-2">
-                                    <label class="p-2 border border-1">
-                                        <input type="radio" value="Windows" name="Platforms" /> Windows
-                                    </label>
-                                    <label class="p-2 border border-1">
-                                        <input type="radio" value="MacOS" name="Platforms" /> MacOS
-                                    </label>
-                                    <label class="p-2 border border-1">
-                                        <input type="radio" value="Linux" name="Platforms" /> Linux
-                                    </label>
-                                </div>
-                            `;
-            document.getElementById('fileInfo').innerHTML = fileInfo;
         }
-    }
 
     // Sự kiện khi chọn file mới từ input
     document.getElementById('fileInput').addEventListener('change', displayFileInfo);
@@ -432,9 +469,18 @@
     });
 
     function removeItem(index) {
+        let links = JSON.parse(document.getElementById("SerializedLinks").value);
+
+        // Xóa phần tử tại index
+        links.splice(index - 1, 1);
+
+        // Cập nhật lại hidden field
+        document.getElementById("SerializedLinks").value = JSON.stringify(links);
+
         // Xóa phần tử khỏi giao diện
         document.getElementById("item-" + index).remove();
     }
+
 </script>
 @section Scripts {
 

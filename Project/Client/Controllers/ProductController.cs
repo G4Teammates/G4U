@@ -253,12 +253,12 @@ namespace Client.Controllers
                         if (item.ProductId == id)
                         {
                             ViewBag.HasOwned = true;
-                            List<string> urls = new List<string>();
+                            List<LinkModel> urls = new List<LinkModel>();
                             foreach (var link in productViewModel.Prod.Links)
                             {
                                 if (link.Url.Contains("drive.google.com"))
                                 {
-                                    urls.Add(link.Url);
+                                    urls.Add(link);
                                 }
                             }
                             ViewBag.UrlsDownLoad = urls;

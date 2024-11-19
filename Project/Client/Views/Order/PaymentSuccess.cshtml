@@ -1,4 +1,6 @@
-﻿<div class="success-container">
+﻿@model Client.Models.OrderModel.PaymentSuccessModel
+
+<div class="success-container">
     <div class="icon-container">
         <i class="fa-solid fa-check-circle"></i>
     </div>
@@ -7,15 +9,26 @@
 
     <div class="order-details w-100">
         <h3>Order Summary</h3>
-        <p><strong>Order ID:</strong> 123456789</p>
-        <p><strong>Payment Method:</strong> Credit/Debit Card</p>
-        <p><strong>Order Date:</strong> October 19, 2024</p>
-        <p><strong>Total Price:</strong> $99.99</p>
+        <p><strong>Order ID:</strong> @Model.OrderId</p>
+        <p>
+            @if (Model.OrderType.Contains("momo"))
+            {
+                <strong>Payment Method: MoMo</strong>
+            }
+            else
+            {
+                <strong>Payment Method: Pay OS</strong>
+            }
+        </p>
+        
+        <p title="UTC time: @Model.ResponseUtcDateTime"><strong>Order Date:</strong>@Model.ResponseLocalDateTime</p>
+        <p><strong>Total Price:</strong> @string.Format("{0:N0}", Model.Amount) vnđ</p>
+
     </div>
 
     <div>
-        <button class="btn success-btn">View Order</button>
-        <button class="btn continue-btn w-auto">Continue Shopping</button>
+        <a asp-action="UserDashboard" asp-controller="User" class="btn success-btn">View Library</a>
+        <a asp-action="Product" asp-controller="Product" class="btn continue-btn w-auto">Continue Shopping</a>
     </div>
 </div>
 

@@ -1416,30 +1416,25 @@ namespace Client.Controllers
             {
                 var errors = ModelState.Values.SelectMany(v => v.Errors)
                                               .Select(e => e.ErrorMessage);
-                return BadRequest(new { Errors = errors });
+                return Json(new { success = false, errors = errors });
             }
 
             try
-
             {
                 var response = await _userService.AddToWishList(wishlist, un);
 
                 if (response != null && response.IsSuccess)
                 {
-                    TempData["success"] = "Category updated successfully";
-                    return RedirectToAction("Index", "Home");
+                    return Json(new { success = true, message = "Add Wishlist successfully" });
                 }
                 else
                 {
-                    TempData["error"] = response?.Message ?? "An unknown error occurred.";
-                    return BadRequest(response.Message); // Trả về view với dữ liệu đã nhập
-
+                    return Json(new { success = false, message = response?.Message ?? "An unknown error occurred." });
                 }
             }
             catch (Exception ex)
             {
-                TempData["error"] = $"An error occurred: {ex.Message}";
-                return StatusCode(500); // Trả về view với dữ liệu đã nhập và lỗi
+                return Json(new { success = false, message = $"An error occurred: {ex.Message}" });
             }
         }
         #endregion

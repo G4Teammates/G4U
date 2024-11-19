@@ -35,13 +35,13 @@ namespace ProductMicroservice.Repostories
     public class RepoProduct : IRepoProduct
     {
         #region declaration and initialization
-        private readonly ProductDbContext _db ;
+        private readonly ProductDbContext _db;
         private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
         private readonly Cloudinary _cloudinary;
         private readonly IHelper _helper;
         private readonly IMessage _message;
-        
+
 
         public RepoProduct(IConfiguration configuration, ProductDbContext db, IMapper mapper, IHelper helper, IMessage message)
         {
@@ -56,7 +56,34 @@ namespace ProductMicroservice.Repostories
         #endregion
 
 
+        public async Task<ResponseDTO> UpdateRangeSoldAsync(OrderItemsResponse model)
+        {
+            ResponseDTO response = new();
+            try
+            {
+                var productIds = model.ProductSoldModels.Select(m => m.ProductId).ToList();
+                var products = await _db.Products.Where(p => productIds.Contains(p.Id)).ToListAsync();
 
+                foreach (var item in model.ProductSoldModels)
+                {
+                    var product = products.FirstOrDefault(p => p.Id == item.ProductId);
+                    if (product != null)
+                    {
+                        product.Sold += item.Quantity;
+                    }
+                }
+
+                await _db.SaveChangesAsync();
+                response.Message = "Update successfully";
+                response.IsSuccess = true;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+            }
+            return response;
+        }
 
 
         public async Task<ResponseDTO> UpdateProduct(List<IFormFile>? imageFiles, UpdateProductModel Product, IFormFile? gameFiles)
@@ -218,7 +245,7 @@ namespace ProductMicroservice.Repostories
                     // Nếu không có file nào từ client, cập nhật sản phẩm không kiểm duyệt hoặc thêm link mới
                     if ((imageFiles == null || imageFiles.Count == 0) && gameFiles == null)
                     {
-                        var proNoFile =  await _helper.UpdateProduct(Product);
+                        var proNoFile = await _helper.UpdateProduct(Product);
                         response.Result = _mapper.Map<Products>(proNoFile);
                         return response;
                     }
@@ -358,8 +385,8 @@ namespace ProductMicroservice.Repostories
                 response.Message = ex.Message;
             }
             return response;
-        } 
-        public async Task<ResponseDTO> GetById(string id) 
+        }
+        public async Task<ResponseDTO> GetById(string id)
         {
             ResponseDTO response = new();
             try
@@ -376,12 +403,12 @@ namespace ProductMicroservice.Repostories
                 }
             }
             catch (Exception ex)
-            {
+             {
                 response.IsSuccess = false;
                 response.Message = ex.Message;
             }
             return response;
-        } 
+        }
         public async Task<ResponseDTO> GetDetail(string id)
         {
             ResponseDTO response = new();
@@ -480,7 +507,7 @@ namespace ProductMicroservice.Repostories
                     {
                         Products = Products.OrderByDescending(x => x.Sold);
                     }
-                    response.Result = _mapper.Map<ICollection<Products>>(Products).ToPagedList(page,pageSize);
+                    response.Result = _mapper.Map<ICollection<Products>>(Products).ToPagedList(page, pageSize);
                 }
                 else
                 {
@@ -538,8 +565,8 @@ namespace ProductMicroservice.Repostories
             }
             return response;
         }
-		public async Task<ResponseDTO> Filter(decimal? minrange, decimal? maxrange, int? sold, bool? Discount, int? Platform, string? Category, int page, int pageSize)
-		{
+        public async Task<ResponseDTO> Filter(decimal? minrange, decimal? maxrange, int? sold, bool? Discount, int? Platform, string? Category, int page, int pageSize)
+        {
             ResponseDTO response = new();
             try
             {
@@ -870,7 +897,7 @@ namespace ProductMicroservice.Repostories
                 .ToListAsync();
         }
 
-
+        
         public async Task<ResponseDTO> TotalRequest()
         {
             ResponseDTO response = new();
@@ -879,7 +906,7 @@ namespace ProductMicroservice.Repostories
 
                 var Pros = await _db.Products.ToListAsync();
                 if (Pros != null)
-                {   
+                {
                     var totalPro = Pros.Count;
                     var totalSold = Pros.Sum(pro => pro.Sold);
                     var totalView = Pros.Sum(pro => pro.Interactions.NumberOfViews);
@@ -1023,6 +1050,14 @@ namespace ProductMicroservice.Repostories
             {
                 List<Products> products;
 
+                var listPro = await _db.Products.Where(p => p.Categories.Any(c => c.CategoryName.Contains(viewString))).ToListAsync();
+                if (listPro != null)
+                {
+                    products = listPro;
+                    response.IsSuccess = true;
+                    response.Result = _mapper.Map<List<Products>>(products);
+                    return response;
+                }
                 switch (viewString.ToLower())
                 {
                     case "discount":
@@ -1057,8 +1092,8 @@ namespace ProductMicroservice.Repostories
                             .OrderByDescending(p => p.CreatedAt)
                             .ToListAsync();
                         break;
-
                     default:
+
                         // Nếu không khớp với bất kỳ điều kiện nào, trả về thông báo không tìm thấy
                         response.IsSuccess = false;
                         response.Message = "Invalid view type";

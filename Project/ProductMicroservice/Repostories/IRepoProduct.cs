@@ -32,5 +32,6 @@ namespace ProductMicroservice.Repostories
         Task<ResponseDTO> DecreaseLike(string productId, UserDisLikesModel userDisLike);
         Task<ResponseDTO>ViewMore(string viewString);
         Task<ProductGroupByUserData> Data(TotalGroupByUserResponse Response);
+        Task<ResponseDTO> UpdateRangeSoldAsync(OrderItemsResponse model);
     }
 }

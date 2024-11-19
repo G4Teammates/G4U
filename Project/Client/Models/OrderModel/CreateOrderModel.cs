@@ -1,23 +1,11 @@
 ﻿using Client.Models.Enum.OrderEnum;
-using MongoDB.Bson;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 
 namespace Client.Models.OrderModel
 {
-    /// <summary>
-    /// Represents an order placed by a user, including details about payment, status, and items purchased.
-    /// <br/>
-    /// Đại diện cho một đơn hàng được đặt bởi người dùng, bao gồm thông tin về thanh toán, trạng thái, và các mặt hàng đã mua.
-    /// </summary>
-    public class OrderModel
+    public class CreateOrderModel
     {
-        /// <summary>
-        /// Unique identifier for the order.
-        /// <br/>
-        /// Định danh duy nhất cho đơn hàng.
-        /// </summary>
-        public string? Id { get; set; }
 
         /// <summary>
         /// Payment Transaction Id. Obtained from Payment 3rd Party Service (e.g., PayPal, Stripe, Bank).

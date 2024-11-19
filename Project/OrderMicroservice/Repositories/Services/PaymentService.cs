@@ -9,18 +9,19 @@ using Net.payOS;
 using OrderMicroservice.Models.OrderModel;
 using OrderMicroservice.Models.PaymentModel.MoMo;
 using OrderMicroservice.DBContexts.Enum;
+using OrderMicroservice.Models.Message;
 
 namespace OrderMicroservice.Repositories.Services
 {
-    public class PaymentService(IOrderService orderService) : IPaymentService
+    public class PaymentService(IOrderService orderService, IMessage message) : IPaymentService
     {
         private readonly IOrderService _orderService = orderService;
         private static readonly HttpClient client = new();
         private static readonly string Gateway = "https://localhost:7296";
         private static readonly string MoMoGateway = "https://test-payment.momo.vn/v2/gateway/api/create";
-        private static readonly string IpnMomo = "https://5960-2402-800-63b6-b08e-5931-a421-6cbb-8c20.ngrok-free.app" + "/api/payment/ipn/momo";
-
-        public async Task<ResponseModel> MoMoPayment(string id, long amount)
+        private static readonly string IpnMomo = "https://ffc6-2402-800-63b6-f762-b8a7-7d2d-985a-a42e.ngrok-free.app" + "/api/payment/ipn/momo";
+        private IMessage _message = message;
+        public async Task<ResponseModel> MoMoPayment(MoMoRequestFromClient requestClient)
         {
             ResponseModel response = new();
             string requestId = Guid.NewGuid().ToString();
@@ -35,8 +36,8 @@ namespace OrderMicroservice.Repositories.Services
                     partnerCode = "MOMO",
                     redirectUrl = $"{Gateway}/Order/PaymentSuccess",
                     ipnUrl = IpnMomo,
-                    amount = amount,
-                    orderId = id,
+                    amount = requestClient.Amount,
+                    orderId = requestClient.Id,
                     requestId = requestId,
                     extraData = "",
                     partnerName = "MoMo Payment",
@@ -160,59 +161,109 @@ namespace OrderMicroservice.Repositories.Services
             return response;
         }
 
-
         public async Task<ResponseModel> Paid(PaidModel model)
         {
             ResponseModel response = new();
+
             try
             {
-                ResponseModel findOrder = await _orderService.GetOrderById(model.OrderId);
+                // 1. Lấy thông tin order
+                var findOrder = await _orderService.GetOrderById(model.OrderId);
                 if (!findOrder.IsSuccess)
                 {
-                    response.IsSuccess = false;
-                    response.Message = "Order not found";
-                    return response;
+                    return new ResponseModel
+                    {
+                        IsSuccess = false,
+                        Message = $"Order not found for OrderId: {model.OrderId}"
+                    };
                 }
 
-                ResponseModel updateTransId = await _orderService.UpdateTransId(model.OrderId, model.TransactionId);
-                if (!updateTransId.IsSuccess)
+                var order = (OrderModel)findOrder.Result!;
+
+                // 2. Cập nhật TransactionId
+                var updateTransIdResponse = await _orderService.UpdateTransId(model.OrderId, model.TransactionId);
+                if (!updateTransIdResponse.IsSuccess)
                 {
-                    response.IsSuccess = false;
-                    response.Message = "Failed to update transaction id";
-                    return response;
+                    return new ResponseModel
+                    {
+                        IsSuccess = false,
+                        Message = $"Failed to update transaction ID for OrderId: {model.OrderId}"
+                    };
                 }
 
-                ResponseModel updateStatus = await _orderService.UpdateStatus(model.OrderId, new PaymentStatusModel
+                // 3. Cập nhật trạng thái thanh toán
+                var updateStatusResponse = await _orderService.UpdateStatus(model.OrderId, new PaymentStatusModel
                 {
                     PaymentStatus = PaymentStatus.Paid,
                     OrderStatus = OrderStatus.Paid,
                     PaymentMethod = PaymentMethod.Wallet,
                     PaymentName = "MoMo"
-                    
                 });
 
-                if (!updateStatus.IsSuccess)
+                if (!updateStatusResponse.IsSuccess)
                 {
-                    response.IsSuccess = false;
-                    response.Message = "Failed to update order status";
-                    return response;
+                    return new ResponseModel
+                    {
+                        IsSuccess = false,
+                        Message = $"Failed to update payment status for OrderId: {model.OrderId}"
+                    };
                 }
+
+                // 4. Cập nhật số lượng sản phẩm đã bán
+                var updateSoldResponse = await UpdateSold(new ProductSoldRequest
+                {
+                    IsExist = true,
+                    ProductSoldModels = order.Items.Select(item => new ProductSoldModel
+                    {
+                        ProductId = item.ProductId,
+                        Quantity = item.Quantity
+                    }).ToList()
+                });
+
+                if (!updateSoldResponse.IsSuccess)
+                {
+                    return new ResponseModel
+                    {
+                        IsSuccess = false,
+                        Message = "Failed to update sold product information"
+                    };
+                }
+
+                // 5. Hoàn tất thanh toán
                 response.IsSuccess = true;
                 response.Message = "Order paid successfully";
-
-
             }
             catch (Exception ex)
             {
+                // Ghi log lỗi nếu cần thiết
                 response.IsSuccess = false;
-                response.Message = $"Error: {ex.Message}";
+                response.Message = $"Unexpected error: {ex.Message}";
             }
+
             return response;
         }
 
-
-
-
+        public async Task<ResponseModel> UpdateSold(ProductSoldRequest request)
+        {
+            try
+            {
+                _message.SendingMessageProduct(request);
+                return new ResponseModel
+                {
+                    IsSuccess = true,
+                    Message = "Update sold product success"
+                };
+            }
+            catch (Exception ex)
+            {
+                // Ghi log lỗi nếu cần thiết
+                return new ResponseModel
+                {
+                    IsSuccess = false,
+                    Message = $"Failed to update sold product: {ex.Message}"
+                };
+            }
+        }
 
 
 
