@@ -14,7 +14,8 @@
             await Task.WhenAll(
                 Task.Run(() => _messageComsumer.ReceiveMessage(), stoppingToken),
                 Task.Run(() => _messageComsumer.ReceiveMessageCheckExistCategory(), stoppingToken),
-                Task.Run(() => _messageComsumer.ReceiveMessageCheckExistUserName(), stoppingToken)
+                Task.Run(() => _messageComsumer.ReceiveMessageCheckExistUserName(), stoppingToken),
+                Task.Run(() => _messageComsumer.ReceiveMessageStastisticalGroupByUserToProduct(), stoppingToken)
             );
 
 

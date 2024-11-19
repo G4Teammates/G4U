@@ -33,8 +33,9 @@ namespace CategoryMicroService.Controllers
                     _responseModel.Result = Cates.Result;
                     return Ok(_responseModel);
                 }
+                _responseModel.IsSuccess = false;
                 _responseModel.Message = Cates.Message;
-                return BadRequest(_responseModel.Message);
+                return BadRequest(_responseModel);
             }
             catch (Exception ex)
             {
@@ -55,8 +56,9 @@ namespace CategoryMicroService.Controllers
                     _responseModel.Result = Cates.Result;
                     return Ok(_responseModel);
                 }
+                _responseModel.IsSuccess = false;
                 _responseModel.Message = Cates.Message;
-                return BadRequest(_responseModel.Message);
+                return BadRequest(_responseModel);
             }
             catch (Exception ex)
             {
@@ -76,8 +78,9 @@ namespace CategoryMicroService.Controllers
                     _responseModel.Result = Cates.Result;
                     return Ok(_responseModel);
                 }
+                _responseModel.IsSuccess = false;
                 _responseModel.Message = Cates.Message;
-                return BadRequest(_responseModel.Message);
+                return BadRequest(_responseModel);
             }
             catch (Exception ex)
             {
@@ -99,8 +102,9 @@ namespace CategoryMicroService.Controllers
                     _responseModel.Result = Cates.Result;
                     return Ok(_responseModel);
                 }
+                _responseModel.IsSuccess = false;
                 _responseModel.Message = Cates.Message;
-                return BadRequest(_responseModel.Message);
+                return BadRequest(_responseModel);
             }
             catch (Exception ex)
             {
@@ -140,8 +144,9 @@ namespace CategoryMicroService.Controllers
                     _responseModel.Result = Cate.Result;
                     return Ok(_responseModel);
                 }
+                _responseModel.IsSuccess = false;
                 _responseModel.Message = Cate.Message;
-                return BadRequest(_responseModel.Message);
+                return BadRequest(_responseModel);
             }
             catch (Exception ex)
             {

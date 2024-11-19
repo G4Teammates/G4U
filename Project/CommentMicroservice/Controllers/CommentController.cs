@@ -33,8 +33,9 @@ namespace CommentMicroService.Controllers
                     _responseModel.Result = Comm.Result;
                     return Ok(_responseModel);
                 }
+                _responseModel.IsSuccess = false;
                 _responseModel.Message = Comm.Message;
-                return BadRequest(_responseModel.Message);
+                return BadRequest(_responseModel);
             }
             catch (Exception ex)
             {
@@ -56,8 +57,9 @@ namespace CommentMicroService.Controllers
                     _responseModel.Result = Comm.Result;
                     return Ok(_responseModel);
                 }
+                _responseModel.IsSuccess = false;
                 _responseModel.Message = Comm.Message;
-                return BadRequest(_responseModel.Message);
+                return BadRequest(_responseModel);
             }
             catch (Exception ex)
             {
@@ -79,8 +81,9 @@ namespace CommentMicroService.Controllers
                     _responseModel.Result = Comm.Result;
                     return Ok(_responseModel);
                 }
+                _responseModel.IsSuccess = false;
                 _responseModel.Message = Comm.Message;
-                return BadRequest(_responseModel.Message);
+                return BadRequest(_responseModel);
             }
             catch (Exception ex)
             {
@@ -90,19 +93,20 @@ namespace CommentMicroService.Controllers
             }
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreateComment([FromForm] CreateCommentDTO model)
+        [HttpPost("{userId}")]
+        public async Task<IActionResult> CreateComment([FromRoute] string userId, [FromForm] CreateCommentDTO model)
         {
             try
             {
-                var Comm = await _db.CreateComment(model);
+                var Comm = await _db.CreateComment(userId,model);
                 if (Comm.IsSuccess)
                 {
                     _responseModel.Result = Comm.Result;
                     return Ok(_responseModel);
                 }
+                _responseModel.IsSuccess = false;
                 _responseModel.Message = Comm.Message;
-                return BadRequest(_responseModel.Message);
+                return BadRequest(_responseModel);
             }
             catch (Exception ex)
             {
@@ -123,8 +127,9 @@ namespace CommentMicroService.Controllers
                     _responseModel.Result = Comm.Result;
                     return Ok(_responseModel);
                 }
+                _responseModel.IsSuccess = false;
                 _responseModel.Message = Comm.Message;
-                return BadRequest(_responseModel.Message);
+                return BadRequest(_responseModel);
             }
             catch (Exception ex)
             {
@@ -147,8 +152,9 @@ namespace CommentMicroService.Controllers
                     _responseModel.Message = Comm.Message;
                     return Ok(_responseModel);
                 }
+                _responseModel.IsSuccess = false;
                 _responseModel.Message = Comm.Message;
-                return BadRequest(_responseModel.Message);
+                return BadRequest(_responseModel);
             }
             catch (Exception ex)
             {
@@ -170,8 +176,9 @@ namespace CommentMicroService.Controllers
                     _responseModel.Result = Comm.Result;
                     return Ok(_responseModel);
                 }
+                _responseModel.IsSuccess = false;
                 _responseModel.Message = Comm.Message;
-                return BadRequest(_responseModel.Message);
+                return BadRequest(_responseModel);
             }
             catch (Exception ex)
             {
@@ -194,8 +201,9 @@ namespace CommentMicroService.Controllers
                     _responseModel.Result = Comm.Result;
                     return Ok(_responseModel);
                 }
+                _responseModel.IsSuccess = false;
                 _responseModel.Message = Comm.Message;
-                return BadRequest(_responseModel.Message);
+                return BadRequest(_responseModel);
             }
             catch (Exception ex)
             {
@@ -217,8 +225,9 @@ namespace CommentMicroService.Controllers
                     _responseModel.Result = Comm.Result;
                     return Ok(_responseModel);
                 }
+                _responseModel.IsSuccess = false;
                 _responseModel.Message = Comm.Message;
-                return BadRequest(_responseModel.Message);
+                return BadRequest(_responseModel);
             }
             catch (Exception ex)
             {
@@ -240,8 +249,9 @@ namespace CommentMicroService.Controllers
                     _responseModel.Message = result.Message;
                     return Ok(_responseModel);
                 }
+                _responseModel.IsSuccess = false;
                 _responseModel.Message = result.Message;
-                return BadRequest(_responseModel.Message);
+                return BadRequest(_responseModel);
             }
             catch (Exception ex)
             {
@@ -263,8 +273,9 @@ namespace CommentMicroService.Controllers
                     _responseModel.Message = result.Message;
                     return Ok(_responseModel);
                 }
+                _responseModel.IsSuccess = false;
                 _responseModel.Message = result.Message;
-                return BadRequest(_responseModel.Message);
+                return BadRequest(_responseModel);
             }
             catch (Exception ex)
             {
