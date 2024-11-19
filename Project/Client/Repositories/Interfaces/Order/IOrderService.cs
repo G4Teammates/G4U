@@ -5,7 +5,7 @@ namespace Client.Repositories.Interfaces.Order
 {
     public interface IOrderService
     {
-        Task<ResponseModel> GetAll();
+        Task<ResponseModel> GetAll(int? pagerNumber, int pageSize);
         Task<ResponseModel> GetOrderById(string id);
         Task<ResponseModel> GetOrderByTransaction(string id);
         Task<ResponseModel> CreateOrder(CreateOrderModel order);
