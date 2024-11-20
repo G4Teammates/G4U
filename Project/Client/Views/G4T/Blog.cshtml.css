@@ -1,5 +1,15 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿.hover-zoom {
+    overflow: hidden; /* Đảm bảo rằng khi hình ảnh zoom, nó không bị tràn ra ngoài */
+}
+
+    .hover-zoom img {
+        transition: transform 1s ease; /* Hiệu ứng zoom mượt mà */
+    }
+
+    .hover-zoom:hover img {
+        transform: scale(1.2); /* Zoom hình ảnh lên 10% khi hover */
+    }
+
+body.dark-theme .ContactUs{
+    color: white;
 }

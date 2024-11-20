@@ -2,14 +2,6 @@
 @using Newtonsoft.Json
 @using System.Web
 @model CartModel
-
-
-
-
-
-
-
-
 <style>
     body {
         background-color: #eeecec;
@@ -38,7 +30,7 @@
     <form asp-action="Checkout" asp-controller="Order" class="row">
         <!-- Your Order Section -->
         <div class="col-lg-7">
-            <h5 class="fw-bold text-success"><i class="fas fa-user"></i>YOUR ORDER</h5>
+            <h5 class="fw-bold"><i class="fas fa-user"></i>YOUR ORDER</h5>
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             @* <input type="hidden" id="cartJson" name="cartJson" value="@Html.Raw(JsonConvert.SerializeObject(Model.Order))" /> *@
             @*         <input type="hidden" id="cartJson" name="cartJson"
@@ -79,7 +71,7 @@
         </div>
         <!-- Your Payment & Gifting Details Section -->
         <div class="col-lg-5">
-            <h5 class="fw-bold text-success"><i class="fas fa-user"></i>YOUR PAYMENT & GIFTING DETAILS</h5>
+            <h5 class="fw-bold"><i class="fas fa-user"></i>YOUR PAYMENT & GIFTING DETAILS</h5>
 
             <div class="custom-bg-light p-3 mt-3 shadow-sm border">
                 <!-- Wallet Payment Method -->

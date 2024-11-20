@@ -90,12 +90,11 @@
         {
             foreach (var image in Model.oderitem)
             {
-                <a asp-controller="Product" asp-action="ProductDetail" asp-route-id="@image.ProductId">
+                <a asp-controller="Product" asp-action="ProductDetail" asp-route-id="@image.ProductId" class="text-decoration-none">
                     <div class="collection-card">
-                        
                         <img src="@image.ImageUrl" alt="Favorites">
                         <div class="text">
-                            <p class="title text-danger text-decoration-none">@image.ProductName</p>
+                            <p class="title text-white text-decoration-none">@image.ProductName</p>
                         </div>
                     </div>
                 </a>
