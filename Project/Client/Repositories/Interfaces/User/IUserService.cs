@@ -1,5 +1,6 @@
 ﻿using Client.Models;
 using Client.Models.UserDTO;
+using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using static Client.Models.Enum.UserEnum.User;
 
@@ -16,5 +17,6 @@ namespace Client.Repositories.Interfaces.User
         Task<ResponseModel> ChangeStatus(string id, UserStatus status);
         Task<ResponseModel> GetAllProductsInWishList(string id);
         Task<ResponseModel> AddToWishList(WishlistModel WishlistModel, string userName);
+        Task<ResponseModel> RemoveWishList(string productId, string userName);
     }
 }

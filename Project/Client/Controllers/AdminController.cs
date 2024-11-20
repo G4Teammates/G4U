@@ -28,6 +28,7 @@ using Client.Repositories.Interfaces.Stastistical;
 using Client.Models.Statistical;
 using System.Security.Claims;
 using Client.Models.Enum.OrderEnum;
+using Azure;
 
 
 
@@ -1518,6 +1519,42 @@ namespace Client.Controllers
             catch (Exception ex)
             {
                 return Json(new { success = false, message = $"An error occurred: {ex.Message}" });
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> RemoveWishList(string productId)
+        {
+            IEnumerable<Claim> claim = HttpContext.User.Claims;
+            string un = claim.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value!;
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors)
+                                              .Select(e => e.ErrorMessage);
+                /*return Json(new { success = false, errors = errors });*/
+                TempData["error"] = "ModelState false.";
+                return RedirectToAction("Collection", "Product");
+            }
+
+            try
+            {
+                var response = await _userService.RemoveWishList(productId, un);
+
+                if (response != null && response.IsSuccess)
+                {
+                    TempData["success"] = "Remove wishlist item successfully";
+                    return RedirectToAction("Collection", "Product");
+                }
+                else
+                {
+                    /*return Json(new { success = false, message = response?.Message ?? "An unknown error occurred." });*/
+                    TempData["error"] = "An unknown error occurred: "+ response.Message;
+                    return RedirectToAction("Collection", "Product");
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = "An unknown error occurred: " + ex.Message;
+                return RedirectToAction("Collection", "Product");
             }
         }
         #endregion

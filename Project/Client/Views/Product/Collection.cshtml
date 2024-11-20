@@ -117,10 +117,22 @@
             foreach (var image in Model.Wishlist)
             {
                 <div class="collection-card">
-                    <span class="delete-icon" onclick="confirmDelete()">&times;</span>
+                    <span class="delete-icon" onclick="confirmDelete('@image.ProductId')">&times;</span>
                     <img src="@image.ProductImage" alt="Favorites">
                     <div class="text">
                         <p class="title text-white">@image.ProductName</p>
+                    </div>
+                </div>
+
+                <!-- Modal Xác nhận Xóa -->
+                <div id="deleteModal-@image.ProductId" class="modal">
+                    <div class="modal-content">
+                        <p>Bạn có muốn xóa Game khỏi Wishlist?</p>
+                        <form asp-action="RemoveWishList" asp-controller="Admin" method="post" class="modal-buttons">
+                            <input type="hidden" name="productId" value="@image.ProductId" />
+                            <input type="submit" value="Yes" class="btn-confirm" />
+                            <a style="text-decoration:none" onclick="closeModal('@image.ProductId')" class="btn-cancel">No</a>
+                        </form>
                     </div>
                 </div>
             }
@@ -136,26 +148,28 @@
 
 
 
-<!-- Modal Xác nhận Xóa -->
-<div id="deleteModal" class="modal">
-    <div class="modal-content">
-        <p>Bạn có muốn xóa Game khỏi Wishlist?</p>
-        <div class="modal-buttons">
-            <button  class="btn-confirm">Yes</button>
-            <button onclick="closeModal()" class="btn-cancel">No</button>
-        </div>
-    </div>
-</div>
+
 
 
  <script>
-    function confirmDelete() {
-        document.getElementById("deleteModal").classList.add("show");
+    function confirmDelete(productId) {
+        const modal = document.getElementById(`deleteModal-${productId}`);
+        if (modal) {
+            modal.classList.add("show");
+        } else {
+            console.error(`Modal với ProductId = ${productId} không tồn tại.`);
+        }
     }
 
-    function closeModal() {
-        document.getElementById("deleteModal").classList.remove("show");
+    function closeModal(productId) {
+        const modal = document.getElementById(`deleteModal-${productId}`);
+        if (modal) {
+            modal.classList.remove("show");
+        } else {
+            console.error(`Modal với ProductId = ${productId} không tồn tại.`);
+        }
     }
+
 
     
  </script>
