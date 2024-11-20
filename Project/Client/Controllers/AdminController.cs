@@ -29,6 +29,7 @@ using Client.Models.Statistical;
 using System.Security.Claims;
 using Client.Models.Enum.OrderEnum;
 using Azure;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 
 
@@ -171,6 +172,24 @@ namespace Client.Controllers
 
             return View(statistical);
         }
+        public async Task<IActionResult> StastistiicalByUser(TotalGroupByUserRequest totalGroupByUserRequest)
+        {
+            ResponseModel? response = await _statisticalService.GetByUser(totalGroupByUserRequest);
+
+            if (response != null && response.IsSuccess)
+            {
+                TotalGroupByUserResponse? Model = JsonConvert.DeserializeObject<TotalGroupByUserResponse>(Convert.ToString(response.Result));
+                TempData["success"] = "successfully";
+                /*ViewBag.Comments = commentsModel;*/  // Gán dữ liệu vào ViewBag
+                return PartialView("_UserStatisticsPartial", Model);
+            }
+            else
+            {
+                TempData["error"] = response?.Message;
+            }
+            return NotFound();
+        }
+
         #endregion
 
         #region User
