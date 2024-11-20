@@ -41,6 +41,15 @@ namespace Client.Repositories.Services.Authentication
                 Url = _authenUrl + "/forgot-password"
             });
         }
+        public async Task<ResponseModel> ActiveUserAsync(string email)
+        {
+            return await _baseService.SendAsync(new RequestModel
+            {
+                ApiType = ApiType.POST,
+                Data = email,
+                Url = _authenUrl + "/active-user"
+            });
+        }
 
         public async Task<ResponseModel> LoginAsync(LoginRequestModel loginModel)
         {

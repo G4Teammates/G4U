@@ -23,6 +23,7 @@
                 {
                     <form class="row" asp-action="UserUpdate" method="post" enctype="multipart/form-data">
                         <!-- Hidden field for User ID -->
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                         <div class="row">
                             <div class="col">
                                 <input type="hidden" asp-for="@Model.Id" />
@@ -82,11 +83,26 @@
                             <!-- Avatar URL -->
                             <div class="col">
                                 <div class="text-center">
-                                    <div>
-                                        <img id="avatarPreview" src="@Model.Avatar" alt="Avatar Preview" style="width:200px; height:200px;" />
-                                    </div>
-                                    <input type="file" id="avatarInput" asp-for="@Model.AvatarFile" class="form-control mt-2" style="display: none;" accept=".png, .jpg" />
-                                    <a id="changeAvatarBtn" class="btn btn-outline-dark text-center mt-2">Change Avatar</a>
+                                    @if (Model.AvatarFile != null)
+                                    {
+                                        <div>
+                                            <img id="avatarPreviewUpdate" src="@Model.Avatar" alt="Avatar Preview" style="width:200px; height:200px;" />
+                                        </div>
+                                        <input type="file" id="avatarInputUpdate" asp-for="@Model.AvatarFile" class="form-control mt-2" style="display: none;" accept=".png, .jpg" />
+                                        <a id="changeAvatarUpdateBtn" class="btn btn-outline-dark text-center mt-2">Change Avatar</a>
+                                        <span asp-validation-for="@Model.Avatar" class="text-danger"></span>
+
+                                    }
+                                    else
+                                    {
+                                        <div>
+                                            <img id="avatarPreviewUpdate" src="@Model.Avatar" alt="Avatar Preview" style="width:200px; height:200px;" />
+                                        </div>
+                                        <input type="file" id="avatarInputUpdate" asp-for="@Model.AvatarFile" class="form-control mt-2" style="display: none;" accept=".png, .jpg" />
+                                        <a id="changeAvatarUpdateBtn" class="btn btn-outline-dark text-center mt-2">Change Avatar</a>
+                                        <span asp-validation-for="@Model.Avatar" class="text-danger"></span>
+
+                                    }
                                 </div>
                             </div>
                         </div>
@@ -109,27 +125,27 @@
         </div>
     </div>
 </div>
+<script>
+    $(document).ready(function () {
+        $('#changeAvatarUpdateBtn').click(function () {
+            $('#avatarInputUpdate').click();
+        });
+
+        $('#avatarInputUpdate').change(function (event) {
+            const input = event.target;
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    $('#avatarPreviewUpdate').attr('src', e.target.result);
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        });
+    });
+</script>
+
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 }
-<script>
-    // Mở hộp thoại chọn file khi nhấp vào nút "Change Avatar"
-    document.getElementById('changeAvatarBtn').addEventListener('click', function () {
-        document.getElementById('avatarInput').click();
-    });
-
-    // Xử lý sự kiện khi file ảnh được chọn
-    document.getElementById('avatarInput').addEventListener('change', function (event) {
-        const input = event.target;
-        if (input.files && input.files[0]) {
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                // Hiển thị ảnh vừa chọn lên thẻ img
-                document.getElementById('avatarPreview').src = e.target.result;
-            };
-            reader.readAsDataURL(input.files[0]);
-        }
-    });
-</script>

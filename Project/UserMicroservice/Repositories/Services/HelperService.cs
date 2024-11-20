@@ -20,6 +20,7 @@ using Azure.Core;
 using static System.Net.WebRequestMethods;
 using System;
 using Amazon.SecurityToken.Model;
+using System.Security.Cryptography;
 
 namespace UserMicroservice.Repositories.Services
 {
@@ -330,5 +331,24 @@ namespace UserMicroservice.Repositories.Services
             };
         }
 
+        public string GenerateRandomPassword(int length)
+        {
+            const string asciiChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            char[] password = new char[length];
+
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                byte[] randomBytes = new byte[length];
+                rng.GetBytes(randomBytes);
+
+                for (int i = 0; i < length; i++)
+                {
+                    int randomIndex = randomBytes[i] % asciiChars.Length;
+                    password[i] = asciiChars[randomIndex];
+                }
+            }
+
+            return new string(password);
+        }
     }
 }

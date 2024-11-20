@@ -179,14 +179,14 @@
                             @if (user.Role == Client.Models.Enum.UserEnum.User.UserRole.Admin)
                             {
                                 <td>
-                                    <p class="text-secondary mx-2"> <i class="fas fa-trash"></i></p>
+                                    <p class="text-secondary mx-2" title="Can not delete Admin"> <i class="fas fa-trash"></i></p>
                                 </td>
                             }
                             else
                             {
-                               @*  <td>
-                                    <a asp-action="UserDelete" asp-route-Id="@user.Id" class="text-danger mx-2"> <i class="fas fa-trash"></i></a>
-                                </td> *@
+                                <td>
+                                    <a asp-action="UserDelete" asp-route-id="@user.Id" class="text-danger mx-2"> <i class="fas fa-trash"></i></a>
+                                </td>
                             }
                         </tr>
                     }
@@ -234,9 +234,18 @@
                                     <i class="fa-solid fa-pen-to-square" style="color:#0b3d0d"></i>
                                 </a>
                             </td>
-                           @*  <td>
-                                <a asp-action="UserDelete" asp-route-Id="@user.Id" class="text-danger mx-2"> <i class="fas fa-trash"></i></a>
-                            </td> *@
+                            @if (user.Role == Client.Models.Enum.UserEnum.User.UserRole.Admin)
+                            {
+                                <td>
+                                    <p class="text-secondary mx-2" title="Can not delete Admin"> <i class="fas fa-trash"></i></p>
+                                </td>
+                            }
+                            else
+                            {
+                                <td>
+                                    <a asp-action="UserDelete" asp-route-id="@user.Id" class="text-danger mx-2"> <i class="fas fa-trash"></i></a>
+                                </td>
+                            }
                         </tr>
                     }
                     else if (user.Status == Client.Models.Enum.UserEnum.User.UserStatus.Block)
@@ -284,9 +293,18 @@
                                     <i class="fa-solid fa-pen-to-square" style="color:#0b3d0d"></i>
                                 </a>
                             </td>
-                           @*  <td>
-                                <a asp-action="UserDelete" asp-route-Id="@user.Id" class="text-danger mx-2"> <i class="fas fa-trash"></i></a>
-                            </td> *@
+                            @if (user.Role == Client.Models.Enum.UserEnum.User.UserRole.Admin)
+                            {
+                                <td>
+                                    <p class="text-secondary mx-2" title="Can not delete Admin"> <i class="fas fa-trash"></i></p>
+                                </td>
+                            }
+                            else
+                            {
+                                <td>
+                                    <a asp-action="UserDelete" asp-route-id="@user.Id" class="text-danger mx-2"> <i class="fas fa-trash"></i></a>
+                                </td>
+                            }
                         </tr>
                     }
                     else if (user.Status == Client.Models.Enum.UserEnum.User.UserStatus.Deleted)
@@ -334,9 +352,6 @@
                                     <i class="fa-solid fa-pen-to-square" style="color:#0b3d0d"></i>
                                 </a>
                             </td>
-                           @*  <td>
-                                <a asp-action="UserDelete" asp-route-Id="@user.Id" class="text-danger mx-2"> <i class="fas fa-trash"></i></a>
-                            </td> *@
                         </tr>
                     }
                     else
