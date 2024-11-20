@@ -2,9 +2,10 @@
 @model ProductViewModel
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
 
+
 <div class="container-fluid mt-5" style="min-height:1100px;">
-    <section class="modern-heading ms-3" style="width:100%; border: 3px solid transparent; border-radius: 12px; padding: 15px 20px; background: linear-gradient(#fff, #fff) padding-box, linear-gradient(135deg, #00A97F, #800080) border-box; max-width: 40%; display: flex; justify-content: center; align-items: center; height: 100px;">
-        <h1 style="font-family: 'Poppins', sans-serif; text-transform: uppercase; color: #00A97F; text-align: center; margin: 0;">
+    <section class="modern-heading ms-3">
+        <h1 style="font-family: 'Poppins', sans-serif; text-transform: uppercase; text-align: center; margin: 0;">
             Other Product
         </h1>
     </section>
@@ -90,74 +91,36 @@
             </div>
         </div>
         <div class="col-md-9 mt-2">
-            @* <div class="ortherproduct">
-                <div class="radio-inputs">
-                    <label class="radio">
-                        <input type="radio" name="radio" checked="" />
-                        <span class="name" style="font-family: 'Roboto', 'Segoe UI', sans-serif;">For you</span>
-                    </label>
-                    <label class="radio">
-                        <input type="radio" name="radio" />
-                        <span class="name" style="font-family: 'Roboto', 'Segoe UI', sans-serif;">Popular</span>
-                    </label>
-
-                    <label class="radio">
-                        <input type="radio" name="radio" />
-                        <span class="name" style="font-family: 'Roboto', 'Segoe UI', sans-serif;">Free</span>
-                    </label>
-
-                    <label class="radio">
-                        <input type="radio" name="radio" />
-                        <span class="name" style="font-family: 'Roboto', 'Segoe UI', sans-serif;">New</span>
-                    </label>
-                    <label class="radio">
-                        <input type="radio" name="radio" />
-                        <span class="name" style="font-family: 'Roboto', 'Segoe UI', sans-serif;">More</span>
-                    </label>
-                </div>
-            </div> *@
-
-            @* <form method="get" asp-controller="Product" asp-action="Product" class="d-inline">
-                <select name="pageSize" class="form-select form-select-sm w-auto d-inline-block" onchange="this.form.submit()">
-                    <option>Select records per page</option>
-                    <option value="3">3 records per page</option>
-                    <option value="5">5 records per page</option>
-                    <option value="10">10 records per page</option>
-                </select>
-                <input type="hidden" name="page" value="1" />
-            </form> *@
-            <div class="d-flex align-items-center justify-content-center" style="margin-right: 1vw; flex-wrap: wrap;">
+            <div class="d-flex align-items-center justify-content-center sort-container">
                 <!-- Sort -->
-                <form class="col-md-5 d-inline-flex align-items-center ms-2" asp-action="SortProducts" asp-controller="Product" method="post" style="gap: 10px;">
-                    <select name="sort" class="form-select me-2 w-75" aria-label="Type" style="height: 2.5em; background-color: #00A97F; color: white; border: 1px solid #ccc; display: flex; align-items: center;">
-                        <option value="ascPrice" style="background-color: white; color: #00A97F;">Price Ascending</option>
-                        <option value="descPrice" style="background-color: white; color: #00A97F;">Price Descending</option>
-                        <option value="ascView" style="background-color: white; color: #00A97F;">View Ascending</option>
-                        <option value="descView" style="background-color: white; color: #00A97F;">View Descending</option>
-                        <option value="ascLike" style="background-color: white; color: #00A97F;">Like Ascending</option>
-                        <option value="descLike" style="background-color: white; color: #00A97F;">Like Descending</option>
-                        <option value="ascSold" style="background-color: white; color: #00A97F;">Purchase Count Ascending</option>
-                        <option value="descSold" style="background-color: white; color: #00A97F;">Purchase Count Descending</option>
+                <form class="col-md-5 d-inline-flex align-items-center ms-2" asp-action="SortProducts" asp-controller="Product" method="post">
+                    <select name="sort" class="form-select me-2 w-75 sort-select">
+                        <option value="ascPrice" class="sort-option">Price Ascending</option>
+                        <option value="descPrice" class="sort-option">Price Descending</option>
+                        <option value="ascView" class="sort-option">View Ascending</option>
+                        <option value="descView" class="sort-option">View Descending</option>
+                        <option value="ascLike" class="sort-option">Like Ascending</option>
+                        <option value="descLike" class="sort-option">Like Descending</option>
+                        <option value="ascSold" class="sort-option">Purchase Count Ascending</option>
+                        <option value="descSold" class="sort-option">Purchase Count Descending</option>
                     </select>
-                    <button type="submit" class="btn btn-primary" style="height: 2.5em; width: 100px; background-color: #00A97F; color: white; border: 1px solid #ccc; display: flex; align-items: center; justify-content: center;">
+                    <button type="submit" class="btn btn-primary sort-btn">
                         Sort
                     </button>
                 </form>
-
 
                 <!-- Phần Bản ghi và Nút Free nằm cùng một hàng và sát bên phải -->
                 <div class="d-flex align-items-center justify-content-end col-md-5 ms-auto">
                     <!-- Bản ghi -->
                     <form method="get" asp-controller="Product" asp-action="Product" class="col-md-2 col-4 d-inline ms-2 mb-2">
-                        <!-- Thay đổi từ col-md-1 thành col-md-2 -->
                         <div class="dropdown">
-                            <a href="#" type="button" class="d-flex align-items-center justify-content-around dropdown-toggle text-white" style="height: 2.5em; background-color: #00A97F; border-radius: 5px" data-bs-toggle="dropdown" aria-expanded="false">
+                            <a href="#" type="button" class="d-flex align-items-center justify-content-around dropdown-toggle text-white" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="fa-regular fa-rectangle-list"></i>
                             </a>
-                            <ul class="dropdown-menu p-0" style="min-width: auto; width: auto;">
-                                <li><button class="dropdown-item" style="background-color: white; color:#00A97F" type="button" onclick="document.querySelector('[name=\'pageSize\']').value='3'; this.form.submit()">3 records per page</button></li>
-                                <li><button class="dropdown-item" style="background-color: white; color:#00A97F" type="button" onclick="document.querySelector('[name=\'pageSize\']').value='5'; this.form.submit()">5 records per page</button></li>
-                                <li><button class="dropdown-item" style="background-color: white; color:#00A97F" type="button" onclick="document.querySelector('[name=\'pageSize\']').value='10'; this.form.submit()">10 records per page</button></li>
+                            <ul class="dropdown-menu p-0">
+                                <li><button class="dropdown-item" type="button" onclick="document.querySelector('[name=\'pageSize\']').value='3'; this.form.submit()">3 records per page</button></li>
+                                <li><button class="dropdown-item" type="button" onclick="document.querySelector('[name=\'pageSize\']').value='5'; this.form.submit()">5 records per page</button></li>
+                                <li><button class="dropdown-item" type="button" onclick="document.querySelector('[name=\'pageSize\']').value='10'; this.form.submit()">10 records per page</button></li>
                             </ul>
                             <input type="hidden" name="pageSize" value="" />
                             <input type="hidden" name="page" value="1" />
@@ -165,13 +128,9 @@
                     </form>
 
                     <!-- Nút Free -->
-                    <label class="switch ms-2 mb-2">
-                        <input type="checkbox">
-                        <span class="slider"></span>
-                    </label>
-                    <p class="ms-2 mt-3">Free</p>
                 </div>
             </div>
+
 
 
 
@@ -261,27 +220,7 @@
                                                 </button>
                                             </form>
                                         </div>
-                                        @* <div title="Wishlist" class="col-md-3 heart-container" >
-                                            <input id="Give-It-An-Id" class="checkbox" type="checkbox">
-                                            <div class="svg-container">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="svg-outline" viewBox="0 0 24 24">
-                                                    <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Zm-3.585,18.4a2.973,2.973,0,0,1-3.83,0C4.947,16.006,2,11.87,2,8.967a4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,11,8.967a1,1,0,0,0,2,0,4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,22,8.967C22,11.87,19.053,16.006,13.915,20.313Z">
-                                                    </path>
-                                                </svg>
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="svg-filled" viewBox="0 0 24 24">
-                                                    <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Z">
-                                                    </path>
-                                                </svg>
-                                                <svg xmlns="http://www.w3.org/2000/svg" height="100" width="100" class="svg-celebrate">
-                                                    <polygon points="10,10 20,20"></polygon>
-                                                    <polygon points="10,50 20,50"></polygon>
-                                                    <polygon points="20,80 30,70"></polygon>
-                                                    <polygon points="90,10 80,20"></polygon>
-                                                    <polygon points="90,50 80,50"></polygon>
-                                                    <polygon points="80,80 70,70"></polygon>
-                                                </svg>
-                                            </div>
-                                        </div> *@
+                                        
                                     </div>
                                     
 
@@ -375,3 +314,6 @@
         }
     }
 </script>
+
+
+

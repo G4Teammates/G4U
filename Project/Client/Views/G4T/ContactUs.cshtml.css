@@ -1,0 +1,104 @@
+﻿.ContactUs {
+    margin: 5vw auto;
+    max-width: 1200px;
+}
+
+.title {
+    font-size: 80px;
+    margin-top: 5rem;
+    margin-left: 5rem;
+    text-align: left; /* Chuyển từ center sang left */
+}
+
+.content {
+    margin-top: 3rem;
+    padding: 3rem;
+}
+
+.form-section .form-control {
+    border-radius: 5px;
+}
+
+.form-section .btn {
+    border-radius: 5px;
+}
+
+.options-section {
+    margin-top: 5vw;
+}
+
+.option {
+    margin-top: 3rem;
+    text-align: center;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid black;
+}
+
+    .option .icon-container {
+        background-color: #000;
+        border-radius: 50%;
+        padding: 2rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 120px;
+        height: 120px;
+        margin: auto;
+    }
+
+    .option .icon {
+        font-size: 3.5rem;
+        color: #fff;
+    }
+
+    .option h2 {
+        font-size: 1.4rem;
+        font-weight: bold;
+        color: #444;
+        margin-top: 0.5rem;
+    }
+
+    .option h1 {
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: #222;
+    }
+
+.option-description {
+    padding-top: 0.8rem;
+    max-width: 90%;
+    margin: auto;
+}
+
+    .option-description p {
+        font-size: 0.95rem;
+        color: #555;
+        line-height: 1.5;
+    }
+
+    .option-description ul {
+        padding-left: 2rem;
+        list-style-type: disc;
+    }
+
+    .option-description a {
+        color: #0066cc;
+        text-decoration: none;
+    }
+
+
+/* Chế độ tối */
+body.dark-theme .ContactUs {
+    color: #e0e0e0; /* Màu chữ chính trong chế độ tối */
+}
+
+    body.dark-theme .ContactUs h1,
+    body.dark-theme .ContactUs h2,
+    body.dark-theme .ContactUs h1.title, /* Tiêu đề chính Contact Us */
+    body.dark-theme .ContactUs p {
+        color: #fff; /* Màu tiêu đề và nội dung sáng hơn */
+    }
+
+    body.dark-theme .ContactUs a {
+        color: #66aaff; /* Màu liên kết sáng hơn */
+    }

@@ -11,7 +11,177 @@
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
   box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
+/*Nav*/
+/* Mặc định: chế độ sáng */
+body {
+    background-color: rgba(255, 255, 255, 0.9);
+    transition: background-color 0.3s, color 0.3s;
+}
 
+    /* Chế độ tối */
+    body.dark-theme {
+        background-color: #24262b;
+    }
+
+        body.dark-theme .navbaradmin {
+            background-color: #222222; /* Màu nền cho navbar trong chế độ tối */
+        }
+
+            /* Chỉnh màu chữ cho các mục trong navbar khi ở chế độ tối */
+            body.dark-theme .navbaradmin .nav-link {
+                color: #ffffff;
+            }
+
+/* Avatar mặc định */
+#avatar {
+    transition: filter 0.3s ease; /* Thêm hiệu ứng mượt */
+}
+
+/* Avatar trong chế độ tối */
+body.dark-theme #avatar {
+    filter: invert(1); /* Đảo ngược màu */
+}
+/*Nav*/
+/*Index*/
+body.dark-theme .gamefree{
+    background-color: #ddd;
+    color: rgba(0, 0, 0, 0.5);
+}
+body.dark-theme .product-name {
+    color: #E0F2F1;
+}
+
+.header_section {
+    width: 100%;
+    border: 3px solid transparent;
+    border-radius: 12px;
+    padding: 15px 20px;
+    background: linear-gradient(#fff, #fff) padding-box, linear-gradient(135deg, #00A97F, #800080) border-box;
+    max-width: 80%;
+    margin: 0 auto;
+}
+
+body.dark-theme .header_section {
+    background: linear-gradient(#fff, #fff) padding-box, linear-gradient(135deg, #FFD700, #008000 ) border-box;
+}
+
+.gamemonth .header_section h1 {
+    color: #00A97F;
+}
+body.dark-theme .gamemonth .header_section h1 {
+    color: #6842ff;
+}
+
+.ortherproduct .header_section h1 {
+    color: #00A97F;
+}
+
+body.dark-theme .ortherproduct .header_section h1 {
+    color: #6842ff;
+}
+/*Index*/
+/*Product*/
+.modern-heading {
+    width: 100%;
+    border: 3px solid transparent;
+    border-radius: 12px;
+    padding: 15px 20px;
+    background: linear-gradient(#fff, #fff) padding-box, linear-gradient(135deg, #00A97F, #800080) border-box;
+    max-width: 40%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100px;
+}
+    .modern-heading h1 {
+        color: #00A97F;
+    }
+body.dark-theme .modern-heading {
+    background: linear-gradient(#fff, #fff) padding-box, linear-gradient(135deg, #FFD700, #008000 ) border-box;
+}
+body.dark-theme .modern-heading h1{
+    color: #6842ff;
+}
+
+body.dark-theme .filter-container {
+    background: linear-gradient(#fff, #fff) padding-box, linear-gradient(135deg, #FFD700, #008000) border-box;
+    box-shadow: 0 0 10px rgba(0, 169, 127, 0.8), 0 0 20px rgba(128, 0, 128, 0.5);
+    color: #6842ff; /* Màu chữ phù hợp với phong cách */
+}
+body.dark-theme .filter-title {
+    color: #6842ff;
+}
+
+body.dark-theme .btn-primary {
+    background-color: #6842ff;
+}
+/* Container for sort and pagination */
+.sort-container {
+    margin-right: 1vw;
+    flex-wrap: wrap;
+}
+
+    /* Sort form */
+    .sort-container form {
+        gap: 10px;
+    }
+
+.sort-select {
+    height: 2.5em;
+    background-color: #00A97F;
+    color: white;
+    border: 1px solid #ccc;
+    display: flex;
+    align-items: center;
+}
+
+.sort-option {
+    background-color: white;
+    color: #00A97F;
+}
+
+.sort-btn {
+    height: 2.5em;
+    width: 100px;
+    background-color: #00A97F;
+    color: white;
+    border: 1px solid #ccc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Dropdown menu and items */
+.dropdown {
+    position: relative;
+}
+
+.dropdown-toggle {
+    height: 2.5em;
+    background-color: #00A97F;
+    border-radius: 5px;
+} 
+body.dark-theme .dropdown-toggle {
+    background-color: #6842ff;
+}
+
+
+.dropdown-menu {
+    min-width: auto;
+    width: auto;
+}
+
+.dropdown-item {
+    background-color: white;
+    color: #00A97F;
+}
+
+    .dropdown-item:hover {
+        background-color: #f1f1f1;
+    }
+
+
+/*Product*/
 html, body {
     position: relative;
     /*min-height: 100%;*/
@@ -103,7 +273,9 @@ header {
     background-color: #E0F2F1;
 }
 
-
+.navbaradmin.dark-theme {
+    background-color: #24262b;
+}
 
 .nav-bar {
     width: 100%;
@@ -355,6 +527,72 @@ header {
         margin-left: 10px;
     }
 }
+
+
+/*Nut doi mau*/
+/* Cải tiến phần switch cho linh hoạt */
+.switch {
+    font-size: 17px;
+    position: relative;
+    display: inline-block;
+    width: 3.5em;
+    height: 2em;
+}
+
+    .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: black;
+    transition: .4s;
+    border-radius: 10px;
+}
+
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 1.4em;
+        width: 1.4em;
+        border-radius: 8px;
+        left: 0.3em;
+        bottom: 0.3em;
+        transform: rotate(270deg);
+        background-color: rgb(255, 255, 255);
+        transition: .4s;
+    }
+
+.switch input:checked + .slider {
+    background-color: #21cc4c;
+}
+
+.switch input:focus + .slider {
+    box-shadow: 0 0 1px #2196F3;
+}
+
+.switch input:checked + .slider:before {
+    transform: translateX(1.5em);
+}
+
+/* Điều chỉnh cho layout linh hoạt */
+@media (max-width: 768px) {
+    .col-md-1 {
+        flex: 1 1 100%; /* Chiếm 100% chiều rộng trên màn hình nhỏ */
+    }
+
+    .dropdown-toggle {
+        width: 100%; /* Đảm bảo các nút dropdown chiếm hết chiều rộng */
+    }
+}
+
 
 
 /*Carousel*/
