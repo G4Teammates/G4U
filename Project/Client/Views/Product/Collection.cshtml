@@ -83,13 +83,9 @@
         cursor: pointer;
     } */
 </style>
-
-<div class="wishlist-container">
-    <h1 class="text-success"><i class="fas fa-heart"></i> Your Library</h1>
+<div class="wishlist-container mt-5">
+    <h1 class="text"><i class="fas fa-heart"></i> Your Library</h1>
     <div class="collections">
-        <div class="collection-card add-new">
-            + CREATE A NEW LIBRARY
-        </div>
         @if (Model.oderitem != null)
         {
             foreach (var image in Model.oderitem)
@@ -111,13 +107,10 @@
     </div>
 </div>
 
-
+<hr />
 <div class="wishlist-container">
-    <h1 class="text-success"><i class="fas fa-heart"></i> Your Wishlist</h1>
+    <h1 class="text"><i class="fas fa-heart"></i> Your Wishlist</h1>
     <div class="collections">
-        <div class="collection-card add-new">
-            + CREATE A NEW WISHLIST
-        </div>
         @if (Model.Wishlist != null)
         {
             foreach (var image in Model.Wishlist)

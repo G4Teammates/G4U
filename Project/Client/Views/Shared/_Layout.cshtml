@@ -20,17 +20,19 @@
 
     @* Owl.Theme.default.min.css *@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css" integrity="sha512-sMXtMNL1zRzolHYKEujM2AqCLUR9F2C4/05cdbxjjLSRvMQIciEPCQZo++nk7go3BtSuK9kfa/s+a4f4i5pLkw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
+    <style>
+        
+    </style>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 
 </head>
-<body style="background-color: rgba(255, 255, 255, 0.9);">
+<body>
     <div class="">
         <header>
             <!-- Navbar -->
-            <nav class="navbaradmin navbar navbar-expand-lg navbar-light bg-white sticky-top">
+            <nav class="navbaradmin navbar navbar-expand-lg sticky-top">
                 <div class="container-fluid d-flex">
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
@@ -39,7 +41,7 @@
                         <div class="d-flex align-items-center">
                             <div>
                                 <a asp-controller="Home" asp-action="Index">
-                                    <img src="~/Image/logo.png" alt="Logo" style="max-height: 60px;">
+                                    <img src="~/Image/logore.png" alt="Logo" style="max-height: 60px;">
                                 </a>
                             </div>
                             <div class="mx-3">
@@ -98,7 +100,8 @@
 
                         <!-- Phần ngôn ngữ và thông tin người dùng -->
                         <ul class="navbar-nav d-flex align-items-center">
-                            <li class="nav-item mx-2">
+                            <li class="nav-item mx-2" style="display:flex; align-items:center">
+
                                 <div class="custom-language-dropdown border border-1 rounded">
                                     <button class="language-dropdown-toggle">
                                         <img src="https://upload.wikimedia.org/wikipedia/en/a/a4/Flag_of_the_United_States.svg" alt="English" width="20">
@@ -116,6 +119,12 @@
                                     </div>
                                 </div>
                                 <div id="google_element" style="display:none;"></div> <!-- Ẩn mặc định của Google -->
+                                <!-- Nút Free -->
+                                <label class="switch ms-2 mb-2">
+                                    <input type="checkbox" id="toggle-theme">
+                                    <span class="slider"></span>
+                                </label>
+                                <p class="ms-2 mt-3" id="theme-text" style="display:none;">Light</p>
                             </li>
                             <li class="nav-item mx-2">
                                 <a class="nav-link"><i class="fa-solid fa-bell"></i></a>
@@ -315,3 +324,34 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 }
+
+<script>
+    // Lấy phần tử checkbox để chuyển đổi theme
+    const toggleThemeCheckbox = document.getElementById('toggle-theme');
+    const themeText = document.getElementById('theme-text');
+
+    // Kiểm tra theme đã được lưu trong localStorage chưa
+    if (localStorage.getItem('theme') === 'dark') {
+        document.body.classList.add('dark-theme');
+        toggleThemeCheckbox.checked = true;
+        themeText.textContent = 'Dark';
+    } else {
+        document.body.classList.remove('dark-theme');
+        toggleThemeCheckbox.checked = false;
+        themeText.textContent = 'Light';
+    }
+
+    // Khi người dùng thay đổi checkbox theme
+    toggleThemeCheckbox.addEventListener('change', () => {
+        if (toggleThemeCheckbox.checked) {
+            document.body.classList.add('dark-theme');
+            themeText.textContent = 'Dark';
+            localStorage.setItem('theme', 'dark');  // Lưu theme vào localStorage
+        } else {
+            document.body.classList.remove('dark-theme');
+            themeText.textContent = 'Light';
+            localStorage.setItem('theme', 'light');  // Lưu theme vào localStorage
+        }
+    });
+</script>
+
