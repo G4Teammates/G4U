@@ -202,13 +202,13 @@ header {
     margin: auto;
 }
 
-/* Kiểu mặc định cho header */
+/* Header */
 header {
     width: 100%;
-    background-color: transparent; /* Màu nền ban đầu */
+    background-color: transparent; 
     transition: background-color 0.3s ease, box-shadow 0.3s ease;
-    position: relative; /* Đảm bảo header nằm trong luồng tài liệu */
-    z-index: 1000; /* Đảm bảo header nằm trên các phần tử khác */
+    position: relative; 
+    z-index: 1000;
     font-family: 'Poppins', sans-serif;
 }
 
@@ -217,41 +217,30 @@ header {
         position: fixed;
         top: 0;
         left: 0;
-        background-color: #ffffff; /* Màu nền khi sticky */
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Thêm bóng để nổi bật */
+        background-color: #ffffff; 
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     }
 
         header.sticky .search-input {
-            background-color: #ffffff; /* Màu nền trắng khi sticky */
-            color: #000000; /* Màu chữ đen khi sticky */
-            border: none; /* Viền đen khi sticky */
+            background-color: #ffffff;
+            color: #000000; 
+            border: none; 
         }
 
-/* Định dạng cho logo */
-/*.logo {
-    width: 100%;
-    min-height: 70px;
-}
 
-.logo-img {
-    width: 100px;*/ /* Kích thước chiều rộng của hình ảnh */
-    /*height: auto;*/ /* Để chiều cao tự động điều chỉnh theo tỷ lệ khung hình */
-    /*display: block;*/ /* Đảm bảo hình ảnh được căn chỉnh tốt trong khối */
-    /*margin: 0 auto;*/ /* Canh giữa hình ảnh trong phần tử chứa */
-/*}*/
 
 /* Kiểu mặc định cho search-bar */
 .search-bar {
-    flex: 1; /* Cho phép search-bar mở rộng để chiếm không gian có sẵn */
+    flex: 1; 
     display: flex;
     align-items: center;
     height: 40px;
     padding: 20px;
     border-radius: 10px;
     border: 1px solid #00A97F;
-    margin: 30px 5px; /* Khoảng cách bên ngoài */
-    max-width: 300px; /* Giới hạn kích thước tối đa */
-    min-width: 150px; /* Giới hạn kích thước tối thiểu */
+    margin: 30px 5px; 
+    max-width: 300px; 
+    min-width: 150px;
 }
 
 /* Ẩn search-bar bên ngoài khi màn hình nhỏ */
@@ -318,18 +307,6 @@ header {
     position:relative;
 }
 
-/*.menu li a::after{
-    content:"";
-    position:absolute;
-    bottom:0;
-    left:0;
-    width:100%;
-    height:1px;
-    transition:0.15s ease-in-out;
-}
-.menu li a:hover:after{
-    width:100%;
-}*/
 
 .open-menu, .close-menu {
     position: absolute;
@@ -621,21 +598,21 @@ header {
 /*Carousel*/
 .carousel-image-container {
     width: 100%;
-    height: 600px; /* Chiều cao tối đa mặc định */
-    overflow: hidden; /* Ẩn phần ảnh thừa nếu có */
+    height: 600px;
+    overflow: hidden; 
     border-radius: 5px;
-    position: relative; /* Để định vị cho hình ảnh */
+    position: relative; 
 }
 
 .carousel-image {
-    position: absolute; /* Định vị hình ảnh */
-    top: 50%; /* Giữa theo chiều dọc */
-    left: 50%; /* Giữa theo chiều ngang */
-    width: auto; /* Để chiều rộng tự động */
-    height: 100%; /* Để chiều cao bằng 100% của khung */
-    min-width: 100%; /* Đảm bảo chiều rộng không nhỏ hơn 100% */
-    min-height: 100%; /* Đảm bảo chiều cao không nhỏ hơn 100% */
-    transform: translate(-50%, -50%); /* Để căn giữa hình ảnh */
+    position: absolute; 
+    top: 50%; 
+    left: 50%;
+    width: auto;
+    height: 100%; 
+    min-width: 100%;
+    min-height: 100%;
+    transform: translate(-50%, -50%);
 }
 
 /* Điều chỉnh chiều cao khung chứa ảnh khi thu nhỏ màn hình */
@@ -663,120 +640,27 @@ header {
     }
 }
 
-/*Filter*/
-.filter-container {
-    background-color: #f8f9fa;
-    border: 1px solid #e0e0e0;
-    width: 100%; /* Mở rộng khung bộ lọc theo chiều ngang */
-}
 
-.filter-title {
-    font-size: 1rem;
-    color: #333;
-    font-weight: bold;
-    margin-bottom: 10px;
-}
 
-.price-input {
-    outline: none; /* Loại bỏ outline mặc định khi nhấn vào */
-}
 
-    .price-input:focus {
-        border-color: #007bff; /* Tùy chỉnh màu viền khi nhấn vào nếu muốn */
-        box-shadow: none; /* Loại bỏ hiệu ứng đổ bóng mặc định của Bootstrap */
-        outline: none;
-    }
 
-.filter-section input,
-.filter-section select {
-    border-radius: 4px;
-    height: 38px;
-    border: 1px solid #ced4da;
-}
-
-    .filter-section input::placeholder {
-        color: #888;
-    }
-
-.form-select {
-    padding: 5px 10px;
-    border-radius: 4px;
-}
-
-.btn-primary {
-    background-color: #007bff;
-    border: none;
-}
-
-    .btn-primary:hover {
-        background-color: #0056b3;
-    }
-
-hr {
-    border-top: 1px solid #ddd;
-}
 
 
 
 
 /*MAIN*/
-.Image_Gallery{
-    width:95%;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    min-height:100vh;
-    /*background:#59b4a1;*/
-    margin:0 auto;
-}
-
-.box{
-    position:relative;
-    width:200px;
-    height:200px;
-    transform-style:preserve-3d;
-    animation: animate 30s linear infinite; 
-}
-
-@keyframes animate{
-    0%{
-        transform: perspective(1000px) rotateY(0deg);
-    }
-    100% {
-        transform: perspective(1000px) rotateY(360deg);
-    }
-}
-
-.box span {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    transform-origin: center;
-    transform-style: preserve-3d;
-    transform: rotateY(calc(var(--i) * 45deg)) translateZ(400px);
-    -webkit-box-reflect: below 0px linear-gradient(transparent,transparent,#0004)
-}
-.box span img{
-    position:absolute;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    object-fit:cover;
-}
 
 .gamefree {
-    width:100%;
-    min-height:300px;
-    justify-content:center;
-    align-items:center;
+    width: 100%;
+    min-height: 300px;
+    justify-content: center;
+    align-items: center;
     border-radius: 10px;
     background: #24262b;
     color: white;
-    margin-left:20px;
+    margin-left: 20px;
     padding: 50px 0;
+    margin-top: 5vw;
 }
     .gamefree .btn_orther:hover{
         color:white!important;
@@ -814,32 +698,60 @@ hr {
 
 }
 
+.best-seller_most-player_top-upcoming-wishlisted{
+    margin-top: 7vw !important;
+}
+
 .best-seller_most-player_top-upcoming-wishlisted h2 {
     transition: margin 0.5s ease;
     font-size: 1.5vw;
     font-family: 'Poppins', sans-serif;
-    font-weight:bold;
+    font-weight: bold;
+    text-decoration:none;
+    color:black; 
+    display: inline-block;
+    border: 3px solid transparent; 
+    border-radius: 12px;
+    padding: 15px 20px; 
+    background: linear-gradient(#fff, #fff) padding-box, linear-gradient(135deg, #00A97F, #800080) border-box;
+    text-transform: uppercase;
 }
 .best-seller_most-player_top-upcoming-wishlisted h2:hover {
     margin-left: 20px;
     color: #00A97F !important;
 }
-.header_section {
-    margin-top: 50px;
-    text-align: center;
-}
-    .header_section h1 {
-        font-size: 60px;
-        color: #62e079;
-    }
+
+
 .gamemonth {
     display: flex;
-    justify-content:center;
+    justify-content: center;
     align-items: center;
     flex-direction: column;
     gap: 30px;
     min-height: 100vh;
+    margin-top: 3vw;
 }
+.header_section {
+    margin-top: 50px;
+    text-align: center;
+    width: 100%;
+    border: 3px solid transparent;
+    border-radius: 12px;
+    padding: 15px 20px;
+    background: linear-gradient(#fff, #fff) padding-box, linear-gradient(135deg, #00A97F, #800080) border-box;
+    max-width: 80%;
+    margin: 0 auto;
+}
+
+    .header_section h1 {
+        font-size: 60px;
+        color: #62e079;
+        font-family: 'Poppins', sans-serif;
+        text-transform: uppercase;
+        color: #00A97F;
+        text-align: center;
+    }
+
 
 .wrapper_gamemonth{
     width:95%;
@@ -935,7 +847,7 @@ hr {
 .footeer_card .btn_card .btn_orther {
     border: 3px solid #000;
     color: #000;
-    font: 12px Montserrat;
+    font: 15px Montserrat;
     text-transform: uppercase;
     padding: 10px;
     font-weight: 600;
@@ -949,6 +861,7 @@ hr {
     transition: all 0.3s ease-out; /* Thêm hiệu ứng cho toàn bộ nút */
     border-radius:5px;
     text-decoration:none;
+
 }
 
     .footeer_card .btn_card .btn_orther:before {
@@ -984,23 +897,24 @@ hr {
         }
 
 
-
-
 /*Trai Tym nè*/
 .heart-container {
     --heart-color: rgb(91, 255, 195);
-    position: relative;
-    width: 20px;
-    height: 20px;
+    position: absolute;
+    right: 0; /* Đặt trái tim sát bên phải */
+    width: 30px;
+    height: 30px;
     transition: .3s;
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 0 auto;
+    margin: 0;
 }
 
     .heart-container .checkbox {
         position: absolute;
+        top: 0;
+        left: 0;
         width: 100%;
         height: 100%;
         opacity: 0;
@@ -1020,6 +934,8 @@ hr {
     .heart-container .svg-filled {
         fill: var(--heart-color);
         position: absolute;
+        width: 30px;
+        height: 30px; /* Đảm bảo kích thước SVG khớp với container */
     }
 
     .heart-container .svg-filled {
@@ -1035,14 +951,16 @@ hr {
         stroke: var(--heart-color);
         fill: var(--heart-color);
         stroke-width: 2px;
+        width: 30px;
+        height: 30px;
     }
 
     .heart-container .checkbox:checked ~ .svg-container .svg-filled {
-        display: block
+        display: block;
     }
 
     .heart-container .checkbox:checked ~ .svg-container .svg-celebrate {
-        display: block
+        display: block;
     }
 
 @keyframes keyframes-svg-filled {
@@ -1079,6 +997,7 @@ hr {
 
 
 
+/*OwlCarousel*/
 .owl-carousel .owl-stage {
     display: flex;
     justify-content: center;
@@ -1132,6 +1051,7 @@ hr {
     width: 95%;
     min-height: 500px;
     margin: 0 auto;
+    margin-top: 10vw;
 }
 
 .lisotherproduct_name {
@@ -1143,6 +1063,8 @@ hr {
     font-size: 22px;
     font-weight: bold;
     text-align: center;
+    font-family: 'Poppins', sans-serif;
+    text-transform: uppercase;
 }
 
     .lisotherproduct_name a {
@@ -1166,46 +1088,26 @@ hr {
             border-color: #00A97F; /* Màu viền khi hover */
         }
 
-.header_section {
-    width: 100%;
-    border: 3px solid transparent;
-    border-radius: 12px;
-    padding: 15px 20px;
-    background: linear-gradient(#fff, #fff) padding-box, linear-gradient(135deg, #00A97F, #800080) border-box;
-    max-width: 83.3%;
-    margin: 0 auto;
-    text-align: center;
-}
 
-    .header_section h1 {
+
+#foryou, #popular, #free, #new, #more {
+    margin-top: 5vw;
+}
+    #foryou h3, #popular h3, #free h3, #new h3, #more h3 {
+        display: inline-block;
+        border: 3px solid transparent;
+        border-radius: 12px;
+        padding: 15px 20px;
+        background: linear-gradient(#fff, #fff) padding-box, linear-gradient(135deg, #00A97F, #800080) border-box;
         font-family: 'Poppins', sans-serif;
         text-transform: uppercase;
-        color: #00A97F;
+        font-weight:bold;
+        text-align:center;
     }
-
-
-/*#foryou, #popular, #free, #new, #more {
-    width:100%;
-    height:100%;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-}*/
-
-
-/*#foryou img, #popular img, #free img, #new img, #more img{
-    width:100%;
-    max-height:250px;
-    border-radius:5px;
-    margin-top:20px;
-}*/
-
-
-
-#foryou a, #popular a, #free a, #new a, #more a{
-    text-decoration:none;
-    color:#303030;
-}
+    #foryou a, #popular a, #free a, #new a, #more a {
+        text-decoration: none;
+        color: #303030;
+    }
 
 #foryou a:hover, #popular a:hover, #free a:hover, #new a:hover, #more a:hover{
     color:#1cab35;
@@ -1243,11 +1145,18 @@ hr {
     font-weight: bold;
     font-size: 14px;
 }
-
-/* Hiển thị số lượt view khi hover vào card */
-.card_other:hover .view-count {
-    display: block;
-}
+    .view-count i, .like-dislike-container i {
+        color: black;
+        width: 20px;
+        height: 20px;
+    }
+    .view-count span, .like-dislike-container span {
+        color: black;
+    }
+    /* Hiển thị số lượt view khi hover vào card */
+    .card_other:hover .view-count {
+        display: block;
+    }
 
 .like-dislike-container {
     display: none;
@@ -1256,10 +1165,13 @@ hr {
     right: 10px;
     z-index: 10;
 }
-
-.card_other:hover .like-dislike-container {
-    display: block;
-}
+    .like-dislike-container form {
+        display: inline;
+        transition: 0.5s all;
+    }
+    .card_other:hover .like-dislike-container {
+        display: block;
+    }
 
 
 
@@ -1385,194 +1297,6 @@ hr {
     #scrollToTopBtn i {
         font-size: 20px;
     }
-
-/*Footer*/
-
-.container_footer {
-    max-width: 80%;
-    margin: auto;
-}
-ul{
-    list-style:none;
-}
-/*.row{
-    display:flex;
-    flex-wrap:wrap;
-}*/
-
-
-.footer {
-    background-color: #24262b;
-    padding: 70px 0;
-}
-
-.footer_col h4 {
-    font-size: 18px;
-    color: #ffffff;
-    text-transform: capitalize;
-    margin-bottom: 30px; /* Giảm margin-bottom để các li gần hơn với h4 */
-    font-weight: 500;
-    position: relative;
-}
-
-.footer_col h4::before{
-    content:'';
-    position:absolute;
-    left:0;
-    bottom:-10px;
-    background-color:#e91e63;
-    height:2px;
-    box-sizing:border-box;
-    width:50px;
-}
-
-.footer_col ul {
-    padding-left: 0; /* Đảm bảo không có padding bên trái */
-}
-    .footer_col ul li {
-        margin-bottom: 5px; /* Giảm khoảng cách giữa các li */
-    }
-.footer_col ul li a {
-    margin-bottom: 1px;
-    font-size: 16px;
-    text-transform: capitalize;
-    color: #ffffff;
-    font-weight: 300;
-    color: #bbbbbb;
-    text-decoration: none;
-    transition: all 0.3s ease;
-}
-
-.footer_col ul li a:hover{
-    color:#ffffff;
-    padding-left:10px;
-}
-
-.footer_col .social-links a{
-    display:inline-block;
-    height:40px;
-    width:40px;
-    background-color:rgba(255,255,255,0.2);
-    margin:0 10px 10px 0;
-    text-align:center;
-    line-height:40px;
-    border-radius:50%;
-    color:#ffffff;
-    transition:all 0.3s ease;
-}
-
-
-.footer_col .social-links a:hover{
-    color:#24262b;
-    background-color:#ffffff;
-}
-
-
-/*.logo-footer {
-    width: 150px;
-    height: auto;
-    display: block;
-    margin: 0 auto;
-}*/
-/* From Uiverse.io by david-mohseni */
-/*.wrapper-footer {
-    display: inline-flex;
-    list-style: none;
-    height: 120px;
-    width: 100%;
-    padding-top: 40px;
-    font-family: "Poppins", sans-serif;
-    justify-content: center;
-}
-
-    .wrapper-footer .icon {
-        position: relative;
-        background: #fff;
-        border-radius: 50%;
-        margin: 10px;
-        width: 50px;
-        height: 50px;
-        font-size: 18px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-        box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1);
-        cursor: pointer;
-        transition: all 0.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    }
-
-    .wrapper-footer .tooltip {
-        position: absolute;
-        top: 0;
-        font-size: 14px;
-        background: #fff;
-        color: #fff;
-        padding: 5px 8px;
-        border-radius: 5px;
-        box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1);
-        opacity: 0;
-        pointer-events: none;
-        transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    }
-
-        .wrapper-footer .tooltip::before {
-            position: absolute;
-            content: "";
-            height: 8px;
-            width: 8px;
-            background: #fff;
-            bottom: -3px;
-            left: 50%;
-            transform: translate(-50%) rotate(45deg);
-            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-        }
-
-    .wrapper-footer .icon:hover .tooltip {
-        top: -45px;
-        opacity: 1;
-        visibility: visible;
-        pointer-events: auto;
-    }
-
-    .wrapper-footer .icon:hover span,
-    .wrapper-footer .icon:hover .tooltip {
-        text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.1);
-    }
-
-    .wrapper-footer .facebook:hover,
-    .wrapper-footer .facebook:hover .tooltip,
-    .wrapper-footer .facebook:hover .tooltip::before {
-        background: #1877f2;
-        color: #fff;
-    }
-
-    .wrapper-footer .twitter:hover,
-    .wrapper-footer .twitter:hover .tooltip,
-    .wrapper-footer .twitter:hover .tooltip::before {
-        background: #1da1f2;
-        color: #fff;
-    }
-
-    .wrapper-footer .instagram:hover,
-    .wrapper-footer .instagram:hover .tooltip,
-    .wrapper-footer .instagram:hover .tooltip::before {
-        background: #e4405f;
-        color: #fff;
-    }
-
-
-.icon.github {
-    background: linear-gradient(145deg, #2b2b2b, #242424);
-    box-shadow: 5px 5px 10px #1a1a1a, -5px -5px 10px #363636;
-    color: white;
-}
-
-    .icon.github .tooltip {
-        background: #333333;
-    }*/
-
-
 
 
 

@@ -3,7 +3,101 @@
 }
 
 @using Client.Models.OrderModel;
+@using Client.Models.Enum.OrderEnum
 @model OrderViewModel
+
+<style>
+    /* Căn giữa nội dung của các ô trong bảng */
+    .table td, .table th {
+        text-align: center; /* Căn giữa cho văn bản */
+        vertical-align: middle; /* Căn giữa theo chiều dọc */
+    }
+
+        /* Căn giữa hình ảnh trong các ô */
+        .table td img {
+            display: block; /* Đảm bảo hình ảnh chiếm toàn bộ không gian */
+            text-align: center;
+            justify-content: center;
+        }
+
+        /* Căn giữa nội dung của các phần tử ul, li trong bảng */
+        .table td ul {
+            list-style-type: none; /* Loại bỏ dấu chấm đầu dòng */
+            padding: 0;
+            text-align: center; /* Căn giữa văn bản trong danh sách */
+        }
+
+        .table td li {
+            text-align: center; /* Căn giữa văn bản trong mỗi mục danh sách */
+        }
+
+        /* Căn giữa cho các icon trong các liên kết */
+        .table td a i {
+            display: inline-block; /* Đảm bảo icon được căn giữa */
+            text-align: center;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+    /* Cải tiến border cho thead và tbody */
+    .table thead {
+        background-color: #f8f9fa; /* Màu nền sáng cho thead */
+        border-radius: 10px 10px 0 0; /* Làm tròn góc trên của thead */
+        box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); /* Thêm bóng nhẹ cho thead */
+    }
+
+    .table tbody {
+        border-radius: 0 0 10px 10px; /* Làm tròn góc dưới của tbody */
+        box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.1); /* Thêm bóng nhẹ cho tbody */
+    }
+
+        /* Chỉnh sửa khi hover vào dòng */
+        .table tbody tr:hover {
+            background-color: #00A97F; /* Nền màu #00A97F khi hover vào dòng */
+            color: white !important; /* Chữ trắng khi hover vào dòng */
+            cursor: pointer; /* Thêm hiệu ứng con trỏ khi hover */
+            border-top: 2px solid #00A97F; /* Viền trên của tr khi hover */
+            border-bottom: 2px solid #00A97F; /* Viền dưới của tr khi hover */
+        }
+
+        /* Giữ nguyên màu nền và chữ trong các ô mặc định */
+        .table tbody tr td {
+            background-color: transparent; /* Nền của các ô là trong suốt */
+            color: inherit; /* Màu chữ kế thừa từ dòng */
+        }
+
+    /* Hiệu ứng chuyển động khi hover vào hình ảnh */
+    .table td img {
+        border-radius: 8px; /* Làm tròn góc hình ảnh */
+        box-shadow: 0 0 10px rgba(0, 169, 127, 0.7); /* Bóng cho hình ảnh */
+        transition: all 0.3s ease; /* Chuyển tiếp hiệu ứng */
+    }
+
+        .table td img:hover {
+            transform: scale(1.05); /* Tăng kích thước hình ảnh khi hover */
+        }
+
+    /* Chỉnh sửa liên kết trong bảng */
+    .table td a {
+        color: inherit; /* Màu liên kết kế thừa từ dòng */
+        text-decoration: none; /* Loại bỏ gạch dưới */
+        transition: color 0.3s ease;
+    }
+
+        .table td a:hover {
+            color: #00A97F; /* Màu chữ của liên kết khi hover */
+        }
+
+        /* Hiệu ứng hover cho các icon trong bảng */
+        .table td a i {
+            transition: transform 0.5s ease; /* Thêm hiệu ứng chuyển động cho icon */
+        }
+
+        /* Khi hover vào icon */
+        .table td a:hover i {
+            transform: scale(1.5); /* Tăng kích thước icon lên 20% khi hover */
+        }
+</style>
 <div class="pt-3 pb-4">
     <span class="titleManager bg-success py-3 px-5 rounded-4 fw-bold text-white">Orders Manager</span>
 </div>
@@ -12,11 +106,44 @@
     <!-- Thanh tìm kiếm và nút Thêm -->
     <div class="d-flex justify-content-between mb-3">
         <form asp-action="SearchOrder" method="get" class="col-md-4">
-            <input name="id" class="form-control" type="text" placeholder="Search by order id or payment transaction id" />
+            <input name="id" class="form-control" type="text" title="Search by Order id, Payment transaction id, Customer Id, Product Id and Product name" placeholder="Search by..." />
         </form>
         @*  <div>
         <button class="btn btn-success" data-toggle="modal" data-target="#modalOrder">+ Add</button>
         </div> *@
+        <span class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="OrderStatusDropdown" data-bs-toggle="dropdown">
+                Order status
+            </button>
+            <span class="dropdown-menu" aria-labelledby="OrderStatusDropdown">
+                <a class="dropdown-item" href="@Url.Action("FilterByOrderStatus", "Admin", new { status =  OrderStatus.Pending})">Pending</a>
+                <a class="dropdown-item" href="@Url.Action("FilterByOrderStatus", "Admin", new { status = OrderStatus.Paid })">Paid</a>
+                <a class="dropdown-item" href="@Url.Action("FilterByOrderStatus", "Admin", new { status = OrderStatus.Cancelled })">Cancelled</a>
+            </span>
+        </span>
+
+        <span class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="PaymentStatusDropdown" data-bs-toggle="dropdown">
+               Payment status
+            </button>
+            <span class="dropdown-menu" aria-labelledby="PaymentStatusDropdown">
+                <a class="dropdown-item" href="@Url.Action("FilterByPaymentStatus", "Admin", new { status = PaymentStatus.Pending })">Pending</a>
+                <a class="dropdown-item" href="@Url.Action("FilterByPaymentStatus", "Admin", new { status =PaymentStatus.Paid })">Paid</a>
+                <a class="dropdown-item" href="@Url.Action("FilterByPaymentStatus", "Admin", new { status =PaymentStatus.Failed })">Failed</a>
+            </span>
+        </span>
+
+        <span class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="PaymentMethod" data-bs-toggle="dropdown">
+                Payment Method
+            </button>
+            <span class="dropdown-menu" aria-labelledby="PaymentMethod">
+                <a class="dropdown-item" href="@Url.Action("FilterByPaymentMethod", "Admin", new { status = PaymentMethod.Free })">Free</a>
+                <a class="dropdown-item" href="@Url.Action("FilterByPaymentMethod", "Admin", new { status = PaymentMethod.Wallet })">Wallet</a>
+                <a class="dropdown-item" href="@Url.Action("FilterByPaymentMethod", "Admin", new { status = PaymentMethod.CreditCard })">CreditCard</a>
+            </span>
+        </span>
+
     </div>
 
     <!-- Bảng thông tin -->
@@ -48,17 +175,85 @@
         <tbody>
             @if (Model != null)
             {
+                @if (Model.Orders.Count == 0)
+                {
+                    <tr>
+                        <td colspan="10" class="text-center">Không có hóa đơn nào để hiển thị.</td>
+                    </tr>
+                }
                 foreach (var order in Model.Orders)
                 {
                     <tr>
                         @*             <td><input type="checkbox" class="order-checkbox"></td> *@
-                        <td scope="col">@order.Id</td>
-                        <td scope="col">@order.PaymentTransactionId</td>
-                        <td scope="col">@order.TotalPrice</td>
-                        <td scope="col">@order.OrderStatus</td>
-                        <td scope="col">@order.PaymentName</td>
-                        <td scope="col">@order.PaymentStatus</td>
-                        <td scope="col">@order.PaymentMethod</td>
+                        <td scope="col" class="text-truncate" title="@order.Id" style="max-width:100px">@order.Id</td>
+                        <td scope="col" class="text-truncate" title="@order.PaymentTransactionId" style="max-width:100px">@order.PaymentTransactionId</td>
+                        <td scope="col" class="text-truncate" title="@order.TotalPrice" style="max-width:100px">@order.TotalPrice</td>
+                        @if (order.OrderStatus == Client.Models.Enum.OrderEnum.OrderStatus.Pending)
+                        {
+
+                            <td scope="col" class="bg-secondary ">@order.OrderStatus</td>
+                        }
+                        else if (order.OrderStatus == Client.Models.Enum.OrderEnum.OrderStatus.Paid)
+                        {
+
+                            <td scope="col" class="bg-success ">@order.OrderStatus</td>
+                        }
+                        else
+                        {
+                            <td scope="col">@order.OrderStatus</td>
+                        }
+
+                        @if (order.PaymentName.ToLower() == "momo")
+                        {
+                            <td scope="col" style="background-color:#b8005e; color:white">@order.PaymentName</td>
+                        }
+                        else if (order.PaymentName.ToLower() == "payos")
+                        {
+                            <td scope="col" style="background-color:#6455fd; color:white">@order.PaymentName</td>
+                        }
+                        else
+                        {
+                            <td scope="col" class="bg-secondary">@order.PaymentName</td>
+                        }
+
+                        @if (order.PaymentStatus == Client.Models.Enum.OrderEnum.PaymentStatus.Pending)
+                        {
+                            <td scope="col" class="bg-secondary">@order.OrderStatus</td>
+                        }
+                        else if (order.PaymentStatus == Client.Models.Enum.OrderEnum.PaymentStatus.Paid)
+                        {
+                            <td scope="col" class="bg-success ">@order.OrderStatus</td>
+                        }
+                        else if (order.PaymentStatus == Client.Models.Enum.OrderEnum.PaymentStatus.Failed)
+                        {
+                            <td scope="col" class="bg-danger">@order.OrderStatus</td>
+                        }
+                        else
+                        {
+                            <td scope="col">@order.PaymentStatus</td>
+                        }
+
+
+                        @if (order.PaymentMethod == Client.Models.Enum.OrderEnum.PaymentMethod.Pending)
+                        {
+                            <td scope="col" class="bg-secondary">@order.PaymentMethod</td>
+                        }
+                        else if (order.PaymentMethod == Client.Models.Enum.OrderEnum.PaymentMethod.Wallet)
+                        {
+                            <td scope="col" style="background-color:#b8005e; color:white">@order.PaymentMethod</td>
+                        }
+                        else if (order.PaymentMethod == Client.Models.Enum.OrderEnum.PaymentMethod.CreditCard)
+                        {
+                            <td scope="col" style="background-color:#6455fd; color:white">@order.PaymentMethod</td>
+                        }
+                        else if (order.PaymentMethod == Client.Models.Enum.OrderEnum.PaymentMethod.Free)
+                        {
+                            <td scope="col" class="bg-success">@order.PaymentMethod</td>
+                        }
+                        else
+                        {
+                            <td scope="col">@order.PaymentMethod</td>
+                        }
                         <td scope="col" title="@order.CreatedAt" style="max-width:90px" class="text-truncate">@order.CreatedAt</td>
                         <td scope="col" title="@order.UpdatedAt" style="max-width:90px" class="text-truncate">@order.UpdatedAt</td>
                         <td scope="col" title="@order.CustomerId" style="max-width:90px" class="text-truncate">@order.CustomerId</td>
@@ -83,7 +278,7 @@
             else
             {
                 <tr>
-                    <td colspan="9" class="text-center">Không có hóa đơn nào để hiển thị.</td>
+                    <td colspan="10" class="text-center">Không có hóa đơn nào để hiển thị.</td>
                 </tr>
             }
         </tbody>
@@ -91,22 +286,40 @@
 
     <!-- Phân trang -->
     <div class="d-flex justify-content-between mt-3">
-        <div>Total: @Model.Orders.Count()</div>
+
+        <div>Total: @(Model.totalItem) items</div>
+
         <div>
-            <select class="form-select form-select-sm w-auto d-inline-block">
-                <option>20 records per page</option>
-                <option>50 records per page</option>
-                <option>100 records per page</option>
-            </select>
+            <form method="get" asp-controller="Admin" asp-action="OrdersManager" class="d-inline">
+                <select name="pageSize" class="form-select form-select-sm w-auto d-inline-block" onchange="this.form.submit()">
+                    <option>Select records per page</option>
+                    <option value="3">3 records per page</option>
+                    <option value="5">5 records per page</option>
+                    <option value="10">10 records per page</option>
+                </select>
+                <input type="hidden" name="page" value="1" />
+            </form>
+
             <nav aria-label="Page navigation example" class="d-inline-block">
                 <ul class="pagination pagination-sm mb-0">
-                    <li class="page-item disabled">
-                        <a class="page-link" href="#">1 to 20</a>
+                    <li class="page-item @(Model.pageNumber == 1 || Model.Orders==null ? "disabled" : "")">
+                        <a class="page-link" asp-controller="Admin" asp-action="OrdersManager" asp-route-page="@(Model.pageNumber - 1)" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
+                            Previous
+                        </a>
                     </li>
-                    <li class="page-item"><a class="page-link" href="#">1</a></li>
-                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                    <li class="page-item"><a class="page-link" href="#">></a></li>
+                    @for (var pg = 1; pg <= Model.pageCount; pg++)
+                    {
+                        <li class="page-item @(pg == Model.pageNumber ? "active" : "")">
+                            <a class="page-link" asp-controller="Admin" asp-action="OrdersManager" asp-route-page="@pg" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
+                                @pg
+                            </a>
+                        </li>
+                    }
+                    <li class="page-item @(Model.pageNumber == Model.pageCount ? "disabled" : "")">
+                        <a class="page-link" asp-controller="Admin" asp-action="OrdersManager" asp-route-page="@(Model.pageNumber + 1)" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
+                            Next
+                        </a>
+                    </li>
                 </ul>
             </nav>
         </div>

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using OrderMicroservice.Models.Message;
 using OrderMicroservice.Repositories.Interfaces;
 using OrderMicroservice.Repositories.Services;
 
@@ -17,7 +18,9 @@ namespace OrderMicroservice.Configure
 
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IPaymentService, PaymentService>();
-            services.AddScoped<IMessage, Message>();
+            services.AddHostedService<Background>();
+            services.AddSingleton<IMessage, Message>();
+            services.AddScoped<CheckPurchaseReceive>();
             //Register DI here ⬆️
 
             return services;

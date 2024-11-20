@@ -26,11 +26,11 @@ namespace OrderMicroservice.Controllers
         }
 
         [HttpPost("momo")]
-        public async Task<ActionResult> MoMoPayment( string id, long amount)
+        public async Task<ActionResult> MoMoPayment([FromBody]MoMoRequestFromClient requestClient)
         {
             try
             {
-                ResponseModel response = await _paymentService.MoMoPayment(id, amount);
+                ResponseModel response = await _paymentService.MoMoPayment(requestClient);
                 if (response.IsSuccess)
                     return Ok(response);
                 return BadRequest(response);

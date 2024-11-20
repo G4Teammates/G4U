@@ -456,6 +456,47 @@ namespace UserMicroservice.Repositories.Services
 
             return response;
         }
+        public async Task<ResponseModel> RemoveFromWishList(string productId, string userName)
+        {
+            ResponseModel response = new();
+            try
+            {
+                var user = await _context.Users.FirstOrDefaultAsync(x => x.Username == userName);
+
+                if (user != null)
+                {
+                    // Kiểm tra xem mục này có tồn tại trong Wishlist của user không
+                    var itemToRemove = user.Wishlist.FirstOrDefault(w => w.ProductId == productId);
+
+                    if (itemToRemove != null)
+                    {
+                        user.Wishlist.Remove(itemToRemove);
+                        _context.Users.Update(user);
+                        await _context.SaveChangesAsync();
+                        response.IsSuccess = true;
+                        response.Message = "Item removed successfully from the wishlist.";
+                    }
+                    else
+                    {
+                        response.IsSuccess = false;
+                        response.Message = "Item not found in the wishlist.";
+                    }
+                }
+                else
+                {
+                    response.IsSuccess = false;
+                    response.Message = "User not found.";
+                }
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+            }
+
+            return response;
+        }
+
 
         //public async Task<ICollection<UserModel>> FindUsers(SearchCriteria criteria)
         //{

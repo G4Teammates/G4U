@@ -27,6 +27,7 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using Client.Repositories.Interfaces.Stastistical;
 using Client.Models.Statistical;
 using System.Security.Claims;
+using Client.Models.Enum.OrderEnum;
 
 
 
@@ -97,15 +98,16 @@ namespace Client.Controllers
         {
             int pageNumber = page ?? 1;
             AllModel statistical = new();
-
             try
             {
                 #region Check IsLogin Cookie and Token
-                var isLogin = HttpContext.Request.Cookies["IsLogin"];
 
+                var isLogin = HttpContext.Request.Cookies["IsLogin"];
                 if (string.IsNullOrEmpty(isLogin))
                 {
                     ViewData["IsLogin"] = false;
+                    TempData["error"] = "Please login first";
+                    return RedirectToAction("Index", "Home");
                 }
                 else
                 {
@@ -120,36 +122,46 @@ namespace Client.Controllers
                     var user = _helperService.GetUserFromJwtToken((JwtSecurityToken)response.Result);
                     ViewBag.User = user;
                     ViewData["IsLogin"] = true;
-                    TempData["success"] = "Welcome to admin dashboarch "+user.Username;
+                    if(user.Role == "Admin") 
+                    {
+                        TempData["success"] = "Welcome to admin dashboarch " + user.Username;
+                        #region Lấy dữ liệu Order
+                        // Gọi API để lấy danh sách Order dựa trên phân trang
+                        var responseModel = await _statisticalService.GetAll(pageNumber, pageSize);
+                        // Gọi API một lần nữa để lấy tổng số Order (không phân trang)
+                        var totalProductsResponse = await _statisticalService.GetAll(1, 99);
+
+                        if (responseModel != null && responseModel.IsSuccess)
+                        {
+                            // Đọc và gán dữ liệu sản phẩm cho model
+                            statistical.statis = JsonConvert.DeserializeObject<ICollection<StatisticalModel>>(responseModel.Result.ToString()!);
+                            var totalProducts = JsonConvert.DeserializeObject<ICollection<StatisticalModel>>(totalProductsResponse.Result.ToString()!);
+
+                            statistical.pageNumber = pageNumber;
+                            statistical.totalItem = totalProducts.Count;
+                            statistical.pageSize = pageSize;
+                            statistical.pageCount = (int)Math.Ceiling(totalProducts.Count / (double)pageSize);
+                        }
+                        else
+                        {
+                            TempData["error"] = responseModel?.Message;
+                        }
+                        #endregion
+                    }
+                    else if(user.Role == "User")
+                    {
+                        TempData["error"] = "You are not Admin";
+                        return RedirectToAction("Index", "Home");
+                    }
                 }
                 else
                 {
                     ViewData["IsLogin"] = false;
+
                 }
                 #endregion
 
-                #region Lấy dữ liệu Order
-                // Gọi API để lấy danh sách Order dựa trên phân trang
-                var responseModel = await _statisticalService.GetAll(pageNumber, pageSize);
-                // Gọi API một lần nữa để lấy tổng số Order (không phân trang)
-                var totalProductsResponse = await _statisticalService.GetAll(1, 99);
-
-                if (responseModel != null && responseModel.IsSuccess)
-                {
-                    // Đọc và gán dữ liệu sản phẩm cho model
-                    statistical.statis = JsonConvert.DeserializeObject<ICollection<StatisticalModel>>(responseModel.Result.ToString()!);
-                    var totalProducts = JsonConvert.DeserializeObject<ICollection<StatisticalModel>>(totalProductsResponse.Result.ToString()!);
-
-                    statistical.pageNumber = pageNumber;
-                    statistical.totalItem = totalProducts.Count;
-                    statistical.pageSize = pageSize;
-                    statistical.pageCount = (int)Math.Ceiling(totalProducts.Count / (double)pageSize);
-                }
-                else
-                {
-                    TempData["error"] = responseModel?.Message;
-                }
-                #endregion
+               
             }
             catch (Exception ex)
             {
@@ -566,7 +578,7 @@ namespace Client.Controllers
                 // Gọi service UpdateProduct từ phía Client
                 var response = await _productService.UpdateProductAsync(
                     model.Id, model.Name, model.Description, model.Price, model.Sold,
-                   numOfView, numOfLike,numOfDisLike, model.Discount,
+                   numOfView, numOfLike, numOfDisLike, model.Discount,
                     model.Links, model.Categories, (int)model.Platform,
                     (int)model.Status, model.CreatedAt, model.ImageFiles,
                     request, model.UserName, model.Interactions.UserLikes, model.Interactions.UserDisLikes);
@@ -831,8 +843,11 @@ namespace Client.Controllers
 
 
         #region Order 
-        public async Task<IActionResult> OrdersManager()
+        public async Task<IActionResult> OrdersManager(int? page, int pageSize = 5)
         {
+
+            OrderViewModel orders = new();
+            int pageNumber = (page ?? 1);
             try
             {
                 // Nếu có dữ liệu tìm kiếm, lấy từ TempData
@@ -841,65 +856,93 @@ namespace Client.Controllers
                     var orderJson = TempData["searchResult"] as string;
                     if (!string.IsNullOrEmpty(orderJson))
                     {
-                        // Convert JSON thành OrderModel
-                        var order = JsonConvert.DeserializeObject<ICollection<OrderModel>>(orderJson);
-                        OrderViewModel orderViewModel = new()
+                        // Deserialize JSON thành mảng chứa OrderViewModel
+                        var orderList = JsonConvert.DeserializeObject<OrderViewModel>(orderJson);
+
+                        if (orderList != null)
                         {
-                            Orders = order
-                        };
-                        return View(orderViewModel);
+                            return View(orderList);
+                        }
                     }
                 }
 
+
+
                 // Nếu không có dữ liệu tìm kiếm, lấy tất cả đơn hàng
-                ResponseModel response = await _orderService.GetAll();
-                if (response.IsSuccess)
+                ResponseModel? response = await _orderService.GetAll(pageNumber, pageSize);
+                ResponseModel? response2 = await _orderService.GetAll(1, 99);
+                var total = JsonConvert.DeserializeObject<ICollection<UsersDTO>>(Convert.ToString(response2.Result.ToString()!));
+
+                if (response != null && response.IsSuccess)
                 {
-                    var orders = JsonConvert.DeserializeObject<ICollection<OrderModel>>(Convert.ToString(response.Result)!);
-                    OrderViewModel orderViewModel = new()
-                    {
-                        Orders = orders
-                    };
-                    return View(orderViewModel);
+                    orders.Orders = JsonConvert.DeserializeObject<ICollection<OrderModel>>(Convert.ToString(response.Result.ToString()!));
+                    var data = orders.Orders;
+                    orders.pageNumber = pageNumber;
+                    orders.totalItem = data.Count;
+                    orders.pageSize = pageSize;
+                    orders.pageCount = (int)Math.Ceiling(total.Count / (double)pageSize);
+                    TempData["success"] = "Load order is success";
                 }
                 else
                 {
-                    TempData["error"] = response.Message;
+                    TempData["error"] = response?.Message;
                 }
+
+
             }
             catch (Exception ex)
             {
                 TempData["error"] = ex.Message;
             }
-            return View();
+            return View(orders);
         }
 
 
 
         public async Task<IActionResult> SearchOrder(string id)
         {
+            OrderViewModel orders = new()
+            {
+                Orders = new List<OrderModel>() // Khởi tạo danh sách Orders
+            };
+
             try
             {
+                // Tìm đơn hàng theo Id đầu tiên
                 var response = await _orderService.GetOrderById(id);
                 if (response.Result == null)
                 {
+                    // Nếu không tìm thấy theo Id, tìm theo Transaction Id
                     response = await _orderService.GetOrderByTransaction(id);
                 }
+
                 if (response.IsSuccess && response.Result != null)
                 {
-                    TempData["searchResult"] = JsonConvert.SerializeObject(response.Result);
-                    TempData["success"] = "Search order successfully";
-                    return RedirectToAction(nameof(OrdersManager));
+                    // Deserialize thành ICollection<OrderModel> nếu có kết quả trả về
+                    var ordersList = JsonConvert.DeserializeObject<ICollection<OrderModel>>(response.Result.ToString());
+
+                    if (ordersList != null && ordersList.Any())
+                    {
+                        // Nếu có nhiều đơn hàng hoặc một đơn hàng, gán vào Orders
+                        orders.Orders = ordersList;
+                        TempData["searchResult"] = JsonConvert.SerializeObject(orders);
+                        TempData["success"] = response.Message;
+                    }
+                    else
+                    {
+                        TempData["error"] = "No orders found for the given criteria.";
+                    }
                 }
                 else
                 {
-                    TempData["error"] = response.Message;
+                    TempData["error"] = response.Message ?? "Error occurred while fetching orders.";
                 }
             }
             catch (Exception ex)
             {
                 TempData["error"] = ex.Message;
             }
+
             return RedirectToAction(nameof(OrdersManager));
         }
 
@@ -983,6 +1026,57 @@ namespace Client.Controllers
             }
             return RedirectToAction(nameof(OrdersManager));
         }
+
+
+
+        public async Task<IActionResult> FilterByOrderStatus(OrderStatus status)
+        {
+            return await FilterOrders(u => u.OrderStatus == status, $"Order status '{status}' not found", $"Order status '{status}'");
+        }
+
+        public async Task<IActionResult> FilterByPaymentStatus(PaymentStatus status)
+        {
+            return await FilterOrders(u => u.PaymentStatus == status, $"Payment status '{status}' not found", $"Payment status '{status}'");
+        }
+        public async Task<IActionResult> FilterByPaymentMethod(PaymentMethod status)
+        {
+            return await FilterOrders(u => u.PaymentMethod == status, $"Payment method '{status}' not found", $"Payment method '{status}'");
+        }
+
+
+        private async Task<IActionResult> FilterOrders(Func<OrderModel, bool> predicate, string errorMessage, string statusDescription)
+        {
+            OrderViewModel orders = new();
+            try
+            {
+                var response = await _orderService.GetAll(1, 10);
+
+                if (response.IsSuccess && response.Result != null)
+                {
+                     orders.Orders = JsonConvert.DeserializeObject<ICollection<OrderModel>>(response.Result.ToString())
+                                   .Where(predicate)
+                                   .ToList();
+
+                    TempData["searchResult"] = JsonConvert.SerializeObject(orders);
+                    TempData["success"] = $"Filter order with {statusDescription} is successful";
+                    return RedirectToAction(nameof(OrdersManager));
+                    //return View(nameof(UsersManager));
+                }
+                else
+                {
+                    TempData["error"] = response.Message ?? errorMessage;
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = ex.Message;
+            }
+
+            return RedirectToAction(nameof(OrdersManager));
+        }
+
+
+
 
         #endregion
 
@@ -1232,7 +1326,7 @@ namespace Client.Controllers
 
             return View(comment);
         }
-        [HttpPost]
+       /* [HttpPost]
         public async Task<IActionResult> CreateComment(CreateCommentDTOModel model)
         {
             if (!ModelState.IsValid)
@@ -1264,7 +1358,7 @@ namespace Client.Controllers
                 return RedirectToAction(nameof(CommentManager));
             }
 
-        }
+        }*/
 
         public async Task<IActionResult> UpdateComment(string id)
         {

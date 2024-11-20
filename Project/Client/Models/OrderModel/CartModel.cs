@@ -7,7 +7,7 @@ namespace Client.Models.OrderModel
     {
         public PaymentMethod PaymentMethod { get; set; } = PaymentMethod.Pending;
         public OrderModel? Order { get; set; }
-        public ICollection<ProductModel> Products { get; set; }
+        //public ICollection<ProductModel> Products { get; set; }
 
     }
 }

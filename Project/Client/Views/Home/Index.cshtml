@@ -144,7 +144,7 @@
                                 <div class="col-md-3"></div>
 
                                 <!-- Form để gửi yêu cầu thêm vào danh sách yêu thích -->
-                                <div title="Wishlist" class="col-md-3 heart-container" style="width:20px;height:20px;--heart-color: Black;position: relative;transition: .3s;display: flex;justify-content: center;align-items: center;margin: 0 auto;">
+                                <div title="Wishlist" class="col-md-3 heart-container">
                                     <form asp-controller="Admin" asp-action="AddWishList" method="post">
                                         <input type="hidden" name="ProductId" value="@product.Id" />
                                         <input type="hidden" name="ProductName" value="@product.Name" />
@@ -211,7 +211,7 @@
 
 
 
-<div class="gamefree row" style="margin-top:5vw;">
+<div class="gamefree row">
     <div class="row">
         <div class="col-9 col-sm-9 col-md-9 free-games-section">
             <i class="fa-solid fa-gift"></i>
@@ -219,7 +219,7 @@
         </div>
         <div class="col-3 col-sm-3 col-md-3 footeer_card" >
             <div class="btn_card" style="display:flex;justify-content:flex-end;" style="width:250px;font-size:font: 15px Montserrat;">
-                <a asp-action="ViewAll" asp-controller="Product" asp-route-viewString="discount" value="discount" class="btn_orther" style="width:200px;font: 15px Montserrat;">View More</a>
+                <a asp-action="ViewAll" asp-controller="Product" asp-route-viewString="discount" value="discount" class="btn_orther">View More</a>
             </div>
         </div>
     </div>
@@ -256,7 +256,7 @@
                         <div class="row">
                             <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@product.Id" class="col-md-6 btn_orther text-center">Read More</a>
                             <div class="col-md-3"></div>
-                            <div title="Wishlist" class="col-md-3 heart-container" style="width:20px;height:20px;transition: .3s;display: flex;justify-content: center;align-items: center;margin: 0 auto;">
+                            <div title="Wishlist" class="col-md-3 heart-container">
                                 <form asp-controller="Admin" asp-action="AddWishList" method="post">
                                     <input type="hidden" name="ProductId" value="@product.Id" />
                                     <input type="hidden" name="ProductName" value="@product.Name" />
@@ -300,46 +300,28 @@
                                     </button>
                                 </form>
                             </div>
-                            @* <div title="Wishlist" class="col-md-3 heart-container" style="width:20px;height:20px;">
-                                <input id="Give-It-An-Id" class="checkbox" type="checkbox">
-                                <div class="svg-container">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="svg-outline" viewBox="0 0 24 24">
-                                        <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Zm-3.585,18.4a2.973,2.973,0,0,1-3.83,0C4.947,16.006,2,11.87,2,8.967a4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,11,8.967a1,1,0,0,0,2,0,4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,22,8.967C22,11.87,19.053,16.006,13.915,20.313Z"></path>
-                                    </svg>
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="svg-filled" viewBox="0 0 24 24">
-                                        <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Z"></path>
-                                    </svg>
-                                    <svg xmlns="http://www.w3.org/2000/svg" height="100" width="100" class="svg-celebrate">
-                                        <polygon points="10,10 20,20"></polygon>
-                                        <polygon points="10,50 20,50"></polygon>
-                                        <polygon points="20,80 30,70"></polygon>
-                                        <polygon points="90,10 80,20"></polygon>
-                                        <polygon points="90,50 80,50"></polygon>
-                                        <polygon points="80,80 70,70"></polygon>
-                                    </svg>
-                                </div>
-                            </div> *@
+                            
                         </div>
                         
                     </div>
                     <!-- Thêm phần số lượt view -->
                     <div class="view-count">
-                        <i class="fa-solid fa-eye" style="color:black;  width:20px;height:20px;" ></i>
-                        <span style="color:black;">@product.Interactions.NumberOfViews</span>
+                        <i class="fa-solid fa-eye" ></i>
+                        <span>@product.Interactions.NumberOfViews</span>
                     </div>
 
                     <div class="like-dislike-container">
                         <!-- Like và Dislike -->
-                        <form asp-action="IncreaseLikeProduct" asp-controller="Product" method="post" style="display:inline;">
+                        <form asp-action="IncreaseLikeProduct" asp-controller="Product" method="post">
                             <input type="hidden" name="productID" value="@product.Id" />
-                            <span id="like-count-@product.Id" class="like-count" style="color:black;">@product.Interactions.NumberOfLikes</span>
-                            <i class="fa-solid fa-thumbs-up like-icon" style="color:black; width:20px;height:20px;"></i>
+                            <span id="like-count-@product.Id" class="like-count">@product.Interactions.NumberOfLikes</span>
+                            <i class="fa-solid fa-thumbs-up like-icon"></i>
                         </form>
 
-                        <form asp-action="DecreaseLikeProduct" asp-controller="Product" method="post" style="display:inline;">
+                        <form asp-action="DecreaseLikeProduct" asp-controller="Product" method="post">
                             <input type="hidden" name="productID" value="@product.Id" />
-                            <span id="dislike-count-@product.Id" class="dislike-count" style="color:black;">@product.Interactions.NumberOfDisLikes</span>
-                            <i class="fa-solid fa-thumbs-down dislike-icon" style="color:black; width:20px;height:20px;"></i>
+                            <span id="dislike-count-@product.Id" class="dislike-count">@product.Interactions.NumberOfDisLikes</span>
+                            <i class="fa-solid fa-thumbs-down dislike-icon"></i>
                         </form>
                     </div>
                 </div>
@@ -351,7 +333,7 @@
 </div>
 
 
-<div class="ortherproduct" style="margin-top:10vw;">
+<div class="ortherproduct">
 
     <section class="header_section">
         <h1 style="font-family: 'Poppins', sans-serif; text-transform: uppercase; text-align: center;">
@@ -359,7 +341,7 @@
         </h1>
     </section>
     <!-- Danh sách Nút Điều Hướng -->
-    <div class="lisotherproduct_name row mt-3 ms-1" style="font-family: 'Poppins', sans-serif; text-transform:uppercase;">
+    <div class="lisotherproduct_name row mt-3 ms-1">
         <a class="col-6 col-sm-2 col-md-2" href="#foryou">For You</a>
         <a class="col-6 col-sm-2 col-md-2" href="#popular">Popular</a>
         <a class="col-4 col-sm-2 col-md-2" href="#free">Free</a>
@@ -372,14 +354,12 @@
 
 
 
-    <section id="popular" style="margin-top:5vw;">
+    <section id="popular">
         <div class="d-flex justify-content-between align-items-center row">
-            <h3 class="col-2 col-sm-2 col-md-2 ms-3 fw-bold text-center" style="display: inline-block; border: 3px solid transparent; border-radius: 12px; padding: 15px 20px; background: linear-gradient(#fff, #fff) padding-box, linear-gradient(135deg, #00A97F, #800080) border-box; font-family: 'Poppins', sans-serif; text-transform: uppercase;">
-                Popular
-            </h3>
-            <div class="col-3 col-sm-3 col-md-3 footeer_card">
-                <div class="btn_card" style="display:flex;justify-content:end;" style="width:200px;font-size:font: 15px Montserrat;">
-                    <a asp-action="ViewAll" asp-controller="Product" asp-route-viewString="popular" value="popular" class="btn_orther" style="width:200px;font: 15px Montserrat;">View More</a>
+            <h3 class="col-2 col-sm-2 col-md-2 ms-3">Popular</h3>
+            <div class="col-2 col-sm-2 col-md-2 footeer_card">
+                <div class="btn_card" style="display:flex;justify-content:end;width:200px;font-size:font: 15px Montserrat;">
+                    <a asp-action="ViewAll" asp-controller="Product" asp-route-viewString="popular" value="popular" class="btn_orther">View More</a>
                 </div>
             </div>
         </div>
@@ -413,9 +393,9 @@
                             </p>
                             <div class="row d-flex align-items-center justify-content-between">
                                 <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@product.Id" class="col-md-6 btn_orther ms-2 text-center">Read More</a>
-                                <div class="col-md-3"></div>
+                                <div class="col-md-4"></div>
                                 @* Day la trai tym ne *@
-                                <div title="Wishlist" class="col-md-3 heart-container">
+                                <div title="Wishlist" class="col-md-1 heart-container">
                                     <form id="wishlistForm" method="post">
                                         <input type="hidden" name="ProductId" id="ProductId" value="@product.Id" />
                                         <input type="hidden" name="ProductName" id="ProductName" value="@product.Name" />
@@ -461,48 +441,27 @@
                                         </div>
                                     </form>
                                 </div>
-                                @* <div title="Wishlist" class="col-md-3 heart-container" style="width:20px;height:20px;">
-                                    <input id="Give-It-An-Id" class="checkbox" type="checkbox">
-                                    <div class="svg-container">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="svg-outline" viewBox="0 0 24 24">
-                                            <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Zm-3.585,18.4a2.973,2.973,0,0,1-3.83,0C4.947,16.006,2,11.87,2,8.967a4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,11,8.967a1,1,0,0,0,2,0,4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,22,8.967C22,11.87,19.053,16.006,13.915,20.313Z">
-                                            </path>
-                                        </svg>
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="svg-filled" viewBox="0 0 24 24">
-                                            <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Z">
-                                            </path>
-                                        </svg>
-                                        <svg xmlns="http://www.w3.org/2000/svg" height="100" width="100" class="svg-celebrate">
-                                            <polygon points="10,10 20,20"></polygon>
-                                            <polygon points="10,50 20,50"></polygon>
-                                            <polygon points="20,80 30,70"></polygon>
-                                            <polygon points="90,10 80,20"></polygon>
-                                            <polygon points="90,50 80,50"></polygon>
-                                            <polygon points="80,80 70,70"></polygon>
-                                        </svg>
-                                    </div>
-                                </div> *@
                             </div>
                             
                         </div>
                         <!-- Thêm phần số lượt view -->
                         <div class="view-count">
-                                    <i class="fa-solid fa-eye" style="color:black;  width:20px;height:20px;" ></i>
-                            <span style="color:black;">@product.Interactions.NumberOfViews</span>
+                            <i class="fa-solid fa-eye" ></i>
+                            <span>@product.Interactions.NumberOfViews</span>
                         </div>
 
                         <div class="like-dislike-container">
                             <!-- Like và Dislike -->
-                            <form asp-action="IncreaseLikeProduct" asp-controller="Product" method="post" style="display:inline;">
+                            <form asp-action="IncreaseLikeProduct" asp-controller="Product" method="post">
                                 <input type="hidden" name="productID" value="@product.Id" />
-                                <span id="like-count-@product.Id" class="like-count" style="color:black;">@product.Interactions.NumberOfLikes</span>
-                                <i class="fa-solid fa-thumbs-up like-icon" style="color:black; width:20px;height:20px;"></i>
+                                <span id="like-count-@product.Id" class="like-count">@product.Interactions.NumberOfLikes</span>
+                                <i class="fa-solid fa-thumbs-up like-icon"></i>
                             </form>
 
-                            <form asp-action="DecreaseLikeProduct" asp-controller="Product" method="post" style="display:inline;">
+                            <form asp-action="DecreaseLikeProduct" asp-controller="Product" method="post">
                                 <input type="hidden" name="productID" value="@product.Id" />
-                                <span id="dislike-count-@product.Id" class="dislike-count" style="color:black;">@product.Interactions.NumberOfDisLikes</span>
-                                <i class="fa-solid fa-thumbs-down dislike-icon" style="color:black; width:20px;height:20px;"></i>
+                                <span id="dislike-count-@product.Id" class="dislike-count">@product.Interactions.NumberOfDisLikes</span>
+                                <i class="fa-solid fa-thumbs-down dislike-icon"></i>
                             </form>
                         </div>
                     </div>
@@ -513,12 +472,12 @@
 
 
 
-    <section id="free" style="margin-top:5vw;">
+    <section id="free">
         <div class="d-flex justify-content-between align-items-center row">
-            <h3 class="col-2 col-sm-2 col-md-2 ms-3 fw-bold text-center" style="border: 3px solid transparent; border-radius: 12px; padding: 15px 20px; background: linear-gradient(#fff, #fff) padding-box, linear-gradient(135deg, #00A97F, #800080) border-box;font-family: 'Poppins', sans-serif; text-transform:uppercase;">Free</h3>
-            <div class="col-3 col-sm-3 col-md-3 footeer_card">
-                <div class="btn_card" style="display:flex;justify-content:end;" style="width:200px;font-size:font: 15px Montserrat;">
-                    <a asp-action="ViewAll" asp-controller="Product" asp-route-viewString="free" value="free" class="btn_orther" style="width:200px;font: 15px Montserrat;">View More</a>
+            <h3 class="col-2 col-sm-2 col-md-2 ms-3">Free</h3>
+            <div class="col-2 col-sm-2 col-md-2 footeer_card">
+                <div class="btn_card" style="display:flex;justify-content:end;width:200px;font-size:font: 15px Montserrat;">
+                    <a asp-action="ViewAll" asp-controller="Product" asp-route-viewString="free" value="free" class="btn_orther">View More</a>
                 </div>
             </div>
         </div>
@@ -555,7 +514,7 @@
                                 <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@product.Id" class="col-md-6 btn_orther ms-2 text-center">Read More</a>
                                 <div class="col-md-3"></div>
                                 @* Day la trai tym ne *@
-                                <div title="Wishlist" class="col-md-3 heart-container" style="width:20px;height:20px;transition: .3s;display: flex;justify-content: center;align-items: center;margin: 0 auto;">
+                                <div title="Wishlist" class="col-md-3 heart-container">
                                     <form asp-controller="Admin" asp-action="AddWishList" method="post">
                                         <input type="hidden" name="ProductId" value="@product.Id" />
                                         <input type="hidden" name="ProductName" value="@product.Name" />
@@ -599,47 +558,27 @@
                                         </button>
                                     </form>
                                 </div>
-                                @* <div title="Wishlist" class="col-md-3 heart-container" style="width:20px;height:20px;">
-                                    <input id="Give-It-An-Id" class="checkbox" type="checkbox">
-                                    <div class="svg-container">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="svg-outline" viewBox="0 0 24 24">
-                                            <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Zm-3.585,18.4a2.973,2.973,0,0,1-3.83,0C4.947,16.006,2,11.87,2,8.967a4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,11,8.967a1,1,0,0,0,2,0,4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,22,8.967C22,11.87,19.053,16.006,13.915,20.313Z">
-                                            </path>
-                                        </svg>
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="svg-filled" viewBox="0 0 24 24">
-                                            <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Z">
-                                            </path>
-                                        </svg>
-                                        <svg xmlns="http://www.w3.org/2000/svg" height="100" width="100" class="svg-celebrate">
-                                            <polygon points="10,10 20,20"></polygon>
-                                            <polygon points="10,50 20,50"></polygon>
-                                            <polygon points="20,80 30,70"></polygon>
-                                            <polygon points="90,10 80,20"></polygon>
-                                            <polygon points="90,50 80,50"></polygon>
-                                            <polygon points="80,80 70,70"></polygon>
-                                        </svg>
-                                    </div>
-                                </div> *@
+                               
                             </div>
                         </div>
                         <!-- Thêm phần số lượt view -->
                         <div class="view-count">
-                            <i class="fa-solid fa-eye" style="color:black;  width:20px;height:20px;"></i>
-                            <span style="color:black;">@product.Interactions.NumberOfViews</span>
+                            <i class="fa-solid fa-eye"></i>
+                            <span>@product.Interactions.NumberOfViews</span>
                         </div>
 
                         <div class="like-dislike-container">
                             <!-- Like và Dislike -->
-                            <form asp-action="IncreaseLikeProduct" asp-controller="Product" method="post" style="display:inline;">
+                            <form asp-action="IncreaseLikeProduct" asp-controller="Product" method="post">
                                 <input type="hidden" name="productID" value="@product.Id" />
-                                <span id="like-count-@product.Id" class="like-count" style="color:black;">@product.Interactions.NumberOfLikes</span>
-                                <i class="fa-solid fa-thumbs-up like-icon" style="color:black; width:20px;height:20px;"></i>
+                                <span id="like-count-@product.Id" class="like-count">@product.Interactions.NumberOfLikes</span>
+                                <i class="fa-solid fa-thumbs-up like-icon"></i>
                             </form>
 
-                            <form asp-action="DecreaseLikeProduct" asp-controller="Product" method="post" style="display:inline;">
+                            <form asp-action="DecreaseLikeProduct" asp-controller="Product" method="post">
                                 <input type="hidden" name="productID" value="@product.Id" />
-                                <span id="dislike-count-@product.Id" class="dislike-count" style="color:black;">@product.Interactions.NumberOfDisLikes</span>
-                                <i class="fa-solid fa-thumbs-down dislike-icon" style="color:black; width:20px;height:20px;"></i>
+                                <span id="dislike-count-@product.Id" class="dislike-count">@product.Interactions.NumberOfDisLikes</span>
+                                <i class="fa-solid fa-thumbs-down dislike-icon"></i>
                             </form>
                         </div>
                     </div>
@@ -649,12 +588,12 @@
     </section>
 
 
-    <section id="new" style="margin-top:5vw;">
+    <section id="new">
         <div class="d-flex justify-content-between align-items-center row">
-            <h3 class="col-2 col-sm-2 col-md-2 ms-3 fw-bold text-center" style="border: 3px solid transparent; border-radius: 12px; padding: 15px 20px; background: linear-gradient(#fff, #fff) padding-box, linear-gradient(135deg, #00A97F, #800080) border-box;font-family: 'Poppins', sans-serif; text-transform:uppercase;">New</h3>
-            <div class="col-3 col-sm-3 col-md-3 footeer_card">
-                <div class="btn_card" style="display:flex;justify-content:end;" style="width:200px;font-size:font: 15px Montserrat;">
-                    <a asp-action="ViewAll" asp-controller="Product" asp-route-viewString="new" value="new" class="btn_orther" style="width:200px;font: 15px Montserrat;">View More</a>
+            <h3 class="col-2 col-sm-2 col-md-2 ms-3">New</h3>
+            <div class="col-2 col-sm-2 col-md-2 footeer_card">
+                <div class="btn_card" style="display:flex;justify-content:end;width:200px;font-size:font: 15px Montserrat;">
+                    <a asp-action="ViewAll" asp-controller="Product" asp-route-viewString="new" value="new" class="btn_orther">View More</a>
                 </div>
             </div>
         </div>
@@ -689,7 +628,7 @@
                             <div class="row d-flex align-items-center justify-content-between">
                                 <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@product.Id" class="col-md-6 btn_orther ms-2 text-center">Read More</a>
                                 <div class="col-md-3"></div>
-                                <div title="Wishlist" class="col-md-3 heart-container" style="width:20px;height:20px;transition: .3s;display: flex;justify-content: center;align-items: center;margin: 0 auto;">
+                                <div title="Wishlist" class="col-md-3 heart-container">
                                     <form asp-controller="Admin" asp-action="AddWishList" method="post">
                                         <input type="hidden" name="ProductId" value="@product.Id" />
                                         <input type="hidden" name="ProductName" value="@product.Name" />
@@ -733,48 +672,27 @@
                                         </button>
                                     </form>
                                 </div>
-                                @* Day la trai tym ne *@
-                                @* <div title="Wishlist" class="col-md-3 heart-container" style="width:20px;height:20px;">
-                                    <input id="Give-It-An-Id" class="checkbox" type="checkbox">
-                                    <div class="svg-container">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="svg-outline" viewBox="0 0 24 24">
-                                            <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Zm-3.585,18.4a2.973,2.973,0,0,1-3.83,0C4.947,16.006,2,11.87,2,8.967a4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,11,8.967a1,1,0,0,0,2,0,4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,22,8.967C22,11.87,19.053,16.006,13.915,20.313Z">
-                                            </path>
-                                        </svg>
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="svg-filled" viewBox="0 0 24 24">
-                                            <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Z">
-                                            </path>
-                                        </svg>
-                                        <svg xmlns="http://www.w3.org/2000/svg" height="100" width="100" class="svg-celebrate">
-                                            <polygon points="10,10 20,20"></polygon>
-                                            <polygon points="10,50 20,50"></polygon>
-                                            <polygon points="20,80 30,70"></polygon>
-                                            <polygon points="90,10 80,20"></polygon>
-                                            <polygon points="90,50 80,50"></polygon>
-                                            <polygon points="80,80 70,70"></polygon>
-                                        </svg>
-                                    </div>
-                                </div> *@
+                                
                             </div>
                         </div>
                         <!-- Thêm phần số lượt view -->
                         <div class="view-count">
-                            <i class="fa-solid fa-eye" style="color:black;  width:20px;height:20px;"></i>
-                            <span style="color:black;">@product.Interactions.NumberOfViews</span>
+                            <i class="fa-solid fa-eye"></i>
+                            <span>@product.Interactions.NumberOfViews</span>
                         </div>
 
                         <div class="like-dislike-container">
                             <!-- Like và Dislike -->
-                            <form asp-action="IncreaseLikeProduct" asp-controller="Product" method="post" style="display:inline;">
+                            <form asp-action="IncreaseLikeProduct" asp-controller="Product" method="post" >
                                 <input type="hidden" name="productID" value="@product.Id" />
-                                <span id="like-count-@product.Id" class="like-count" style="color:black;">@product.Interactions.NumberOfLikes</span>
-                                <i class="fa-solid fa-thumbs-up like-icon" style="color:black; width:20px;height:20px;"></i>
+                                <span id="like-count-@product.Id" class="like-count">@product.Interactions.NumberOfLikes</span>
+                                <i class="fa-solid fa-thumbs-up like-icon"></i>
                             </form>
 
-                            <form asp-action="DecreaseLikeProduct" asp-controller="Product" method="post" style="display:inline;">
+                            <form asp-action="DecreaseLikeProduct" asp-controller="Product" method="post">
                                 <input type="hidden" name="productID" value="@product.Id" />
-                                <span id="dislike-count-@product.Id" class="dislike-count" style="color:black;">@product.Interactions.NumberOfDisLikes</span>
-                                <i class="fa-solid fa-thumbs-down dislike-icon" style="color:black; width:20px;height:20px;"></i>
+                                <span id="dislike-count-@product.Id" class="dislike-count">@product.Interactions.NumberOfDisLikes</span>
+                                <i class="fa-solid fa-thumbs-down dislike-icon"></i>
                             </form>
                         </div>
                     </div>
@@ -784,12 +702,12 @@
     </section>
 
 
-    <section id="more" style="margin-top:5vw;">
+    <section id="more">
         <div class="d-flex justify-content-between align-items-center row">
-            <h3 class="col-2 `col-sm-2 col-md-2 ms-3 fw-bold text-center" style="border: 3px solid transparent; border-radius: 12px; padding: 15px 20px; background: linear-gradient(#fff, #fff) padding-box, linear-gradient(135deg, #00A97F, #800080) border-box;font-family: 'Poppins', sans-serif; text-transform:uppercase;">More</h3>
-            <div class="col-3 col-sm-3 col-md-3 footeer_card">
-                <div class="btn_card" style="display:flex;justify-content:end;" style="width:200px;font-size:font: 15px Montserrat;">
-                    <a asp-controller="Product" asp-action="Product" class="btn_orther" style="width:200px;font: 15px Montserrat;">View More</a>
+            <h3 class="col-2 col-sm-2 col-md-2 ms-3">More</h3>
+            <div class="col-2 col-sm-2 col-md-2 footeer_card">
+                <div class="btn_card" style="display:flex;justify-content:end;width:200px;font-size:font: 15px Montserrat;">
+                    <a asp-controller="Product" asp-action="Product" class="btn_orther">View More</a>
                 </div>
             </div>
         </div>
@@ -831,7 +749,7 @@
                                 <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@product.Id" class="col-md-6 btn_orther ms-2 text-center">Read More</a>
                                 <div class="col-md-3"></div>
                                 @* Day la trai tym ne *@
-                                <div title="Wishlist" class="col-md-3 heart-container" style="width:20px;height:20px;transition: .3s;display: flex;justify-content: center;align-items: center;margin: 0 auto;">
+                                <div title="Wishlist" class="col-md-3 heart-container">
                                     <form asp-controller="Admin" asp-action="AddWishList" method="post">
                                         <input type="hidden" name="ProductId" value="@product.Id" />
                                         <input type="hidden" name="ProductName" value="@product.Name" />
@@ -875,47 +793,27 @@
                                         </button>
                                     </form>
                                 </div>
-                                @* <div title="Wishlist" class="col-md-3 heart-container" style="width:20px;height:20px;">
-                                    <input id="Give-It-An-Id" class="checkbox" type="checkbox">
-                                    <div class="svg-container">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="svg-outline" viewBox="0 0 24 24">
-                                            <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Zm-3.585,18.4a2.973,2.973,0,0,1-3.83,0C4.947,16.006,2,11.87,2,8.967a4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,11,8.967a1,1,0,0,0,2,0,4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,22,8.967C22,11.87,19.053,16.006,13.915,20.313Z">
-                                            </path>
-                                        </svg>
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="svg-filled" viewBox="0 0 24 24">
-                                            <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Z">
-                                            </path>
-                                        </svg>
-                                        <svg xmlns="http://www.w3.org/2000/svg" height="100" width="100" class="svg-celebrate">
-                                            <polygon points="10,10 20,20"></polygon>
-                                            <polygon points="10,50 20,50"></polygon>
-                                            <polygon points="20,80 30,70"></polygon>
-                                            <polygon points="90,10 80,20"></polygon>
-                                            <polygon points="90,50 80,50"></polygon>
-                                            <polygon points="80,80 70,70"></polygon>
-                                        </svg>
-                                    </div>
-                                </div> *@
+                                
                             </div>
                         </div>
                         <!-- Thêm phần số lượt view -->
                         <div class="view-count">
-                            <i class="fa-solid fa-eye" style="color:black;  width:20px;height:20px;"></i>
-                            <span style="color:black;">@product.Interactions.NumberOfViews</span>
+                            <i class="fa-solid fa-eye"></i>
+                            <span>@product.Interactions.NumberOfViews</span>
                         </div>
 
                         <div class="like-dislike-container">
                             <!-- Like và Dislike -->
-                            <form asp-action="IncreaseLikeProduct" asp-controller="Product" method="post" style="display:inline;">
+                            <form asp-action="IncreaseLikeProduct" asp-controller="Product" method="post">
                                 <input type="hidden" name="productID" value="@product.Id" />
-                                <span id="like-count-@product.Id" class="like-count" style="color:black;">@product.Interactions.NumberOfLikes</span>
-                                <i class="fa-solid fa-thumbs-up like-icon" style="color:black; width:20px;height:20px;"></i>
+                                <span id="like-count-@product.Id" class="like-count" >@product.Interactions.NumberOfLikes</span>
+                                <i class="fa-solid fa-thumbs-up like-icon"></i>
                             </form>
 
-                            <form asp-action="DecreaseLikeProduct" asp-controller="Product" method="post" style="display:inline;">
+                            <form asp-action="DecreaseLikeProduct" asp-controller="Product" method="post">
                                 <input type="hidden" name="productID" value="@product.Id" />
-                                <span id="dislike-count-@product.Id" class="dislike-count" style="color:black;">@product.Interactions.NumberOfDisLikes</span>
-                                <i class="fa-solid fa-thumbs-down dislike-icon" style="color:black; width:20px;height:20px;"></i>
+                                <span id="dislike-count-@product.Id" class="dislike-count">@product.Interactions.NumberOfDisLikes</span>
+                                <i class="fa-solid fa-thumbs-down dislike-icon"></i>
                             </form>
                         </div>
                     </div>
@@ -924,12 +822,10 @@
         </div>
     </section>
 </div>
-<div class="best-seller_most-player_top-upcoming-wishlisted row" style="margin-top:7vw;">
+<div class="best-seller_most-player_top-upcoming-wishlisted row">
     <div class="col-12 col-sm-12 col-md-4" style="margin:0 auto;">
         <h2>
-            <a href="" style="text-decoration:none;color:black; display: inline-block; border: 3px solid transparent; border-radius: 12px; padding: 15px 20px; background: linear-gradient(#fff, #fff) padding-box, linear-gradient(135deg, #00A97F, #800080) border-box; font-family: 'Poppins', sans-serif; text-transform: uppercase;">
-                Top Sellers <i class="fa-solid fa-angle-right"></i>
-            </a>
+            Top Sellers <i class="fa-solid fa-angle-right"></i>
         </h2>
         <div class="row ">
             @if (Model.Product != null)
@@ -984,9 +880,7 @@
 
     <div class="col-12 col-sm-12 col-md-4" style="margin:0 auto;">
         <h2>
-            <a href="" style="text-decoration:none;color:black; display: inline-block; border: 3px solid transparent; border-radius: 12px; padding: 15px 20px; background: linear-gradient(#fff, #fff) padding-box, linear-gradient(135deg, #00A97F, #800080) border-box; font-family: 'Poppins', sans-serif; text-transform: uppercase;">
-                Most Played <i class="fa-solid fa-angle-right"></i>
-            </a>
+            Most Played <i class="fa-solid fa-angle-right"></i>
         </h2>
 
         <div class="row">
@@ -1042,9 +936,7 @@
 
     <div class="col-12 col-sm-12 col-md-4" style="margin:0 auto;">
         <h2>
-            <a href="" style="text-decoration:none;color:black; display: inline-block; border: 3px solid transparent; border-radius: 12px; padding: 15px 20px; background: linear-gradient(#fff, #fff) padding-box, linear-gradient(135deg, #00A97F, #800080) border-box; font-family: 'Poppins', sans-serif; text-transform: uppercase;">
-                Top Upcoming Wishlisted <i class="fa-solid fa-angle-right"></i>
-            </a>
+            Top Upcoming Wishlisted <i class="fa-solid fa-angle-right"></i>
         </h2>
         <div class="row">
             @if (Model.Product != null)

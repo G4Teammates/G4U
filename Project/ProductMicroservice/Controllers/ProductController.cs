@@ -52,25 +52,33 @@ namespace ProductMicroService.Controllers
                 // Kiểm tra tệp hình ảnh
                 if (imageFiles == null || !imageFiles.Any())
                 {
-                    return BadRequest("Image files cannot be null or empty.");
+                    _responseDTO.IsSuccess = false;
+                    _responseDTO.Message = "Image files cannot be null or empty.";
+                    return BadRequest(_responseDTO);
                 }
 
                 // Kiểm tra tệp game
                 if (request?.gameFile == null || request.gameFile.Length == 0)
                 {
-                    return BadRequest("Game file cannot be null or empty.");
+                    _responseDTO.IsSuccess = false;
+                    _responseDTO.Message = "IGame file cannot be null or empty.";
+                    return BadRequest(_responseDTO);
                 }
 
                 // Kiểm tra giá trị Platform
                 if (!Enum.IsDefined(typeof(PlatformType), platform))
                 {
-                    return BadRequest("Invalid platform value.");
+                    _responseDTO.IsSuccess = false;
+                    _responseDTO.Message = "Invalid platform value.";
+                    return BadRequest(_responseDTO);
                 }
 
                 // Kiểm tra giá trị Status
                 if (!Enum.IsDefined(typeof(ProductStatus), status))
                 {
-                    return BadRequest("Invalid status value.");
+                    _responseDTO.IsSuccess = false;
+                    _responseDTO.Message = "Invalid status value.";
+                    return BadRequest(_responseDTO);
                 }
 
                 // Chuyển đổi danh sách chuỗi thành danh sách CategoryModel
@@ -94,8 +102,9 @@ namespace ProductMicroService.Controllers
                     _responseDTO.Result = newProduct.Result;
                     return Ok(_responseDTO);
                 }
+                _responseDTO.IsSuccess = false;
                 _responseDTO.Message = newProduct.Message;
-                return BadRequest(_responseDTO.Message);
+                return BadRequest(_responseDTO);
             }
             catch (Exception ex)
             {
@@ -122,8 +131,9 @@ namespace ProductMicroService.Controllers
                     _responseDTO.Result = Products.Result;
                     return Ok(_responseDTO);
                 }
+                _responseDTO.IsSuccess = false;
                 _responseDTO.Message = Products.Message;
-                return BadRequest(_responseDTO.Message);
+                return BadRequest(_responseDTO);
             }
             catch (Exception ex)
             {
@@ -144,8 +154,9 @@ namespace ProductMicroService.Controllers
                     _responseDTO.Result = Product.Result;
                     return Ok(_responseDTO);
                 }
+                _responseDTO.IsSuccess = false;
                 _responseDTO.Message = Product.Message;
-                return BadRequest(_responseDTO.Message);
+                return BadRequest(_responseDTO);
             }
             catch (Exception ex)
             {
@@ -168,8 +179,9 @@ namespace ProductMicroService.Controllers
                     _responseDTO.Result = Pros.Result;
                     return Ok(_responseDTO);
                 }
+                _responseDTO.IsSuccess = false;
                 _responseDTO.Message = Pros.Message;
-                return BadRequest(_responseDTO.Message);
+                return BadRequest(_responseDTO);
             }
             catch (Exception ex)
             {
@@ -192,8 +204,9 @@ namespace ProductMicroService.Controllers
                     _responseDTO.Result = Products.Result;
                     return Ok(_responseDTO);
                 }
+                _responseDTO.IsSuccess = false;
                 _responseDTO.Message = Products.Message;
-                return BadRequest(_responseDTO.Message);
+                return BadRequest(_responseDTO);
             }
             catch (Exception ex)
             {
@@ -263,8 +276,9 @@ namespace ProductMicroService.Controllers
                         _responseDTO.Result = newProductNoFiles.Result;
                         return Ok(_responseDTO);
                     }
+                    _responseDTO.IsSuccess = false;
                     _responseDTO.Message = newProductNoFiles.Message;
-                    return BadRequest(_responseDTO.Message);
+                    return BadRequest(_responseDTO);
                 }
                 // Kiểm tra nếu không có tệp game nào được gửi
                 else if (gameFile == null)
@@ -276,8 +290,9 @@ namespace ProductMicroService.Controllers
                         _responseDTO.Result = newProductNoFilesGame.Result;
                         return Ok(_responseDTO);
                     }
+                    _responseDTO.IsSuccess = false;
                     _responseDTO.Message = newProductNoFilesGame.Message;
-                    return BadRequest(_responseDTO.Message);
+                    return BadRequest(_responseDTO);
                 }
                 // Kiểm tra nếu không có tệp game nào được gửi
                 else if (gameFile == null && imageFiles == null)
@@ -289,8 +304,9 @@ namespace ProductMicroService.Controllers
                         _responseDTO.Result = newProductNoFiles.Result;
                         return Ok(_responseDTO);
                     }
+                    _responseDTO.IsSuccess = false;
                     _responseDTO.Message = newProductNoFiles.Message;
-                    return BadRequest(_responseDTO.Message);
+                    return BadRequest(_responseDTO);
                 }
 
                 var newProduct = await _repoProduct.UpdateProduct(imageFiles, product, gameFile);
@@ -299,8 +315,9 @@ namespace ProductMicroService.Controllers
                     _responseDTO.Result = newProduct.Result;
                     return Ok(_responseDTO);
                 }
+                _responseDTO.IsSuccess = false;
                 _responseDTO.Message = newProduct.Message;
-                return BadRequest(_responseDTO.Message);
+                return BadRequest(_responseDTO);
             }
             catch (Exception ex)
             {
@@ -323,8 +340,9 @@ namespace ProductMicroService.Controllers
                     _responseDTO.Result = Pros.Result;
                     return Ok(_responseDTO);
                 }
+                _responseDTO.IsSuccess = false;
                 _responseDTO.Message = Pros.Message;
-                return BadRequest(_responseDTO.Message);
+                return BadRequest(_responseDTO);
             }
             catch (Exception ex)
             {
@@ -346,8 +364,9 @@ namespace ProductMicroService.Controllers
                     _responseDTO.Result = Pros.Result;
                     return Ok(_responseDTO);
                 }
+                _responseDTO.IsSuccess = false;
                 _responseDTO.Message = Pros.Message;
-                return BadRequest(_responseDTO.Message);
+                return BadRequest(_responseDTO);
             }
             catch (Exception ex)
             {
@@ -368,8 +387,9 @@ namespace ProductMicroService.Controllers
                     _responseDTO.Result = Pros.Result;
                     return Ok(_responseDTO);
                 }
+                _responseDTO.IsSuccess = false;
                 _responseDTO.Message = Pros.Message;
-                return BadRequest(_responseDTO.Message);
+                return BadRequest(_responseDTO);
             }
             catch (Exception ex)
             {
@@ -390,8 +410,9 @@ namespace ProductMicroService.Controllers
                     _responseDTO.Result = Pros.Result;
                     return Ok(_responseDTO);
                 }
+                _responseDTO.IsSuccess = false;
                 _responseDTO.Message = Pros.Message;
-                return BadRequest(_responseDTO.Message);
+                return BadRequest(_responseDTO);
             }
             catch (Exception ex)
             {
@@ -415,8 +436,9 @@ namespace ProductMicroService.Controllers
                     _responseDTO.Message = result.Message;
                     return Ok(_responseDTO);
                 }
+                _responseDTO.IsSuccess = false;
                 _responseDTO.Message = result.Message;
-                return BadRequest(_responseDTO.Message);
+                return BadRequest(_responseDTO);
             }
             catch (Exception ex)
             {
@@ -438,8 +460,9 @@ namespace ProductMicroService.Controllers
                     _responseDTO.Message = result.Message;
                     return Ok(_responseDTO);
                 }
+                _responseDTO.IsSuccess = false;
                 _responseDTO.Message = result.Message;
-                return BadRequest(_responseDTO.Message);
+                return BadRequest(_responseDTO);
             }
             catch (Exception ex)
             {
@@ -461,8 +484,9 @@ namespace ProductMicroService.Controllers
                     _responseDTO.Message = result.Message;
                     return Ok(_responseDTO);
                 }
+                _responseDTO.IsSuccess = false;
                 _responseDTO.Message = result.Message;
-                return BadRequest(_responseDTO.Message);
+                return BadRequest(_responseDTO);
             }
             catch (Exception ex)
             {

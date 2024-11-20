@@ -20,13 +20,15 @@ namespace StatisticalMicroservice.Repostories
         private readonly StatisticalDbcontext _db;
         private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
+        private readonly IMessage _message;
 
 
-        public Repo(IConfiguration configuration, StatisticalDbcontext db, IMapper mapper)
+        public Repo(IConfiguration configuration, StatisticalDbcontext db, IMapper mapper, IMessage message)
         {
             _configuration = configuration;
             _db = db;
             _mapper = mapper;
+            _message = message;
         }
         #endregion
         public async Task<ResponseDTO> GetAll(int page, int pageSize)
@@ -338,5 +340,151 @@ namespace StatisticalMicroservice.Repostories
             return response;
         }
 
+        public async Task<ResponseDTO> GetStastisticalByUser(TotalGroupByUserRequest totalGroupByUserRequest)
+        {
+            ResponseDTO response = new();
+            try
+            {
+                // Đồng thời thực hiện cả OrderData và ProductData
+                var orderDataTask = OrderData(totalGroupByUserRequest);
+                var productDataTask = ProductData(totalGroupByUserRequest);
+
+                // Chờ cả hai task hoàn thành
+                await Task.WhenAll(orderDataTask, productDataTask);
+
+                var orderdata = await orderDataTask;
+                var productdata = await productDataTask;
+
+                var total = new TotalGroupByUserResponse()
+                {
+                    orderdata = orderdata,
+                    productdata = productdata
+                };
+
+                if (orderdata != null && productdata != null)
+                {
+                    response.IsSuccess = true;
+                    response.Result = total;
+                }
+                else
+                {
+                    response.IsSuccess = false;
+                    response.Message = "Data missing.";
+                }
+            }
+            catch (Exception ex)
+            {
+                // Xử lý lỗi nếu cần
+                response.IsSuccess = false;
+                response.Message = $"An error occurred: {ex.Message}";
+            }
+
+            return response;
+        }
+
+        private async Task<OrderGroupByUserData> OrderData(TotalGroupByUserRequest totalGroupByUserRequest)
+        {
+            var response = new OrderGroupByUserData();
+            try
+            {
+                int maxRetryAttempts = 3;
+                int retryCount = 0;
+                bool isCompleted = false; // Biến đánh dấu hoàn thành
+                while (retryCount < maxRetryAttempts && !isCompleted)
+                {
+                    _message.SendingMessageStastisticalGroupByUser(totalGroupByUserRequest);
+
+                    var orderTcs = new TaskCompletionSource<bool>();
+
+                    // Đăng ký sự kiện nhận dữ liệu order
+                    _message.OnOrderResponseReceived += (orderResponse) =>
+                    {
+                        Console.WriteLine($"Received order response: {orderResponse.Revenue}");
+                        response.Revenue = orderResponse.Revenue;
+                        // Đánh dấu task đã hoàn thành
+                        if (!orderTcs.Task.IsCompleted)
+                        {
+                            orderTcs.SetResult(true);
+                            Console.WriteLine("SetResult done");
+                        }
+                    };
+
+                    // Tạo task hẹn giờ timeout
+                    var timeoutTask = Task.Delay(5000);
+                    var completedTask = await Task.WhenAny (orderTcs.Task, timeoutTask);
+
+                    if (completedTask == timeoutTask)
+                    {
+                        Console.WriteLine($"Attempt {retryCount + 1} failed due to timeout.");
+                        retryCount++;
+
+                        if (retryCount >= maxRetryAttempts)
+                        {
+                           
+                            return null;
+                        }
+                        continue;
+                    }
+                    isCompleted = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return response;
+        }
+        private async Task<ProductGroupByUserData> ProductData(TotalGroupByUserRequest totalGroupByUserRequest)
+        {
+            var response = new ProductGroupByUserData();
+            try
+            {
+                int maxRetryAttempts = 3;
+                int retryCount = 0;
+                bool isCompleted = false; // Biến đánh dấu hoàn thành
+                while (retryCount < maxRetryAttempts && !isCompleted)
+                {
+                    _message.SendingMessageStastisticalGroupByUser(totalGroupByUserRequest);
+
+                    var orderTcs = new TaskCompletionSource<bool>();
+
+                    // Đăng ký sự kiện nhận dữ liệu order
+                    _message.OnProductResponseReceived += (orderResponse) =>
+                    {
+                        Console.WriteLine($"Received product response: {orderResponse.Views}, {orderResponse.Products}, {orderResponse.Solds}");
+                        response.Views = orderResponse.Views;
+                        response.Solds = orderResponse.Solds;
+                        response.Products = orderResponse.Products;
+                        if (!orderTcs.Task.IsCompleted)
+                        {
+                            orderTcs.SetResult(true);  // Đánh dấu khi nhận dữ liệu order
+                        }
+                    };
+
+                    // Tạo task hẹn giờ timeout
+                    var timeoutTask = Task.Delay(5000);
+                    var completedTask = await Task.WhenAny(orderTcs.Task, timeoutTask);
+
+                    if (completedTask == timeoutTask)
+                    {
+                        Console.WriteLine($"Attempt {retryCount + 1} failed due to timeout.");
+                        retryCount++;
+
+                        if (retryCount >= maxRetryAttempts)
+                        {
+
+                            return null;
+                        }
+                        continue;
+                    }
+                    isCompleted = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return response;
+        }
     }
 }
