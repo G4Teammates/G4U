@@ -18,5 +18,6 @@ namespace UserMicroservice.Repositories.Interfaces
         public string GeneratePasswordResetToken(UserModel model);
         public ResponseModel DecodeToken(string token);
         public User GetUserIdFromToken(JwtSecurityToken token);
+        public string GenerateRandomPassword(int length);
     }
 }

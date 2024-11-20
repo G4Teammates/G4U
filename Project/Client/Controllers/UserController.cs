@@ -231,19 +231,97 @@ namespace Client.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(RegisterModel register)
         {
-            if (ModelState.IsValid)
+            try
             {
-                var response = await _authenService.RegisterAsync(register);
-                if (response.IsSuccess)
+                // Kiểm tra dữ liệu đầu vào
+                if (!ModelState.IsValid)
                 {
+                    TempData["error"] = "Invalid registration data. Please check your inputs.";
+                    return View(register);
+                }
+
+                // Gọi service để thực hiện đăng ký
+                var response = await _authenService.RegisterAsync(register);
+                if (response.IsSuccess && response.Result != null)
+                {
+                    // Deserialize kết quả từ service
                     var user = JsonConvert.DeserializeObject<RegisterModel>(response.Result.ToString()!);
-                    TempData["success"] = "Register is success";
+                    if (user != null)
+                    {
+                        TempData["success"] = "Registration successful. Check your email to activate your account.";
+                        await _authenService.ActiveUserAsync(user.Email);
+                        return RedirectToAction("Index", "Home");
+                    }
+                    else
+                    {
+                        TempData["error"] = "Registration was successful, but the user data could not be processed.";
+                    }
+                }
+                else
+                {
+                    // Xử lý lỗi nếu đăng ký thất bại
+                    TempData["error"] = response.Message ?? "Registration failed. Please try again.";
+                }
+            }
+            catch (Exception ex)
+            {
+                // Xử lý lỗi không mong muốn
+                TempData["error"] = $"An unexpected error occurred: {ex.Message}";
+            }
+            // Trả về View với dữ liệu đã nhập nếu có lỗi
+            return View(register);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ActiveUser(string userId)
+        {
+            try
+            {
+                // Tìm kiếm user theo email
+                ResponseModel findUser = await _userService.GetUserAsync(userId);
+                if (!findUser.IsSuccess || findUser.Result == null)
+                {
+                    TempData["error"] = $"No user found with Id: {userId}";
                     return RedirectToAction("Index", "Home");
                 }
-                TempData["success"] = "Register is fail";
+
+                // Lấy thông tin user
+                if (findUser.Result is not UsersDTO user)
+                {
+                    TempData["error"] = "Failed to cast user data.";
+                    return RedirectToAction("Index", "Home");
+                }
+                
+                // Thay đổi trạng thái của user
+                ResponseModel response = await _userService.ChangeStatus(user.Id, Models.Enum.UserEnum.User.UserStatus.Active);
+                if (response.IsSuccess)
+                {
+                    TempData["success"] = "User activation is successful.";
+                    return View(); // Trả về View nếu cần hiển thị thông báo
+                }
+                else
+                {
+                    TempData["error"] = $"Failed to activate user. Reason: {response.Message}";
+                    return RedirectToAction("Index", "Home");
+                }
             }
+            catch (Exception ex)
+            {
+                // Xử lý lỗi bất ngờ
+                TempData["error"] = $"An unexpected error occurred: {ex.Message}";
+                return RedirectToAction("Index", "Home");
+            }
+        }
+
+        [HttpGet]
+        public IActionResult ActiveUser()
+        {
+
             return View();
         }
+
+
+
 
 
         [HttpGet]
@@ -440,8 +518,8 @@ namespace Client.Controllers
                 cart = JsonConvert.DeserializeObject<CartModel>(cartJsonCookie);
             }
             var itemDelele = cart.Order.Items.FirstOrDefault(id => id.ProductId == productId);
-            if(itemDelele!=null)
-            cart.Order.Items.Remove(itemDelele);
+            if (itemDelele != null)
+                cart.Order.Items.Remove(itemDelele);
 
             cart.Order.TotalPrice = cart.Order.Items.Sum(x => x.Price * x.Quantity);
 
