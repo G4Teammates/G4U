@@ -182,8 +182,8 @@ namespace UserMicroService.Controllers
             }
         }
 
-        [HttpPut("removeWishList/{userName}")]
-        public async Task<ActionResult> RemoveWishList(string productId, [FromRoute] string userName)
+        [HttpPut("removeWishList/{userName}/{productId}")]
+        public async Task<ActionResult> RemoveWishList([FromRoute] string productId, [FromRoute] string userName)
         {
             try
             {
