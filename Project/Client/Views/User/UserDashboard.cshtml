@@ -112,55 +112,36 @@
             foreach (var product in Model.Product)
             {
                 <div class="project-item">
-                    @if (product.Links != null)
+                @if (product.Links != null)
+                {
+                    string secondImageUrl = null; // Biến để lưu URL hình ảnh thứ hai
+                    int imageCount = 0; // Biến đếm hình ảnh
+
+                    foreach (var link in product.Links) // Lặp qua từng đối tượng LinkModel
                     {
-                        string secondImageUrl = null; // Biến để lưu URL hình ảnh thứ hai
-                        int imageCount = 0; // Biến đếm hình ảnh
-
-                        foreach (var link in product.Links) // Lặp qua từng đối tượng LinkModel
+                        if (link.Url.Contains("cloudinary"))
                         {
-                            if (link.Url.Contains("cloudinary"))
-                            {
-                                imageCount++; // Tăng biến đếm khi gặp hình ảnh
+                            imageCount++; // Tăng biến đếm khi gặp hình ảnh
 
-                                if (imageCount == 2) // Kiểm tra nếu đây là hình ảnh thứ hai
-                                {
-                                    secondImageUrl = link.Url; // Lưu URL của hình ảnh thứ hai
-                                    break; // Thoát khỏi vòng lặp khi đã tìm thấy hình ảnh thứ hai
-                                }
+                            if (imageCount == 2) // Kiểm tra nếu đây là hình ảnh thứ hai
+                            {
+                                secondImageUrl = link.Url; // Lưu URL của hình ảnh thứ hai
+                                break; // Thoát khỏi vòng lặp khi đã tìm thấy hình ảnh thứ hai
                             }
                         }
+                    }
 
-                        // Hiển thị hình ảnh thứ hai nếu có
-                        if (secondImageUrl != null)
-                        {
-                            <img src="@secondImageUrl" alt="Cloudinary Image" />
-                        }
+                    // Hiển thị hình ảnh thứ hai nếu có
+                    if (secondImageUrl != null)
+                    {
+                        <img src="@secondImageUrl" alt="Cloudinary Image" />
+                    }
                         <div class="project-info">
                             <strong class="d-inline-block text-truncate" style="max-width: 150px;">@product.Name</strong>
-                            <div><small style="min-width: 150px"><a asp-controller="User" asp-action="EditProduct" asp-route-id="@product.Id">Edit</a> | <a href="">Analytics</a> | <a href="">More</a> | <a class="text-danger" data-bs-toggle="modal" data-bs-target="#deleteProductModal-@product.Id" href="">Remove</a></small></div>
+                            <div><small style="min-width: 150px"><a asp-controller="User" asp-action="EditProduct" asp-route-id="@product.Id">Edit</a> | <a href="">Analytics</a> | <a href="">Widget</a> | <a href="">More</a></small></div>
                         </div>
                         <span class="badge bg-secondary">DRAFT</span>
-                    }
-                </div>
-
-                <!-- Delete Confirmation Modal for each product -->
-                <div class="modal fade" id="deleteProductModal-@product.Id" tabindex="-1" aria-labelledby="deleteModalLabel-@product.Id" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="deleteModalLabel-@product.Id">Confirm Deletion</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <p>Are you sure you want to delete this item? This action cannot be undone.</p>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                <a asp-controller="User" asp-action="DeleteProduct" asp-route-id="@product.Id" class="btn btn-danger">Delete</a>
-                            </div>
-                        </div>
-                    </div>
+                }
                 </div>
             }
         }
@@ -182,6 +163,4 @@
         </div>
     </div>
 </div>
-
-
 
