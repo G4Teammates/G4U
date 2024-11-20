@@ -123,7 +123,7 @@ namespace Client.Controllers
                     var user = _helperService.GetUserFromJwtToken((JwtSecurityToken)response.Result);
                     ViewBag.User = user;
                     ViewData["IsLogin"] = true;
-                    if(user.Role == "Admin") 
+                    if (user.Role == "Admin")
                     {
                         TempData["success"] = "Welcome to admin dashboarch " + user.Username;
                         #region Lấy dữ liệu Order
@@ -149,7 +149,7 @@ namespace Client.Controllers
                         }
                         #endregion
                     }
-                    else if(user.Role == "User")
+                    else if (user.Role == "User")
                     {
                         TempData["error"] = "You are not Admin";
                         return RedirectToAction("Index", "Home");
@@ -162,7 +162,7 @@ namespace Client.Controllers
                 }
                 #endregion
 
-               
+
             }
             catch (Exception ex)
             {
@@ -249,6 +249,7 @@ namespace Client.Controllers
         [HttpPost]
         public async Task<IActionResult> UserCreate(CreateUser user)
         {
+            user.Avatar ??= "https://static.vecteezy.com/system/resources/previews/020/911/747/non_2x/user-profile-icon-profile-avatar-user-icon-male-icon-face-icon-profile-icon-free-png.png";
             if (ModelState.IsValid)
             {
                 if (user.AvatarFile != null && user.AvatarFile.Length > 0)
@@ -292,6 +293,7 @@ namespace Client.Controllers
                     UpdateUser = user
                 };
                 // Trả về model UsersDTO để sử dụng trong View
+                ViewData["role"] = user.Role;
                 TempData["success"] = "Get user need update success";
                 return PartialView("UserUpdate", user);
             }
@@ -305,7 +307,35 @@ namespace Client.Controllers
         [HttpPost]
         public async Task<IActionResult> UserUpdate(UpdateUser user)
         {
-            UserViewModel userViewModel = new() { UpdateUser = user };
+            UserViewModel userViewModel = new() 
+            { 
+                UpdateUser = user 
+            };
+
+            if (user.Role != UserRole.Admin && ViewData["role"] == UserRole.Admin.ToString())
+            {
+                TempData["error"] = "Can not change role admin";
+                return RedirectToAction(nameof(UsersManager));
+            }
+
+            if (user.Role == UserRole.Admin && user.Status != UserStatus.Active && ViewData["role"] == UserRole.Admin.ToString())
+            {
+                TempData["error"] = "Can not change status of role admin";
+                return RedirectToAction(nameof(UsersManager));
+            }
+
+            if (user.AvatarFile != null && user.AvatarFile.Length > 0)
+            {
+                using (var stream = user.AvatarFile.OpenReadStream())
+                {
+                    // Gọi phương thức upload lên Cloudinary
+                    string imageUrl = await _helperService.UploadImageAsync(stream, user.AvatarFile.FileName);
+
+                    // Lưu URL của avatar vào model
+                    user.Avatar = imageUrl;
+                }
+            }
+
             if (ModelState.IsValid)
             {
                 var updateUser = new UpdateUser
@@ -320,18 +350,6 @@ namespace Client.Controllers
                     Avatar = user.Avatar
                     // Nếu bạn có thêm thuộc tính, hãy thêm vào đây
                 };
-
-                if (user.Role == Models.Enum.UserEnum.User.UserRole.Admin)
-                {
-                    TempData["error"] = "Can not change role admin";
-                    return View(user);
-                }
-
-                if (user.Role == Models.Enum.UserEnum.User.UserRole.Admin && user.Status == Models.Enum.UserEnum.User.UserStatus.Active)
-                {
-                    TempData["error"] = "Can not change status of role admin";
-                    return View(user);
-                }
 
 
                 ResponseModel? response = await _userService.UpdateUser(updateUser);
@@ -1054,9 +1072,9 @@ namespace Client.Controllers
 
                 if (response.IsSuccess && response.Result != null)
                 {
-                     orders.Orders = JsonConvert.DeserializeObject<ICollection<OrderModel>>(response.Result.ToString())
-                                   .Where(predicate)
-                                   .ToList();
+                    orders.Orders = JsonConvert.DeserializeObject<ICollection<OrderModel>>(response.Result.ToString())
+                                  .Where(predicate)
+                                  .ToList();
 
                     TempData["searchResult"] = JsonConvert.SerializeObject(orders);
                     TempData["success"] = $"Filter order with {statusDescription} is successful";
@@ -1327,39 +1345,39 @@ namespace Client.Controllers
 
             return View(comment);
         }
-       /* [HttpPost]
-        public async Task<IActionResult> CreateComment(CreateCommentDTOModel model)
-        {
-            if (!ModelState.IsValid)
-            {
-                var errors = ModelState.Values.SelectMany(v => v.Errors)
-                                              .Select(e => e.ErrorMessage);
-                return BadRequest(new { Errors = errors });
-            }
+        /* [HttpPost]
+         public async Task<IActionResult> CreateComment(CreateCommentDTOModel model)
+         {
+             if (!ModelState.IsValid)
+             {
+                 var errors = ModelState.Values.SelectMany(v => v.Errors)
+                                               .Select(e => e.ErrorMessage);
+                 return BadRequest(new { Errors = errors });
+             }
 
-            try
-            {
-                // Gọi service CreateCommentAsync
-                var response = await _commentService.CreateCommentAsync(model);
+             try
+             {
+                 // Gọi service CreateCommentAsync
+                 var response = await _commentService.CreateCommentAsync(model);
 
-                if (response != null && response.IsSuccess)
-                {
-                    TempData["success"] = "Category created successfully";
-                    return RedirectToAction(nameof(CommentManager));
-                }
-                else
-                {
-                    TempData["error"] = response?.Message ?? "An unknown error occurred.";
-                    return RedirectToAction(nameof(CommentManager));
-                }
-            }
-            catch (Exception ex)
-            {
-                TempData["error"] = $"An error occurred: {ex.Message}";
-                return RedirectToAction(nameof(CommentManager));
-            }
+                 if (response != null && response.IsSuccess)
+                 {
+                     TempData["success"] = "Category created successfully";
+                     return RedirectToAction(nameof(CommentManager));
+                 }
+                 else
+                 {
+                     TempData["error"] = response?.Message ?? "An unknown error occurred.";
+                     return RedirectToAction(nameof(CommentManager));
+                 }
+             }
+             catch (Exception ex)
+             {
+                 TempData["error"] = $"An error occurred: {ex.Message}";
+                 return RedirectToAction(nameof(CommentManager));
+             }
 
-        }*/
+         }*/
 
         public async Task<IActionResult> UpdateComment(string id)
         {

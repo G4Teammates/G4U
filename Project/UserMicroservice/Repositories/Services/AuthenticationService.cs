@@ -247,6 +247,47 @@ namespace UserMicroservice.Repositories.Services
             return response;
         }
 
+
+        public async Task<ResponseModel> ChangePassword(ChangePasswordModel model)
+        {
+            ResponseModel response = new();
+            try
+            {
+                User? user = await _context.Users.FindAsync(model.Id);
+                if (user == null)
+                {
+                    response.IsSuccess = false;
+                    response.Message = "User need change password is null";
+                    return response;
+                }
+                else
+                {
+                    bool isPasswordCorrect = BCrypt.Net.BCrypt.Verify(model.OldPassword, user.PasswordHash);
+                    if (isPasswordCorrect)
+                    {
+                        user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.NewPassword);
+                        _context.Users.Attach(user);     // Đính kèm vào context nhưng không theo dõi tất cả trường
+                        _context.Entry(user).Property(u => u.PasswordHash).IsModified = true; // Chỉ cập nhật trường cần thiết
+                        await _context.SaveChangesAsync();
+                        response.Message = "Change password is success";
+                        return response;
+                    }
+                    response.IsSuccess = false;
+                    response.Message = "Password is not correct";
+
+                }
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+            }
+
+            return response;
+        }
+
+
+        #region Forgot and Reset Password
         public async Task<ResponseModel> ForgotPasswordAsync(string email)
         {
             ResponseModel response = new();
@@ -308,6 +349,7 @@ namespace UserMicroservice.Repositories.Services
             return response;
         }
 
+
         public async Task<ResponseModel> ResetPassword(ResetPasswordModel model)
         {
             ResponseModel response = new();
@@ -337,42 +379,80 @@ namespace UserMicroservice.Repositories.Services
             return response;
         }
 
-        public async Task<ResponseModel> ChangePassword(ChangePasswordModel model)
+        #endregion
+
+        #region Active User
+
+        public async Task<ResponseModel> ActiveUserAsync(string email)
         {
             ResponseModel response = new();
             try
             {
-                User? user = await _context.Users.FindAsync(model.Id);
-                if (user == null)
+
+                // Kiểm tra xem email có tồn tại không
+                ResponseModel findUser = await _userService.GetUserByEmail(email);
+                if (findUser == null)
                 {
                     response.IsSuccess = false;
-                    response.Message = "User need change password is null";
+                    response.Message = "Email does not exist";
                     return response;
                 }
-                else
+                UserModel user = (UserModel)findUser.Result;
+                if(user.Status == UserStatus.Active)
                 {
-                    bool isPasswordCorrect = BCrypt.Net.BCrypt.Verify(model.OldPassword, user.PasswordHash);
-                    if (isPasswordCorrect)
-                    {
-                        user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.NewPassword);
-                        _context.Users.Attach(user);     // Đính kèm vào context nhưng không theo dõi tất cả trường
-                        _context.Entry(user).Property(u => u.PasswordHash).IsModified = true; // Chỉ cập nhật trường cần thiết
-                        await _context.SaveChangesAsync();
-                        response.Message = "Change password is success";
-                        return response;
-                    }
                     response.IsSuccess = false;
-                    response.Message = "Password is not correct";
-
+                    response.Message = "User was active";
+                    return response;
                 }
+
+                response = await SendActiveUserEmailAsync(user);
             }
             catch (Exception ex)
             {
                 response.IsSuccess = false;
                 response.Message = ex.Message;
             }
-
             return response;
         }
+
+
+        private async Task<ResponseModel> SendActiveUserEmailAsync(UserModel model)
+        {
+            ResponseModel response = new();
+            try
+            {
+                // Tạo token đặt lại mật khẩu
+                //var token = _helper.GeneratePasswordResetToken(model);
+                var gateway = "https://localhost:7296";
+                // Tạo URL thủ công nếu không có ngữ cảnh HttpRequest
+                string confirmationLink = $"{gateway}/User/ActiveUser?userId={model.Id}";
+
+                var emailSubject = "Kích hoạt tài khoản của bạn";
+                var emailBody = $"Nhấp vào liên kết sau để kích hoạt tài khoản: <a href='{confirmationLink}'>Kích hoạt tài khoản</a>";
+
+                // Kiểm tra và gửi email
+                if (model.Email != null)
+                {
+                    response = await _helper.SendEmailAsync(model.Email, emailSubject, emailBody);
+                    //response.Result = token;
+                }
+                else
+                {
+                    response.IsSuccess = false;
+                    response.Message = "Email is null";
+                }
+
+            }
+            catch (Exception ex)
+            {
+                response.Message = $"Error: {ex.Message}";
+                response.IsSuccess = false;
+            }
+            return response;
+        }
+
+
+        #endregion
+
     }
 }

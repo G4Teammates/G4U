@@ -1,0 +1,48 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}<style>
+     .activation-container {
+         min-height: 100vh;
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         background-color: #f8f9fa;
+     }
+
+     .card {
+         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+     }
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        let countdown = 5; // Thời gian đếm ngược (giây)
+        const countdownElement = document.getElementById("countdown");
+        const interval = setInterval(() => {
+            countdown--;
+            countdownElement.textContent = countdown;
+            if (countdown === 0) {
+                clearInterval(interval);
+                window.location.href = "/"; // Chuyển hướng về trang chủ
+            }
+        }, 1000);
+    });
+</script>
+
+
+<div class="activation-container">
+    <div class="card text-center" style="width: 28rem;">
+        <div class="card-body">
+            <h2 class="card-title text-success">Account Activated!</h2>
+            <p class="card-text mt-3">
+                Congratulations! Your account has been successfully activated. You can now log in and start using our services.
+            </p>
+            <p class="card-text mt-3 text-muted">
+                You will be redirected to the home page in <strong><span id="countdown">5</span> seconds</strong>.
+            </p>
+            <a href="/" class="btn btn-primary mt-4">Go to Home Now</a>
+        </div>
+    </div>
+</div>

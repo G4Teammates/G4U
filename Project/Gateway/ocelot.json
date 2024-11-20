@@ -397,7 +397,7 @@
     },
 
 
-    //For got password
+    //Forgot password
     {
       "DownstreamPathTemplate": "/api/Auth/forgot-password",
       "DownstreamScheme": "https",
@@ -437,6 +437,19 @@
       "UpstreamHttpMethod": [ "Post" ]
     },
 
+    //Active user
+    {
+      "DownstreamPathTemplate": "/api/Auth/active-user",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7107
+        }
+      ],
+      "UpstreamPathTemplate": "/Auth/active-user",
+      "UpstreamHttpMethod": [ "Post" ]
+    },
 
 
 

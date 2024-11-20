@@ -11,6 +11,7 @@ namespace Client.Repositories.Interfaces.Authentication
         public Task<ResponseModel> ChangePasswordAsync(ChangePasswordModel model);
         public Task<ResponseModel> ResetPasswordAsync(ResetPasswordModel model);
         public Task<ResponseModel> ForgotPasswordAsync(ForgotPasswordModel model);
+        public Task<ResponseModel> ActiveUserAsync(string email);
         public Task<ResponseModel> LogoutAsync();
 
     }
