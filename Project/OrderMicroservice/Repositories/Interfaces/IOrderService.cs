@@ -9,7 +9,7 @@ namespace OrderMicroservice.Repositories.Interfaces
 {
     public interface IOrderService
     {
-        Task<ResponseModel> GetAll();
+        Task<ResponseModel> GetAll(int pageNumber, int pageSize);
         Task<ResponseModel> GetOrderById(string id);
         Task<ResponseModel> GetOrderByTransaction(string id);
         Task<ResponseModel> Create(OrderModel order);
@@ -20,7 +20,6 @@ namespace OrderMicroservice.Repositories.Interfaces
         Task<ResponseModel> TotalRequest();
         Task<bool> CheckPurchaseAsync(CheckPurchaseReceive order);
         Task<OrderGroupByUserData> Data(TotalGroupByUserResponse Response);
-        Task<ResponseModel> UpdateSold(ProductSoldRequest request);
 
     }
 }
