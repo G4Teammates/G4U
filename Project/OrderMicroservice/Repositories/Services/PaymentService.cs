@@ -19,7 +19,7 @@ namespace OrderMicroservice.Repositories.Services
         private static readonly HttpClient client = new();
         private static readonly string Gateway = "https://localhost:7296";
         private static readonly string MoMoGateway = "https://test-payment.momo.vn/v2/gateway/api/create";
-        private static readonly string IpnMomo = "https://ffc6-2402-800-63b6-f762-b8a7-7d2d-985a-a42e.ngrok-free.app" + "/api/payment/ipn/momo";
+        private static readonly string IpnMomo = "   https://930a-42-113-221-81.ngrok-free.app" + "/api/payment/ipn/momo";
         private IMessage _message = message;
         public async Task<ResponseModel> MoMoPayment(MoMoRequestFromClient requestClient)
         {
