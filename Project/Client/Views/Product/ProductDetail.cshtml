@@ -438,76 +438,7 @@
                         {
                             @await Html.PartialAsync("_CommentPartial", comment)
 
-                            <div class="comment">
-                                <div class="row">
-                                    <div class="col-md-1 comment-icon d-flex justify-content-center mt-5">
-                                        <i class="fa-solid fa-user-secret"></i>
-                                    </div>
-                                    <div class="col-md-11 comment-body">
-                                        <div class="comment-header">
-                                            <p><strong>@comment.UserName</strong></p>
-                                            <p class="created-at">@comment.CreatedAt.ToString("g")</p>
-                                        </div>
-                                        <div class="comment-content">
-                                            <p>@comment.Content</p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <!-- Nút "Xem thêm" -->
-                                    <div class="col-md-6 text-start">
-                                        <a id="toggleButton-@comment.Id"
-                                           class="link-action"
-                                           onclick="toggleReplies('@comment.Id')"
-                                           style="width:50%; text-decoration:none; color:black; padding:5px; border-radius:5px; transition: all 0.3s;">
-                                            Xem thêm
-                                        </a>
-                                        |
-                                        <a class="link-action"
-                                           onclick="scrollToReplyForm('@comment.Id')"
-                                           style="width:50%; text-decoration:none; color:black; padding:5px; border-radius:5px; transition: all 0.3s;">
-                                            Reply
-                                        </a>
-                                    </div>
-
-                                    <div class="col-md-6 comment-footer text-end">
-                                        <p class="likes">
-                                            <small>
-                                                <span id="like-count-@comment.Id">@comment.NumberOfLikes</span>
-
-                                                <!-- Form for Increasing Like -->
-                                                <form asp-action="IncreaseLike" asp-controller="Product" method="post" style="display:inline;">
-                                                    <!-- Hidden input to send the comment ID -->
-                                                    <input type="hidden" name="commentID" value="@comment.Id" />
-                                                    <!-- Hidden input to send the product ID -->
-                                                    <input type="hidden" name="productID" value="@product.Id" />
-                                                    <button type="submit" class="like-button" style="background:none; border:none; cursor:pointer;">
-                                                        <i class="fa-solid fa-thumbs-up"></i>
-                                                    </button>
-                                                </form>
-
-                                                <span id="dislike-count-@comment.Id">@comment.NumberOfDisLikes</span>
-
-                                                <!-- Form for Decreasing Like -->
-                                                <form asp-action="DecreaseLike" asp-controller="Product" method="post" style="display:inline;">
-                                                    <!-- Hidden input to send the comment ID -->
-                                                    <input type="hidden" name="commentID" value="@comment.Id" />
-                                                    <!-- Hidden input to send the product ID -->
-                                                    <input type="hidden" name="productID" value="@product.Id" />
-                                                    <button type="submit" class="dislike-button" style="background:none; border:none; cursor:pointer;">
-                                                        <i class="fa-solid fa-thumbs-down"></i>
-                                                    </button>
-                                                </form>
-                                            </small>
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <!-- Phần chứa các bình luận con -->
-                                <div id="replies-@comment.Id" class="ms-5" style="display: none;"></div>
-
-                            </div>
+                           
                         }
                     }
                     else
@@ -616,11 +547,11 @@
                                                             <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@products.Id" class="ms-3 col-md-5 text-center btn_orther">Read More</a>
                                                             <div class="col-md-3"></div>
                                                             @* Day la trai tym ne *@
-                                                            <div title="Wishlist" class="col-md-3 heart-container" style="width:20px;height:20px;transition: .3s;display: flex;justify-content: center;align-items: center;margin: 0 auto;">
-                                                                <form asp-controller="Admin" asp-action="AddWishList" method="post">
-                                                                    <input type="hidden" name="ProductId" value="@products.Id" />
-                                                                    <input type="hidden" name="ProductName" value="@products.Name" />
-                                                                    <input type="hidden" name="ProductPrice" value="@products.Price" />
+                                                            <div title="Wishlist" class="col-md-1 heart-container">
+                                                                <form id="wishlistForm" method="post">
+                                                                    <input type="hidden" name="ProductId" id="ProductId" value="@product.Id" />
+                                                                    <input type="hidden" name="ProductName" id="ProductName" value="@product.Name" />
+                                                                    <input type="hidden" name="ProductPrice" id="ProductPrice" value="@product.Price" />
 
                                                                     @{
                                                                         string secondImageUrl2 = null;
@@ -631,25 +562,35 @@
                                                                         if (link.Url.Contains("cloudinary"))
                                                                         {
                                                                             imageCount2++;
-                                                                            if (imageCount2 == 2) // Lấy hình ảnh thứ hai
+                                                                            if (imageCount2 == 2)
                                                                             {
                                                                                 secondImageUrl2 = link.Url;
-                                                                                break; // Thoát khỏi vòng lặp khi đã tìm thấy
+                                                                                break;
                                                                             }
                                                                         }
                                                                     }
-                                                                    <input type="hidden" name="ProductImage" value="@secondImageUrl2" />
+                                                                    <input type="hidden" name="ProductImage" id="ProductImage" value="@secondImageUrl2" />
 
-                                                                    <button type="submit" class="btn-heart" style="border: none; background: transparent; padding: 0;">
-                                                                        <div class="svg-container">
-                                                                            <svg xmlns="http://www.w3.org/2000/svg" class="svg-outline" viewBox="0 0 24 24">
-                                                                                <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Zm-3.585,18.4a2.973,2.973,0,0,1-3.83,0C4.947,16.006,2,11.87,2,8.967a4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,11,8.967a1,1,0,0,0,2,0,4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,22,8.967C22,11.87,19.053,16.006,13.915,20.313Z"></path>
-                                                                            </svg>
-                                                                            <svg xmlns="http://www.w3.org/2000/svg" class="svg-filled" viewBox="0 0 24 24">
-                                                                                <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Z"></path>
-                                                                            </svg>
-                                                                        </div>
-                                                                    </button>
+                                                                    <!-- Checkbox hidden -->
+                                                                    <input type="checkbox" id="wishlistCheckbox" class="checkbox" onclick="addToWishList('@product.Id', '@product.Name', '@product.Price', '@secondImageUrl2')" />
+
+                                                                    <!-- Icon trái tim -->
+                                                                    <div class="svg-container">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" class="svg-outline" viewBox="0 0 24 24">
+                                                                            <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Zm-3.585,18.4a2.973,2.973,0,0,1-3.83,0C4.947,16.006,2,11.87,2,8.967a4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,11,8.967a1,1,0,0,0,2,0,4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,22,8.967C22,11.87,19.053,16.006,13.915,20.313Z"></path>
+                                                                        </svg>
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" class="svg-filled" viewBox="0 0 24 24">
+                                                                            <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Z"></path>
+                                                                        </svg>
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" height="100" width="100" class="svg-celebrate">
+                                                                            <polygon points="10,10 20,20"></polygon>
+                                                                            <polygon points="10,50 20,50"></polygon>
+                                                                            <polygon points="20,80 30,70"></polygon>
+                                                                            <polygon points="90,10 80,20"></polygon>
+                                                                            <polygon points="90,50 80,50"></polygon>
+                                                                            <polygon points="80,80 70,70"></polygon>
+                                                                        </svg>
+                                                                    </div>
                                                                 </form>
                                                             </div>
                                                         </div>
@@ -1095,4 +1036,35 @@
         </div>
     </div>
 </div>
+
+<script>
+    function addToWishList(productId, productName, productPrice, productImage) {
+        // Cập nhật các giá trị input ẩn với thông tin của sản phẩm hiện tại
+        document.getElementById('ProductId').value = productId;
+        document.getElementById('ProductName').value = productName;
+        document.getElementById('ProductPrice').value = productPrice;
+        document.getElementById('ProductImage').value = productImage;
+
+        // Tạo FormData và gửi request
+        const formData = new FormData(document.getElementById('wishlistForm'));
+
+        fetch('@Url.Action("AddWishList", "Admin")', {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => response.json())
+            .then(response => {
+                if (response.success) {
+                    toastr.success(response.message || 'Thêm vào WishList  đã thành công!')
+                } else {
+                    toastr.error(response.message || 'Đã xảy ra lỗi không xác định.');
+                    document.getElementById('wishlistCheckbox').checked = false;
+                }
+            })
+            .catch(error => {
+                alert("Có lỗi xảy ra: " + error.message);
+                document.getElementById('wishlistCheckbox').checked = false;
+            });
+    }
+</script>
 

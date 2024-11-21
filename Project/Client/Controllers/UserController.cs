@@ -437,7 +437,7 @@ namespace Client.Controllers
                 return View(cart);
             }
 
-            return View();
+            return View(cart);
             // Truyền dữ liệu vào View
         }
 
