@@ -834,7 +834,7 @@
 
     //Update order status
     {
-      "DownstreamPathTemplate": "/api/Order",
+      "DownstreamPathTemplate": "/api/Order/{id}",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
@@ -842,7 +842,7 @@
           "Port": 7297
         }
       ],
-      "UpstreamPathTemplate": "/Order",
+      "UpstreamPathTemplate": "/Order/{id}",
       "UpstreamHttpMethod": [ "Put" ]
     },
     //Update trans id

@@ -106,7 +106,7 @@ namespace OrderMicroService.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Create([FromBody]OrderModel order)
+        public async Task<ActionResult> Create([FromBody] OrderModel order)
         {
             try
             {
@@ -122,7 +122,7 @@ namespace OrderMicroService.Controllers
             }
         }
 
-        [HttpPut]
+        [HttpPut("{id}")]
         public async Task<ActionResult> UpdateStatus(string id, PaymentStatusModel status)
         {
             try

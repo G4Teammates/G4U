@@ -3,8 +3,10 @@ using Client.Models;
 using Client.Models.Enum.OrderEnum;
 using Client.Models.OrderModel;
 using Client.Repositories.Interfaces.Order;
+using CloudinaryDotNet;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System;
 
 namespace Client.Controllers
 {
@@ -21,26 +23,94 @@ namespace Client.Controllers
         public IActionResult History()
         {
             return View();
-        }
+        }        //public async Task<IActionResult> Checkout(string orderJson, PaymentMethod paymentMethod)
+        //{
+        //    CartModel cart = JsonConvert.DeserializeObject<CartModel>(orderJson);
+        //    cart.PaymentMethod = paymentMethod;
+        //    cart.Order.PaymentName = "Pending";
+        //    if (cart == null)
+        //    {
+        //        TempData["Error"] = "Cart is empty";
+        //        return RedirectToAction("Index", "Cart");
+        //    }
+        //    if (cart.PaymentMethod == Models.Enum.OrderEnum.PaymentMethod.Wallet)
+        //    {
+        //        CreateOrderModel createOrder = _mapper.Map<CreateOrderModel>(cart.Order);
+        //        ResponseModel responseCreateOrder = await _orderService.CreateOrder(createOrder);
+        //        if (responseCreateOrder.IsSuccess)
+        //        {
+        //            OrderModel newOrder = JsonConvert.DeserializeObject<OrderModel>(responseCreateOrder.Result.ToString());
+        //            MoMoRequestModel request = new MoMoRequestModel(newOrder.Id, (long)cart.Order.TotalPrice);
+        //            ResponseModel responsePayment = await _paymentService.MoMoPayment(request);
+        //            if (responsePayment.IsSuccess)
+        //            {
+        //                HttpContext.Response.Cookies.Delete("cart");
+        //                return Redirect(responsePayment.Result.ToString());
+        //            }
+        //            else
+        //            {
+        //                return RedirectToAction("PaymentFailure");
+        //            }
+        //        }
+        //    }
+
+        //    else if (cart.PaymentMethod == Models.Enum.OrderEnum.PaymentMethod.CreditCard)
+        //    {
+
+        //    }
+        //    else if (cart.Order.TotalPrice == 0)
+        //    {
+        //        CreateOrderModel createOrder = _mapper.Map<CreateOrderModel>(cart.Order);
+        //        ResponseModel responseCreateOrder = await _orderService.CreateOrder(createOrder);
+        //        if (responseCreateOrder.IsSuccess)
+        //        {
+        //            OrderModel newOrder = JsonConvert.DeserializeObject<OrderModel>(responseCreateOrder.Result.ToString());
+        //            PaymentStatusModel status = new PaymentStatusModel()
+        //            {
+        //                OrderStatus = OrderStatus.Paid,
+        //                PaymentMethod = PaymentMethod.Free,
+        //                PaymentName = "Free",
+        //                PaymentStatus = PaymentStatus.Paid
+        //            };
+        //            ResponseModel responseUpdateOrder = await _orderService.UpdateStatus(newOrder.Id, status);
+        //            OrderModel freeOrder = JsonConvert.DeserializeObject<OrderModel>(responseUpdateOrder.Result.ToString());
+        //            return RedirectToAction("PaymentSuccess/OrderModel", "Order", freeOrder); // Thay "YourControllerName" bằng tên của controller chứa phương thức này.
+        //        }
+
+        //        else
+        //        {
+
+        //        }
+
+        //        return RedirectToAction("PaymentFailure");
+        //    }
+        //    return RedirectToAction("PaymentFailure");
+        //}
+
+
         public async Task<IActionResult> Checkout(string orderJson, PaymentMethod paymentMethod)
         {
             CartModel cart = JsonConvert.DeserializeObject<CartModel>(orderJson);
             cart.PaymentMethod = paymentMethod;
             cart.Order.PaymentName = "Pending";
+
             if (cart == null)
             {
                 TempData["Error"] = "Cart is empty";
                 return RedirectToAction("Index", "Cart");
             }
+
             if (cart.PaymentMethod == Models.Enum.OrderEnum.PaymentMethod.Wallet)
             {
                 CreateOrderModel createOrder = _mapper.Map<CreateOrderModel>(cart.Order);
                 ResponseModel responseCreateOrder = await _orderService.CreateOrder(createOrder);
+
                 if (responseCreateOrder.IsSuccess)
                 {
                     OrderModel newOrder = JsonConvert.DeserializeObject<OrderModel>(responseCreateOrder.Result.ToString());
                     MoMoRequestModel request = new MoMoRequestModel(newOrder.Id, (long)cart.Order.TotalPrice);
                     ResponseModel responsePayment = await _paymentService.MoMoPayment(request);
+
                     if (responsePayment.IsSuccess)
                     {
                         HttpContext.Response.Cookies.Delete("cart");
@@ -52,95 +122,60 @@ namespace Client.Controllers
                     }
                 }
             }
-
             else if (cart.PaymentMethod == Models.Enum.OrderEnum.PaymentMethod.CreditCard)
             {
-
+                // Handle credit card payment here
             }
-            else
+            else if (cart.Order.TotalPrice == 0)
             {
+                CreateOrderModel createOrder = _mapper.Map<CreateOrderModel>(cart.Order);
+                ResponseModel responseCreateOrder = await _orderService.CreateOrder(createOrder);
 
+                if (responseCreateOrder.IsSuccess)
+                {
+                    OrderModel newOrder = JsonConvert.DeserializeObject<OrderModel>(responseCreateOrder.Result.ToString());
+                    PaymentStatusModel status = new PaymentStatusModel
+                    {
+                        OrderStatus = OrderStatus.Paid,
+                        PaymentMethod = PaymentMethod.Free,
+                        PaymentName = "Free",
+                        PaymentStatus = PaymentStatus.Paid
+                    };
+                    ResponseModel responseUpdateOrder = await _orderService.UpdateStatus(newOrder.Id, status);
+                    OrderModel freeOrder = JsonConvert.DeserializeObject<OrderModel>(responseUpdateOrder.Result.ToString());
+
+                    return RedirectToAction("PaymentSuccess", "Order", new
+                    {
+                        orderId = newOrder.Id,
+                        amount = 0,
+                        orderType = "Free",
+                        responseTime = ((DateTimeOffset)newOrder.UpdatedAt).ToUnixTimeMilliseconds()
+
+                });
+                }
+                else
+                {
+                    return RedirectToAction("PaymentFailure");
+                }
             }
 
-            return View();
+            return RedirectToAction("PaymentFailure");
         }
-        //public async Task<IActionResult> Checkout(string orderJson, PaymentMethod paymentMethod)
-        //{
-        //    // 1. Deserialize cart và kiểm tra null
-        //    CartModel cart;
-        //    try
-        //    {
-        //        cart = JsonConvert.DeserializeObject<CartModel>(orderJson);
-        //    }
-        //    catch (JsonException ex)
-        //    {
-        //        TempData["Error"] = "Invalid cart data";
-        //        return RedirectToAction("Index", "Cart");
-        //    }
 
-
-        //    if (cart == null || cart.Order == null || cart.Order.Items == null || !cart.Order.Items.Any())
-        //    {
-
-        //        TempData["Error"] = "Cart is empty";
-        //        return RedirectToAction("Index", "Cart");
-        //    }
-
-        //    // Gán phương thức thanh toán và tên mặc định
-        //    cart.PaymentMethod = paymentMethod;
-        //    cart.Order.PaymentName = "Pending";
-
-        //    // 2. Xử lý đơn hàng miễn phí
-        //    if (cart.Order.TotalPrice == 0)
-        //    {
-        //        await HandleFreeOrder(cart);
-        //        TempData["Success"] = "Free order completed successfully";
-        //        if (HttpContext.Request.Cookies.ContainsKey("cart"))
-        //        {
-        //            HttpContext.Response.Cookies.Delete("cart");
-        //        }
-
-        //        return RedirectToAction("Index", "Home");
-        //    }
-
-
-        //    switch (cart.PaymentMethod)
-        //    {
-        //        case Models.Enum.OrderEnum.PaymentMethod.Wallet:
-        //            return await HandleMoMoPayment(cart.Order);
-
-        //        case Models.Enum.OrderEnum.PaymentMethod.CreditCard:
-        //            // Gọi hàm xử lý CreditCard
-        //            return await HandleCreditCardPayment(cart.Order);
-
-        //        default:
-        //            TempData["Error"] = "Unsupported payment method";
-        //            return RedirectToAction("Index", "Cart");
-        //    }
-        //}
-
-
-        public IActionResult PaymentSuccess(string partnerCode, string orderId, string requestId, decimal amount, string orderInfo, string orderType, string transId, int resultCode, string message, string payType, long responseTime, string extraData, string signature)
+        [HttpGet]
+        public IActionResult PaymentSuccess(string? partnerCode, string? orderId, string? requestId, decimal amount, string? orderInfo, string? orderType, string? transId, int? resultCode, string message, string payType, long responseTime, string extraData, string signature)
         {
             var model = new PaymentSuccessModel
             {
-                PartnerCode = partnerCode,
                 OrderId = orderId,
-                RequestId = requestId,
                 Amount = amount,
-                OrderInfo = orderInfo,
                 OrderType = orderType,
-                TransId = transId,
-                ResultCode = resultCode,
-                Message = message,
-                PayType = payType,
                 ResponseTime = responseTime,
-                ExtraData = extraData,
-                Signature = signature
             };
 
             return View(model);
         }
+
 
         public IActionResult PaymentFailure()
         {
