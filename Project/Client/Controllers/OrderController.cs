@@ -22,61 +22,102 @@ namespace Client.Controllers
         {
             return View();
         }
-
         public async Task<IActionResult> Checkout(string orderJson, PaymentMethod paymentMethod)
         {
-            // 1. Deserialize cart và kiểm tra null
-            CartModel cart;
-            try
+            CartModel cart = JsonConvert.DeserializeObject<CartModel>(orderJson);
+            cart.PaymentMethod = paymentMethod;
+            cart.Order.PaymentName = "Pending";
+            if (cart == null)
             {
-                cart = JsonConvert.DeserializeObject<CartModel>(orderJson);
-            }
-            catch (JsonException ex)
-            {
-                TempData["Error"] = "Invalid cart data";
-                return RedirectToAction("Index", "Cart");
-            }
-
-
-            if (cart == null || cart.Order == null || cart.Order.Items == null || !cart.Order.Items.Any())
-            {
-
                 TempData["Error"] = "Cart is empty";
                 return RedirectToAction("Index", "Cart");
             }
-
-            // Gán phương thức thanh toán và tên mặc định
-            cart.PaymentMethod = paymentMethod;
-            cart.Order.PaymentName = "Pending";
-
-            // 2. Xử lý đơn hàng miễn phí
-            if (cart.Order.TotalPrice == 0)
+            if (cart.PaymentMethod == Models.Enum.OrderEnum.PaymentMethod.Wallet)
             {
-                await HandleFreeOrder(cart);
-                TempData["Success"] = "Free order completed successfully";
-                if (HttpContext.Request.Cookies.ContainsKey("cart"))
+                CreateOrderModel createOrder = _mapper.Map<CreateOrderModel>(cart.Order);
+                ResponseModel responseCreateOrder = await _orderService.CreateOrder(createOrder);
+                if (responseCreateOrder.IsSuccess)
                 {
-                    HttpContext.Response.Cookies.Delete("cart");
+                    OrderModel newOrder = JsonConvert.DeserializeObject<OrderModel>(responseCreateOrder.Result.ToString());
+                    MoMoRequestModel request = new MoMoRequestModel(newOrder.Id, (long)cart.Order.TotalPrice);
+                    ResponseModel responsePayment = await _paymentService.MoMoPayment(request);
+                    if (responsePayment.IsSuccess)
+                    {
+                        HttpContext.Response.Cookies.Delete("cart");
+                        return Redirect(responsePayment.Result.ToString());
+                    }
+                    else
+                    {
+                        return RedirectToAction("PaymentFailure");
+                    }
                 }
-
-                return RedirectToAction("Index", "Home");
             }
 
-            // 3. Xử lý các phương thức thanh toán khác
-            switch (cart.PaymentMethod)
+            else if (cart.PaymentMethod == Models.Enum.OrderEnum.PaymentMethod.CreditCard)
             {
-                case Models.Enum.OrderEnum.PaymentMethod.Wallet:
-                    return await HandleMoMoPayment(cart);
 
-                case Models.Enum.OrderEnum.PaymentMethod.CreditCard:
-                    // Gọi hàm xử lý CreditCard
-                    return await HandleCreditCardPayment(cart);
-
-                default:
-                    TempData["Error"] = "Unsupported payment method";
-                    return RedirectToAction("Index", "Cart");
             }
+            else
+            {
+
+            }
+
+            return View();
         }
+        //public async Task<IActionResult> Checkout(string orderJson, PaymentMethod paymentMethod)
+        //{
+        //    // 1. Deserialize cart và kiểm tra null
+        //    CartModel cart;
+        //    try
+        //    {
+        //        cart = JsonConvert.DeserializeObject<CartModel>(orderJson);
+        //    }
+        //    catch (JsonException ex)
+        //    {
+        //        TempData["Error"] = "Invalid cart data";
+        //        return RedirectToAction("Index", "Cart");
+        //    }
+
+
+        //    if (cart == null || cart.Order == null || cart.Order.Items == null || !cart.Order.Items.Any())
+        //    {
+
+        //        TempData["Error"] = "Cart is empty";
+        //        return RedirectToAction("Index", "Cart");
+        //    }
+
+        //    // Gán phương thức thanh toán và tên mặc định
+        //    cart.PaymentMethod = paymentMethod;
+        //    cart.Order.PaymentName = "Pending";
+
+        //    // 2. Xử lý đơn hàng miễn phí
+        //    if (cart.Order.TotalPrice == 0)
+        //    {
+        //        await HandleFreeOrder(cart);
+        //        TempData["Success"] = "Free order completed successfully";
+        //        if (HttpContext.Request.Cookies.ContainsKey("cart"))
+        //        {
+        //            HttpContext.Response.Cookies.Delete("cart");
+        //        }
+
+        //        return RedirectToAction("Index", "Home");
+        //    }
+
+
+        //    switch (cart.PaymentMethod)
+        //    {
+        //        case Models.Enum.OrderEnum.PaymentMethod.Wallet:
+        //            return await HandleMoMoPayment(cart.Order);
+
+        //        case Models.Enum.OrderEnum.PaymentMethod.CreditCard:
+        //            // Gọi hàm xử lý CreditCard
+        //            return await HandleCreditCardPayment(cart.Order);
+
+        //        default:
+        //            TempData["Error"] = "Unsupported payment method";
+        //            return RedirectToAction("Index", "Cart");
+        //    }
+        //}
 
 
         public IActionResult PaymentSuccess(string partnerCode, string orderId, string requestId, decimal amount, string orderInfo, string orderType, string transId, int resultCode, string message, string payType, long responseTime, string extraData, string signature)
@@ -108,70 +149,72 @@ namespace Client.Controllers
 
 
 
-        private async Task HandleFreeOrder(CartModel cart)
-        {
-            // Lấy danh sách sản phẩm miễn phí
-            List<string> productsIdFree = cart.Order.Items.Select(i => i.ProductId).ToList();
-            cart.Order.PaymentName = "Free";
+        //private async Task HandleFreeOrder(CartModel cart)
+        //{
+        //    // Lấy danh sách sản phẩm miễn phí
+        //    List<string> productsIdFree = cart.Order.Items.Select(i => i.ProductId).ToList();
+        //    cart.Order.PaymentName = "Free";
 
-            PaymentStatusModel paymentStatusFree = new()
-            {
-                OrderStatus = OrderStatus.Paid,
-                PaymentStatus = PaymentStatus.Paid
-            };
+        //    PaymentStatusModel paymentStatusFree = new()
+        //    {
+        //        OrderStatus = OrderStatus.Paid,
+        //        PaymentStatus = PaymentStatus.Paid,
+        //        PaymentMethod = PaymentMethod.Free,
+        //        PaymentName = "Free"
+        //    };
 
-            foreach (var productId in productsIdFree)
-            {
-                var response = await _orderService.UpdateStatus(productId, paymentStatusFree);
-                if (!response.IsSuccess)
-                {
-                    TempData["Error"] = $"Failed to update status for product {productId}";
-                    return;
-                }
-            }
+        //    foreach (var productId in productsIdFree)
+        //    {
+        //        var response = await _orderService.UpdateStatus(productId, paymentStatusFree);
+        //        if (!response.IsSuccess)
+        //        {
+        //            TempData["Error"] = $"Failed to update status for product {productId}";
+        //            return;
+        //        }
+        //    }
 
-        }
-
-
-        private async Task<IActionResult> HandleMoMoPayment(CartModel cart)
-        {
-            // Tạo đơn hàng
-            CreateOrderModel createOrder = _mapper.Map<CreateOrderModel>(cart.Order);
-            ResponseModel responseCreateOrder = await _orderService.CreateOrder(createOrder);
-
-            if (!responseCreateOrder.IsSuccess)
-            {
-                TempData["Error"] = "Failed to create order";
-                return RedirectToAction("PaymentFailure");
-            }
-
-            // Thanh toán qua MoMo
-            OrderModel newOrder = JsonConvert.DeserializeObject<OrderModel>(responseCreateOrder.Result.ToString());
-            MoMoRequestModel request = new MoMoRequestModel(newOrder.Id, (long)cart.Order.TotalPrice);
-            ResponseModel responsePayment = await _paymentService.MoMoPayment(request);
-
-            if (!responsePayment.IsSuccess)
-            {
-                TempData["Error"] = "Payment through MoMo failed";
-                return RedirectToAction("PaymentFailure");
-            }
-
-            // Xóa giỏ hàng và chuyển hướng đến trang MoMo
-            if (HttpContext.Request.Cookies.ContainsKey("cart"))
-            {
-                HttpContext.Response.Cookies.Delete("cart");
-            }
-
-            return Redirect(responsePayment.Result.ToString());
-        }
+        //}
 
 
-        private async Task<IActionResult> HandleCreditCardPayment(CartModel cart)
-        {
-            // Thêm logic xử lý thanh toán qua Credit Card ở đây
-            TempData["Info"] = "Credit card payment is not implemented yet";
-            return RedirectToAction("Index", "Cart");
-        }
+        //private async Task<IActionResult> HandleMoMoPayment(OrderModel newOrder)
+        //{
+        //    // Tạo đơn hàng
+        //    CreateOrderModel createOrder = _mapper.Map<CreateOrderModel>(newOrder);
+        //    ResponseModel responseCreateOrder = await _orderService.CreateOrder(createOrder);
+        //    OrderModel order = JsonConvert.DeserializeObject<OrderModel>(responseCreateOrder.Result.ToString());
+
+        //    if (!responseCreateOrder.IsSuccess)
+        //    {
+        //        TempData["Error"] = "Failed to create order";
+        //        return RedirectToAction("PaymentFailure");
+        //    }
+        //    // Thanh toán qua MoMo
+        //    //OrderModel newOrder = cart.Order;
+        //    MoMoRequestModel request = new MoMoRequestModel(order.Id, (long)order.TotalPrice);
+        //    ResponseModel responsePayment = await _paymentService.MoMoPayment(request);
+
+        //    if (!responsePayment.IsSuccess)
+        //    {
+        //        TempData["Error"] = "Payment through MoMo failed";
+        //        return RedirectToAction("PaymentFailure");
+        //    }
+
+        //    // Xóa giỏ hàng và chuyển hướng đến trang MoMo
+        //    if (HttpContext.Request.Cookies.ContainsKey("cart"))
+        //    {
+        //        HttpContext.Response.Cookies.Delete("cart");
+        //    }
+
+        //    return Redirect(responsePayment.Result.ToString());
+        //}
+
+
+        //private async Task<IActionResult> HandleCreditCardPayment(OrderModel cart)
+        //{
+        //    // Thêm logic xử lý thanh toán qua Credit Card ở đây
+        //    TempData["Info"] = "Credit card payment is not implemented yet";
+        //    return RedirectToAction("Index", "Cart");
+        //}
 
     }
 }
