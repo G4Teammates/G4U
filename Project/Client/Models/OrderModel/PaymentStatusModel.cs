@@ -20,5 +20,20 @@ namespace Client.Models.OrderModel
         public PaymentStatus PaymentStatus { get; set; } = PaymentStatus.Pending;
 
 
+        /// <summary>
+        /// Method of payment, including: CreditCard, DebitCard, NetBanking, UPI, Wallet.
+        /// <br/>
+        /// Phương thức thanh toán, bao gồm: Thẻ tín dụng, Thẻ ghi nợ, Ngân hàng trực tuyến, UPI, Ví điện tử.
+        /// </summary>
+        public PaymentMethod PaymentMethod { get; set; } = PaymentMethod.Pending;
+
+        /// <summary>
+        /// Name of the payment method (e.g., Momo, Vnpay, ViettinBank).
+        /// <br/>
+        /// Tên phương thức thanh toán (ví dụ: Momo, Vnpay, ViettinBank).
+        /// </summary>
+        public string PaymentName { get; set; } = "Pending";
+
+
     }
 }
