@@ -1,0 +1,39 @@
+﻿@model Client.Models.Statistical.TotalGroupByUserResponse
+
+@if (Model != null)
+{
+
+
+
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">User Statistics</h5>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col">Total products</th>
+                            <th scope="col">Total views</th>
+                            <th scope="col">Total solds</th>
+                            <th scope="col">Revenue</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>@Model.productdata.Products</td>
+                            <td>@Model.productdata.Views</td>
+                            <td>@Model.productdata.Solds</td>
+                            <td>@Model.orderdata.Revenue</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <p>No data available.</p>
+}
+
+
