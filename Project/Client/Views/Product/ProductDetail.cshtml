@@ -3,7 +3,7 @@
 
 @{
     var HasOwned = ViewBag.HasOwned;
-    List<string> LinkDownload = ViewBag.UrlsDownLoad as List<string>;
+    List<LinkModel> LinkDownload = ViewBag.UrlsDownLoad as List<LinkModel>;
 }
 
 <style>
@@ -314,8 +314,6 @@
                             </button>
                         </form>
 
-
-
                         <!-- Form for Decreasing Like -->
                         <form asp-action="DecreaseLikeProduct" asp-controller="Product" method="post" style="display:inline;" class="dislike-form2 ">
                             <!-- Hidden input to send the comment ID -->
@@ -329,7 +327,6 @@
                         </form>
                     </div>
                 </div>
-
 
                 <br />
 
@@ -345,7 +342,7 @@
                                     <span class="discounted-price">Owned</span>
                                 </div>
                             </div>
-                            <a href="@LinkDownload[0]" class="btn btn-success align-content-center w-25 fw-bold">Play</a>
+                            <a data-bs-toggle="modal" data-bs-target="#downloadModal" class="btn btn-success align-content-center w-25 fw-bold">Play</a>
                         </div>
                     }
                 }
@@ -355,7 +352,7 @@
                     <div class="product-price-container">
                         <div class="discount-section">
                             @* Free *@
-                            @if (Model.Prod.Discount == 100)
+                            @if (Model.Prod.Discount == 100 || Model.Prod.Price == 0)
                             {
                                 <div class="product-price-container">
                                     <div class="discount-section">
@@ -363,17 +360,7 @@
                                             <span class="discounted-price">Free</span>
                                         </div>
                                     </div>
-                                    <a href="#" class="btn btn-success align-content-center w-25 fw-bold">Play</a>
-                                </div>
-                            }
-                            else if (Model.Prod.Discount == 0)
-                            {
-                                <div class="price-section">
-                                    <span class="original-price">
-                                        <input type="text" readonly asp-for="@Model.Prod.Price" />
-                                        @Model.Prod.Price
-                                    </span>
-                                    <span class="discounted-price">@Model.Prod.Price - (@Model.Prod.Price*@Model.Prod.Discount/100)</span>
+                                    <a data-bs-toggle="modal" data-bs-target="#downloadModal" class="btn btn-success align-content-center w-25 fw-bold">Play</a>
                                 </div>
                             }
                             else
@@ -388,13 +375,16 @@
                                 </div>
                             }
                         </div>
-                        <form asp-action="Cart" asp-controller="User" class="align-content-center w-25 fw-bold">
+                        <form class="align-content-center w-25 fw-bold" asp-action="Cart" asp-controller="User">
                             <input type="text" hidden asp-for="Prod.Id" />
                             <input type="text" hidden asp-for="Prod.Name" />
                             <input type="text" hidden asp-for="Prod.UserName" />
                             <input type="text" hidden asp-for="Prod.Discount" />
                             <input type="text" hidden asp-for="Prod.Price" />
-
+                            @for (int i = 0; i < Model.Prod.Links.Count; i++)
+                            {
+                                <input type="hidden" name="Prod.Links[@i].Url" value="@Model.Prod.Links.ElementAt(i).Url" />
+                            }
                             <button type="submit" class="btn btn-success ">Add To Cart</button>
                         </form>
 
@@ -448,6 +438,7 @@
                         {
                             @await Html.PartialAsync("_CommentPartial", comment)
 
+                           
                         }
                     }
                     else
@@ -485,7 +476,7 @@
                         <input asp-for="createcomment.Status" name="Status" class="form-control" value="1" readonly />
                     </div>
 
-                    <button type="submit" class="btn btn-primary">Gửi bình luận</button>
+                    <button type="submit" class="btn btn-primary mt-2">Gửi bình luận</button>
                 </form>
 
 
@@ -501,7 +492,7 @@
                 <div class="mt-3">
                     <section id="popular">
                         <div class="d-flex justify-content-between align-items-center">
-                            <h3 style="font-size:2vw;">Same category</h3>
+                            <h2 class="same" style="font-size:2vw;">Same category</h2>
                             <div class="col-5 col-sm-5 col-md-5 footeer_card">
                                 <div class="btn_card" style="display:flex;justify-content:flex-end;" style="width:250px;font-size:font: 15px Montserrat;">
                                     <a asp-action="ViewAll" asp-controller="Product" asp-route-viewString="@cate" value="@cate" class="btn_orther" style="width:200px;font: 15px Montserrat;">View More</a>
@@ -543,53 +534,63 @@
                                                             <img src="@firstImageUrl" alt="Cloudinary Image" class="img-fluid" style="width: 100%;" />
                                                         }
                                                     }
-                                                
-                                                <div class="info_other">
-                                                    <h1>@products.Name</h1>
-                                                    <p>
-                                                        @(products.Description.Length > 100
-                                                            ? products.Description.Substring(0, 100) + "..."
-                                                            : products.Description)
-                                                    </p>
-                                                   @*  <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@products.Id" class="btn_orther">Read More</a> *@
-                                                    <div class="row d-flex align-items-center justify-content-between">
-                                                        <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@products.Id" class="ms-3 col-md-5 text-center btn_orther">Read More</a>
-                                                        <div class="col-md-3"></div>
-                                                        @* Day la trai tym ne *@
-                                                        <div title="Wishlist" class="col-md-3 heart-container" style="width:20px;height:20px;transition: .3s;display: flex;justify-content: center;align-items: center;margin: 0 auto;">
-                                                            <form asp-controller="Admin" asp-action="AddWishList" method="post">
-                                                                <input type="hidden" name="ProductId" value="@products.Id" />
-                                                                <input type="hidden" name="ProductName" value="@products.Name" />
-                                                                <input type="hidden" name="ProductPrice" value="@products.Price" />
 
-                                                                @{
-                                                                    string secondImageUrl2 = null;
-                                                                    int imageCount2 = 0;
-                                                                }
-                                                                @foreach (var link in product.Links)
-                                                                {
+                                                    <div class="info_other">
+                                                        <h1>@products.Name</h1>
+                                                        <p>
+                                                            @(products.Description.Length > 100
+                                                                ? products.Description.Substring(0, 100) + "..."
+                                                                : products.Description)
+                                                        </p>
+                                                        @*  <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@products.Id" class="btn_orther">Read More</a> *@
+                                                        <div class="row d-flex align-items-center justify-content-between">
+                                                            <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@products.Id" class="ms-3 col-md-5 text-center btn_orther">Read More</a>
+                                                            <div class="col-md-3"></div>
+                                                            @* Day la trai tym ne *@
+                                                            <div title="Wishlist" class="col-md-1 heart-container">
+                                                                <form id="wishlistForm" method="post">
+                                                                    <input type="hidden" name="ProductId" id="ProductId" value="@product.Id" />
+                                                                    <input type="hidden" name="ProductName" id="ProductName" value="@product.Name" />
+                                                                    <input type="hidden" name="ProductPrice" id="ProductPrice" value="@product.Price" />
+
+                                                                    @{
+                                                                        string secondImageUrl2 = null;
+                                                                        int imageCount2 = 0;
+                                                                    }
+                                                                    @foreach (var link in product.Links)
+                                                                    {
                                                                         if (link.Url.Contains("cloudinary"))
                                                                         {
                                                                             imageCount2++;
-                                                                            if (imageCount2 == 2) // Lấy hình ảnh thứ hai
+                                                                            if (imageCount2 == 2)
                                                                             {
                                                                                 secondImageUrl2 = link.Url;
-                                                                                break; // Thoát khỏi vòng lặp khi đã tìm thấy
+                                                                                break;
                                                                             }
                                                                         }
                                                                     }
-                                                                    <input type="hidden" name="ProductImage" value="@secondImageUrl2" />
+                                                                    <input type="hidden" name="ProductImage" id="ProductImage" value="@secondImageUrl2" />
 
-                                                                    <button type="submit" class="btn-heart" style="border: none; background: transparent; padding: 0;">
-                                                                        <div class="svg-container">
-                                                                            <svg xmlns="http://www.w3.org/2000/svg" class="svg-outline" viewBox="0 0 24 24">
-                                                                                <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Zm-3.585,18.4a2.973,2.973,0,0,1-3.83,0C4.947,16.006,2,11.87,2,8.967a4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,11,8.967a1,1,0,0,0,2,0,4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,22,8.967C22,11.87,19.053,16.006,13.915,20.313Z"></path>
-                                                                            </svg>
-                                                                            <svg xmlns="http://www.w3.org/2000/svg" class="svg-filled" viewBox="0 0 24 24">
-                                                                                <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Z"></path>
-                                                                            </svg>
-                                                                        </div>
-                                                                    </button>
+                                                                    <!-- Checkbox hidden -->
+                                                                    <input type="checkbox" id="wishlistCheckbox" class="checkbox" onclick="addToWishList('@product.Id', '@product.Name', '@product.Price', '@secondImageUrl2')" />
+
+                                                                    <!-- Icon trái tim -->
+                                                                    <div class="svg-container">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" class="svg-outline" viewBox="0 0 24 24">
+                                                                            <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Zm-3.585,18.4a2.973,2.973,0,0,1-3.83,0C4.947,16.006,2,11.87,2,8.967a4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,11,8.967a1,1,0,0,0,2,0,4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,22,8.967C22,11.87,19.053,16.006,13.915,20.313Z"></path>
+                                                                        </svg>
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" class="svg-filled" viewBox="0 0 24 24">
+                                                                            <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Z"></path>
+                                                                        </svg>
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" height="100" width="100" class="svg-celebrate">
+                                                                            <polygon points="10,10 20,20"></polygon>
+                                                                            <polygon points="10,50 20,50"></polygon>
+                                                                            <polygon points="20,80 30,70"></polygon>
+                                                                            <polygon points="90,10 80,20"></polygon>
+                                                                            <polygon points="90,50 80,50"></polygon>
+                                                                            <polygon points="80,80 70,70"></polygon>
+                                                                        </svg>
+                                                                    </div>
                                                                 </form>
                                                             </div>
                                                         </div>
@@ -627,9 +628,7 @@
                 </div>
             }
         </div>
-
     </div>
-
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -984,6 +983,88 @@
             bindLikeDislikeEvents2()
         });
     @*  ajax hien thi comment moi *@
+</script>
 
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="downloadModal" tabindex="-1" aria-labelledby="downloadModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <!-- Header -->
+            <div class="modal-header bg-light">
+                <h5 class="modal-title text-success" id="downloadModalLabel">Download File</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <!-- Body -->
+            <div class="modal-body">
+                @if (LinkDownload != null)
+                {
+                    @if (LinkDownload.Count != 0)
+                    {
+                        foreach (var item in LinkDownload)
+                        {
+                            <div class="d-flex align-items-center mb-3">
+                                <!-- Download Button -->
+                                <a class="btn btn-success me-3" href="@item.Url">Download</a>
+
+                                <!-- File Info -->
+                                <div class="align-content-center"> 
+                                    <span class="d-inline-block text-truncate" style="max-width: 300px;">@item.Url</span>
+                                    @* <p class="mb-1 text-secondary">363 MB</p> *@
+@*                                     <div>
+                                        <!-- Platform Icon -->
+                                        <i class="bi bi-windows fs-5 text-success" title="Windows"></i>
+                                    </div> *@
+                                </div>
+                            </div>
+                        }
+                    }
+                }
+
+                <!-- Timestamp -->
+                <div class="mt-3">
+                    <p class="mb-0 text-secondary"><i class="bi bi-clock"></i> 56 days ago</p>
+                </div>
+
+                <!-- Help Link -->
+                <div class="mt-2">
+                    <a href="#" class="text-success text-decoration-none">Download not starting?</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function addToWishList(productId, productName, productPrice, productImage) {
+        // Cập nhật các giá trị input ẩn với thông tin của sản phẩm hiện tại
+        document.getElementById('ProductId').value = productId;
+        document.getElementById('ProductName').value = productName;
+        document.getElementById('ProductPrice').value = productPrice;
+        document.getElementById('ProductImage').value = productImage;
+
+        // Tạo FormData và gửi request
+        const formData = new FormData(document.getElementById('wishlistForm'));
+
+        fetch('@Url.Action("AddWishList", "Admin")', {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => response.json())
+            .then(response => {
+                if (response.success) {
+                    toastr.success(response.message || 'Thêm vào WishList  đã thành công!')
+                } else {
+                    toastr.error(response.message || 'Đã xảy ra lỗi không xác định.');
+                    document.getElementById('wishlistCheckbox').checked = false;
+                }
+            })
+            .catch(error => {
+                alert("Có lỗi xảy ra: " + error.message);
+                document.getElementById('wishlistCheckbox').checked = false;
+            });
+    }
 </script>
 

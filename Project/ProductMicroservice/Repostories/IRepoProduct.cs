@@ -31,6 +31,7 @@ namespace ProductMicroservice.Repostories
         // Phương thức giảm lượt thích cho bình luận
         Task<ResponseDTO> DecreaseLike(string productId, UserDisLikesModel userDisLike);
         Task<ResponseDTO>ViewMore(string viewString);
-
+        Task<ProductGroupByUserData> Data(TotalGroupByUserResponse Response);
+        Task<ResponseDTO> UpdateRangeSoldAsync(OrderItemsResponse model);
     }
 }

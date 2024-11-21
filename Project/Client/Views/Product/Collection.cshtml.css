@@ -33,6 +33,28 @@
 }
 
 
+.text {
+    color: #33cc33;
+    font-size: 40px;
+    font-weight: bold;
+    width: 100%;
+}
+
+body.dark-theme .text {
+    color: #6842ff;
+}
+
+hr {
+    border: none; /* Loại bỏ đường viền mặc định */
+    height: 4px; /* Đặt chiều cao cho đường gạch ngang */
+    background-color: black; /* Màu sắc của đường gạch ngang */
+    margin: 20px 0; /* Thêm khoảng cách phía trên và dưới đường gạch ngang */
+}
+
+body.dark-theme hr {
+    background-color: #6842ff;
+}
+
 .collections {
     display: flex;
     gap: 15px;
@@ -180,4 +202,5 @@
     to {
         box-shadow: 0 0 25px #00ffbf;
     }
+
 }

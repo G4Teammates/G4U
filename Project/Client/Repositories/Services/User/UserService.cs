@@ -104,5 +104,13 @@ namespace Client.Repositories.Services.User
                 Url = $"{StaticTypeApi.APIGateWay}/User/addWishList/{userName}"
             });
         }
+        public async Task<ResponseModel> RemoveWishList(string productId, string userName)
+        {
+            return await _baseService.SendAsync(new RequestModel()
+            {
+                ApiType = StaticTypeApi.ApiType.PUT,
+                Url = $"{StaticTypeApi.APIGateWay}/User/removeWishList/{userName}/{productId}"
+            });
+        }
     }
 }

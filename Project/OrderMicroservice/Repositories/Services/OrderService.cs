@@ -9,6 +9,7 @@ using OrderMicroservice.Models.OrderModel;
 using OrderMicroservice.Models.PaymentModel;
 using OrderMicroservice.Models.UserModel;
 using OrderMicroservice.Repositories.Interfaces;
+using X.PagedList.Extensions;
 
 namespace OrderMicroservice.Repositories.Services
 {
@@ -45,13 +46,13 @@ namespace OrderMicroservice.Repositories.Services
         }
 
 
-        public async Task<ResponseModel> GetAll()
+        public async Task<ResponseModel> GetAll(int pageNumber, int pageSize)
         {
             ResponseModel response = new();
             try
             {
                 var orders = await _context.Orders.ToListAsync();
-                response.Result = _mapper.Map<ICollection<OrderModel>>(orders); ;
+                response.Result = _mapper.Map<ICollection<OrderModel>>(orders).ToPagedList(pageNumber, pageSize); ;
                 response.IsSuccess = true;
                 response.Message = "Retrieved all orders successfully.";
 
@@ -72,21 +73,41 @@ namespace OrderMicroservice.Repositories.Services
             ResponseModel response = new();
             try
             {
-                // Tìm đơn hàng theo ID
-                var order = await _context.Orders.SingleOrDefaultAsync(i => i.Id == id);
+                // Tìm đơn hàng dựa trên từng loại id
+                var ordersByOrderId = await _context.Orders.Where(o => o.Id == id).ToListAsync();
+                var ordersByCustomerId = await _context.Orders.Where(o => o.CustomerId == id).ToListAsync();
+                var ordersByProductId = await _context.Orders
+                    .Where(o => o.Items.Any(i => i.ProductId == id))
+                    .ToListAsync();
 
-                // Kiểm tra nếu không tìm thấy đơn hàng
-                if (order == null)
+
+                if (ordersByOrderId.Any())
                 {
-                    response.IsSuccess = false;
-                    response.Message = $"Order with ID '{id}' not found.";
-                    return response;
+                    // Nếu tìm thấy theo Order.Id
+                    response.Result = _mapper.Map<List<OrderModel>>(ordersByOrderId);
+                    response.IsSuccess = true;
+                    response.Message = $"Order with ID '{id}' found by Order ID.";
                 }
-
-                // Nếu tìm thấy, map và trả về kết quả
-                response.Result = _mapper.Map<OrderModel>(order);
-                response.IsSuccess = true;
-                response.Message = $"Order with ID '{id}' retrieved successfully.";
+                else if (ordersByCustomerId.Any())
+                {
+                    // Nếu tìm thấy theo CustomerId
+                    response.Result = _mapper.Map<List<OrderModel>>(ordersByCustomerId);
+                    response.IsSuccess = true;
+                    response.Message = $"Order with Customer ID '{id}' found.";
+                }
+                else if (ordersByProductId.Any())
+                {
+                    // Nếu tìm thấy theo ProductId trong Items
+                    response.Result = _mapper.Map<List<OrderModel>>(ordersByProductId);
+                    response.IsSuccess = true;
+                    response.Message = $"Order containing Product ID '{id}' found.";
+                }
+                else
+                {
+                    // Nếu không tìm thấy
+                    response.IsSuccess = false;
+                    response.Message = $"No orders found with ID '{id}'.";
+                }
             }
             catch (Exception ex)
             {
@@ -103,31 +124,45 @@ namespace OrderMicroservice.Repositories.Services
             ResponseModel response = new();
             try
             {
-                // Tìm đơn hàng theo ID
-                ICollection<Order>? order = await _context.Orders.Where(i => i.PaymentTransactionId!.Contains(id)).ToListAsync();
+                // Tìm đơn hàng theo Transaction ID
+                var ordersByTransactionId = await _context.Orders
+                    .Where(i => i.PaymentTransactionId != null && i.PaymentTransactionId.Contains(id))
+                    .ToListAsync();
 
-                // Kiểm tra nếu không tìm thấy đơn hàng
-                if (order == null)
+                // Tìm đơn hàng theo Product Name trong Items
+                var ordersByProductName = await _context.Orders
+                    .Where(o => o.Items.Any(i => i.ProductName.ToLower().Contains(id.ToLower())))
+                    .ToListAsync();
+
+                // Kiểm tra kết quả và thiết lập phản hồi
+                if (ordersByProductName.Any())
+                {
+                    response.Result = _mapper.Map<List<OrderModel>>(ordersByProductName);
+                    response.IsSuccess = true;
+                    response.Message = $"Order containing Product Name '{id}' found.";
+                }
+                else if (ordersByTransactionId.Any())
+                {
+                    response.Result = _mapper.Map<List<OrderModel>>(ordersByTransactionId);
+                    response.IsSuccess = true;
+                    response.Message = $"Order with payment transaction ID '{id}' retrieved successfully.";
+                }
+                else
                 {
                     response.IsSuccess = false;
-                    response.Message = $"Order with payment transaction ID '{id}' not found.";
-                    return response;
+                    response.Message = $"No orders found matching ID '{id}'.";
                 }
-
-                // Nếu tìm thấy, map và trả về kết quả
-                response.Result = _mapper.Map<ICollection<OrderModel>>(order);
-                response.IsSuccess = true;
-                response.Message = $"Order with payment transaction ID '{id}' retrieved successfully.";
             }
             catch (Exception ex)
             {
                 // Xử lý ngoại lệ và trả về thông báo lỗi
                 response.IsSuccess = false;
-                response.Message = $"Failed to retrieve order with payment transaction ID '{id}'. Error: {ex.Message}";
+                response.Message = $"Failed to retrieve order. Error: {ex.Message}";
             }
 
             return response;
         }
+
 
 
         public async Task<ResponseModel> GetOrderItems(string id)
@@ -395,6 +430,36 @@ namespace OrderMicroservice.Repositories.Services
             return response;
         }
 
+        public async Task<bool> CheckPurchaseAsync(CheckPurchaseReceive order)
+        {
+            // Check if any order contains the specified UserId
+            var userOrder = await Task.Run(() => _context.Orders
+                .FirstOrDefault(o => o.CustomerId == order.UserId));
+            // If no order is found for the given UserId, return false
+            if (userOrder == null)
+            {
+                return false;
+            }
+
+            // Check if the ProductId exists in the items list of the order
+            bool isProductInOrder = userOrder.Items.Any(item => item.ProductId == order.ProductId);
+
+            return isProductInOrder;
+        }
+        public async Task<OrderGroupByUserData> Data(TotalGroupByUserResponse response)
+        {
+            var result = new OrderGroupByUserData();
+
+            // Đảm bảo response.CreateAt là UTC và có thời gian là 00:00:00
+            var startOfDayUtc = DateTime.SpecifyKind(response.CreateAt.Date, DateTimeKind.Utc);
+
+            var orders = await _context.Orders
+                .Where(p => p.Items.Any(x=> x.PublisherName==response.UserName)  && p.CreatedAt <= startOfDayUtc).ToListAsync();
+
+            result.Revenue =orders.Sum(x=>x.TotalProfit);
+
+            return result;
+        }
 
     }
 }

@@ -182,6 +182,21 @@ namespace UserMicroService.Controllers
             }
         }
 
+        [HttpPut("removeWishList/{userName}/{productId}")]
+        public async Task<ActionResult> RemoveWishList([FromRoute] string productId, [FromRoute] string userName)
+        {
+            try
+            {
+                ResponseModel response = await _userService.RemoveFromWishList(productId, userName);
+                if (response.IsSuccess)
+                    return Ok(response);
+                return BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An unexpected error occurred. Detail: " + ex.Message });
+            }
+        }
 
         //[HttpGet("find")]
         //public async Task<ActionResult> SearchAsync([FromQuery]SearchCriteria query)

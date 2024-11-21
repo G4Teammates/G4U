@@ -1,5 +1,6 @@
 ﻿using Client.Models.Enum.OrderEnum;
 using MongoDB.Bson;
+using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 
 namespace Client.Models.OrderModel
@@ -39,6 +40,7 @@ namespace Client.Models.OrderModel
         /// <br/>
         /// Tổng lợi nhuận từ đơn hàng.
         /// </summary>
+        [JsonIgnore]
         public decimal TotalProfit => TotalPrice - (TotalPrice * 0.1m);
 
         /// <summary>
@@ -53,7 +55,7 @@ namespace Client.Models.OrderModel
         /// <br/>
         /// Tên phương thức thanh toán (ví dụ: Momo, Vnpay, ViettinBank).
         /// </summary>
-        public string? PaymentName { get; set; }
+        public string PaymentName { get; set; } = "Pending";
 
         /// <summary>
         /// Status of the payment, including: Pending, Paid, Failed.

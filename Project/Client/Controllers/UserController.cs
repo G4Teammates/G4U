@@ -30,12 +30,12 @@ using System.Collections.ObjectModel;
 namespace Client.Controllers
 {
     public class UserController(
-        IAuthenticationService authenService, 
-        IUserService userService, 
-        ITokenProvider tokenProvider, 
-        IHelperService helperService, 
-        IRepoProduct repoProduct, 
-        ICategoriesService categoriesService, 
+        IAuthenticationService authenService,
+        IUserService userService,
+        ITokenProvider tokenProvider,
+        IHelperService helperService,
+        IRepoProduct repoProduct,
+        ICategoriesService categoriesService,
         IOrderService orderService) : Controller
     {
         private readonly IAuthenticationService _authenService = authenService;
@@ -47,8 +47,6 @@ namespace Client.Controllers
         public readonly IOrderService _orderService = orderService;
 
         ICollection<ProductModel> productsAtCart = new List<ProductModel>();
-
-
 
         [HttpGet]
         public IActionResult Login()
@@ -233,19 +231,97 @@ namespace Client.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(RegisterModel register)
         {
-            if (ModelState.IsValid)
+            try
             {
-                var response = await _authenService.RegisterAsync(register);
-                if (response.IsSuccess)
+                // Kiểm tra dữ liệu đầu vào
+                if (!ModelState.IsValid)
                 {
+                    TempData["error"] = "Invalid registration data. Please check your inputs.";
+                    return View(register);
+                }
+
+                // Gọi service để thực hiện đăng ký
+                var response = await _authenService.RegisterAsync(register);
+                if (response.IsSuccess && response.Result != null)
+                {
+                    // Deserialize kết quả từ service
                     var user = JsonConvert.DeserializeObject<RegisterModel>(response.Result.ToString()!);
-                    TempData["success"] = "Register is success";
+                    if (user != null)
+                    {
+                        TempData["success"] = "Registration successful. Check your email to activate your account.";
+                        await _authenService.ActiveUserAsync(user.Email);
+                        return RedirectToAction("Index", "Home");
+                    }
+                    else
+                    {
+                        TempData["error"] = "Registration was successful, but the user data could not be processed.";
+                    }
+                }
+                else
+                {
+                    // Xử lý lỗi nếu đăng ký thất bại
+                    TempData["error"] = response.Message ?? "Registration failed. Please try again.";
+                }
+            }
+            catch (Exception ex)
+            {
+                // Xử lý lỗi không mong muốn
+                TempData["error"] = $"An unexpected error occurred: {ex.Message}";
+            }
+            // Trả về View với dữ liệu đã nhập nếu có lỗi
+            return View(register);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ActiveUser(string userId)
+        {
+            try
+            {
+                // Tìm kiếm user theo email
+                ResponseModel findUser = await _userService.GetUserAsync(userId);
+                if (!findUser.IsSuccess || findUser.Result == null)
+                {
+                    TempData["error"] = $"No user found with Id: {userId}";
                     return RedirectToAction("Index", "Home");
                 }
-                TempData["success"] = "Register is fail";
+
+                // Lấy thông tin user
+                if (findUser.Result is not UsersDTO user)
+                {
+                    TempData["error"] = "Failed to cast user data.";
+                    return RedirectToAction("Index", "Home");
+                }
+                
+                // Thay đổi trạng thái của user
+                ResponseModel response = await _userService.ChangeStatus(user.Id, Models.Enum.UserEnum.User.UserStatus.Active);
+                if (response.IsSuccess)
+                {
+                    TempData["success"] = "User activation is successful.";
+                    return View(); // Trả về View nếu cần hiển thị thông báo
+                }
+                else
+                {
+                    TempData["error"] = $"Failed to activate user. Reason: {response.Message}";
+                    return RedirectToAction("Index", "Home");
+                }
             }
+            catch (Exception ex)
+            {
+                // Xử lý lỗi bất ngờ
+                TempData["error"] = $"An unexpected error occurred: {ex.Message}";
+                return RedirectToAction("Index", "Home");
+            }
+        }
+
+        [HttpGet]
+        public IActionResult ActiveUser()
+        {
+
             return View();
         }
+
+
+
 
 
         [HttpGet]
@@ -348,41 +424,113 @@ namespace Client.Controllers
         }
 
         [HttpGet]
-        public IActionResult Cart(CartModel model)
+        public IActionResult Cart()
         {
+            // Đọc cookie giỏ hàng
+            string cartJson = HttpContext.Request.Cookies["cart"];
+            CartModel cart = new();
+            if (!string.IsNullOrEmpty(cartJson))
+            {
+                // Chuyển đổi JSON thành đối tượng CartViewModel
+                cart = JsonConvert.DeserializeObject<CartModel>(cartJson);
+
+                return View(cart);
+            }
+
             return View();
+            // Truyền dữ liệu vào View
         }
+
 
         [HttpPost]
         public IActionResult Cart(ProductViewModel product)
         {
-            productsAtCart.Add(product.Prod);
+            // Đọc cookie giỏ hàng
+            string cartJsonCookie = HttpContext.Request.Cookies["cart"];
             CartModel cart = new();
-            cart.Products = productsAtCart;
-            cart.Order = new OrderModel
+
+            if (!string.IsNullOrEmpty(cartJsonCookie))
             {
-                CustomerId = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)!.Value,
-                TotalPrice = productsAtCart.Sum(x => x.Price),
-                Items = productsAtCart.Select(x => new OrderItemModel
+                // Chuyển đổi JSON thành đối tượng CartModel
+                cart = JsonConvert.DeserializeObject<CartModel>(cartJsonCookie);
+            }
+            // Nếu giỏ hàng chưa được khởi tạo thì khởi tạo mới
+            if (cart.Order == null)
+            {
+                cart.Order = new OrderModel
                 {
-                    ProductId = x.Id,
-                    ProductName = x.Name,
-                    Price = x.Price,
-                    PublisherName = x.UserName,
-                    Quantity = 1
-                }).ToList()
+                    Items = new List<OrderItemModel>(),
+                    TotalPrice = 0,
+                    CustomerId = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value
+                };
+            }
+
+            // Thêm sản phẩm vào giỏ hàng
+            var newItem = new OrderItemModel
+            {
+                ProductId = product.Prod.Id,
+                ProductName = product.Prod.Name,
+                Price = product.Prod.Price,
+                PublisherName = product.Prod.UserName,
+                Quantity = 1,
+                ImageUrl = product.Prod.Links.FirstOrDefault(link => link.Url.Contains("cloudinary"))?.Url
             };
-            return RedirectToAction("Payment","Order", cart);
+
+            // Kiểm tra xem sản phẩm đã tồn tại trong giỏ hàng chưa
+            var existingItem = cart.Order.Items.FirstOrDefault(x => x.ProductId == newItem.ProductId);
+            if (existingItem != null)
+            {
+                // Nếu đã tồn tại, tăng số lượng
+                existingItem.Quantity += 1;
+            }
+            else
+            {
+                // Nếu chưa, thêm mới vào danh sách
+                cart.Order.Items.Add(newItem);
+            }
+
+            // Cập nhật tổng giá
+            cart.Order.TotalPrice = cart.Order.Items.Sum(x => x.Price * x.Quantity);
+
+            // Lưu giỏ hàng vào cookie
+            string cartJson = JsonConvert.SerializeObject(cart);
+            HttpContext.Response.Cookies.Append("cart", cartJson, new CookieOptions
+            {
+                HttpOnly = true // Bảo vệ cookie không bị truy cập bởi JavaScript
+            });
+
+            // Trả về dữ liệu giỏ hàng dạng JSON
+            return View(cart);
+            return RedirectToAction("Payment", "Order", cart);
         }
 
 
-        public IActionResult CartRemoveProduct(ProductModel product)
-        {
-            productsAtCart.Remove(product);
-            CartModel cart = new();
-            cart.Products = productsAtCart;
 
-            return View(cart);
+
+        public IActionResult CartRemoveProduct(string productId)
+        {
+            string cartJsonCookie = HttpContext.Request.Cookies["cart"];
+            CartModel cart = new();
+
+            if (!string.IsNullOrEmpty(cartJsonCookie))
+            {
+                // Chuyển đổi JSON thành đối tượng CartModel
+                cart = JsonConvert.DeserializeObject<CartModel>(cartJsonCookie);
+            }
+            var itemDelele = cart.Order.Items.FirstOrDefault(id => id.ProductId == productId);
+            if (itemDelele != null)
+                cart.Order.Items.Remove(itemDelele);
+
+            cart.Order.TotalPrice = cart.Order.Items.Sum(x => x.Price * x.Quantity);
+
+            // Lưu giỏ hàng vào cookie
+            string cartJson = JsonConvert.SerializeObject(cart);
+            HttpContext.Response.Cookies.Append("cart", cartJson, new CookieOptions
+            {
+                HttpOnly = true // Bảo vệ cookie không bị truy cập bởi JavaScript
+            });
+
+            return RedirectToAction("Cart");
         }
 
         [HttpGet]
@@ -431,7 +579,7 @@ namespace Client.Controllers
         [HttpPost]
         [RequestSizeLimit(60 * 1024 * 1024)] // 50MB
         [RequestFormLimits(MultipartBodyLengthLimit = 60 * 1024 * 1024)] // Đặt giới hạn cho form multipart
-        public async Task<IActionResult> UpdateProduct(UpdateProductModel updateProductModel)
+        public async Task<IActionResult> UpdateProduct(UpdateProductModel updateProductModel, string SerializedLinks)
         {
             //if (!ModelState.IsValid)
             //{
@@ -448,10 +596,13 @@ namespace Client.Controllers
                     throw new Exception("Không thấy game nào có ID vậy hết");
                 }
                 ProductModel? product = JsonConvert.DeserializeObject<ProductModel>(Convert.ToString(responsee.Result));
-                
+
                 if (updateProductModel.Links == null)
                 {
-                    updateProductModel.Links = product.Links.ToList();
+                    if (!string.IsNullOrEmpty(SerializedLinks))
+                    {
+                        updateProductModel.Links = Newtonsoft.Json.JsonConvert.DeserializeObject<List<LinkModel>>(SerializedLinks);
+                    }
                 }
 
                 if (updateProductModel.UserName == null)
@@ -471,10 +622,10 @@ namespace Client.Controllers
                 // Gọi service UpdateProduct từ phía Client
                 var response = await _productService.UpdateProductAsync(
                     updateProductModel.Id, updateProductModel.Name, updateProductModel.Description, updateProductModel.Price, updateProductModel.Sold,
-                   numOfView, numOfLike,numOfDisLike, updateProductModel.Discount,
+                   numOfView, numOfLike, numOfDisLike, updateProductModel.Discount,
                     updateProductModel.Links, updateProductModel.Categories, (int)updateProductModel.Platform,
                     (int)updateProductModel.Status, updateProductModel.CreatedAt, updateProductModel.ImageFiles,
-                    request, updateProductModel.UserName,updateProductModel.Interactions.UserLikes, updateProductModel.Interactions.UserDisLikes);
+                    request, updateProductModel.UserName, updateProductModel.Interactions.UserLikes, updateProductModel.Interactions.UserDisLikes);
 
                 if (response.IsSuccess)
                 {
@@ -515,32 +666,43 @@ namespace Client.Controllers
                 updateProductModel.Categories = model.Categories.Select(x => x.CategoryName).ToList();
                 updateProductModel.Platform = model.Platform;
                 updateProductModel.Status = model.Status;
+                //updateProductModel.Links = model.Links;
 
+                List<LinkModel> listLinks = new List<LinkModel>();
                 if (model.Links != null)
                 {
-                    List<string> filesImage = new List<string>();
-                    List<IFormFile> filesGame = new List<IFormFile>();
-                    foreach (var link in model.Links)
+                    foreach (var item in model.Links)
                     {
-                        if (link.ProviderName.Contains("Cloudinary"))
-                        {
-                            // Sử dụng trong CreateProductModel
-                            var file = await DownloadFileAsIFormFile(link.Url);
-                            updateProductModel.ImageFiles.Add(file);
-                            filesImage.Add(link.Url);
-                            ViewBag.ImageFiles = filesImage;
-                        }
-                        else if (link.ProviderName.Contains("Google Drive"))
-                        {
-                            var file = await DownloadFileAsIFormFile(link.Url);
-                            updateProductModel.gameFile = file;
-                            //ViewBag.GameFileName = file.FileName;
-                            //ViewBag.GameFileSize = file.Length;
-                            filesGame.Add(file);
-                            ViewBag.Games = filesGame;
-                        }
+                        listLinks.Add(item);
                     }
                 }
+                updateProductModel.Links = listLinks;
+
+                //if (model.Links != null)
+                //{
+                //    List<string> filesImage = new List<string>();
+                //    List<IFormFile> filesGame = new List<IFormFile>();
+                //    foreach (var link in model.Links)
+                //    {
+                //        if (link.ProviderName.Contains("Cloudinary"))
+                //        {
+                //            // Sử dụng trong CreateProductModel
+                //            var file = await DownloadFileAsIFormFile(link.Url);
+                //            updateProductModel.ImageFiles.Add(file);
+                //            filesImage.Add(link.Url);
+                //            ViewBag.ImageFiles = filesImage;
+                //        }
+                //        else if (link.ProviderName.Contains("Google Drive"))
+                //        {
+                //            var file = await DownloadFileAsIFormFile(link.Url);
+                //            updateProductModel.gameFile = file;
+                //            //ViewBag.GameFileName = file.FileName;
+                //            //ViewBag.GameFileSize = file.Length;
+                //            filesGame.Add(file);
+                //            ViewBag.Games = filesGame;
+                //        }
+                //    }
+                //}
 
                 var responseCategory = await _categoriesService.GetAllCategoryAsync(1, 99);
                 //updateProductModel.Categories = (List<string>)response.Result;
@@ -654,7 +816,29 @@ namespace Client.Controllers
                 else
                 {
                     TempData["error"] = response?.Message ?? "An unknown error occurred.";
-                    return RedirectToAction(nameof(UploadProduct), new {updateProductModel = updateProductModel});
+                    return RedirectToAction(nameof(UploadProduct), new { updateProductModel = updateProductModel });
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = $"An error occurred: {ex.Message}";
+                return RedirectToAction(nameof(UserDashboard));
+            }
+        }
+
+        public async Task<IActionResult> DeleteProduct(string id)
+        {
+            try
+            {
+                ResponseModel? response = await _productService.DeleteProductAsync(id);
+                if (response != null && response.IsSuccess)
+                {
+                    TempData["success"] = "Product deleted successfully";
+                    return RedirectToAction(nameof(UserDashboard));
+                }
+                else
+                {
+                    throw new Exception(response?.Message);
                 }
             }
             catch (Exception ex)
@@ -702,13 +886,13 @@ namespace Client.Controllers
             // Kiểm tra và gán oderitem nếu ItemResponse thành công
             if (ProResponese != null && ProResponese.IsSuccess)
             {
-                productViewModel.Product = JsonConvert.DeserializeObject<List<ProductModel>>(Convert.ToString(ProResponese.Result))
-                    ?? new List<ProductModel>();
+                productViewModel.oderitem = JsonConvert.DeserializeObject<List<OrderItemModel>>(Convert.ToString(ProResponese.Result))
+                    ?? new List<OrderItemModel>();
             }
             else
             {
                 // Nếu không có ItemResponse hợp lệ, gán danh sách trống
-                productViewModel.Product = new List<ProductModel>();
+                productViewModel.oderitem = new List<OrderItemModel>();
             }
 
 

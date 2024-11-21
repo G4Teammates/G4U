@@ -309,7 +309,7 @@
       "UpstreamHttpMethod": [ "Put" ]
     },
 
-    //Update status
+    //addWishList
     {
       "DownstreamPathTemplate": "/api/User/addWishList/{userName}",
       "DownstreamScheme": "https",
@@ -397,7 +397,7 @@
     },
 
 
-    //For got password
+    //Forgot password
     {
       "DownstreamPathTemplate": "/api/Auth/forgot-password",
       "DownstreamScheme": "https",
@@ -437,6 +437,19 @@
       "UpstreamHttpMethod": [ "Post" ]
     },
 
+    //Active user
+    {
+      "DownstreamPathTemplate": "/api/Auth/active-user",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7107
+        }
+      ],
+      "UpstreamPathTemplate": "/Auth/active-user",
+      "UpstreamHttpMethod": [ "Post" ]
+    },
 
 
 
@@ -456,7 +469,19 @@
       "UpstreamPathTemplate": "/User/getAllProductsInWishList/{id}",
       "UpstreamHttpMethod": [ "Get" ]
     },
-
+    //remove wishlist
+    {
+      "DownstreamPathTemplate": "/api/User/removeWishList/{userName}/{productId}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7107
+        }
+      ],
+      "UpstreamPathTemplate": "/User/removeWishList/{userName}/{productId}",
+      "UpstreamHttpMethod": [ "Put" ]
+    },
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //                                                                                                                    //
@@ -599,7 +624,7 @@
 
     //create
     {
-      "DownstreamPathTemplate": "/api/Comment",
+      "DownstreamPathTemplate": "/api/Comment/{userId}",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
@@ -607,7 +632,7 @@
           "Port": 7250
         }
       ],
-      "UpstreamPathTemplate": "/Comment",
+      "UpstreamPathTemplate": "/Comment/{userId}",
       "UpstreamHttpMethod": [ "Post" ]
     },
 
@@ -733,6 +758,21 @@
       ],
       "UpstreamPathTemplate": "/Order",
       "UpstreamHttpMethod": [ "Get" ]
+    },
+
+
+    //Create order
+    {
+      "DownstreamPathTemplate": "/api/Order",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7297
+        }
+      ],
+      "UpstreamPathTemplate": "/Order",
+      "UpstreamHttpMethod": [ "Post" ]
     },
 
     //Get by id
@@ -885,6 +925,20 @@
         }
       ],
       "UpstreamPathTemplate": "/Statistical",
+      "UpstreamHttpMethod": [ "Get" ]
+    },
+
+    //stastistical by user
+    {
+      "DownstreamPathTemplate": "/api/Statistical/GetStastisticalByUser",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7019
+        }
+      ],
+      "UpstreamPathTemplate": "/Statistical/GetStastisticalByUser",
       "UpstreamHttpMethod": [ "Get" ]
     }
   ],

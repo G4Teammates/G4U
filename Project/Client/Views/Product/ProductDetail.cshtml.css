@@ -73,3 +73,14 @@ form {
     display: inline-block;
     vertical-align: middle;
 }
+
+body.dark-theme .product-details {
+    color: white;
+}
+
+body.dark-theme .game-info{
+    color: white;
+}
+body.dark-theme .same {
+    color: white;
+}

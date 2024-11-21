@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using OrderMicroservice.DBContexts;
 using OrderMicroservice.DBContexts.Entities;
 using OrderMicroservice.Models;
+using OrderMicroservice.Models.Message;
 using OrderMicroservice.Models.OrderModel;
 using OrderMicroservice.Models.PaymentModel;
 using OrderMicroservice.Repositories.Interfaces;
@@ -17,13 +18,14 @@ namespace OrderMicroService.Controllers
     {
         IOrderService _orderService = orderService;
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin, User")]
         [HttpGet]
-        public async Task<ActionResult> GetOrders()
+        public async Task<ActionResult> GetOrders(int? page, int pageSize)
         {
             try
             {
-                ResponseModel response = await _orderService.GetAll();
+                int pageNumber = (page ?? 1);
+                ResponseModel response = await _orderService.GetAll(pageNumber, pageSize);
                 if (response.IsSuccess)
                     return Ok(response);
                 return BadRequest(response);
@@ -34,7 +36,7 @@ namespace OrderMicroService.Controllers
                 return StatusCode(500, new { message = "An unexpected error occurred. Detail" + ex.Message });
             }
         }
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         [HttpGet("search/{id}")]
         public async Task<ActionResult> GetOrderById(string id)
         {
@@ -153,8 +155,6 @@ namespace OrderMicroService.Controllers
                 return StatusCode(500, new { message = "An unexpected error occurred. Detail" + ex.Message });
             }
         }
-
-
 
     }
 }

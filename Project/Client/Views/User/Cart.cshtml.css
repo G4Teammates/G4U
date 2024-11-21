@@ -1,0 +1,9 @@
+﻿
+
+ h5 {
+    color: #198754;
+}
+
+body.dark-theme .container h5 {
+    color: #6842ff;
+}

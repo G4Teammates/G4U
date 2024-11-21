@@ -40,43 +40,87 @@ namespace UserMicroservice.Repositories.Services
             ResponseModel response = new();
             try
             {
-                // Check if the user model is valid
+                // Step 1: Validate user input
                 response = _helper.IsUserNotNull(userInput);
-                if (!response.IsSuccess) return response;
+                if (!response.IsSuccess)
+                {
+                    response.Message = "Invalid user input.";
+                    return response;
+                }
 
-                // Check if username or email already exists
+                // Step 2: Check if username or email already exists
                 response = await _helper.IsUserNotExist(userInput.Username, userInput.Email);
+                if (!response.IsSuccess)
+                {
+                    response.Message = "Failed to verify if user exists.";
+                    return response;
+                }
+
                 CountModel count = (CountModel)response.Result;
-                if (count.NumUsername != 0 || count.NumEmail != 0) return response;
-                if (!response.IsSuccess) return response;
+                if (count.NumUsername != 0)
+                {
+                    response.IsSuccess = false;
+                    response.Message = "Username already exists.";
+                    return response;
+                }
+                if (count.NumEmail != 0)
+                {
+                    response.IsSuccess = false;
+                    response.Message = "Email already exists.";
+                    return response;
+                }
 
-                // Map UserModel to User entity
-
+                // Step 3: Map AddUserModel to User entity
                 UserModel userMapper = _mapper.Map<UserModel>(userInput);
-
                 User userCreate = _mapper.Map<User>(userMapper);
 
-                // Generate random password for admin creation (future functionality: send via email)
-                userCreate.PasswordHash = BCrypt.Net.BCrypt.HashPassword("Abc123!");
+                // Step 4: Generate random password and hash it
+                string randomPassword = _helper.GenerateRandomPassword(6);
+                userCreate.PasswordHash = BCrypt.Net.BCrypt.HashPassword(randomPassword);
+
+                // Step 5: Send email with account details
+                ResponseModel emailSent = await _helper.SendEmailAsync(
+                    userCreate.Email,
+                    "Account Creation",
+                    $"Your account has been created. Your password is: {randomPassword}"
+                );
+
+                if (!emailSent.IsSuccess)
+                {
+                    response.IsSuccess = false;
+                    response.Message = "Failed to send account creation email.";
+                    return response;
+                }
+
+                // Step 6: Save user to the database
                 userCreate.UpdatedAt = DateTime.UtcNow;
-                // Save the user to the database
                 await _context.Users.AddAsync(userCreate);
                 await _context.SaveChangesAsync();
 
+                // Step 7: Notify statistics update
                 var totalRequest = await TotalRequest();
                 _message.SendingMessageStatistiscal(totalRequest.Result);
 
-                response.Message = "User created successfully";
+                response.IsSuccess = true;
+                response.Message = "User created successfully.";
                 response.Result = userMapper;
+            }
+            catch (DbUpdateException dbEx)
+            {
+                response.IsSuccess = false;
+                response.Message = "Database operation failed.";
+                // Log dbEx (add a logging library or mechanism)
             }
             catch (Exception ex)
             {
                 response.IsSuccess = false;
-                response.Message = ex.Message;
+                response.Message = "An unexpected error occurred.";
+                // Log ex (add a logging library or mechanism)
             }
 
             return response;
         }
+
 
 
 
@@ -332,6 +376,17 @@ namespace UserMicroservice.Repositories.Services
                 }
                 user.Status = status;
                 user.UpdatedAt = DateTime.UtcNow;
+
+                if(user.Status == UserStatus.Deleted)
+                {
+                    await _helper.SendEmailAsync(user.Email, "Account Deletion", "Your account has been deleted. If you did not request this, please contact us immediately.");
+                }
+                else if(user.Status == UserStatus.Block)
+                {
+                    await _helper.SendEmailAsync(user.Email, "Account Blocked", "Your account has been blocked. If you did not request this, please contact us immediately.");
+                }
+
+
                 _context.Users.Update(user);
                 await _context.SaveChangesAsync();
                 response.IsSuccess = true;
@@ -426,12 +481,21 @@ namespace UserMicroservice.Repositories.Services
 
                 if (user != null)
                 {
+                    // Kiểm tra xem mục này đã tồn tại trong Wishlist của user chưa
+                    bool isItemExists = user.Wishlist.Any(w => w.ProductId == userWishlistModel.ProductId);
 
-                    user.Wishlist.Add(_mapper.Map<UserWishlist>(userWishlistModel));
-                    _context.Users.Update(user);
-                    _context.SaveChanges();
-                    response.Result = user;
-                    return response;
+                    if (!isItemExists)
+                    {
+                        user.Wishlist.Add(_mapper.Map<UserWishlist>(userWishlistModel));
+                        _context.Users.Update(user);
+                        await _context.SaveChangesAsync();
+                        response.Result = user;
+                    }
+                    else
+                    {
+                        response.IsSuccess = false;
+                        response.Message = "Item already exists in the wishlist";
+                    }
                 }
                 else
                 {
@@ -447,6 +511,47 @@ namespace UserMicroservice.Repositories.Services
 
             return response;
         }
+        public async Task<ResponseModel> RemoveFromWishList(string productId, string userName)
+        {
+            ResponseModel response = new();
+            try
+            {
+                var user = await _context.Users.FirstOrDefaultAsync(x => x.Username == userName);
+
+                if (user != null)
+                {
+                    // Kiểm tra xem mục này có tồn tại trong Wishlist của user không
+                    var itemToRemove = user.Wishlist.FirstOrDefault(w => w.ProductId == productId);
+
+                    if (itemToRemove != null)
+                    {
+                        user.Wishlist.Remove(itemToRemove);
+                        _context.Users.Update(user);
+                        await _context.SaveChangesAsync();
+                        response.IsSuccess = true;
+                        response.Message = "Item removed successfully from the wishlist.";
+                    }
+                    else
+                    {
+                        response.IsSuccess = false;
+                        response.Message = "Item not found in the wishlist.";
+                    }
+                }
+                else
+                {
+                    response.IsSuccess = false;
+                    response.Message = "User not found.";
+                }
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+            }
+
+            return response;
+        }
+
 
         //public async Task<ICollection<UserModel>> FindUsers(SearchCriteria criteria)
         //{

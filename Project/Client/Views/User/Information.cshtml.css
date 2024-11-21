@@ -24,3 +24,63 @@
         background-color: #198754;
         color: white;
     }
+
+body.dark-theme .custom-nav-item button {
+    color: black; /* Màu chữ xám */
+}
+
+.custom-nav-item button:hover {
+    background-color: #198754;
+    color: white;
+}
+
+body.dark-theme .custom-nav-item button:hover {
+    background-color: #6842ff;
+    color: white;
+}
+
+body.dark-theme .d-flex {
+    color: #ffffff; /* Đặt màu chữ trắng cho tất cả các phần tử bên trong div */
+}
+
+    body.dark-theme .d-flex img {
+        background-color: #ffffff; /* Tạo đường viền trắng cho hình ảnh nếu cần */
+    }
+
+    body.dark-theme .d-flex h5, .d-flex p {
+        color: #ffffff; /* Đảm bảo màu chữ của các thẻ h5 và p cũng là trắng */
+    }
+
+body.dark-theme .text-muted {
+    color: #d3d3d3 !important; /* Nếu muốn giữ màu sắc nhẹ cho phần tử có class text-muted */
+}
+
+.fw-bold {
+    color: #33cc33;
+}
+
+body.dark-theme .fw-bold {
+    color: #6842ff;
+}
+
+.col-md-3 {
+    color: black;
+}
+
+body.dark-theme .col-md-3 {
+    color: white;
+}
+
+body.dark-theme .btn {
+    background-color: #6842ff;
+    color: white;
+}
+
+.btn {
+    background-color: #33cc33;
+    color: white;
+}
+
+body.dark-theme .logout-section span {
+    color: white;
+}
