@@ -847,6 +847,7 @@ header {
     padding:20px;
     padding-top:0;
     display:flex;
+
     justify-content:flex-start;
     align-items:center;
 }
@@ -923,8 +924,8 @@ header {
 /*Trai Tym nè*/
 .heart-container {
     --heart-color: rgb(91, 255, 195);
-    position: absolute;
-    right: 0; /* Đặt trái tim sát bên phải */
+    position: relative;
+    right: 15px; /* Đặt trái tim sát bên phải */
     width: 30px;
     height: 30px;
     transition: .3s;
