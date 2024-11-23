@@ -119,9 +119,9 @@ namespace OrderMicroservice.Repositories.Services
                 string accessKey = MoMoOptionModel.AccessKey!;
                 string secretKey = MoMoOptionModel.SecretKey!;
 
-                ResponseModel orderResult = await _orderService.GetOrderById(request.OrderId);
-
-                OrderModel order = (OrderModel)orderResult.Result;
+                ResponseModel orderResult = await _orderService.GetOrderById(request.OrderId, 1,1);
+                ICollection<OrderModel> orders = (ICollection<OrderModel>)orderResult.Result;
+                OrderModel order = orders.FirstOrDefault();
                 //MoMoSignature orderSignature = new MoMoSignature()
                 //{
                 //    AccessKey = accessKey,
@@ -168,8 +168,8 @@ namespace OrderMicroservice.Repositories.Services
             try
             {
                 // 1. Lấy thông tin order
-                var findOrder = await _orderService.GetOrderById(model.OrderId);
-                if (!findOrder.IsSuccess)
+                ResponseModel responseFindOrder = await _orderService.GetOrderById(model.OrderId, 1, 1);
+                if (!responseFindOrder.IsSuccess)
                 {
                     return new ResponseModel
                     {
@@ -178,8 +178,8 @@ namespace OrderMicroservice.Repositories.Services
                     };
                 }
 
-                var order = (OrderModel)findOrder.Result!;
-
+                ICollection<OrderModel> orders = (ICollection<OrderModel>)responseFindOrder.Result!;
+                var order = orders.FirstOrDefault();
                 // 2. Cập nhật TransactionId
                 var updateTransIdResponse = await _orderService.UpdateTransId(model.OrderId, model.TransactionId);
                 if (!updateTransIdResponse.IsSuccess)

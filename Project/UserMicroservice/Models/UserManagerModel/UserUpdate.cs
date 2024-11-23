@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using UserMicroservice.DBContexts.Enum;
+using UserMicroservice.Models.CustomValidation;
 
 namespace UserMicroservice.Models.UserManagerModel
 {
@@ -19,6 +20,7 @@ namespace UserMicroservice.Models.UserManagerModel
         /// </summary>
         [Required(ErrorMessage = "The {0} field is required.")]
         [StringLength(320, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+        [WhiteSpaceValidation(ErrorMessage = "{0} cannot have leading or trailing spaces and must not contain more than one consecutive space.")]
         public required string Username { get; set; }
 
         /// <summary>
@@ -31,6 +33,7 @@ namespace UserMicroservice.Models.UserManagerModel
 
 
         [StringLength(15, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 7)]
+        [WhiteSpaceValidation(ErrorMessage = "{0} cannot have leading or trailing spaces and must not contain more than one consecutive space.")]
         [Phone(ErrorMessage = "The {0} field is not a valid phone number.")]
         public string? PhoneNumber { get; set; }
 
@@ -40,6 +43,7 @@ namespace UserMicroservice.Models.UserManagerModel
         /// Tên hiển thị của người dùng.
         /// </summary>
         [StringLength(256, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+        [WhiteSpaceValidation(ErrorMessage = "{0} cannot have leading or trailing spaces and must not contain more than one consecutive space.")]
         private string? _displayName;
         public string? DisplayName
         {

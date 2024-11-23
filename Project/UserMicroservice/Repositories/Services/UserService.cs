@@ -217,7 +217,7 @@ namespace UserMicroservice.Repositories.Services
             ResponseModel response = new();
             try
             {
-                var user = await _context.Users.SingleOrDefaultAsync(u=>u.Email == email);
+                var user = await _context.Users.SingleOrDefaultAsync(u => u.Email == email);
                 if (user != null)
                 {
                     response.Message = $"Found success user: {email} ";
@@ -315,7 +315,7 @@ namespace UserMicroservice.Repositories.Services
         /// Một đối tượng <see cref="ResponseModel"/> chứa <see cref="ResponseModel.Result"/> là danh sách người dùng được tìm thấy hoặc thông báo ở <see cref="ResponseModel.Message"/> nếu không tìm thấy.
         /// Thuộc tính <see cref="ResponseModel.IsSuccess"/> sẽ là <see langword="false"/> nếu có lỗi xảy ra.
         /// </returns>
-        public async Task<ResponseModel> FindUsers(string? query)
+        public async Task<ResponseModel> FindUsers(string? query, int pageNumber, int pageSize)
         {
             var response = new ResponseModel();
 
@@ -326,26 +326,45 @@ namespace UserMicroservice.Repositories.Services
                 {
                     query = response.Result.ToString();
 
-                    ICollection<User> users = await _context.Users.Where(u =>
-                         u.DisplayName!.Contains(query!) ||
-                         u.NormalizedUsername!.Contains(query!) ||
-                         u.NormalizedEmail!.Contains(query!) ||
-                         u.PhoneNumber!.Contains(query!))
-                         .ToListAsync();
-
-                    if (users.Count == 0)
+                    // Try to parse the query as an ObjectId
+                    if (ObjectId.TryParse(query, out var objectId))
                     {
-                        response.Message = $"'{query}' not found";
-                        response.Result = null!;
-                    }
+                        // If it's a valid ObjectId, search by ObjectId
+                        ICollection<User> users = await _context.Users.Where(u =>  u.Id == objectId.ToString()).ToListAsync();
 
+                        if (users.Count == 0)
+                        {
+                            response.Message = $"User with ID '{query}' not found";
+                            response.Result = null!;
+                        }
+                        else
+                        {
+                            response.Message = $"Found {users.Count} user(s) by ID";
+                            response.Result = _mapper.Map<ICollection<UserModel>>(users).ToPagedList(pageNumber, pageSize);
+                        }
+                    }
                     else
                     {
-                        response.Result = _mapper.Map<ICollection<UserModel>>(users);
-                        response.Message = $"{users.Count} users were found";
+                        // If it's not an ObjectId, proceed with normal search
+                        ICollection<User> users = await _context.Users.Where(u =>
+                            u.DisplayName!.ToUpper().Contains(query!) ||
+                            u.NormalizedUsername!.ToUpper().Contains(query!) ||
+                            u.NormalizedEmail!.ToUpper().Contains(query!) ||
+                            u.PhoneNumber!.Contains(query!))
+                            .ToListAsync();
+
+                        if (users.Count == 0)
+                        {
+                            response.Message = $"'{query}' not found";
+                            response.Result = null!;
+                        }
+                        else
+                        {
+                            response.Message = $"Found {users.Count} users";
+                            response.Result = _mapper.Map<ICollection<UserModel>>(users).ToPagedList(pageNumber, pageSize);
+                        }
                     }
                 }
-
             }
             catch (Exception ex)
             {
@@ -355,6 +374,8 @@ namespace UserMicroservice.Repositories.Services
 
             return response;
         }
+
+
 
         public async Task<ResponseModel> ChangeStatus(string id, UserStatus status)
         {
@@ -377,11 +398,11 @@ namespace UserMicroservice.Repositories.Services
                 user.Status = status;
                 user.UpdatedAt = DateTime.UtcNow;
 
-                if(user.Status == UserStatus.Deleted)
+                if (user.Status == UserStatus.Deleted)
                 {
                     await _helper.SendEmailAsync(user.Email, "Account Deletion", "Your account has been deleted. If you did not request this, please contact us immediately.");
                 }
-                else if(user.Status == UserStatus.Block)
+                else if (user.Status == UserStatus.Block)
                 {
                     await _helper.SendEmailAsync(user.Email, "Account Blocked", "Your account has been blocked. If you did not request this, please contact us immediately.");
                 }

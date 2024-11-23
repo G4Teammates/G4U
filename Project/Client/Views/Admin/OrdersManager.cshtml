@@ -111,37 +111,55 @@
         @*  <div>
         <button class="btn btn-success" data-toggle="modal" data-target="#modalOrder">+ Add</button>
         </div> *@
+        <!-- Dropdown: Order Status -->
         <span class="dropdown">
             <button class="btn btn-secondary dropdown-toggle" type="button" id="OrderStatusDropdown" data-bs-toggle="dropdown">
-                Order status
+                Order Status
             </button>
-            <span class="dropdown-menu" aria-labelledby="OrderStatusDropdown">
-                <a class="dropdown-item" href="@Url.Action("FilterByOrderStatus", "Admin", new { status =  OrderStatus.Pending})">Pending</a>
-                <a class="dropdown-item" href="@Url.Action("FilterByOrderStatus", "Admin", new { status = OrderStatus.Paid })">Paid</a>
-                <a class="dropdown-item" href="@Url.Action("FilterByOrderStatus", "Admin", new { status = OrderStatus.Cancelled })">Cancelled</a>
-            </span>
+            <ul class="dropdown-menu" aria-labelledby="OrderStatusDropdown">
+                @foreach (OrderStatus status in Enum.GetValues(typeof(OrderStatus)))
+                {
+                    <li>
+                        <a class="dropdown-item" asp-controller="Admin" asp-action="FilterByOrderStatus" asp-route-status="@status">
+                            @status
+                        </a>
+                    </li>
+                }
+            </ul>
         </span>
 
+        <!-- Dropdown: Payment Status -->
         <span class="dropdown">
             <button class="btn btn-secondary dropdown-toggle" type="button" id="PaymentStatusDropdown" data-bs-toggle="dropdown">
-               Payment status
+                Payment Status
             </button>
-            <span class="dropdown-menu" aria-labelledby="PaymentStatusDropdown">
-                <a class="dropdown-item" href="@Url.Action("FilterByPaymentStatus", "Admin", new { status = PaymentStatus.Pending })">Pending</a>
-                <a class="dropdown-item" href="@Url.Action("FilterByPaymentStatus", "Admin", new { status =PaymentStatus.Paid })">Paid</a>
-                <a class="dropdown-item" href="@Url.Action("FilterByPaymentStatus", "Admin", new { status =PaymentStatus.Failed })">Failed</a>
-            </span>
+            <ul class="dropdown-menu" aria-labelledby="PaymentStatusDropdown">
+                @foreach (PaymentStatus status in Enum.GetValues(typeof(PaymentStatus)))
+                {
+                    <li>
+                        <a class="dropdown-item" asp-controller="Admin" asp-action="FilterByPaymentStatus" asp-route-status="@status">
+                            @status
+                        </a>
+                    </li>
+                }
+            </ul>
         </span>
 
+        <!-- Dropdown: Payment Method -->
         <span class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle" type="button" id="PaymentMethod" data-bs-toggle="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="PaymentMethodDropdown" data-bs-toggle="dropdown">
                 Payment Method
             </button>
-            <span class="dropdown-menu" aria-labelledby="PaymentMethod">
-                <a class="dropdown-item" href="@Url.Action("FilterByPaymentMethod", "Admin", new { status = PaymentMethod.Free })">Free</a>
-                <a class="dropdown-item" href="@Url.Action("FilterByPaymentMethod", "Admin", new { status = PaymentMethod.Wallet })">Wallet</a>
-                <a class="dropdown-item" href="@Url.Action("FilterByPaymentMethod", "Admin", new { status = PaymentMethod.CreditCard })">CreditCard</a>
-            </span>
+            <ul class="dropdown-menu" aria-labelledby="PaymentMethodDropdown">
+                @foreach (PaymentMethod method in Enum.GetValues(typeof(PaymentMethod)))
+                {
+                    <li>
+                        <a class="dropdown-item" asp-controller="Admin" asp-action="FilterByPaymentMethod" asp-route-status="@method">
+                            @method
+                        </a>
+                    </li>
+                }
+            </ul>
         </span>
 
     </div>
@@ -175,104 +193,111 @@
         <tbody>
             @if (Model != null)
             {
-                @if (Model.Orders.Count == 0)
+                @if (Model.Orders == null || Model.Orders.Count == 0)
                 {
                     <tr>
                         <td colspan="10" class="text-center">Không có hóa đơn nào để hiển thị.</td>
                     </tr>
                 }
-                foreach (var order in Model.Orders)
+                else
                 {
-                    <tr>
-                        @*             <td><input type="checkbox" class="order-checkbox"></td> *@
-                        <td scope="col" class="text-truncate" title="@order.Id" style="max-width:100px">@order.Id</td>
-                        <td scope="col" class="text-truncate" title="@order.PaymentTransactionId" style="max-width:100px">@order.PaymentTransactionId</td>
-                        <td scope="col" class="text-truncate" title="@order.TotalPrice" style="max-width:100px">@order.TotalPrice</td>
-                        @if (order.OrderStatus == Client.Models.Enum.OrderEnum.OrderStatus.Pending)
-                        {
+                    foreach (var order in Model.Orders)
+                    {
+                        <tr>
+                            @*             <td><input type="checkbox" class="order-checkbox"></td> *@
+                            <td scope="col" class="text-truncate" title="@order.Id" style="max-width:100px">@order.Id</td>
+                            <td scope="col" class="text-truncate" title="@order.PaymentTransactionId" style="max-width:100px">@order.PaymentTransactionId</td>
+                            <td scope="col" class="text-truncate" title="@order.TotalPrice" style="max-width:100px">@order.TotalPrice</td>
+                            @if (order.OrderStatus == Client.Models.Enum.OrderEnum.OrderStatus.Pending)
+                            {
 
-                            <td scope="col" class="bg-secondary ">@order.OrderStatus</td>
-                        }
-                        else if (order.OrderStatus == Client.Models.Enum.OrderEnum.OrderStatus.Paid)
-                        {
+                                <td scope="col" class="bg-secondary ">@order.OrderStatus</td>
+                            }
+                            else if (order.OrderStatus == Client.Models.Enum.OrderEnum.OrderStatus.Paid)
+                            {
 
-                            <td scope="col" class="bg-success ">@order.OrderStatus</td>
-                        }
-                        else
-                        {
-                            <td scope="col">@order.OrderStatus</td>
-                        }
+                                <td scope="col" class="bg-success ">@order.OrderStatus</td>
+                            }
+                            else
+                            {
+                                <td scope="col">@order.OrderStatus</td>
+                            }
 
-                        @if (order.PaymentName.ToLower() == "momo")
-                        {
-                            <td scope="col" style="background-color:#b8005e; color:white">@order.PaymentName</td>
-                        }
-                        else if (order.PaymentName.ToLower() == "payos")
-                        {
-                            <td scope="col" style="background-color:#6455fd; color:white">@order.PaymentName</td>
-                        }
-                        else
-                        {
-                            <td scope="col" class="bg-secondary">@order.PaymentName</td>
-                        }
+                            @if (order.PaymentName.ToLower() == "momo")
+                            {
+                                <td scope="col" style="background-color:#b8005e; color:white">@order.PaymentName</td>
+                            }
+                            else if (order.PaymentName.ToLower() == "payos")
+                            {
+                                <td scope="col" style="background-color:#6455fd; color:white">@order.PaymentName</td>
+                            }
+                            else if (order.PaymentName.ToLower() == "free")
+                            {
+                                <td scope="col" class="bg-success">@order.PaymentName</td>
+                            }
+                            else
+                            {
+                                <td scope="col" class="bg-secondary">@order.PaymentName</td>
+                            }
 
-                        @if (order.PaymentStatus == Client.Models.Enum.OrderEnum.PaymentStatus.Pending)
-                        {
-                            <td scope="col" class="bg-secondary">@order.OrderStatus</td>
-                        }
-                        else if (order.PaymentStatus == Client.Models.Enum.OrderEnum.PaymentStatus.Paid)
-                        {
-                            <td scope="col" class="bg-success ">@order.OrderStatus</td>
-                        }
-                        else if (order.PaymentStatus == Client.Models.Enum.OrderEnum.PaymentStatus.Failed)
-                        {
-                            <td scope="col" class="bg-danger">@order.OrderStatus</td>
-                        }
-                        else
-                        {
-                            <td scope="col">@order.PaymentStatus</td>
-                        }
-
-
-                        @if (order.PaymentMethod == Client.Models.Enum.OrderEnum.PaymentMethod.Pending)
-                        {
-                            <td scope="col" class="bg-secondary">@order.PaymentMethod</td>
-                        }
-                        else if (order.PaymentMethod == Client.Models.Enum.OrderEnum.PaymentMethod.Wallet)
-                        {
-                            <td scope="col" style="background-color:#b8005e; color:white">@order.PaymentMethod</td>
-                        }
-                        else if (order.PaymentMethod == Client.Models.Enum.OrderEnum.PaymentMethod.CreditCard)
-                        {
-                            <td scope="col" style="background-color:#6455fd; color:white">@order.PaymentMethod</td>
-                        }
-                        else if (order.PaymentMethod == Client.Models.Enum.OrderEnum.PaymentMethod.Free)
-                        {
-                            <td scope="col" class="bg-success">@order.PaymentMethod</td>
-                        }
-                        else
-                        {
-                            <td scope="col">@order.PaymentMethod</td>
-                        }
-                        <td scope="col" title="@order.CreatedAt" style="max-width:90px" class="text-truncate">@order.CreatedAt</td>
-                        <td scope="col" title="@order.UpdatedAt" style="max-width:90px" class="text-truncate">@order.UpdatedAt</td>
-                        <td scope="col" title="@order.CustomerId" style="max-width:90px" class="text-truncate">@order.CustomerId</td>
-                        <td>
-                            <a href="javascript:void(0);"
-                               data-url="@Url.Action("OrderDetail", "Admin", new { id = order.Id })"
-                               onclick="showDetailModal(this)"
-                               title="Order Detail">
-                                <i class="fa-solid fa-pen-to-square" style="color:#0b3d0d"></i>
-                            </a>
+                            @if (order.PaymentStatus == Client.Models.Enum.OrderEnum.PaymentStatus.Pending)
+                            {
+                                <td scope="col" class="bg-secondary">@order.OrderStatus</td>
+                            }
+                            else if (order.PaymentStatus == Client.Models.Enum.OrderEnum.PaymentStatus.Paid)
+                            {
+                                <td scope="col" class="bg-success ">@order.OrderStatus</td>
+                            }
+                            else if (order.PaymentStatus == Client.Models.Enum.OrderEnum.PaymentStatus.Failed)
+                            {
+                                <td scope="col" class="bg-danger">@order.OrderStatus</td>
+                            }
+                            else
+                            {
+                                <td scope="col">@order.PaymentStatus</td>
+                            }
 
 
-                        </td>
+                            @if (order.PaymentMethod == Client.Models.Enum.OrderEnum.PaymentMethod.Pending)
+                            {
+                                <td scope="col" class="bg-secondary">@order.PaymentMethod</td>
+                            }
+                            else if (order.PaymentMethod == Client.Models.Enum.OrderEnum.PaymentMethod.Wallet)
+                            {
+                                <td scope="col" style="background-color:#b8005e; color:white">@order.PaymentMethod</td>
+                            }
+                            else if (order.PaymentMethod == Client.Models.Enum.OrderEnum.PaymentMethod.CreditCard)
+                            {
+                                <td scope="col" style="background-color:#6455fd; color:white">@order.PaymentMethod</td>
+                            }
+                            else if (order.PaymentMethod == Client.Models.Enum.OrderEnum.PaymentMethod.Free)
+                            {
+                                <td scope="col" class="bg-success">@order.PaymentMethod</td>
+                            }
+                            else
+                            {
+                                <td scope="col">@order.PaymentMethod</td>
+                            }
+                            <td scope="col" title="@order.CreatedAt" style="max-width:90px" class="text-truncate">@order.CreatedAt</td>
+                            <td scope="col" title="@order.UpdatedAt" style="max-width:90px" class="text-truncate">@order.UpdatedAt</td>
+                            <td scope="col" title="@order.CustomerId" style="max-width:90px" class="text-truncate">@order.CustomerId</td>
+                            <td>
+                                <a href="javascript:void(0);"
+                                   data-url="@Url.Action("OrderDetail", "Admin", new { id = order.Id })"
+                                   onclick="showDetailModal(this)"
+                                   title="Order Detail">
+                                    <i class="fa-solid fa-pen-to-square" style="color:#0b3d0d"></i>
+                                </a>
 
-                        <td>
-                            <a asp-action="UpdateOrderStatus" asp-route-Id="@order.Id" class="text-danger mx-2"><span><i class="fa-regular fa-pen-to-square"></i></span></a>
-                        </td>
-                        @* <td>-</td> *@
-                    </tr>
+
+                            </td>
+
+                            <td>
+                                <a asp-action="UpdateOrderStatus" asp-route-Id="@order.Id" class="text-danger mx-2"><span><i class="fa-regular fa-pen-to-square"></i></span></a>
+                            </td>
+                            @* <td>-</td> *@
+                        </tr>
+                    }
                 }
             }
             else
@@ -285,45 +310,73 @@
     </table>
 
     <!-- Phân trang -->
-    <div class="d-flex justify-content-between mt-3">
+    
+<div class="d-flex justify-content-between align-items-center mt-3">
+    <!-- Total Items -->
+    <div>Total: @Model.Orders.Count items</div>
 
-        <div>Total: @(Model.totalItem) items</div>
+    <!-- Records Per Page -->
+    <div class="d-flex align-items-center">
+        <form method="get" asp-controller="Admin" asp-action="@ViewData["FilterOrderAction"]" class="d-inline">
+            <select name="pageSize" class="form-select form-select-sm w-auto me-2" onchange="this.form.submit()">
+                <option>Select records per page</option>
+                @foreach (var size in new[] { 3, 5, 10 })
+                {
+                    <option value="@size">
+                        @size records per page
+                    </option>
+                }
+            </select>
+            <input type="hidden" name="page" value="1" />
+            <input type="hidden" name="status" value="@(ViewContext.HttpContext.Request.Query["status"])" />
+        </form>
 
-        <div>
-            <form method="get" asp-controller="Admin" asp-action="OrdersManager" class="d-inline">
-                <select name="pageSize" class="form-select form-select-sm w-auto d-inline-block" onchange="this.form.submit()">
-                    <option>Select records per page</option>
-                    <option value="3">3 records per page</option>
-                    <option value="5">5 records per page</option>
-                    <option value="10">10 records per page</option>
-                </select>
-                <input type="hidden" name="page" value="1" />
-            </form>
+        <!-- Pagination -->
+        <nav aria-label="Page navigation example">
+            <ul class="pagination pagination-sm mb-0">
+                <!-- Previous Page -->
+                <li class="page-item @(Model.pageNumber == 1 ? "disabled" : "")">
+                    <a class="page-link"
+                       asp-controller="Admin"
+                       asp-action="@ViewData["FilterOrderAction"]"
+                       asp-route-status="@(ViewContext.HttpContext.Request.Query["status"])"
+                       asp-route-page="@(Model.pageNumber - 1)"
+                       asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
+                        Previous
+                    </a>
+                </li>
 
-            <nav aria-label="Page navigation example" class="d-inline-block">
-                <ul class="pagination pagination-sm mb-0">
-                    <li class="page-item @(Model.pageNumber == 1 || Model.Orders==null ? "disabled" : "")">
-                        <a class="page-link" asp-controller="Admin" asp-action="OrdersManager" asp-route-page="@(Model.pageNumber - 1)" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
-                            Previous
+                <!-- Page Numbers -->
+                @for (var pg = 1; pg <= Model.pageCount; pg++)
+                {
+                    <li class="page-item @(pg == Model.pageNumber ? "active" : "")">
+                        <a class="page-link"
+                           asp-controller="Admin"
+                           asp-action="@ViewData["FilterOrderAction"]"
+                           asp-route-status="@(ViewContext.HttpContext.Request.Query["status"])"
+                           asp-route-page="@pg"
+                           asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
+                            @pg
                         </a>
                     </li>
-                    @for (var pg = 1; pg <= Model.pageCount; pg++)
-                    {
-                        <li class="page-item @(pg == Model.pageNumber ? "active" : "")">
-                            <a class="page-link" asp-controller="Admin" asp-action="OrdersManager" asp-route-page="@pg" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
-                                @pg
-                            </a>
-                        </li>
-                    }
-                    <li class="page-item @(Model.pageNumber == Model.pageCount ? "disabled" : "")">
-                        <a class="page-link" asp-controller="Admin" asp-action="OrdersManager" asp-route-page="@(Model.pageNumber + 1)" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
-                            Next
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-        </div>
+                }
+
+                <!-- Next Page -->
+                <li class="page-item @(Model.pageNumber == Model.pageCount ? "disabled" : "")">
+                    <a class="page-link"
+                       asp-controller="Admin"
+                       asp-action="@ViewData["FilterOrderAction"]"
+                       asp-route-status="@(ViewContext.HttpContext.Request.Query["status"])"
+                       asp-route-page="@(Model.pageNumber + 1)"
+                       asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
+                        Next
+                    </a>
+                </li>
+            </ul>
+        </nav>
     </div>
+</div>
+
 </div>
 
 

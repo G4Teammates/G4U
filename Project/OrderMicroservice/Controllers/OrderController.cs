@@ -38,11 +38,12 @@ namespace OrderMicroService.Controllers
         }
         //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         [HttpGet("search/{id}")]
-        public async Task<ActionResult> GetOrderById(string id)
+        public async Task<ActionResult> GetOrderById(string id, int? page, int pageSize)
         {
             try
             {
-                ResponseModel response = await _orderService.GetOrderById(id);
+                int pageNumber = (page ?? 1);
+                ResponseModel response = await _orderService.GetOrderById(id, pageNumber, pageSize);
                 if (response.IsSuccess)
                     return Ok(response);
                 return BadRequest(response);
@@ -55,11 +56,12 @@ namespace OrderMicroService.Controllers
         }
 
         [HttpGet("search-payment/{id}")]
-        public async Task<ActionResult> GetOrder(string id)
+        public async Task<ActionResult> GetOrder(string id, int? page, int pageSize)
         {
             try
             {
-                ResponseModel response = await _orderService.GetOrderByTransaction(id);
+                int pageNumber = (page ?? 1);
+                ResponseModel response = await _orderService.GetOrderByTransaction(id, pageNumber, pageSize);
                 if (response.IsSuccess)
                     return Ok(response);
                 return BadRequest(response);

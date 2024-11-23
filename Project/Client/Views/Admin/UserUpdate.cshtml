@@ -27,9 +27,6 @@
                         <div class="row">
                             <div class="col">
                                 <input type="hidden" asp-for="@Model.Id" />
-                                <input type="hidden" asp-for="@Model.Status" />
-                                <input type="hidden" asp-for="@Model.Role" />
-                                <input type="hidden" asp-for="@Model.EmailConfirmation" />
 
                                 <!-- Username (Hidden) -->
                                 <div class="form-group mb-3" style="display: none;">
@@ -78,13 +75,21 @@
                                         <option value="Deleted">Deleted</option>
                                     </select>
                                     <span asp-validation-for="Status" class="text-danger"></span>
+                                </div> 
+                                <div class="form-group mb-3">
+                                    <label asp-for="@Model.EmailConfirmation" class="font-weight-bold">Email Confirmation</label>
+                                    <select asp-for="@Model.EmailConfirmation" class="form-control form-control-sm">
+                                        <option value="Unconfirmed">Unconfirmed</option>
+                                        <option value="Confirmed">Confirmed</option>
+                                    </select>
+                                    <span asp-validation-for="EmailConfirmation" class="text-danger"></span>
                                 </div>
                             </div>
                             <!-- Avatar URL -->
                             <div class="col">
                                 <div class="text-center">
-                                    @if (Model.AvatarFile != null)
-                                    {
+                                    <input hidden asp-for="@Model.Avatar" />
+                               
                                         <div>
                                             <img id="avatarPreviewUpdate" src="@Model.Avatar" alt="Avatar Preview" style="width:200px; height:200px;" />
                                         </div>
@@ -92,17 +97,6 @@
                                         <a id="changeAvatarUpdateBtn" class="btn btn-outline-dark text-center mt-2">Change Avatar</a>
                                         <span asp-validation-for="@Model.Avatar" class="text-danger"></span>
 
-                                    }
-                                    else
-                                    {
-                                        <div>
-                                            <img id="avatarPreviewUpdate" src="@Model.Avatar" alt="Avatar Preview" style="width:200px; height:200px;" />
-                                        </div>
-                                        <input type="file" id="avatarInputUpdate" asp-for="@Model.AvatarFile" class="form-control mt-2" style="display: none;" accept=".png, .jpg" />
-                                        <a id="changeAvatarUpdateBtn" class="btn btn-outline-dark text-center mt-2">Change Avatar</a>
-                                        <span asp-validation-for="@Model.Avatar" class="text-danger"></span>
-
-                                    }
                                 </div>
                             </div>
                         </div>

@@ -197,40 +197,8 @@ namespace Client.Controllers
         [HttpGet]
         public async Task<IActionResult> UsersManager(int? page, int pageSize = 5)
         {
-            if (TempData.ContainsKey("searchResult"))
-            {
-                var userJson = TempData["searchResult"] as string;
-                if (userJson == "User not found")
-                {
-                    UserViewModel userViewModel = new()
-                    {
-                        CreateUser = new CreateUser(),
-                    };
-                    TempData["success"] = $"Not found any user";
-                    return View(userViewModel);
-                }
-                if (!string.IsNullOrEmpty(userJson))
-                {
-                    // Convert JSON thành OrderModel
-                    var userSearch = JsonConvert.DeserializeObject<ICollection<UsersDTO>>(userJson);
-                    UserViewModel userViewModel = new()
-                    {
-                        CreateUser = new CreateUser(),
-                        Users = userSearch
-                    };
-                    var data = userSearch;
-                    userViewModel.pageNumber = 1;
-                    userViewModel.totalItem = data.Count;
-                    userViewModel.pageSize = 99;
-                    userViewModel.pageCount = (int)Math.Ceiling(userSearch.Count / (double)pageSize);
-
-                    return View(userViewModel);
-                }
-            }
-
-
             int pageNumber = (page ?? 1);
-            UserViewModel users = new()
+            UserViewModel userViewModel = new()
             {
                 CreateUser = new CreateUser()
             };
@@ -242,12 +210,12 @@ namespace Client.Controllers
 
                 if (response != null && response.IsSuccess)
                 {
-                    users.Users = JsonConvert.DeserializeObject<ICollection<UsersDTO>>(Convert.ToString(response.Result.ToString()!));
-                    var data = users.Users;
-                    users.pageNumber = pageNumber;
-                    users.totalItem = data.Count;
-                    users.pageSize = pageSize;
-                    users.pageCount = (int)Math.Ceiling(total.Count / (double)pageSize);
+                    userViewModel.Users = JsonConvert.DeserializeObject<ICollection<UsersDTO>>(Convert.ToString(response.Result.ToString()!));
+                    var data = userViewModel.Users;
+                    userViewModel.pageNumber = pageNumber;
+                    userViewModel.totalItem = data.Count;
+                    userViewModel.pageSize = pageSize;
+                    userViewModel.pageCount = (int)Math.Ceiling(total.Count / (double)pageSize);
                     TempData["success"] = "Load user is success";
                 }
                 else
@@ -261,8 +229,39 @@ namespace Client.Controllers
                 TempData["error"] = ex.Message;
             }
 
-            return View(users);
+            return View(userViewModel);
         }
+        //[HttpPost]
+        //public async Task<IActionResult> UsersManager(ICollection<UsersDTO> users, int? page, int pageSize = 5)
+        //{
+        //    int pageNumber = (page ?? 1);
+        //    UserViewModel userViewModel = new()
+        //    {
+        //        CreateUser = new CreateUser(),
+        //        Users = users
+        //    };
+        //    try
+        //    {
+        //        ResponseModel? response2 = await _userService.GetAllUserAsync(1, 99);
+        //        var total = JsonConvert.DeserializeObject<ICollection<UsersDTO>>(Convert.ToString(response2.Result.ToString()!));
+
+        //        var data = userViewModel.Users;
+        //        userViewModel.pageNumber = pageNumber;
+        //        userViewModel.totalItem = data.Count;
+        //        userViewModel.pageSize = pageSize;
+        //        userViewModel.pageCount = (int)Math.Ceiling(total.Count / (double)pageSize);
+        //        TempData["success"] = "Load user is success";
+
+
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        TempData["error"] = ex.Message;
+        //    }
+
+        //    return View(userViewModel);
+        //}
 
 
         [HttpPost]
@@ -311,9 +310,11 @@ namespace Client.Controllers
                 {
                     UpdateUser = user
                 };
-                // Trả về model UsersDTO để sử dụng trong View
-                ViewData["role"] = user.Role;
+
+                // Use TempData to persist the role across redirects
+                TempData["role"] = user.Role.ToString();
                 TempData["success"] = "Get user need update success";
+
                 return PartialView("UserUpdate", user);
             }
             else
@@ -323,21 +324,25 @@ namespace Client.Controllers
             return NotFound();
         }
 
+
         [HttpPost]
         public async Task<IActionResult> UserUpdate(UpdateUser user)
         {
-            UserViewModel userViewModel = new() 
-            { 
-                UpdateUser = user 
+            UserViewModel userViewModel = new()
+            {
+                UpdateUser = user
             };
 
-            if (user.Role != UserRole.Admin && ViewData["role"] == UserRole.Admin.ToString())
+            // Get the role from TempData instead of ViewData
+            var roleFromTempData = TempData["role"]?.ToString();
+
+            if (user.Role != UserRole.Admin && roleFromTempData == UserRole.Admin.ToString())
             {
                 TempData["error"] = "Can not change role admin";
                 return RedirectToAction(nameof(UsersManager));
             }
 
-            if (user.Role == UserRole.Admin && user.Status != UserStatus.Active && ViewData["role"] == UserRole.Admin.ToString())
+            if (user.Role == UserRole.Admin && user.Status != UserStatus.Active && roleFromTempData == UserRole.Admin.ToString())
             {
                 TempData["error"] = "Can not change status of role admin";
                 return RedirectToAction(nameof(UsersManager));
@@ -367,9 +372,7 @@ namespace Client.Controllers
                     Role = user.Role,
                     Status = user.Status,
                     Avatar = user.Avatar
-                    // Nếu bạn có thêm thuộc tính, hãy thêm vào đây
                 };
-
 
                 ResponseModel? response = await _userService.UpdateUser(updateUser);
 
@@ -386,8 +389,8 @@ namespace Client.Controllers
 
             // Nếu ModelState không hợp lệ, trả về lại model để hiển thị lỗi
             return RedirectToAction(nameof(UsersManager));
-
         }
+
 
         [HttpGet]
         public async Task<IActionResult> UserDelete(string id)
@@ -430,36 +433,84 @@ namespace Client.Controllers
         }
 
 
-        public async Task<IActionResult> SearchUsers(string query)
+        //public async Task<IActionResult> SearchUsers(string query, int? page, int pageSize = 5)
+        //{
+        //    int pageNumber = page ?? 1;
+        //    UserViewModel userViewModel = new() { CreateUser = new CreateUser() };
+
+        //    try
+        //    {
+        //        var response = await _userService.FindUsers(query, 1, 999);
+
+        //        if (response.IsSuccess && response.Result != null)
+        //        {
+        //            var allUsers = JsonConvert.DeserializeObject<ICollection<UsersDTO>>(response.Result.ToString());
+
+        //            // Phân trang
+        //            (userViewModel.pageCount, userViewModel.Users) = Paginate(allUsers, pageNumber, pageSize);
+
+        //            userViewModel.pageNumber = pageNumber;
+        //            userViewModel.pageSize = pageSize;
+        //            userViewModel.totalItem = allUsers.Count;
+
+        //            TempData["success"] = $"Found {allUsers.Count} user(s) matching '{query}'";
+        //            return View(nameof(UsersManager), userViewModel);
+        //        }
+        //        else
+        //        {
+        //            TempData["error"] = response.Message ?? "User not found";
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        TempData["error"] = ex.Message;
+        //    }
+
+        //    return View(nameof(UsersManager), userViewModel);
+        //}
+
+        // Prepare to search users
+        public async Task<IActionResult> PrepareSearchUsers(string query, int? page, int pageSize = 5)
         {
+            ViewData["FilterUserAction"] = nameof(SearchUsers);
+            return await SearchUsers(query, page, pageSize);
+        }
+
+        // Search users by query
+        public async Task<IActionResult> SearchUsers(string query, int? page, int pageSize = 5)
+        {
+            ViewData["FilterUserAction"] = nameof(SearchUsers);
+
+            int pageNumber = page ?? 1;
+            UserViewModel userViewModel = new() 
+            { 
+                CreateUser = new CreateUser(),
+                Users = new List<UsersDTO>()
+            };
+
             try
             {
-                // Gọi phương thức FindUser để tìm kiếm người dùng theo query
-                var response = await _userService.FindUsers(query);
-
-                // Kiểm tra xem tìm kiếm có thành công và trả về kết quả không
-                if (response.IsSuccess && response.Result == null)
-                {
-                    TempData["searchResult"] = "User not found";
-                    return RedirectToAction(nameof(UsersManager));
-                }
+                var response = await _userService.FindUsers(query, 1, 999);
 
                 if (response.IsSuccess && response.Result != null)
                 {
-                    var users = JsonConvert.DeserializeObject<ICollection<UsersDTO>>(response.Result.ToString());
-                    TempData["searchResult"] = JsonConvert.SerializeObject(users);
+                    var allUsers = JsonConvert.DeserializeObject<ICollection<UsersDTO>>(response.Result.ToString());
 
-                    if (users.Count == 1)
-                        TempData["success"] = $"Was found 1 user";
-                    else
-                    {
-                        TempData["success"] = $"Was found {users.Count} users";
-                    }
-                    return RedirectToAction(nameof(UsersManager));
+                    // Paginate results
+                    (userViewModel.pageCount, userViewModel.Users) = Paginate(allUsers, pageNumber, pageSize);
+
+                    userViewModel.pageNumber = pageNumber;
+                    userViewModel.pageSize = pageSize;
+                    userViewModel.totalItem = allUsers.Count;
+
+                    TempData["success"] = $"Found {allUsers.Count} user(s) matching '{query}'";
+                    return View(nameof(UsersManager), userViewModel);
                 }
                 else
                 {
-                    TempData["error"] = response.Message;
+                    TempData["error"] = response.Message ?? "User not found";
+                    userViewModel.pageNumber = pageNumber;
+                    userViewModel.pageSize = pageSize;
                 }
             }
             catch (Exception ex)
@@ -467,38 +518,58 @@ namespace Client.Controllers
                 TempData["error"] = ex.Message;
             }
 
-            // Nếu có lỗi hoặc không tìm thấy người dùng, chuyển hướng đến trang quản lý người dùng
-            return RedirectToAction(nameof(UsersManager));
+            return View(nameof(UsersManager), userViewModel);
         }
 
-
-        public async Task<IActionResult> FilterByUserStatus(UserStatus status)
+        // Filter users by status
+        public async Task<IActionResult> FilterByUserStatus(UserStatus status, int? page, int pageSize = 5)
         {
-            return await FilterUsers(u => u.Status == status, $"User status '{status}' not found", $"User status '{status}'");
+            ViewData["FilterUserAction"] = nameof(FilterByUserStatus);
+            return await FilterUsers(u => u.Status == status, $"User status '{status}' not found", $"User status '{status}'", page, pageSize);
         }
 
-        public async Task<IActionResult> FilterByEmailStatus(EmailStatus status)
+        // Filter users by email status
+        public async Task<IActionResult> FilterByEmailStatus(EmailStatus status, int? page, int pageSize = 5)
         {
-            return await FilterUsers(u => u.EmailConfirmation == status, $"Email status '{status}' not found", $"Email status '{status}'");
+            ViewData["FilterUserAction"] = nameof(FilterByEmailStatus);
+            return await FilterUsers(u => u.EmailConfirmation == status, $"Email status '{status}' not found", $"Email status '{status}'", page, pageSize);
+        }
+        // Filter users by role
+        public async Task<IActionResult> FilterByRole(UserRole status, int? page, int pageSize = 5)
+        {
+            ViewData["FilterUserAction"] = nameof(FilterByRole);
+            return await FilterUsers(u => u.Role == status, $"Role '{status}' not found", $"Role '{status}'", page, pageSize);
         }
 
-
-        private async Task<IActionResult> FilterUsers(Func<UsersDTO, bool> predicate, string errorMessage, string statusDescription)
+        // Generic method to filter users based on a predicate
+        private async Task<IActionResult> FilterUsers(Func<UsersDTO, bool> predicate, string errorMessage, string statusDescription, int? page, int pageSize)
         {
+            int pageNumber = page ?? 1;
+            UserViewModel userViewModel = new()
+            {
+                CreateUser = new CreateUser(),
+                Users = new List<UsersDTO>()
+            };
+
             try
             {
-                var response = await _userService.GetAllUserAsync(1, 99);
+                var response = await _userService.GetAllUserAsync(1, 999); // Get all users
 
                 if (response.IsSuccess && response.Result != null)
                 {
-                    var users = JsonConvert.DeserializeObject<ICollection<UsersDTO>>(response.Result.ToString())
-                                   .Where(predicate)
-                                   .ToList();
+                    var allUsers = JsonConvert.DeserializeObject<ICollection<UsersDTO>>(response.Result.ToString())
+                        .Where(predicate)
+                        .ToList();
 
-                    TempData["searchResult"] = JsonConvert.SerializeObject(users);
+                    // Paginate results
+                    (userViewModel.pageCount, userViewModel.Users) = Paginate(allUsers, pageNumber, pageSize);
+
+                    userViewModel.pageNumber = pageNumber;
+                    userViewModel.pageSize = pageSize;
+                    userViewModel.totalItem = allUsers.Count;
+
                     TempData["success"] = $"Filter user with {statusDescription} is successful";
-                    return RedirectToAction(nameof(UsersManager));
-                    //return View(nameof(UsersManager));
+                    return View(nameof(UsersManager), userViewModel);
                 }
                 else
                 {
@@ -510,9 +581,22 @@ namespace Client.Controllers
                 TempData["error"] = ex.Message;
             }
 
-            return RedirectToAction(nameof(UsersManager));
+            return View(nameof(UsersManager), userViewModel);
         }
 
+        // Paginate data (for users)
+        private (int pageCount, ICollection<UsersDTO> paginatedData) Paginate(ICollection<UsersDTO> data, int pageNumber, int pageSize)
+        {
+            int totalItems = data.Count;
+            int pageCount = (int)Math.Ceiling(totalItems / (double)pageSize);
+
+            var paginatedData = data
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            return (pageCount, paginatedData);
+        }
 
 
         #endregion
@@ -888,24 +972,6 @@ namespace Client.Controllers
             int pageNumber = (page ?? 1);
             try
             {
-                // Nếu có dữ liệu tìm kiếm, lấy từ TempData
-                if (TempData.ContainsKey("searchResult"))
-                {
-                    var orderJson = TempData["searchResult"] as string;
-                    if (!string.IsNullOrEmpty(orderJson))
-                    {
-                        // Deserialize JSON thành mảng chứa OrderViewModel
-                        var orderList = JsonConvert.DeserializeObject<OrderViewModel>(orderJson);
-
-                        if (orderList != null)
-                        {
-                            return View(orderList);
-                        }
-                    }
-                }
-
-
-
                 // Nếu không có dữ liệu tìm kiếm, lấy tất cả đơn hàng
                 ResponseModel? response = await _orderService.GetAll(pageNumber, pageSize);
                 ResponseModel? response2 = await _orderService.GetAll(1, 99);
@@ -936,53 +1002,6 @@ namespace Client.Controllers
         }
 
 
-
-        public async Task<IActionResult> SearchOrder(string id)
-        {
-            OrderViewModel orders = new()
-            {
-                Orders = new List<OrderModel>() // Khởi tạo danh sách Orders
-            };
-
-            try
-            {
-                // Tìm đơn hàng theo Id đầu tiên
-                var response = await _orderService.GetOrderById(id);
-                if (response.Result == null)
-                {
-                    // Nếu không tìm thấy theo Id, tìm theo Transaction Id
-                    response = await _orderService.GetOrderByTransaction(id);
-                }
-
-                if (response.IsSuccess && response.Result != null)
-                {
-                    // Deserialize thành ICollection<OrderModel> nếu có kết quả trả về
-                    var ordersList = JsonConvert.DeserializeObject<ICollection<OrderModel>>(response.Result.ToString());
-
-                    if (ordersList != null && ordersList.Any())
-                    {
-                        // Nếu có nhiều đơn hàng hoặc một đơn hàng, gán vào Orders
-                        orders.Orders = ordersList;
-                        TempData["searchResult"] = JsonConvert.SerializeObject(orders);
-                        TempData["success"] = response.Message;
-                    }
-                    else
-                    {
-                        TempData["error"] = "No orders found for the given criteria.";
-                    }
-                }
-                else
-                {
-                    TempData["error"] = response.Message ?? "Error occurred while fetching orders.";
-                }
-            }
-            catch (Exception ex)
-            {
-                TempData["error"] = ex.Message;
-            }
-
-            return RedirectToAction(nameof(OrdersManager));
-        }
 
 
         [HttpGet]
@@ -1045,11 +1064,12 @@ namespace Client.Controllers
         {
             try
             {
-                ResponseModel response = await _orderService.GetOrderById(id);
+                ResponseModel response = await _orderService.GetOrderById(id, 1, 1);
 
                 if (response.IsSuccess)
                 {
-                    var order = JsonConvert.DeserializeObject<OrderModel>(Convert.ToString(response.Result.ToString()!));
+                    ICollection<OrderModel> orders = JsonConvert.DeserializeObject<ICollection<OrderModel>>(Convert.ToString(response.Result.ToString()!));
+                    OrderModel order = orders.FirstOrDefault();
                     TempData["success"] = "Get order need to update successfully";
                     return View(order);
                 }
@@ -1065,54 +1085,147 @@ namespace Client.Controllers
             return RedirectToAction(nameof(OrdersManager));
         }
 
-
-
-        public async Task<IActionResult> FilterByOrderStatus(OrderStatus status)
+        // Phương thức SearchOrder
+        public async Task<IActionResult> SearchOrder(string id, int? page, int pageSize = 5)
         {
-            return await FilterOrders(u => u.OrderStatus == status, $"Order status '{status}' not found", $"Order status '{status}'");
-        }
+            int pageNumber = page ?? 1;
 
-        public async Task<IActionResult> FilterByPaymentStatus(PaymentStatus status)
-        {
-            return await FilterOrders(u => u.PaymentStatus == status, $"Payment status '{status}' not found", $"Payment status '{status}'");
-        }
-        public async Task<IActionResult> FilterByPaymentMethod(PaymentMethod status)
-        {
-            return await FilterOrders(u => u.PaymentMethod == status, $"Payment method '{status}' not found", $"Payment method '{status}'");
-        }
+            OrderViewModel orderViewModel = new()
+            {
+                Orders = new List<OrderModel>(),
+                pageNumber = pageNumber,
+                pageSize = pageSize
+            };
 
-
-        private async Task<IActionResult> FilterOrders(Func<OrderModel, bool> predicate, string errorMessage, string statusDescription)
-        {
-            OrderViewModel orders = new();
             try
             {
-                var response = await _orderService.GetAll(1, 10);
+                // Tìm đơn hàng theo Id hoặc Transaction Id
+                var response = await SearchOrderByIdOrTransaction(id);
 
                 if (response.IsSuccess && response.Result != null)
                 {
-                    orders.Orders = JsonConvert.DeserializeObject<ICollection<OrderModel>>(response.Result.ToString())
-                                  .Where(predicate)
-                                  .ToList();
+                    var ordersList = JsonConvert.DeserializeObject<ICollection<OrderModel>>(response.Result.ToString());
+                    (orderViewModel.pageCount, orderViewModel.Orders) = Paginate(ordersList, pageNumber, pageSize);
 
-                    TempData["searchResult"] = JsonConvert.SerializeObject(orders);
-                    TempData["success"] = $"Filter order with {statusDescription} is successful";
-                    return RedirectToAction(nameof(OrdersManager));
-                    //return View(nameof(UsersManager));
+                    TempData["success"] = response.Message ?? "Orders fetched successfully.";
                 }
                 else
                 {
-                    TempData["error"] = response.Message ?? errorMessage;
+                    TempData["error"] = response.Message ?? "No orders found."; 
+                    page = 1;
                 }
             }
             catch (Exception ex)
             {
-                TempData["error"] = ex.Message;
+                TempData["error"] = $"An unexpected error occurred: {ex.Message}";
             }
 
-            return RedirectToAction(nameof(OrdersManager));
+            return View(nameof(OrdersManager), orderViewModel);
         }
 
+        // Tìm kiếm đơn hàng theo Id hoặc Transaction Id
+        private async Task<ResponseModel> SearchOrderByIdOrTransaction(string id)
+        {
+            var response = await _orderService.GetOrderById(id, 1, 999);
+            if (response.Result == null || !response.IsSuccess)
+            {
+                response = await _orderService.GetOrderByTransaction(id, 1, 999);
+            }
+            return response;
+        }
+
+        // Phương thức FilterOrders (chung cho tất cả bộ lọc)
+        public async Task<IActionResult> FilterOrders<T>(
+            Func<OrderModel, bool> predicate,
+            string successMessage,
+            string errorMessage,
+            int? page,
+            int pageSize)
+        {
+            int pageNumber = page ?? 1;
+
+            OrderViewModel orderViewModel = new()
+            {
+                Orders = new List<OrderModel>(),
+                pageNumber = pageNumber,
+                pageSize = pageSize
+            };
+
+            try
+            {
+                var response = await _orderService.GetAll(1, 999);
+
+                if (response.IsSuccess && response.Result != null)
+                {
+                    var filteredOrders = JsonConvert.DeserializeObject<ICollection<OrderModel>>(response.Result.ToString())
+                        .Where(predicate)
+                        .ToList();
+
+                    (orderViewModel.pageCount, orderViewModel.Orders) = Paginate(filteredOrders, pageNumber, pageSize);
+
+                    TempData["success"] = successMessage;
+                }
+                else
+                {
+                    TempData["error"] = errorMessage;
+                    page = 1;
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = $"An unexpected error occurred: {ex.Message}";
+            }
+
+            return View(nameof(OrdersManager), orderViewModel);
+        }
+
+        // Các phương thức filter cụ thể sử dụng FilterOrders
+        public async Task<IActionResult> FilterByOrderStatus(OrderStatus status, int? page, int pageSize = 5)
+        {
+            ViewData["FilterOrderAction"] = nameof(FilterByOrderStatus);
+            return await FilterOrders<OrderModel>(
+                o => o.OrderStatus == status,
+                $"Filter by order status '{status}' was successful.",
+                $"No orders found with status '{status}'.",
+                page,
+                pageSize);
+        }
+
+        public async Task<IActionResult> FilterByPaymentStatus(PaymentStatus status, int? page, int pageSize = 5)
+        {
+            ViewData["FilterOrderAction"] = nameof(FilterByPaymentStatus);
+            return await FilterOrders<OrderModel>(
+                o => o.PaymentStatus == status,
+                $"Filter by payment status '{status}' was successful.",
+                $"No orders found with payment status '{status}'.",
+                page,
+                pageSize);
+        }
+
+        public async Task<IActionResult> FilterByPaymentMethod(PaymentMethod status, int? page, int pageSize = 5)
+        {
+            ViewData["FilterOrderAction"] = nameof(FilterByPaymentMethod);
+            return await FilterOrders<OrderModel>(
+                o => o.PaymentMethod == status,
+                $"Filter by payment method '{status}' was successful.",
+                $"No orders found with payment method '{status}'.",
+                page,
+                pageSize);
+        }
+
+        // Phương thức Paginate
+        private (int pageCount, ICollection<T> paginatedItems) Paginate<T>(ICollection<T> items, int pageNumber, int pageSize)
+        {
+            int totalItems = items.Count;
+            int pageCount = (int)Math.Ceiling(totalItems / (double)pageSize);
+
+            var paginatedItems = items
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            return (pageCount, paginatedItems);
+        }
 
 
 
@@ -1584,7 +1697,7 @@ namespace Client.Controllers
                 else
                 {
                     /*return Json(new { success = false, message = response?.Message ?? "An unknown error occurred." });*/
-                    TempData["error"] = "An unknown error occurred: "+ response.Message;
+                    TempData["error"] = "An unknown error occurred: " + response.Message;
                     return RedirectToAction("Collection", "Product");
                 }
             }

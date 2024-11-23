@@ -75,7 +75,7 @@ namespace UserMicroService.Configure
                     ValidAudience = JwtOptionModel.Audience,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtOptionModel.Secret)),
                     ClockSkew = TimeSpan.Zero,
-                    RoleClaimType = ClaimTypes.Role
+                    RoleClaimType = ClaimTypes.Role,
                 };
             });
 

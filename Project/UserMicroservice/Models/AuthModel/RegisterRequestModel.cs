@@ -1,9 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using UserMicroservice.Models.CustomValidation;
 
 namespace UserMicroservice.Models.AuthModel
 {
     public class RegisterRequestModel
     {
+        [WhiteSpaceValidation(ErrorMessage = "{0} cannot have leading or trailing spaces and must not contain more than one consecutive space.")]
         [Required(ErrorMessage = "The {0} field is required.")]
         [StringLength(32, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
         [RegularExpression(@"^[a-zA-Z0-9_-]*$", ErrorMessage = "The {0} can only contain letters, numbers, underscores (_), and hyphens (-).")]

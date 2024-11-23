@@ -1,13 +1,16 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using UserMicroservice.DBContexts.Enum;
+using UserMicroservice.Models.CustomValidation;
 
 namespace UserMicroservice.Models.AuthModel
 {
     public class LoginGoogleRequestModel
     {
+        [WhiteSpaceValidation(ErrorMessage = "{0} cannot have leading or trailing spaces and must not contain more than one consecutive space.")]
         [Required(ErrorMessage = "The {0} field is required.")]
         [StringLength(320, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
         public string? Username { get; set; }
+        [WhiteSpaceValidation(ErrorMessage = "{0} cannot have leading or trailing spaces and must not contain more than one consecutive space.")]
         [StringLength(256, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
         public string? DisplayName { get; set; }
         [Required(ErrorMessage = "The {0} field is required.")]
