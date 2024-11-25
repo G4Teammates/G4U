@@ -218,12 +218,33 @@ namespace UserMicroservice.Repositories.Services
 
             try
             {
-                // Kiểm tra xem username và email đã tồn tại chưa
-                var isUserExist = await _helper.IsUserNotExist(registerRequestModel.Username, registerRequestModel.Email);
-                if (!isUserExist.IsSuccess)
+
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == registerRequestModel.Email);
+                if (user.Status != UserStatus.Inactive && user.EmailConfirmation !=EmailStatus.Unconfirmed)
                 {
-                    return isUserExist;
+                    response.Message = "User is exist";
+                    response.IsSuccess = false;
+                    return response;
                 }
+
+                await _userService.DeleteUser(user.Id);
+
+                // Step 2: Check if username or email already exists
+                response = await _helper.IsUserNotExist(registerRequestModel.Username, registerRequestModel.Email);
+                if (!response.IsSuccess)
+                {
+                    response.Message = "Failed to verify if user exists.";
+                    return response;
+                }
+
+                CountModel count = (CountModel)response.Result;
+                if (count.NumUsername != 0)
+                {
+                    response.IsSuccess = false;
+                    response.Message = "Username already exists.";
+                    return response;
+                }
+
                 UserModel userModel = _mapper.Map<UserModel>(registerRequestModel);
                 userModel.Id = ObjectId.GenerateNewId().ToString();
                 User userCreate = _mapper.Map<User>(userModel);
@@ -231,13 +252,11 @@ namespace UserMicroservice.Repositories.Services
                 await _context.AddAsync(userCreate);
                 await _context.SaveChangesAsync();
 
-
                 //Gửi mail kích hoạt tài khoản
-
-
+                await ActiveUserAsync(registerRequestModel.Email);
 
                 response.Result = userModel;
-
+                response.Message = "Register is success";
             }
             catch (Exception ex)
             {
@@ -342,7 +361,7 @@ namespace UserMicroservice.Repositories.Services
 
             }
             catch (Exception ex)
-            { 
+            {
                 response.Message = $"Error: {ex.Message}";
                 response.IsSuccess = false;
             }
@@ -398,14 +417,11 @@ namespace UserMicroservice.Repositories.Services
                     return response;
                 }
                 UserModel user = (UserModel)findUser.Result;
-                if(user.Status == UserStatus.Active)
-                {
-                    response.IsSuccess = false;
-                    response.Message = "User was active";
-                    return response;
-                }
 
                 response = await SendActiveUserEmailAsync(user);
+                return response;
+
+
             }
             catch (Exception ex)
             {

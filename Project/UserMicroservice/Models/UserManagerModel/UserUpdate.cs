@@ -69,6 +69,15 @@ namespace UserMicroservice.Models.UserManagerModel
         public string NormalizedEmail => Email.ToUpper();
 
         /// <summary>
+        /// The Bank Account of the user.
+        /// <br/>
+        /// Số tài khoản của người dùng.
+        /// </summary>
+        [StringLength(17, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 5)]
+        [RegularExpression("^[0-9]+$", ErrorMessage = "The {0} must be number.")]
+        public string? BankAccount { get; set; }
+
+        /// <summary>
         /// The avatar URL of the user.
         /// <br/>
         /// URL của ảnh đại diện người dùng.
