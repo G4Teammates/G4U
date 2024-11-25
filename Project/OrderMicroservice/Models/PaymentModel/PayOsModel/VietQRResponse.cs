@@ -1,4 +1,4 @@
-﻿namespace OrderMicroservice.Models.PaymentModel
+﻿namespace OrderMicroservice.Models.PaymentModel.PayOsModel
 {
     public class VietQRResponse
     {

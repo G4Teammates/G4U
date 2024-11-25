@@ -6,6 +6,7 @@ namespace Client.Repositories.Interfaces.Order
     public interface IPaymentService
     {
         Task<ResponseModel> MoMoPayment(MoMoRequestModel model);
-        Task<ResponseModel> VietQRPayment();
+        Task<ResponseModel> VietQRPayment(VietQRRequestModel model);
+        Task<ResponseModel> Paid(PaidModel model);
     }
 }

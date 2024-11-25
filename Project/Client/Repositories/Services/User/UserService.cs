@@ -3,7 +3,9 @@ using Client.Models.UserDTO;
 using Client.Repositories.Interfaces;
 using Client.Repositories.Interfaces.User;
 using Client.Utility;
+using CloudinaryDotNet;
 using Microsoft.Azure.CognitiveServices.ContentModerator.Models;
+using System.Drawing.Printing;
 using System.Net.Http;
 using System.Text;
 using static Client.Models.Enum.UserEnum.User;
@@ -38,17 +40,17 @@ namespace Client.Repositories.Services.User
             });
         }
 
-        public async Task<ResponseModel> FindUsers(string? query)
+        public async Task<ResponseModel> FindUsers(string? query, int? pageNumber, int pageSize)
         {
             return await _baseService.SendAsync(new RequestModel()
             {
                 ApiType = StaticTypeApi.ApiType.GET,
-                Url = StaticTypeApi.APIGateWay + $"/User/search?query={query}"
+                Url = $"{StaticTypeApi.APIGateWay}/User/search?query={query}&page={pageNumber}&pageSize={pageSize}"
             });
         }
 
 
-		public async Task<ResponseModel> GetAllUserAsync(int? pageNumber, int pageSize)
+        public async Task<ResponseModel> GetAllUserAsync(int? pageNumber, int pageSize)
         {
             return await _baseService.SendAsync(new RequestModel()
             {

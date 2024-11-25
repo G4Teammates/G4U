@@ -88,6 +88,7 @@ namespace UserMicroservice.Controllers
         /// </summary>
         /// <returns>Chuyển hướng đến trang đăng nhập của Google.</returns>
         [HttpGet("signin-google")]
+        [AllowAnonymous]
         public IActionResult ExternalLoginGoogle()
         {
             var properties = new AuthenticationProperties { RedirectUri = Url.Action("ExternalLoginCallback") };
@@ -99,6 +100,7 @@ namespace UserMicroservice.Controllers
         /// </summary>
         /// <returns>Chuyển hướng về frontend với token JWT (nếu thành công đăng nhập thành công).</returns>
         [HttpGet("external-login-callback")]
+        [AllowAnonymous]
         public async Task<IActionResult> ExternalLoginCallback()
         {
             ResponseModel response = new();
@@ -135,6 +137,7 @@ namespace UserMicroservice.Controllers
         }
 
         [HttpPost("active-user")]
+        [AllowAnonymous]
         public async Task<IActionResult> ActiveUser(string email)
         {
             try

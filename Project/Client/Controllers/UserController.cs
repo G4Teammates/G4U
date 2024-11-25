@@ -72,7 +72,15 @@ namespace Client.Controllers
                     }
 
                     _tokenProvider.SetToken(user!.Token);
-                    HttpContext.Response.Cookies.Append("IsLogin", response.IsSuccess.ToString());
+
+                    var cookieOptions = new CookieOptions
+                    {
+                        HttpOnly = true, // Bảo vệ cookie khỏi bị truy cập bởi JavaScript
+                        Secure = true, // Chỉ gửi cookie qua HTTPS
+                        //SameSite = SameSiteMode.Strict, // Ngăn chặn cookie gửi từ bên thứ ba
+                        Expires = DateTime.UtcNow.AddDays(1) // Đặt thời hạn hết hạn là 1 ngày
+                    };
+                    HttpContext.Response.Cookies.Append("IsLogin", response.IsSuccess.ToString(), cookieOptions);
 
                     IEnumerable<Claim> claim = HttpContext.User.Claims;
                     UserClaimModel userClaim = new UserClaimModel
@@ -250,7 +258,7 @@ namespace Client.Controllers
                     {
                         TempData["success"] = "Registration successful. Check your email to activate your account.";
                         await _authenService.ActiveUserAsync(user.Email);
-                        return RedirectToAction("Index", "Home");
+                        return View(register);
                     }
                     else
                     {
@@ -261,6 +269,7 @@ namespace Client.Controllers
                 {
                     // Xử lý lỗi nếu đăng ký thất bại
                     TempData["error"] = response.Message ?? "Registration failed. Please try again.";
+                    return View(register);
                 }
             }
             catch (Exception ex)

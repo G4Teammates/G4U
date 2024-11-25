@@ -14,7 +14,7 @@ namespace UserMicroservice.Repositories.Interfaces
         Task<ResponseModel> AddUserAsync(AddUserModel user);
         Task<ResponseModel> UpdateUser(UserUpdate user);
         Task<ResponseModel> DeleteUser(string id);
-        Task<ResponseModel>? FindUsers(string? query);
+        Task<ResponseModel>? FindUsers(string? query, int page, int pageSize);
         Task<ResponseModel> ChangeStatus(string id, UserStatus status);
 
         Task<ResponseModel> TotalRequest();
