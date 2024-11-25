@@ -10,8 +10,8 @@ namespace OrderMicroservice.Repositories.Interfaces
     public interface IOrderService
     {
         Task<ResponseModel> GetAll(int pageNumber, int pageSize);
-        Task<ResponseModel> GetOrderById(string id);
-        Task<ResponseModel> GetOrderByTransaction(string id);
+        Task<ResponseModel> GetOrderById(string id, int pageNumber, int pageSize);
+        Task<ResponseModel> GetOrderByTransaction(string id, int pageNumber, int pageSize);
         Task<ResponseModel> Create(OrderModel order);
         Task<ResponseModel> UpdateTransId(string orderId, string transId);
         Task<ResponseModel> UpdateStatus(string id, PaymentStatusModel status);

@@ -17,6 +17,7 @@ using static Google.Apis.Requests.BatchRequest;
 using X.PagedList.Extensions;
 using UserMicroservice.Models.Message;
 using ZstdSharp.Unsafe;
+using UserMicroservice.Models.AuthModel;
 
 namespace UserMicroservice.Repositories.Services
 {
@@ -40,12 +41,27 @@ namespace UserMicroservice.Repositories.Services
             ResponseModel response = new();
             try
             {
+
                 // Step 1: Validate user input
                 response = _helper.IsUserNotNull(userInput);
                 if (!response.IsSuccess)
                 {
                     response.Message = "Invalid user input.";
                     return response;
+                }
+
+
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == userInput.Email);
+                if (user != null)
+                {
+                    if (user.Status != UserStatus.Inactive)
+                    {
+                        response.Message = "User is exist";
+                        response.IsSuccess = false;
+                        return response;
+                    }
+
+                    await DeleteUser(user.Id);
                 }
 
                 // Step 2: Check if username or email already exists
@@ -72,6 +88,15 @@ namespace UserMicroservice.Repositories.Services
 
                 // Step 3: Map AddUserModel to User entity
                 UserModel userMapper = _mapper.Map<UserModel>(userInput);
+
+                userMapper.Status = UserStatus.Active;
+                userMapper.EmailConfirmation = EmailStatus.Confirmed;
+                userMapper.UpdatedAt = DateTime.UtcNow;
+                if (string.IsNullOrEmpty(userMapper.Avatar))
+                {
+                    userMapper.Avatar = "https://static.vecteezy.com/system/resources/previews/020/911/747/non_2x/user-profile-icon-profile-avatar-user-icon-male-icon-face-icon-profile-icon-free-png.png";
+                }
+
                 User userCreate = _mapper.Map<User>(userMapper);
 
                 // Step 4: Generate random password and hash it
@@ -93,7 +118,7 @@ namespace UserMicroservice.Repositories.Services
                 }
 
                 // Step 6: Save user to the database
-                userCreate.UpdatedAt = DateTime.UtcNow;
+
                 await _context.Users.AddAsync(userCreate);
                 await _context.SaveChangesAsync();
 
@@ -217,7 +242,7 @@ namespace UserMicroservice.Repositories.Services
             ResponseModel response = new();
             try
             {
-                var user = await _context.Users.SingleOrDefaultAsync(u=>u.Email == email);
+                var user = await _context.Users.SingleOrDefaultAsync(u => u.Email == email);
                 if (user != null)
                 {
                     response.Message = $"Found success user: {email} ";
@@ -276,6 +301,7 @@ namespace UserMicroservice.Repositories.Services
                     user.Email = updatedUserModel.Email ?? user.Email;
                     user.Avatar = updatedUserModel.Avatar ?? user.Avatar;
                     user.Role = updatedUserModel.Role ?? user.Role;
+                    user.EmailConfirmation = updatedUserModel.EmailConfirmation ?? user.EmailConfirmation;
                     user.Status = updatedUserModel.Status ?? user.Status;
                     user.UpdatedAt = DateTime.UtcNow;
                     // Lưu các thay đổi vào cơ sở dữ liệu
@@ -315,7 +341,7 @@ namespace UserMicroservice.Repositories.Services
         /// Một đối tượng <see cref="ResponseModel"/> chứa <see cref="ResponseModel.Result"/> là danh sách người dùng được tìm thấy hoặc thông báo ở <see cref="ResponseModel.Message"/> nếu không tìm thấy.
         /// Thuộc tính <see cref="ResponseModel.IsSuccess"/> sẽ là <see langword="false"/> nếu có lỗi xảy ra.
         /// </returns>
-        public async Task<ResponseModel> FindUsers(string? query)
+        public async Task<ResponseModel> FindUsers(string? query, int pageNumber, int pageSize)
         {
             var response = new ResponseModel();
 
@@ -326,26 +352,45 @@ namespace UserMicroservice.Repositories.Services
                 {
                     query = response.Result.ToString();
 
-                    ICollection<User> users = await _context.Users.Where(u =>
-                         u.DisplayName!.Contains(query!) ||
-                         u.NormalizedUsername!.Contains(query!) ||
-                         u.NormalizedEmail!.Contains(query!) ||
-                         u.PhoneNumber!.Contains(query!))
-                         .ToListAsync();
-
-                    if (users.Count == 0)
+                    // Try to parse the query as an ObjectId
+                    if (ObjectId.TryParse(query, out var objectId))
                     {
-                        response.Message = $"'{query}' not found";
-                        response.Result = null!;
-                    }
+                        // If it's a valid ObjectId, search by ObjectId
+                        ICollection<User> users = await _context.Users.Where(u => u.Id == objectId.ToString()).ToListAsync();
 
+                        if (users.Count == 0)
+                        {
+                            response.Message = $"User with ID '{query}' not found";
+                            response.Result = null!;
+                        }
+                        else
+                        {
+                            response.Message = $"Found {users.Count} user(s) by ID";
+                            response.Result = _mapper.Map<ICollection<UserModel>>(users).ToPagedList(pageNumber, pageSize);
+                        }
+                    }
                     else
                     {
-                        response.Result = _mapper.Map<ICollection<UserModel>>(users);
-                        response.Message = $"{users.Count} users were found";
+                        // If it's not an ObjectId, proceed with normal search
+                        ICollection<User> users = await _context.Users.Where(u =>
+                            u.DisplayName!.ToUpper().Contains(query!) ||
+                            u.NormalizedUsername!.ToUpper().Contains(query!) ||
+                            u.NormalizedEmail!.ToUpper().Contains(query!) ||
+                            u.PhoneNumber!.Contains(query!))
+                            .ToListAsync();
+
+                        if (users.Count == 0)
+                        {
+                            response.Message = $"'{query}' not found";
+                            response.Result = null!;
+                        }
+                        else
+                        {
+                            response.Message = $"Found {users.Count} users";
+                            response.Result = _mapper.Map<ICollection<UserModel>>(users).ToPagedList(pageNumber, pageSize);
+                        }
                     }
                 }
-
             }
             catch (Exception ex)
             {
@@ -355,6 +400,8 @@ namespace UserMicroservice.Repositories.Services
 
             return response;
         }
+
+
 
         public async Task<ResponseModel> ChangeStatus(string id, UserStatus status)
         {
@@ -377,11 +424,11 @@ namespace UserMicroservice.Repositories.Services
                 user.Status = status;
                 user.UpdatedAt = DateTime.UtcNow;
 
-                if(user.Status == UserStatus.Deleted)
+                if (user.Status == UserStatus.Deleted)
                 {
                     await _helper.SendEmailAsync(user.Email, "Account Deletion", "Your account has been deleted. If you did not request this, please contact us immediately.");
                 }
-                else if(user.Status == UserStatus.Block)
+                else if (user.Status == UserStatus.Block)
                 {
                     await _helper.SendEmailAsync(user.Email, "Account Blocked", "Your account has been blocked. If you did not request this, please contact us immediately.");
                 }

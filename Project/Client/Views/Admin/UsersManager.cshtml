@@ -41,22 +41,74 @@
 </style>
 
 <div class="pt-3 pb-4">
-    <span class="titleManager bg-success py-3 px-5 rounded-4 fw-bold text-white">Users Manager</span>
+    <a asp-action="UsersManager" class="titleManager bg-success py-3 px-5 rounded-4 fw-bold text-white text-decoration-none">Users Manager</a>
 </div>
 
 <div class="container mt-4">
     <!-- Thanh tìm kiếm và nút Thêm -->
     <div class="d-flex justify-content-between mb-3">
-        <form asp-action="SearchUsers" method="get">
-            <form method="get" asp-action="SearchUsers" class="input-group mb-3">
+        <form asp-action="PrepareSearchUsers" method="get">
+            <form method="get" asp-action="PrepareSearchUsers" class="input-group mb-3">
                 <input type="text" class="form-control" name="query" placeholder="Search users..." value="" />
                 @* <button class="btn btn-outline-success" type="submit">Search</button> *@
             </form>
         </form>
         <div class="w-100">
             <div class="text-end">
-                <!-- Dropdown cho User Status -->
+
+
                 <span class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="roleDropdown" data-bs-toggle="dropdown">
+                        User Status
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="roleDropdown">
+                        @foreach (UserRole status in Enum.GetValues(typeof(UserRole)))
+                        {
+                            <li>
+                                <a class="dropdown-item" asp-controller="Admin" asp-action="FilterByRole" asp-route-status="@status">
+                                    @status
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </span>
+                
+                <span class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="statusDropdown" data-bs-toggle="dropdown">
+                        User Status
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="statusDropdown">
+                        @foreach (UserStatus status in Enum.GetValues(typeof(UserStatus)))
+                        {
+                            <li>
+                                <a class="dropdown-item" asp-controller="Admin" asp-action="FilterByUserStatus" asp-route-status="@status">
+                                    @status
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </span>
+                
+                <span class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="emailDropdown" data-bs-toggle="dropdown">
+                        Email confirm
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="emailDropdown">
+                        @foreach (EmailStatus status in Enum.GetValues(typeof(EmailStatus)))
+                        {
+                            <li>
+                                <a class="dropdown-item" asp-controller="Admin" asp-action="FilterByEmailStatus" asp-route-status="@status">
+                                    @status
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </span>
+
+
+
+                <!-- Dropdown cho User Status -->
+           @*      <span class="dropdown">
                     <button class="btn btn-secondary dropdown-toggle" type="button" style="width:100px" id="statusDropdown" data-bs-toggle="dropdown">
                         Status
                     </button>
@@ -78,7 +130,7 @@
                         <a class="dropdown-item" href="@Url.Action("FilterByEmailStatus", "Admin", new { status = EmailStatus.Unconfirmed })">Not confirmed</a>
                     </span>
                 </span>
-
+ *@
                 <!-- Button để thêm người dùng -->
                 <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalUser">+ Add</button>
             </div>
@@ -128,7 +180,7 @@
             </tr>
         </thead>
         <tbody>
-            @if (Model.Users != null)
+            @if (Model != null || Model.Users!=null)
             {
                 foreach (var user in Model.Users)
                 {
@@ -342,7 +394,7 @@
                                     <span>User</span>
                                 }
                             </td>
-                            <td>@DateTime.Now.ToString("dd/MM/yyyy")</td> <!-- Hiển thị ngày tham gia -->
+                            <td class=" text-truncate" style="max-width: 100px;" title="@user.CreateAt">@user.CreateAt.ToString()</td> <!-- Hiển thị ngày tham gia -->
                             @*Đây là nút Update*@
                             <td>
                                 <a href="javascript:void(0);" class="text-danger mx-2"
@@ -372,47 +424,75 @@
         </tbody>
     </table>
 
+<!-- Pagination -->
+<div class="d-flex justify-content-between mt-3">
+    <!-- Total Items -->
+    <div>Total: @Model.Users.Count items</div>
 
-    <!-- Phân trang -->
-    <div class="d-flex justify-content-between mt-3">
+    <!-- Records per page -->
+    <div>
+        <form method="get" asp-controller="Admin" asp-action="@ViewData["FilterUserAction"]" class="d-inline">
+            <select name="pageSize" class="form-select form-select-sm w-auto d-inline-block" onchange="this.form.submit()">
+                <option>Select records per page</option>
+                <option value="3">3 records per page</option>
+                <option value="5">5 records per page</option>
+                <option value="10">10 records per page</option>
+            </select>
+            <input type="hidden" name="page" value="1" />
+            <input type="hidden" name="query" value="@(ViewContext.HttpContext.Request.Query["query"])" />
+            <input type="hidden" name="status" value="@(ViewContext.HttpContext.Request.Query["status"])" />
+        </form>
 
-        <div>Total: @(Model.totalItem) items</div>
+        <!-- Pagination -->
+        <nav aria-label="Page navigation example" class="d-inline-block">
+            <ul class="pagination pagination-sm mb-0">
+                <!-- Previous Page -->
+                <li class="page-item @(Model.pageNumber == 1 ? "disabled" : "")">
+                    <a class="page-link" 
+                       asp-controller="Admin"
+                       asp-action="@ViewData["FilterUserAction"]"
+                       asp-route-page="@(Model.pageNumber - 1)" 
+                       asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])" 
+                       asp-route-query="@(ViewContext.HttpContext.Request.Query["query"])" 
+                       asp-route-status="@(ViewContext.HttpContext.Request.Query["status"])">
+                        Previous
+                    </a>
+                </li>
 
-        <div>
-            <form method="get" asp-controller="Admin" asp-action="UsersManager" class="d-inline">
-                <select name="pageSize" class="form-select form-select-sm w-auto d-inline-block" onchange="this.form.submit()">
-                    <option>Select records per page</option>
-                    <option value="3">3 records per page</option>
-                    <option value="5">5 records per page</option>
-                    <option value="10">10 records per page</option>
-                </select>
-                <input type="hidden" name="page" value="1" />
-            </form>
-
-            <nav aria-label="Page navigation example" class="d-inline-block">
-                <ul class="pagination pagination-sm mb-0">
-                    <li class="page-item @(Model.pageNumber == 1 || Model.Users==null ? "disabled" : "")">
-                        <a class="page-link" asp-controller="Admin" asp-action="UsersManager" asp-route-page="@(Model.pageNumber - 1)" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
-                            Previous
+                <!-- Page Numbers -->
+                @for (var pg = 1; pg <= Model.pageCount; pg++)
+                {
+                    <li class="page-item @(pg == Model.pageNumber ? "active" : "")">
+                        <a class="page-link" 
+                           asp-controller="Admin" 
+                           asp-action="@ViewData["FilterUserAction"]"
+                           asp-route-page="@pg" 
+                           asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])" 
+                           asp-route-query="@(ViewContext.HttpContext.Request.Query["query"])" 
+                           asp-route-status="@(ViewContext.HttpContext.Request.Query["status"])">
+                            @pg
                         </a>
                     </li>
-                    @for (var pg = 1; pg <= Model.pageCount; pg++)
-                    {
-                        <li class="page-item @(pg == Model.pageNumber ? "active" : "")">
-                            <a class="page-link" asp-controller="Admin" asp-action="UsersManager" asp-route-page="@pg" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
-                                @pg
-                            </a>
-                        </li>
-                    }
-                    <li class="page-item @(Model.pageNumber == Model.pageCount ? "disabled" : "")">
-                        <a class="page-link" asp-controller="Admin" asp-action="UsersManager" asp-route-page="@(Model.pageNumber + 1)" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
-                            Next
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-        </div>
+                }
+
+                <!-- Next Page -->
+                <li class="page-item @(Model.pageNumber == Model.pageCount ? "disabled" : "")">
+                    <a class="page-link" 
+                       asp-controller="Admin"
+                       asp-action="@ViewData["FilterUserAction"]"
+                       asp-route-page="@(Model.pageNumber + 1)" 
+                       asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])" 
+                       asp-route-query="@(ViewContext.HttpContext.Request.Query["query"])" 
+                       asp-route-status="@(ViewContext.HttpContext.Request.Query["status"])">
+                        Next
+                    </a>
+                </li>
+            </ul>
+        </nav>
     </div>
+</div>
+
+
 </div>
 
 

@@ -9,16 +9,17 @@ using OrderMicroservice.Models.OrderModel;
 using OrderMicroservice.Models.PaymentModel;
 using OrderMicroservice.Models.UserModel;
 using OrderMicroservice.Repositories.Interfaces;
+using System.ComponentModel.Design;
 using X.PagedList.Extensions;
 
 namespace OrderMicroservice.Repositories.Services
 {
-    public class OrderService(OrderDbContext context, IMapper mapper, IMessage message) : IOrderService
+    public class OrderService(OrderDbContext context, IMapper mapper, IMessage message, IHelperService helpService) : IOrderService
     {
         OrderDbContext _context = context;
         IMapper _mapper = mapper;
         IMessage _message = message;
-
+        IHelperService _helperService = helpService;
         public async Task<ResponseModel> Create(OrderModel orderModel)
         {
             ResponseModel response = new();
@@ -68,7 +69,7 @@ namespace OrderMicroservice.Repositories.Services
         }
 
 
-        public async Task<ResponseModel> GetOrderById(string id)
+        public async Task<ResponseModel> GetOrderById(string id, int pageNumber, int pageSize)
         {
             ResponseModel response = new();
             try
@@ -80,25 +81,25 @@ namespace OrderMicroservice.Repositories.Services
                     .Where(o => o.Items.Any(i => i.ProductId == id))
                     .ToListAsync();
 
-
+                
                 if (ordersByOrderId.Any())
                 {
                     // Nếu tìm thấy theo Order.Id
-                    response.Result = _mapper.Map<List<OrderModel>>(ordersByOrderId);
+                    response.Result = _mapper.Map<ICollection<OrderModel>>(ordersByOrderId).ToPagedList(pageNumber, pageSize);
                     response.IsSuccess = true;
                     response.Message = $"Order with ID '{id}' found by Order ID.";
                 }
                 else if (ordersByCustomerId.Any())
                 {
                     // Nếu tìm thấy theo CustomerId
-                    response.Result = _mapper.Map<List<OrderModel>>(ordersByCustomerId);
+                    response.Result = _mapper.Map<ICollection<OrderModel>>(ordersByCustomerId).ToPagedList(pageNumber, pageSize);
                     response.IsSuccess = true;
                     response.Message = $"Order with Customer ID '{id}' found.";
                 }
                 else if (ordersByProductId.Any())
                 {
                     // Nếu tìm thấy theo ProductId trong Items
-                    response.Result = _mapper.Map<List<OrderModel>>(ordersByProductId);
+                    response.Result = _mapper.Map<ICollection<OrderModel>>(ordersByProductId).ToPagedList(pageNumber, pageSize);
                     response.IsSuccess = true;
                     response.Message = $"Order containing Product ID '{id}' found.";
                 }
@@ -119,7 +120,7 @@ namespace OrderMicroservice.Repositories.Services
             return response;
         }
 
-        public async Task<ResponseModel> GetOrderByTransaction(string id)
+        public async Task<ResponseModel> GetOrderByTransaction(string id, int pageNumber, int pageSize)
         {
             ResponseModel response = new();
             try
@@ -137,13 +138,13 @@ namespace OrderMicroservice.Repositories.Services
                 // Kiểm tra kết quả và thiết lập phản hồi
                 if (ordersByProductName.Any())
                 {
-                    response.Result = _mapper.Map<List<OrderModel>>(ordersByProductName);
+                    response.Result = _mapper.Map<ICollection<OrderModel>>(ordersByProductName).ToPagedList(pageNumber, pageSize);
                     response.IsSuccess = true;
                     response.Message = $"Order containing Product Name '{id}' found.";
                 }
                 else if (ordersByTransactionId.Any())
                 {
-                    response.Result = _mapper.Map<List<OrderModel>>(ordersByTransactionId);
+                    response.Result = _mapper.Map<ICollection<OrderModel>>(ordersByTransactionId).ToPagedList(pageNumber, pageSize);
                     response.IsSuccess = true;
                     response.Message = $"Order with payment transaction ID '{id}' retrieved successfully.";
                 }

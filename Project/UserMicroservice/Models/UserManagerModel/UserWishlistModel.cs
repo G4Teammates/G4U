@@ -1,5 +1,6 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using UserMicroservice.Models.CustomValidation;
 
 namespace UserMicroservice.Models.UserManagerModel
 {
@@ -22,6 +23,7 @@ namespace UserMicroservice.Models.UserManagerModel
         /// <br/>
         /// Tên của sản phẩm được thêm vào danh sách yêu thích.
         /// </summary>
+        [WhiteSpaceValidation(ErrorMessage = "{0} cannot have leading or trailing spaces and must not contain more than one consecutive space.")]
         public string? ProductName { get; set; }
 
         /// <summary>
