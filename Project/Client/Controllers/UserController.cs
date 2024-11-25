@@ -26,6 +26,7 @@ using Client.Repositories.Interfaces.Order;
 using Client.Models.OrderModel;
 using MongoDB.Bson;
 using System.Collections.ObjectModel;
+using AutoMapper;
 
 namespace Client.Controllers
 {
@@ -36,7 +37,8 @@ namespace Client.Controllers
         IHelperService helperService,
         IRepoProduct repoProduct,
         ICategoriesService categoriesService,
-        IOrderService orderService) : Controller
+        IOrderService orderService,
+        IMapper mapper) : Controller
     {
         private readonly IAuthenticationService _authenService = authenService;
         public readonly IUserService _userService = userService;
@@ -45,6 +47,7 @@ namespace Client.Controllers
         public readonly IRepoProduct _productService = repoProduct;
         public readonly ICategoriesService _categoriesService = categoriesService;
         public readonly IOrderService _orderService = orderService;
+        public readonly IMapper _mapper = mapper;
 
         ICollection<ProductModel> productsAtCart = new List<ProductModel>();
 
@@ -176,6 +179,7 @@ namespace Client.Controllers
         {
             _tokenProvider.ClearToken();
             HttpContext.Response.Cookies.Delete("IsLogin");
+            HttpContext.Response.Cookies.Delete("cart");
             HttpContext.Response.Cookies.Delete("g_csrf_token");
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
@@ -257,7 +261,6 @@ namespace Client.Controllers
                     if (user != null)
                     {
                         TempData["success"] = "Registration successful. Check your email to activate your account.";
-                        await _authenService.ActiveUserAsync(user.Email);
                         return View(register);
                     }
                     else
@@ -281,8 +284,8 @@ namespace Client.Controllers
             return View(register);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> ActiveUser(string userId)
+        [HttpGet]
+        public async Task<IActionResult> ActiveUser(string? userId)
         {
             try
             {
@@ -295,14 +298,48 @@ namespace Client.Controllers
                 }
 
                 // Lấy thông tin user
-                if (findUser.Result is not UsersDTO user)
-                {
-                    TempData["error"] = "Failed to cast user data.";
-                    return RedirectToAction("Index", "Home");
-                }
-                
+                UsersDTO user = JsonConvert.DeserializeObject<UsersDTO>(findUser.Result.ToString()!);
+
                 // Thay đổi trạng thái của user
-                ResponseModel response = await _userService.ChangeStatus(user.Id, Models.Enum.UserEnum.User.UserStatus.Active);
+                UpdateUser updateUser = _mapper.Map<UpdateUser>(user);
+                updateUser.Status = Models.Enum.UserEnum.User.UserStatus.Active;
+                updateUser.EmailConfirmation = Models.Enum.UserEnum.User.EmailStatus.Confirmed;
+                ResponseModel response = await _userService.UpdateUser(updateUser);
+                response = await _authenService.LoginWithoutPassword(updateUser.Email);
+                if (response.IsSuccess)
+                {
+                    LoginResponseModel userLogin = JsonConvert.DeserializeObject<LoginResponseModel>(response.Result.ToString()!);
+                    if (user == null)
+                    {
+                        TempData["error"] = "Login failed";
+                        return View();
+                    }
+
+                    _tokenProvider.SetToken(userLogin!.Token);
+
+                    var cookieOptions = new CookieOptions
+                    {
+                        HttpOnly = true, // Bảo vệ cookie khỏi bị truy cập bởi JavaScript
+                        Secure = true, // Chỉ gửi cookie qua HTTPS
+                        //SameSite = SameSiteMode.Strict, // Ngăn chặn cookie gửi từ bên thứ ba
+                        Expires = DateTime.UtcNow.AddDays(1) // Đặt thời hạn hết hạn là 1 ngày
+                    };
+                    HttpContext.Response.Cookies.Append("IsLogin", response.IsSuccess.ToString(), cookieOptions);
+
+                    IEnumerable<Claim> claim = HttpContext.User.Claims;
+                    UserClaimModel userClaim = new UserClaimModel
+                    {
+                        Id = userLogin.Id!,
+                        Username = userLogin.Username!,
+                        Email = userLogin.Email!,
+                        Role = userLogin.Role!,
+                        DisplayName = userLogin.DisplayName!,
+                        Avatar = userLogin.Avatar!
+                    };
+                    await _helperService.UpdateClaim(userClaim, HttpContext);
+
+                    TempData["success"] = "Login success";
+                }
                 if (response.IsSuccess)
                 {
                     TempData["success"] = "User activation is successful.";
@@ -322,12 +359,12 @@ namespace Client.Controllers
             }
         }
 
-        [HttpGet]
-        public IActionResult ActiveUser()
-        {
+        //[HttpGet]
+        //public IActionResult ActiveUser()
+        //{
 
-            return View();
-        }
+        //    return View();
+        //}
 
 
 

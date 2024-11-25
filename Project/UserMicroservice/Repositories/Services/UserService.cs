@@ -17,6 +17,7 @@ using static Google.Apis.Requests.BatchRequest;
 using X.PagedList.Extensions;
 using UserMicroservice.Models.Message;
 using ZstdSharp.Unsafe;
+using UserMicroservice.Models.AuthModel;
 
 namespace UserMicroservice.Repositories.Services
 {
@@ -40,6 +41,7 @@ namespace UserMicroservice.Repositories.Services
             ResponseModel response = new();
             try
             {
+
                 // Step 1: Validate user input
                 response = _helper.IsUserNotNull(userInput);
                 if (!response.IsSuccess)
@@ -47,6 +49,18 @@ namespace UserMicroservice.Repositories.Services
                     response.Message = "Invalid user input.";
                     return response;
                 }
+
+
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == userInput.Email);
+                if (user.Status != UserStatus.Inactive)
+                {
+                    response.Message = "User is exist";
+                    response.IsSuccess = false;
+                    return response;
+                }
+
+                await DeleteUser(user.Id);
+
 
                 // Step 2: Check if username or email already exists
                 response = await _helper.IsUserNotExist(userInput.Username, userInput.Email);
@@ -72,6 +86,12 @@ namespace UserMicroservice.Repositories.Services
 
                 // Step 3: Map AddUserModel to User entity
                 UserModel userMapper = _mapper.Map<UserModel>(userInput);
+
+                if (string.IsNullOrEmpty(userMapper.Avatar))
+                {
+                    userMapper.Avatar = "https://static.vecteezy.com/system/resources/previews/020/911/747/non_2x/user-profile-icon-profile-avatar-user-icon-male-icon-face-icon-profile-icon-free-png.png";
+                }
+
                 User userCreate = _mapper.Map<User>(userMapper);
 
                 // Step 4: Generate random password and hash it
@@ -93,7 +113,10 @@ namespace UserMicroservice.Repositories.Services
                 }
 
                 // Step 6: Save user to the database
+                userCreate.Status = UserStatus.Active;
+                userCreate.EmailConfirmation = EmailStatus.Confirmed;
                 userCreate.UpdatedAt = DateTime.UtcNow;
+
                 await _context.Users.AddAsync(userCreate);
                 await _context.SaveChangesAsync();
 
@@ -276,6 +299,7 @@ namespace UserMicroservice.Repositories.Services
                     user.Email = updatedUserModel.Email ?? user.Email;
                     user.Avatar = updatedUserModel.Avatar ?? user.Avatar;
                     user.Role = updatedUserModel.Role ?? user.Role;
+                    user.EmailConfirmation = updatedUserModel.EmailConfirmation ?? user.EmailConfirmation;
                     user.Status = updatedUserModel.Status ?? user.Status;
                     user.UpdatedAt = DateTime.UtcNow;
                     // Lưu các thay đổi vào cơ sở dữ liệu

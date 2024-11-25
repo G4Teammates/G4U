@@ -82,7 +82,7 @@ namespace UserMicroService.Controllers
         }
 
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin, User")]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin, User")]
         [HttpGet("{id}")]
         public async Task<ActionResult> GetUser(string id)
         {
@@ -119,7 +119,7 @@ namespace UserMicroService.Controllers
         }
 
         // Phương thức cập nhật người dùng
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin, User")]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin, User")]
         [HttpPut]
         public async Task<ActionResult> UpdateUser([FromBody] UserUpdate updatedUserModel)
         {

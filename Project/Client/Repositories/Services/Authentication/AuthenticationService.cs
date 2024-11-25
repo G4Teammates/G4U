@@ -70,6 +70,15 @@ namespace Client.Repositories.Services.Authentication
                 Url = _authenUrl + "/login-google"
             });
         }
+        public async Task<ResponseModel> LoginWithoutPassword(string email)
+        {
+            return await _baseService.SendAsync(new RequestModel
+            {
+                ApiType = ApiType.POST,
+                Data = email,
+                Url = _authenUrl + "/login-without-password"
+            });
+        }
 
         public Task<ResponseModel> LogoutAsync()
         {

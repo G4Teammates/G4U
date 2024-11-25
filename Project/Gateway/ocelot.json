@@ -397,6 +397,21 @@
     },
 
 
+    //login-without-password
+    {
+      "DownstreamPathTemplate": "/api/Auth/login-without-password",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7107
+        }
+      ],
+      "UpstreamPathTemplate": "/Auth/login-without-password",
+      "UpstreamHttpMethod": [ "Post" ]
+    },
+
+
     //Forgot password
     {
       "DownstreamPathTemplate": "/api/Auth/forgot-password",
@@ -905,7 +920,7 @@
       "UpstreamHttpMethod": [ "Post" ]
     },
 
-     //paid
+    //paid
     {
       "DownstreamPathTemplate": "/api/Payment/paid",
       "DownstreamScheme": "https",
@@ -915,7 +930,7 @@
           "Port": 7297
         }
       ],
-      "UpstreamPathTemplate": "/Payment/ipn/momo",
+      "UpstreamPathTemplate": "/Payment/paid",
       "UpstreamHttpMethod": [ "Post" ]
     },
 
