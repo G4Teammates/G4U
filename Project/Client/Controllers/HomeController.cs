@@ -162,7 +162,10 @@ namespace Client.Controllers
             // Trả về view ProductsManager với danh sách sản phẩm đã tìm kiếm
         }
 
-
+        public IActionResult Play()
+        {
+            return View();
+        }
 
         public IActionResult Privacy()
         {
