@@ -6,7 +6,7 @@ namespace Client.Models.AuthenModel
     {
         [Required(ErrorMessage = "The {0} field is required.")]
         [StringLength(320, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
-        [RegularExpression(@"^[a-zA-Z0-9_-]*$", ErrorMessage = "The {0} can only contain letters, numbers, underscores (_), and hyphens (-).")]
+        [RegularExpression(@"^[a-zA-Z0-9_@.-]*$", ErrorMessage = "The {0} can only contain letters, numbers, '_', '-', '@', '.'")]
         public required string Username { get; set; }
         [Required(ErrorMessage = "The {0} field is required.")]
         [StringLength(320, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 3)]
