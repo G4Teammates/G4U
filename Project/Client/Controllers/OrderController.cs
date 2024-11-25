@@ -81,9 +81,30 @@ namespace Client.Controllers
         }
         private async Task<IActionResult> ProcessCreditCardPayment(CartModel cart)
         {
-            // Xử lý thanh toán bằng thẻ tín dụng
-            // Bạn có thể thêm logic thanh toán thẻ tín dụng ở đây
-            // Ví dụ: Gửi thông tin thanh toán đến dịch vụ thẻ tín dụng
+            CreateOrderModel createOrder = _mapper.Map<CreateOrderModel>(cart.Order);
+            ResponseModel responseCreateOrder = await _orderService.CreateOrder(createOrder);
+
+            if (responseCreateOrder.IsSuccess)
+            {
+                OrderModel newOrder = JsonConvert.DeserializeObject<OrderModel>(responseCreateOrder.Result.ToString());
+                VietQRRequestModel request = new VietQRRequestModel()
+                {
+                    Id = newOrder.Id,
+                    Amount = (int)cart.Order.TotalPrice,
+                    Items = cart.Order.Items
+                };
+                ResponseModel responsePayment = await _paymentService.VietQRPayment(request);
+
+                if (responsePayment.IsSuccess)
+                {
+                    HttpContext.Response.Cookies.Delete("cart");
+                    return Redirect(responsePayment.Result.ToString() + $"&orderId={request.Id}");
+                }
+                else
+                {
+                    return RedirectToAction("PaymentFailure");
+                }
+            }
 
             return RedirectToAction("PaymentFailure"); // Placeholder, trả về lỗi nếu không xử lý được
         }
@@ -119,7 +140,6 @@ namespace Client.Controllers
         #endregion
 
 
-
         #region Return Payment Status
         [HttpGet]
         public IActionResult PaymentSuccess(string? partnerCode, string? orderId, string? requestId, decimal amount, string? orderInfo, string? orderType, string? transId, int? resultCode, string message, string payType, long responseTime, string extraData, string signature)
@@ -134,6 +154,47 @@ namespace Client.Controllers
 
             return View(model);
         }
+
+
+        [HttpGet("Order/PaymentSuccessPayOsAsync")]
+        public async Task<IActionResult> PaymentSuccessPayOsAsync(
+      string? code,
+      string? id,
+      [FromQuery(Name = "cancel")] string? cancelParam, // Xử lý chuỗi cancel
+      string? status,
+      string? orderCode,
+      string? orderId)
+        {
+
+            ResponseModel response = await _paymentService.Paid(new PaidModel()
+            {
+                OrderId = orderId,
+                TransactionId = orderCode,
+                Status = new PaymentStatusModel()
+                {
+                    OrderStatus = OrderStatus.Paid,
+                    PaymentMethod = PaymentMethod.CreditCard,
+                    PaymentName = "PayOS",
+                    PaymentStatus = PaymentStatus.Paid
+                }
+            });
+
+            if (!response.IsSuccess)
+                return RedirectToAction("PaymentFailure");
+
+
+            OrderModel payosOrder = JsonConvert.DeserializeObject<OrderModel>(response.Result.ToString());
+            PaymentSuccessModel model = new()
+            {
+                OrderId = orderId,
+                Amount = payosOrder.TotalPrice,
+                OrderType = "PayOS",
+                ResponseTime = ((DateTimeOffset)payosOrder.UpdatedAt).ToUnixTimeMilliseconds(),
+            };
+            return View("PaymentSuccess", model);
+        }
+
+
 
 
         public IActionResult PaymentFailure()

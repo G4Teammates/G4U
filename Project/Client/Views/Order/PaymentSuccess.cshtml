@@ -11,11 +11,11 @@
         <h3>Order Summary</h3>
         <p><strong>Order ID:</strong> @Model.OrderId</p>
         <p>
-            @if (Model.OrderType.Contains("momo"))
+            @if (Model.OrderType.ToLower().Contains("momo"))
             {
                 <strong>Payment Method: MoMo</strong>
             }
-            else if (Model.OrderType.Contains("payos"))
+            else if (Model.OrderType.ToLower().Contains("payos"))
             {
                 <strong>Payment Method: Pay OS</strong>
             }

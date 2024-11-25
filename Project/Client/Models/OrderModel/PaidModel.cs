@@ -1,4 +1,4 @@
-﻿namespace OrderMicroservice.Models.PaymentModel
+﻿namespace Client.Models.OrderModel
 {
     public class PaidModel
     {

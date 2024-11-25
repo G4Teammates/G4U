@@ -905,6 +905,20 @@
       "UpstreamHttpMethod": [ "Post" ]
     },
 
+     //paid
+    {
+      "DownstreamPathTemplate": "/api/Payment/paid",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7297
+        }
+      ],
+      "UpstreamPathTemplate": "/Payment/ipn/momo",
+      "UpstreamHttpMethod": [ "Post" ]
+    },
+
 
 
 

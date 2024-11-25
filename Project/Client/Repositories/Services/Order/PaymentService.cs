@@ -19,9 +19,23 @@ namespace Client.Repositories.Services.Order
             });
         }
 
-        public Task<ResponseModel> VietQRPayment()
+        public async Task<ResponseModel> VietQRPayment(VietQRRequestModel model)
         {
-            throw new NotImplementedException();
+            return await _baseService.SendAsync(new RequestModel()
+            {
+                ApiType = StaticTypeApi.ApiType.POST,
+                Data = model,
+                Url = StaticTypeApi.APIGateWay + "/Payment/vietqr"
+            });
+        }
+        public async Task<ResponseModel> Paid(PaidModel model)
+        {
+            return await _baseService.SendAsync(new RequestModel()
+            {
+                ApiType = StaticTypeApi.ApiType.POST,
+                Data = model,
+                Url = StaticTypeApi.APIGateWay + "/Payment/paid"
+            });
         }
     }
 }
