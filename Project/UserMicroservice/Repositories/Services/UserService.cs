@@ -52,15 +52,17 @@ namespace UserMicroservice.Repositories.Services
 
 
                 var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == userInput.Email);
-                if (user.Status != UserStatus.Inactive)
+                if (user != null)
                 {
-                    response.Message = "User is exist";
-                    response.IsSuccess = false;
-                    return response;
+                    if (user.Status != UserStatus.Inactive)
+                    {
+                        response.Message = "User is exist";
+                        response.IsSuccess = false;
+                        return response;
+                    }
+
+                    await DeleteUser(user.Id);
                 }
-
-                await DeleteUser(user.Id);
-
 
                 // Step 2: Check if username or email already exists
                 response = await _helper.IsUserNotExist(userInput.Username, userInput.Email);
@@ -87,6 +89,9 @@ namespace UserMicroservice.Repositories.Services
                 // Step 3: Map AddUserModel to User entity
                 UserModel userMapper = _mapper.Map<UserModel>(userInput);
 
+                userMapper.Status = UserStatus.Active;
+                userMapper.EmailConfirmation = EmailStatus.Confirmed;
+                userMapper.UpdatedAt = DateTime.UtcNow;
                 if (string.IsNullOrEmpty(userMapper.Avatar))
                 {
                     userMapper.Avatar = "https://static.vecteezy.com/system/resources/previews/020/911/747/non_2x/user-profile-icon-profile-avatar-user-icon-male-icon-face-icon-profile-icon-free-png.png";
@@ -113,9 +118,6 @@ namespace UserMicroservice.Repositories.Services
                 }
 
                 // Step 6: Save user to the database
-                userCreate.Status = UserStatus.Active;
-                userCreate.EmailConfirmation = EmailStatus.Confirmed;
-                userCreate.UpdatedAt = DateTime.UtcNow;
 
                 await _context.Users.AddAsync(userCreate);
                 await _context.SaveChangesAsync();
@@ -354,7 +356,7 @@ namespace UserMicroservice.Repositories.Services
                     if (ObjectId.TryParse(query, out var objectId))
                     {
                         // If it's a valid ObjectId, search by ObjectId
-                        ICollection<User> users = await _context.Users.Where(u =>  u.Id == objectId.ToString()).ToListAsync();
+                        ICollection<User> users = await _context.Users.Where(u => u.Id == objectId.ToString()).ToListAsync();
 
                         if (users.Count == 0)
                         {
