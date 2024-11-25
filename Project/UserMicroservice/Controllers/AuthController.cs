@@ -85,7 +85,7 @@ namespace UserMicroservice.Controllers
 
         [AllowAnonymous]
         [HttpPost("login-without-password")]
-        public async Task<ActionResult> LoginWithoutPassword(string email)
+        public async Task<ActionResult> LoginWithoutPassword([FromBody]string email)
         {
             try
             {

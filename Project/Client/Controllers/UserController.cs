@@ -179,6 +179,7 @@ namespace Client.Controllers
         {
             _tokenProvider.ClearToken();
             HttpContext.Response.Cookies.Delete("IsLogin");
+            HttpContext.Response.Cookies.Delete("cart");
             HttpContext.Response.Cookies.Delete("g_csrf_token");
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
@@ -297,11 +298,7 @@ namespace Client.Controllers
                 }
 
                 // Lấy thông tin user
-                if (findUser.Result is not UsersDTO user)
-                {
-                    TempData["error"] = "Failed to cast user data.";
-                    return RedirectToAction("Index", "Home");
-                }
+                UsersDTO user = JsonConvert.DeserializeObject<UsersDTO>(findUser.Result.ToString()!);
 
                 // Thay đổi trạng thái của user
                 UpdateUser updateUser = _mapper.Map<UpdateUser>(user);

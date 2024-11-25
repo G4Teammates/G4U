@@ -930,7 +930,7 @@
           "Port": 7297
         }
       ],
-      "UpstreamPathTemplate": "/Payment/ipn/momo",
+      "UpstreamPathTemplate": "/Payment/paid",
       "UpstreamHttpMethod": [ "Post" ]
     },
 
