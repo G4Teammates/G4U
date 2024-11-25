@@ -15,5 +15,6 @@ namespace UserMicroservice.Repositories.Interfaces
         Task<ResponseModel> ResetPassword(ResetPasswordModel model);
         Task<ResponseModel> ChangePassword(ChangePasswordModel model);
         Task<ResponseModel> ActiveUserAsync(string email);
+        Task<ResponseModel> LoginWithoutPassword(string email);
     }
 }

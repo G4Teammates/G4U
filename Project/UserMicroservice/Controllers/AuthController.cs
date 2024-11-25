@@ -83,6 +83,24 @@ namespace UserMicroservice.Controllers
             }
         }
 
+        [AllowAnonymous]
+        [HttpPost("login-without-password")]
+        public async Task<ActionResult> LoginWithoutPassword(string email)
+        {
+            try
+            {
+                ResponseModel response = await _authService.LoginWithoutPassword(email);
+                if (response.IsSuccess)
+                    return Ok(response);
+                return BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                // Trả về lỗi 500 cho các lỗi chưa dự đoán
+                return StatusCode(500, new { message = "An unexpected error occurred. Detail" + ex.Message });
+            }
+        }
+
 
         /// Bắt đầu quá trình đăng nhập bằng Google.
         /// </summary>

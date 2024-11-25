@@ -202,6 +202,47 @@ namespace UserMicroservice.Repositories.Services
             }
             return response;
         }
+             
+        
+        
+        public async Task<ResponseModel> LoginWithoutPassword(string email)
+        {
+            var response = new ResponseModel();
+
+            if (email == null)
+            {
+                return new ResponseModel
+                {
+                    IsSuccess = false,
+                    Message = "RegisterRequestModel is null"
+                };
+            }
+
+            try
+            {
+                var user = await _context.Users.FirstOrDefaultAsync(x => x.Email == email);
+                UserModel userModel = _mapper.Map<UserModel>(user);
+                string token = _helper.GenerateJwtAsync(userModel);
+                response.Result = new LoginResponseModel
+                {
+                    Token = token,
+                    Username = user!.Username,
+                    Id = user.Id,
+                    DisplayName = user.DisplayName,
+                    Avatar = user.Avatar,
+                    Email = user.Email,
+                    Role = user.Role.ToString()
+                };
+                response.Message = "Login successful";
+
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+            }
+            return response;
+        }
 
         public async Task<ResponseModel> RegisterAsync(RegisterRequestModel registerRequestModel)
         {
