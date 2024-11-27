@@ -354,14 +354,13 @@
                             @* Free *@
                             @if (Model.Prod.Discount == 100 || Model.Prod.Price == 0)
                             {
-                                <div class="product-price-container">
-                                    <div class="discount-section">
+                                @* <div class="product-price-container"> *@
+                                    @* <div class="discount-section"> *@
                                         <div class="price-section">
                                             <span class="discounted-price">Free</span>
                                         </div>
-                                    </div>
-                                    <a data-bs-toggle="modal" data-bs-target="#downloadModal" class="btn btn-success align-content-center w-25 fw-bold">Play</a>
-                                </div>
+                                    @* </div> *@
+                                @* </div> *@
                             }
                             else
                             {

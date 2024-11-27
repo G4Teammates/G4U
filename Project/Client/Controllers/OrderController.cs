@@ -53,7 +53,6 @@ namespace Client.Controllers
             return RedirectToAction("PaymentFailure");
         }
 
-
         #region Process Payment Methods
         private async Task<IActionResult> ProcessWalletPayment(CartModel cart)
         {
