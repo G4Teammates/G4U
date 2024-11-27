@@ -19,5 +19,6 @@ namespace UserMicroservice.Repositories.Interfaces
         public ResponseModel DecodeToken(string token);
         public User GetUserIdFromToken(JwtSecurityToken token);
         public string GenerateRandomPassword(int length);
+        public bool IsContentAppropriate(string content);
     }
 }

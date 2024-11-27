@@ -495,5 +495,53 @@ namespace ProductMicroService.Controllers
                 return StatusCode(500, _responseDTO);
             }
         }
+
+        [HttpGet("GetProductByStatus/{Status}")]
+        public async Task<IActionResult> GetProductByStatus([FromRoute] int Status)
+        {
+            try
+            {
+                var result = await _repoProduct.GetProductByStatus(Status);
+                if (result.IsSuccess)
+                {
+                    _responseDTO.Result = result.Result;
+                    _responseDTO.Message = result.Message;
+                    return Ok(_responseDTO);
+                }
+                _responseDTO.IsSuccess = false;
+                _responseDTO.Message = result.Message;
+                return BadRequest(_responseDTO);
+            }
+            catch (Exception ex)
+            {
+                _responseDTO.IsSuccess = false;
+                _responseDTO.Message = "An error occurred while get view more: " + ex.Message;
+                return StatusCode(500, _responseDTO);
+            }
+        }
+
+        [HttpGet("GetProductByPlatform/{Platform}")]
+        public async Task<IActionResult> GetProductByPlatform([FromRoute] int Platform)
+        {
+            try
+            {
+                var result = await _repoProduct.GetProductByPlatform(Platform);
+                if (result.IsSuccess)
+                {
+                    _responseDTO.Result = result.Result;
+                    _responseDTO.Message = result.Message;
+                    return Ok(_responseDTO);
+                }
+                _responseDTO.IsSuccess = false;
+                _responseDTO.Message = result.Message;
+                return BadRequest(_responseDTO);
+            }
+            catch (Exception ex)
+            {
+                _responseDTO.IsSuccess = false;
+                _responseDTO.Message = "An error occurred while get view more: " + ex.Message;
+                return StatusCode(500, _responseDTO);
+            }
+        }
     }
 }

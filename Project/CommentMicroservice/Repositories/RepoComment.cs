@@ -69,20 +69,26 @@ namespace CommentMicroservice.Repositories
             }
             return response;
         }
-        public async Task<ResponseModel> GetListById(string id, int page, int pageSize) 
+        public async Task<ResponseModel> GetListById(string id, int page, int pageSize)
         {
             ResponseModel response = new();
             try
             {
-                var Comm = await _db.Comments.Where(c => c.Id == id || c.ParentId == id).ToListAsync();
-                if (Comm != null)
+                // Lấy danh sách tất cả các comment từ database
+                var allComments = await _db.Comments.ToListAsync();
+
+                // Tìm tất cả các comment con, cháu, và sâu hơn nữa
+                var commentsHierarchy = GetCommentsHierarchy(allComments, id);
+
+                if (commentsHierarchy.Any())
                 {
-                    response.Result = _mapper.Map<ICollection<Comment>>(Comm).ToPagedList(page, pageSize);
+                    // Map kết quả và phân trang
+                    response.Result = _mapper.Map<ICollection<Comment>>(commentsHierarchy).ToPagedList(page, pageSize);
                 }
                 else
                 {
                     response.IsSuccess = false;
-                    response.Message = "Not found any Commemt";
+                    response.Message = "Not found any Comment";
                 }
             }
             catch (Exception ex)
@@ -543,6 +549,35 @@ namespace CommentMicroservice.Repositories
                 }
             }
             return true; // Nội dung phù hợp
+        }
+
+        private List<Comment> GetCommentsHierarchy(List<Comment> allComments, string parentId)
+        {
+            var result = new List<Comment>();
+            var stack = new Stack<Comment>();
+
+            // Tìm các comment gốc khớp với parentId và thêm vào stack
+            var rootComments = allComments.Where(c => c.Id == parentId).ToList();
+            foreach (var root in rootComments)
+            {
+                stack.Push(root);
+                result.Add(root); // Thêm comment gốc vào kết quả
+            }
+
+            // Xử lý các comment con, cháu và sâu hơn
+            while (stack.Any())
+            {
+                var currentComment = stack.Pop();
+                var childComments = allComments.Where(c => c.ParentId == currentComment.Id).ToList();
+
+                foreach (var child in childComments)
+                {
+                    stack.Push(child);    // Thêm con vào stack để duyệt tiếp
+                    result.Add(child);   // Thêm con vào danh sách kết quả
+                }
+            }
+
+            return result;
         }
 
 

@@ -155,5 +155,53 @@ namespace CategoryMicroService.Controllers
                 return StatusCode(500, _responseModel); // Trả về mã lỗi 500 với thông báo lỗi chi tiết
             }
         }
+
+        [HttpGet("GetCateByStatus/{Status}")]
+        public async Task<IActionResult> GetCateByStatus([FromRoute] int Status)
+        {
+            try
+            {
+                var result = await _categoryService.GetCateByStatus(Status);
+                if (result.IsSuccess)
+                {
+                    _responseModel.Result = result.Result;
+                    _responseModel.Message = result.Message;
+                    return Ok(_responseModel);
+                }
+                _responseModel.IsSuccess = false;
+                _responseModel.Message = result.Message;
+                return BadRequest(_responseModel);
+            }
+            catch (Exception ex)
+            {
+                _responseModel.IsSuccess = false;
+                _responseModel.Message = "An error occurred while get view more: " + ex.Message;
+                return StatusCode(500, _responseModel);
+            }
+        }
+
+        [HttpGet("GetCateByType/{Type}")]
+        public async Task<IActionResult> GetCateByType([FromRoute] int Type)
+        {
+            try
+            {
+                var result = await _categoryService.GetCateByType(Type);
+                if (result.IsSuccess)
+                {
+                    _responseModel.Result = result.Result;
+                    _responseModel.Message = result.Message;
+                    return Ok(_responseModel);
+                }
+                _responseModel.IsSuccess = false;
+                _responseModel.Message = result.Message;
+                return BadRequest(_responseModel);
+            }
+            catch (Exception ex)
+            {
+                _responseModel.IsSuccess = false;
+                _responseModel.Message = "An error occurred while get view more: " + ex.Message;
+                return StatusCode(500, _responseModel);
+            }
+        }
     }
 }

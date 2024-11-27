@@ -3,6 +3,7 @@ using Client.Repositories.Interfaces.Authentication;
 using Client.Repositories.Interfaces.Categories;
 using Client.Repositories.Interfaces.Comment;
 using Client.Repositories.Interfaces.Order;
+using Client.Repositories.Interfaces.Reports;
 using Client.Repositories.Interfaces.Product;
 using Client.Repositories.Interfaces.Stastistical;
 using Client.Repositories.Interfaces.User;
@@ -11,6 +12,7 @@ using Client.Repositories.Services.Authentication;
 using Client.Repositories.Services.Categories;
 using Client.Repositories.Services.Comment;
 using Client.Repositories.Services.Order;
+using Client.Repositories.Services.Reports;
 using Client.Repositories.Services.Product;
 using Client.Repositories.Services.Stastistical;
 using Client.Repositories.Services.User;
@@ -36,6 +38,9 @@ namespace Client.Configure
             services.AddScoped<IHelperService, HelperService>();
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IPaymentService, PaymentService>();
+
+            services.AddScoped<IReportsService, ReportsService>();
+
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IRepoProduct, RepoProduct>();
             services.AddScoped<ICategoriesService, CategoriesService>();
@@ -47,6 +52,7 @@ namespace Client.Configure
             services.AddHttpContextAccessor();
             services.AddRazorComponents();
             services.AddControllersWithViews();
+
 
             services.AddHttpContextAccessor();
             services.AddHttpClient();
