@@ -85,7 +85,6 @@
         </div>
         <!-- Your Payment & Gifting Details Section -->
         <div class="col-lg-5">
-
             @if (Model.Order.TotalPrice != 0)
             {
 
@@ -143,7 +142,7 @@
                 <div class="custom-bg-light p-3 shadow-sm border">
                     <!-- Free Payment Method -->
                     <div class="form-check text-secondary d-flex align-items-center">
-                        <input asp-for="@Model.PaymentMethod" value="Free" type="radio" id="free" name="PaymentMethod" class="form-check-input">
+                        <input asp-for="@Model.PaymentMethod" value="Free" type="radio" checked name="PaymentMethod" class="form-check-input">
                         <label for="payos" class="form-check-label d-flex align-items-center">
                             <img src="~/image/freeicon.png" alt="free icon" class="mx-3 payment-icon me-2" />
                             FREE

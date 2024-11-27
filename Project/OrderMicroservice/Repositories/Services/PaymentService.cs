@@ -14,13 +14,14 @@ using OrderMicroservice.Models.PaymentModel.PayOsModel;
 
 namespace OrderMicroservice.Repositories.Services
 {
-    public class PaymentService(IOrderService orderService, IMessage message) : IPaymentService
+    public class PaymentService(IOrderService orderService, IMessage message, IHelperService helperService) : IPaymentService
     {
         private readonly IOrderService _orderService = orderService;
+        private readonly IHelperService _helperService = helperService;
         private static readonly HttpClient client = new();
         private static readonly string Gateway = "https://localhost:7296";
         private static readonly string MoMoGateway = "https://test-payment.momo.vn/v2/gateway/api/create";
-        private static readonly string IpnMomo = "   https://930a-42-113-221-81.ngrok-free.app" + "/api/payment/ipn/momo";
+        private static readonly string IpnMomo = "https://930a-42-113-221-81.ngrok-free.app" + "/api/payment/ipn/momo";
         private IMessage _message = message;
         public async Task<ResponseModel> MoMoPayment(MoMoRequestFromClient requestClient)
         {
@@ -229,6 +230,33 @@ namespace OrderMicroservice.Repositories.Services
 
             return response;
         }
+
+        public async Task<ResponseModel> SendNotification(SendMailModel model)
+        {
+            try
+            {
+                await _helperService.SendEmailAsync(model.Email, model.Subject, model.Body);
+                return new ResponseModel
+                {
+                    IsSuccess = true,
+                    Message = "Send notification success"
+                };
+            }
+            catch (Exception ex)
+            {
+                // Ghi log lỗi nếu cần thiết
+                return new ResponseModel
+                {
+                    IsSuccess = false,
+                    Message = $"Failed to send notification: {ex.Message}"
+                };
+            }
+        }
+
+
+
+
+
 
         public async Task<ResponseModel> UpdateSold(ProductSoldRequest request)
         {
