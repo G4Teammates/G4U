@@ -11,5 +11,6 @@ namespace ProductMicroservice.Repostories.Helper
         Task<string> UploadFileToGoogleDrive(IFormFile file);
         Task<Products> CreateProduct(CreateProductModel Product, List<LinkModel> linkModel, string username);
         Task<Products> UpdateProduct(UpdateProductModel Product);
+        public bool IsContentAppropriate(string content);
     }
 }

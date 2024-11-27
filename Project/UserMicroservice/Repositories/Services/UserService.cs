@@ -40,6 +40,13 @@ namespace UserMicroservice.Repositories.Services
             ResponseModel response = new();
             try
             {
+                // Step 0: Moderate description, name
+                if (!_helper.IsContentAppropriate(userInput.Username))
+                {
+                    response.IsSuccess = false;
+                    response.Message = "The Content is not for community";
+                    return response;
+                }
                 // Step 1: Validate user input
                 response = _helper.IsUserNotNull(userInput);
                 if (!response.IsSuccess)
@@ -244,6 +251,13 @@ namespace UserMicroservice.Repositories.Services
 
             try
             {
+                // Step 0: Moderate description, name
+                if (!_helper.IsContentAppropriate(updatedUserModel.Username))
+                {
+                    response.IsSuccess = false;
+                    response.Message = "The Content is not for community";
+                    return response;
+                }
                 // Kiểm tra xem người dùng có tồn tại không dựa trên ID của họ
                 User user = await _context.Users.FindAsync(updatedUserModel.Id);
                 if (user == null)

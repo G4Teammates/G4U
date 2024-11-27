@@ -1,0 +1,137 @@
+﻿/* Chatbox Container */
+#chatContainer {
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    width: 350px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    z-index: 1000;
+    font-family: Arial, sans-serif;
+}
+
+/* Header */
+#chatHeader {
+    background-color: #004aad;
+    color: white;
+    padding: 10px;
+    text-align: center;
+    font-size: 18px;
+    position: relative;
+}
+
+    #chatHeader button {
+        position: absolute;
+        right: 10px;
+        top: 10px;
+        background: none;
+        border: none;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+/* Message Area */
+#chatContent {
+    display: flex;
+    flex-direction: column;
+    height: 400px;
+}
+
+#messageArea {
+    flex: 1;
+    padding: 10px;
+    overflow-y: auto;
+    border-top: 1px solid #ddd;
+}
+
+    #messageArea div {
+        margin-bottom: 10px;
+        padding: 10px;
+        border-radius: 8px;
+        max-width: 70%;
+    }
+
+        #messageArea div.system {
+            background-color: #f0f0f0;
+            align-self: flex-start;
+        }
+
+        #messageArea div.user {
+            background-color: #d1edc1;
+            align-self: flex-end;
+        }
+
+/* Topic Buttons */
+#topicSelection {
+    padding: 10px;
+}
+
+#topics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.topicButton {
+    flex: 1;
+    padding: 8px 12px;
+    border: none;
+    background-color: #d1edc1;
+    color: #333;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+}
+
+    .topicButton:hover {
+        background-color: #b5dfac;
+    }
+
+/* User Input */
+#userInput {
+    display: flex;
+    border-top: 1px solid #ddd;
+}
+
+#messageInput {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-right: 1px solid #ddd;
+    outline: none;
+}
+
+#sendMessage {
+    padding: 10px 15px;
+    border: none;
+    background-color: #004aad;
+    color: white;
+    cursor: pointer;
+}
+
+    #sendMessage:hover {
+        background-color: #003080;
+    }
+
+
+/* Open Chat Button */
+#openChat {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    padding: 10px 20px;
+    background-color: #004aad;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    z-index: 999;
+}
+
+    #openChat:hover {
+        background-color: #003080;
+    }

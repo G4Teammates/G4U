@@ -20,5 +20,7 @@ namespace CategoryMicroservice.Repositories.Interfaces
         Task<string> DeleteCategory(string id);
         Task<ResponseModel> Search(string searchstring, int page, int pageSize);
         Task<bool> CheckCategorysByCategoryNameAsync(ICollection<CategoryNameModel> categories);
+        Task<ResponseModel> GetCateByStatus(int Status);
+        Task<ResponseModel> GetCateByType(int Type);
     }
 }

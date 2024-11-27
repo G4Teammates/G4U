@@ -1,9 +1,11 @@
 ﻿using Client.Repositories.Interfaces;
 using Client.Repositories.Interfaces.Authentication;
 using Client.Repositories.Interfaces.Order;
+using Client.Repositories.Interfaces.Reports;
 using Client.Repositories.Services;
 using Client.Repositories.Services.Authentication;
 using Client.Repositories.Services.Order;
+using Client.Repositories.Services.Reports;
 using Client.Repositories.Services.Stastistical;
 
 
@@ -25,7 +27,7 @@ namespace Client.Configure
             services.AddScoped<IHelperService, HelperService>();
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IPaymentService, PaymentService>();
-
+            services.AddScoped<IReportsService, ReportsService>();
 
 
 

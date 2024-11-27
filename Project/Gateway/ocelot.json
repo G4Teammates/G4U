@@ -905,7 +905,7 @@
       "UpstreamHttpMethod": [ "Post" ]
     },
 
-     //paid
+    //paid
     {
       "DownstreamPathTemplate": "/api/Payment/paid",
       "DownstreamScheme": "https",
@@ -915,7 +915,7 @@
           "Port": 7297
         }
       ],
-      "UpstreamPathTemplate": "/Payment/ipn/momo",
+      "UpstreamPathTemplate": "/Payment/paid",
       "UpstreamHttpMethod": [ "Post" ]
     },
 
@@ -954,7 +954,39 @@
       ],
       "UpstreamPathTemplate": "/Statistical/GetStastisticalByUser",
       "UpstreamHttpMethod": [ "Get" ]
+    },
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //                                                                                                                    //
+    //                                                REPORT                                                              //
+    //                                                                                                                    //
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    {
+      "DownstreamPathTemplate": "/api/Reports",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7039
+        }
+      ],
+      "UpstreamPathTemplate": "/Reports",
+      "UpstreamHttpMethod": [ "Get" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/Reports/userName/{UserName}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7039
+        }
+      ],
+      "UpstreamPathTemplate": "/Reports/userName/{UserName}",
+      "UpstreamHttpMethod": [ "Post" ]
     }
+
   ],
   "GlobalConfiguration": {
     "BaseUrl": "https://localhost:7260",
