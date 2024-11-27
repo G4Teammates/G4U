@@ -124,6 +124,16 @@ namespace UserMicroservice.DBContexts.Entities
         [BsonElement("normalizedUserName")]
         public string? NormalizedUsername { get; set; }
 
+
+        /// <summary>
+        /// The Bank Account of the user.
+        /// <br/>
+        /// Số tài khoản của người dùng.
+        /// </summary>
+        [BsonElement("bankAccount")]
+        public string? BankAccount { get; set; }
+
+
         /// <summary>
         /// The status of the user account.
         /// <br/>

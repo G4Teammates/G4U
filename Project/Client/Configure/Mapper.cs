@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Client.Models.OrderModel;
+using Client.Models.UserDTO;
 
 namespace Client.Configure
 {
@@ -24,6 +25,7 @@ namespace Client.Configure
 
                 //cfg.AllowNullCollections = true;
                 cfg.CreateMap<OrderModel, CreateOrderModel>().ReverseMap();
+                cfg.CreateMap<UsersDTO, UpdateUser>().ReverseMap();
                 //Register mapper here⬆️
             });
         }

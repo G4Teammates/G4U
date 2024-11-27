@@ -1,4 +1,5 @@
 ﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson.Serialization.IdGenerators;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -74,6 +75,19 @@ namespace UserMicroservice.Models.UserManagerModel
             get => string.IsNullOrEmpty(_displayName) ? Username : _displayName;
             set => _displayName = value;
         }
+
+
+
+        /// <summary>
+        /// The Bank Account of the user.
+        /// <br/>
+        /// Số tài khoản của người dùng.
+        /// </summary>
+        [StringLength(17, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 5)]
+        [RegularExpression("^[0-9]+$", ErrorMessage = "The {0} must be number.")]
+        public string? BankAccount { get; set; }
+
+
 
         /// <summary>
         /// The avatar URL of the user.

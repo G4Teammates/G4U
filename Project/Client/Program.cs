@@ -25,28 +25,28 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 builder.Services.AddStartupService(builder.Configuration);
 
-builder.Services.AddControllersWithViews();
-builder.Services.AddRazorComponents();
-builder.Services.AddHttpContextAccessor();
-builder.Services.AddHttpClient();
-builder.Services.AddHttpClient<IRepoProduct, RepoProduct>(); 
-builder.Services.AddSession(options =>
+/*builder.Services.AddControllersWithViews();*/
+/*builder.Services.AddRazorComponents();*/
+/*builder.Services.AddHttpContextAccessor();*/
+/*builder.Services.AddHttpClient();*/
+/*builder.Services.AddHttpClient<IRepoProduct, RepoProduct>(); */
+/*builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(30); // Set the session timeout as needed
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
-});
+});*/
 // Đăng ký thư viện
-builder.Services.AddHttpContextAccessor();
-builder.Services.AddHttpClient();
+/*builder.Services.AddHttpContextAccessor();*/
+/*builder.Services.AddHttpClient();*/
 StaticTypeApi.APIGateWay = builder.Configuration["ServiceUrls:APIGateWay"];
-builder.Services.AddScoped<IBaseService, BaseService>();
-builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IRepoProduct, RepoProduct>();
-builder.Services.AddScoped<ICategoriesService, CategoriesService>();
-builder.Services.AddScoped<ICommentService, CommentService>();
-builder.Services.AddScoped<IRepoStastistical, RepoStastistical>();
-builder.Services.AddCors(options =>
+/*builder.Services.AddScoped<IBaseService, BaseService>();*/
+/*builder.Services.AddScoped<IUserService, UserService>();*/
+/*builder.Services.AddScoped<IRepoProduct, RepoProduct>();*/
+/*builder.Services.AddScoped<ICategoriesService, CategoriesService>();*/
+/*builder.Services.AddScoped<ICommentService, CommentService>();*/
+/*builder.Services.AddScoped<IRepoStastistical, RepoStastistical>();*/
+/*builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAllOrigins",
         builder =>
@@ -55,17 +55,17 @@ builder.Services.AddCors(options =>
                    .AllowAnyMethod()
                    .AllowAnyHeader();
         });
-});
-builder.Services.Configure<FormOptions>(options =>
+});*/
+/*builder.Services.Configure<FormOptions>(options =>
 {
 	options.MultipartBodyLengthLimit = 104857600; // Giới hạn tối đa (ví dụ: 100 MB)
-});
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+});*/
+/*builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
         options.LoginPath = "/login"; // Địa chỉ để người dùng được chuyển hướng khi không được xác thực
         options.LogoutPath = "/logout"; // Địa chỉ để người dùng được chuyển hướng khi đăng xuất
-    });
+    });*/
 builder.WebHost.ConfigureKestrel(options =>
 {
 	options.Limits.MaxRequestBodySize = 104857600; // 100 MB
