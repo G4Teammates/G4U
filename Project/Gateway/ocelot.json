@@ -935,6 +935,20 @@
     },
 
 
+    //send notification
+    {
+      "DownstreamPathTemplate": "/api/Payment/send-notification",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7297
+        }
+      ],
+      "UpstreamPathTemplate": "/Payment/send-notification",
+      "UpstreamHttpMethod": [ "Post" ]
+    },
+
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

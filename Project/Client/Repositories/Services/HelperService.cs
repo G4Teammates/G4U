@@ -13,17 +13,20 @@ using System.IO;
 using Client.Models.UserDTO;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
+using static Google.Apis.Requests.BatchRequest;
+using Client.Utility;
 
 namespace Client.Repositories.Services
 {
-    public class HelperService : IHelperService
+    public class HelperService(IBaseService baseService) : IHelperService
     {
         private readonly Cloudinary _cloudinary = new Cloudinary(
             new Account(
             cloud: ConfigKeyModel.CloudinaryName,
             apiKey: ConfigKeyModel.CloudinaryKey,
             apiSecret: ConfigKeyModel.CloudinarySecret));
-
+        private IBaseService _baseService = baseService;
+        
 
         public async Task<string> UploadImageAsync(Stream imageStream, string fileName)
         {
@@ -251,6 +254,17 @@ namespace Client.Repositories.Services
             }
 
             return context;
+        }
+
+
+        public async Task<ResponseModel> SendMail(SendMailModel model)
+        {
+            return await _baseService.SendAsync(new RequestModel()
+            {
+                ApiType = StaticTypeApi.ApiType.POST,
+                Data = model,
+                Url = StaticTypeApi.APIGateWay + "/Payment/send-notification"
+            });
         }
 
     }

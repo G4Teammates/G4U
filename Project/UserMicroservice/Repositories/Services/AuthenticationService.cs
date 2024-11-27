@@ -23,6 +23,10 @@ using System.Text;
 using System;
 using Newtonsoft.Json;
 
+/*hiện tại bọn em đang làm chức năng trả lương cho nhân viên bằng ngân hàng, nhưng em chưa tìm được keyword để nghiên cứu. 
+Cho em hỏi dịch vụ chi hộ của ngân hàng có phải dùng để trả lương không,
+
+ */
 namespace UserMicroservice.Repositories.Services
 {
     public class AuthenticationService : IAuthenticationService

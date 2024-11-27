@@ -2,19 +2,22 @@
 using Client.Models;
 using Client.Models.Enum.OrderEnum;
 using Client.Models.OrderModel;
+using Client.Repositories.Interfaces;
 using Client.Repositories.Interfaces.Order;
 using CloudinaryDotNet;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System;
+using System.Security.Claims;
 
 namespace Client.Controllers
 {
-    public class OrderController(IOrderService orderService, IPaymentService paymentService, IMapper mapper) : Controller
+    public class OrderController(IOrderService orderService, IPaymentService paymentService, IMapper mapper, IHelperService helperService) : Controller
     {
         private readonly IMapper _mapper = mapper;
         private readonly IOrderService _orderService = orderService;
         private readonly IPaymentService _paymentService = paymentService;
+        private readonly IHelperService _helperService = helperService;
         public IActionResult Index()
         {
             return View();
@@ -151,6 +154,13 @@ namespace Client.Controllers
                 OrderType = orderType,
                 ResponseTime = responseTime,
             };
+            string email = User.FindFirst(ClaimTypes.Email)?.Value;
+            _helperService.SendMail(new SendMailModel()
+            {
+                Email = email,
+                Subject = "Payment Success",
+                Body = $"Your payment for order {orderId} is successful. Thank you for shopping with us."
+            });
 
             return View(model);
         }
@@ -191,6 +201,15 @@ namespace Client.Controllers
                 OrderType = "PayOS",
                 ResponseTime = ((DateTimeOffset)payosOrder.UpdatedAt).ToUnixTimeMilliseconds(),
             };
+            string email = User.FindFirst(ClaimTypes.Email)?.Value;
+            await _helperService.SendMail(new SendMailModel()
+            {
+                Email = email,
+                Subject = "Payment Success",
+                Body = $"Your payment for order {orderId} is successful. Thank you for shopping with us."
+            });
+
+
             return View("PaymentSuccess", model);
         }
 

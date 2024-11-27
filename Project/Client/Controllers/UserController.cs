@@ -474,7 +474,10 @@ namespace Client.Controllers
         {
             // Đọc cookie giỏ hàng
             string cartJson = HttpContext.Request.Cookies["cart"];
-            CartModel cart = new();
+            CartModel cart = new()
+            {
+                Order = new OrderModel()
+            };
             if (!string.IsNullOrEmpty(cartJson))
             {
                 // Chuyển đổi JSON thành đối tượng CartViewModel

@@ -12,5 +12,6 @@ namespace OrderMicroservice.Repositories.Interfaces
         Task<ResponseModel> VierQRPayment(VietQRRequest request);
         Task<ResponseModel> IpnMoMo(MoMoIPNResquest request);
         Task<ResponseModel> Paid(PaidModel model);
+        Task<ResponseModel> SendNotification(SendMailModel model);
     }
 }
