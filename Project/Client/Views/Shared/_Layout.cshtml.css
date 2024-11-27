@@ -63,6 +63,9 @@ button.accept-policy {
     display: flex;
     align-items: center;
     border-radius: 5px;
+    min-width: 160px; /* Cung cấp chiều rộng tối thiểu cho văn bản dài */
+    white-space: nowrap; /* Ngăn văn bản xuống dòng */
+    justify-content:space-around;
 }
 
     .language-dropdown-toggle img {
@@ -87,6 +90,7 @@ button.accept-policy {
         display: flex;
         align-items: center;
         cursor: pointer;
+        white-space: nowrap; /* Ngăn văn bản xuống dòng trong các lựa chọn */
     }
 
         .language-dropdown-content .language-option img {
