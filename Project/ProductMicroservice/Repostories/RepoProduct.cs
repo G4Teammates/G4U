@@ -91,6 +91,15 @@ namespace ProductMicroservice.Repostories
             ResponseDTO response = new();
             try
             {
+                #region Kiểm tra số lượng hình ảnh
+                if((imageFiles.Count + Product.Links.Count) > 7)
+                {
+                    response.IsSuccess = false;
+                    response.Message = $"Maximum 7 image files.";
+                    return response; // Ngưng hàm và trả về response
+                }
+                #endregion
+
                 #region Kiểm tra trùng lặp trong danh sách categories
                 var duplicateCategories = Product.Categories
                     .GroupBy(c => c.CategoryName.ToLower())
@@ -236,119 +245,138 @@ namespace ProductMicroservice.Repostories
                 }
                 #endregion
 
-                #region Kiểm duyệt và update product
-
-                var product = await _db.Products.FindAsync(Product.Id);
-                if (product != null)
+                #region Kiểm duyệt description, name
+                // Kiểm duyệt nội dung
+                if (!_helper.IsContentAppropriate(Product.Description) || !_helper.IsContentAppropriate(Product.Name))
                 {
+                    response.IsSuccess = false;
+                    response.Message = "The Content is not for community";
+                    return response;
+                }
+                else
+                {
+                    #region Kiểm duyệt hình ảnh, quét virus và update product
 
-                    // Nếu không có file nào từ client, cập nhật sản phẩm không kiểm duyệt hoặc thêm link mới
-                    if ((imageFiles == null || imageFiles.Count == 0) && gameFiles == null)
+                    var product = await _db.Products.FindAsync(Product.Id);
+                    if (product != null)
                     {
-                        var proNoFile = await _helper.UpdateProduct(Product);
-                        response.Result = _mapper.Map<Products>(proNoFile);
-                        return response;
-                    }
 
-                    // Khởi tạo ContentSafetyClient và danh sách link từ client
-                    var client = new ContentSafetyClient(new Uri(initializationModel.EndpointContentSafety), new AzureKeyCredential(initializationModel.ApiKeyContentSafety));
-                    var linkModel = new List<LinkModel>(Product.Links);
-                    var listUnsafe = new List<bool>();
-
-                    // Kiểm duyệt và upload mỗi hình ảnh từ imageFiles nếu có
-                    if (imageFiles != null && imageFiles.Count > 0)
-                    {
-                        var imageTasks = imageFiles.Select(async imageFile =>
+                        // Nếu không có file nào từ client, cập nhật sản phẩm không kiểm duyệt hoặc thêm link mới
+                        if ((imageFiles == null || imageFiles.Count == 0) && gameFiles == null)
                         {
-                            using var imageStream = new MemoryStream();
-                            await imageFile.CopyToAsync(imageStream);
-                            imageStream.Position = 0;
+                            var proNoFile = await _helper.UpdateProduct(Product);
+                            response.Result = _mapper.Map<Products>(proNoFile);
+                            return response;
+                        }
 
-                            var imageData = new ContentSafetyImageData(BinaryData.FromBytes(imageStream.ToArray()));
-                            var request = new AnalyzeImageOptions(imageData);
-                            try
+                        // Khởi tạo ContentSafetyClient và danh sách link từ client
+                        var client = new ContentSafetyClient(new Uri(initializationModel.EndpointContentSafety), new AzureKeyCredential(initializationModel.ApiKeyContentSafety));
+                        var linkModel = new List<LinkModel>(Product.Links);
+                        var listUnsafe = new List<bool>();
+
+                        // Kiểm duyệt và upload mỗi hình ảnh từ imageFiles nếu có
+                        if (imageFiles != null && imageFiles.Count > 0)
+                        {
+                            var imageTasks = imageFiles.Select(async imageFile =>
                             {
-                                var response = await client.AnalyzeImageAsync(request);
-                                var result = response.Value;
+                                using var imageStream = new MemoryStream();
+                                await imageFile.CopyToAsync(imageStream);
+                                imageStream.Position = 0;
 
-                                // Kiểm tra kết quả kiểm duyệt
-                                if (result.CategoriesAnalysis.Any(c => c.Severity > 4))
+                                var imageData = new ContentSafetyImageData(BinaryData.FromBytes(imageStream.ToArray()));
+                                var request = new AnalyzeImageOptions(imageData);
+                                try
+                                {
+                                    var responseAnalyze = await client.AnalyzeImageAsync(request);
+                                    var result = responseAnalyze.Value;
+
+                                    // Kiểm tra kết quả kiểm duyệt
+                                    if (result.CategoriesAnalysis.Any(c => c.Severity > 4))
+                                    {
+                                        listUnsafe.Add(true);
+                                        return; // Nếu hình ảnh không đạt, ngừng xử lý
+                                    }
+
+                                    // Hình ảnh đạt yêu cầu, upload lên Cloudinary và thêm link mới vào danh sách
+                                    var imageLink = await _helper.UploadImageCloudinary(imageFile);
+                                    linkModel.Add(new LinkModel
+                                    {
+                                        ProviderName = "Cloudinary",
+                                        Url = imageLink,
+                                        Type = LinkType.External,
+                                        Status = LinkStatus.Active,
+                                        Censorship = new CensorshipModel
+                                        {
+                                            ProviderName = "Azure Content Safety",
+                                            Description = "Content Safety",
+                                            Status = CensorshipStatus.Access
+                                        }
+                                    });                                  
+                                }
+                                catch (RequestFailedException)
                                 {
                                     listUnsafe.Add(true);
-                                    return; // Nếu hình ảnh không đạt, ngừng xử lý
                                 }
+                            });
+                            await Task.WhenAll(imageTasks);
+                        }
+                        // Kiểm duyệt và upload cho gameFile nếu có
+                        if (gameFiles != null)
+                        {
+                            // Tìm link Google Drive cũ
+                            var existingGoogleDriveLink = Product.Links.FirstOrDefault(l => l.ProviderName == "Google Drive");
 
-                                // Hình ảnh đạt yêu cầu, upload lên Cloudinary và thêm link mới vào danh sách
-                                var imageLink = await _helper.UploadImageCloudinary(imageFile);
+                            if (existingGoogleDriveLink != null)
+                            {
+                                // Xóa link cũ
+                                Product.Links.Remove(existingGoogleDriveLink);
+                            }
+                            string scan = await _helper.ScanFileForVirus(gameFiles);
+                            if (scan != "OK")
+                            {
+                                listUnsafe.Add(true);
+                            }
+                            else
+                            {
+                                var gameLink = await _helper.UploadFileToGoogleDrive(gameFiles);
                                 linkModel.Add(new LinkModel
                                 {
-                                    ProviderName = "Cloudinary",
-                                    Url = imageLink,
+                                    ProviderName = "Google Drive",
+                                    Url = gameLink,
                                     Type = LinkType.External,
                                     Status = LinkStatus.Active,
                                     Censorship = new CensorshipModel
                                     {
-                                        ProviderName = "Azure Content Safety",
-                                        Description = "Content Safety",
+                                        ProviderName = "VirusTotal",
+                                        Description = "Scan Virus",
                                         Status = CensorshipStatus.Access
                                     }
                                 });
-
                             }
-                            catch (RequestFailedException)
-                            {
-                                listUnsafe.Add(true);
-                            }
-                        });
-                        await Task.WhenAll(imageTasks);
-                    }
-                    // Kiểm duyệt và upload cho gameFile nếu có
-                    if (gameFiles != null)
-                    {
-                        string scan = await _helper.ScanFileForVirus(gameFiles);
-                        if (scan != "OK")
-                        {
-                            listUnsafe.Add(true);
                         }
-                        else
-                        {
-                            var gameLink = await _helper.UploadFileToGoogleDrive(gameFiles);
-                            linkModel.Add(new LinkModel
-                            {
-                                ProviderName = "Google Drive",
-                                Url = gameLink,
-                                Type = LinkType.External,
-                                Status = LinkStatus.Active,
-                                Censorship = new CensorshipModel
-                                {
-                                    ProviderName = "VirusTotal",
-                                    Description = "Scan Virus",
-                                    Status = CensorshipStatus.Access
-                                }
-                            });
-                        }
-                    }
 
-                    // Kiểm tra nếu có file không hợp lệ
-                    if (listUnsafe.Any())
+                        // Kiểm tra nếu có file không hợp lệ
+                        if (listUnsafe.Any())
+                        {
+                            response.IsSuccess = false;
+                            response.Message = "Have any file not Safety";
+                            return response; // Ngưng hàm và trả về response
+                        }
+
+                        // Cập nhật links của product với linkModel
+                        Product.Links = linkModel;
+                        var proHaveFile = await _helper.UpdateProduct(Product);
+                        response.Result = _mapper.Map<Products>(proHaveFile);// Thực hiện cập nhật sản phẩm
+
+                        var totalRequest = await TotalRequest();
+                        _message.SendingMessageStatistiscal(totalRequest.Result);
+                    }
+                    else
                     {
                         response.IsSuccess = false;
-                        response.Message = "Have any file not Safety";
-                        return response; // Ngưng hàm và trả về response
+                        response.Message = "Not found any Product";
                     }
-
-                    // Cập nhật links của product với linkModel
-                    Product.Links = linkModel;
-                    var proHaveFile = await _helper.UpdateProduct(Product);
-                    response.Result = _mapper.Map<Products>(proHaveFile);// Thực hiện cập nhật sản phẩm
-
-                    var totalRequest = await TotalRequest();
-                    _message.SendingMessageStatistiscal(totalRequest.Result);
-                }
-                else
-                {
-                    response.IsSuccess = false;
-                    response.Message = "Not found any Product";
+                    #endregion
                 }
                 #endregion
             }
@@ -507,6 +535,10 @@ namespace ProductMicroservice.Repostories
                     {
                         Products = Products.OrderByDescending(x => x.Sold);
                     }
+                    else if (sort == "free")
+                    {
+                        Products = Products.Where(x => x.Sold == 0);
+                    }
                     response.Result = _mapper.Map<ICollection<Products>>(Products).ToPagedList(page, pageSize);
                 }
                 else
@@ -529,33 +561,34 @@ namespace ProductMicroservice.Repostories
             try
             {
                 var Pros = _db.Products.AsQueryable();
-                if (Pros != null || !string.IsNullOrEmpty(searchstring))
+                if (!string.IsNullOrEmpty(searchstring))
                 {
-                    // Tìm kiếm theo tên sản phẩm
-                    var resultByName = Pros.Where(x => x.Name.Contains(searchstring));
-                    if (resultByName.Any())
-                    {
-                        response.Result = _mapper.Map<ICollection<Products>>(resultByName).ToPagedList(page, pageSize);
-                    }
+                    // Chuyển từ khóa tìm kiếm về dạng chữ thường
+                    searchstring = searchstring.ToLower();
 
-                    // Tìm kiếm theo tên category
-                    var resultByCateName = Pros.Where(x => x.Categories.Any(c => c.CategoryName.Contains(searchstring)));
-                    if (resultByCateName.Any())
-                    {
-                        response.Result = _mapper.Map<ICollection<Products>>(resultByCateName).ToPagedList(page, pageSize);
-                    }
+                    // Tìm kiếm theo name, category name và username
+                    var result = Pros.Where(x =>
+                        x.Name.ToLower().Contains(searchstring) || // Tìm trong tên sản phẩm
+                        x.Categories.Any(c => c.CategoryName.ToLower().Contains(searchstring)) || // Tìm trong tên category
+                        x.UserName.ToLower().Contains(searchstring)); // Tìm trong username
 
-                    // tim kiem theo username
-                    var resultByUser = Pros.Where(x => x.UserName.Contains(searchstring));
-                    if (resultByUser.Any())
+                    if (result.Any())
                     {
-                        response.Result = _mapper.Map<ICollection<Products>>(resultByUser).ToPagedList(page, pageSize);
+                        response.Result = _mapper
+                            .Map<ICollection<Products>>(result)
+                            .ToPagedList(page, pageSize); // Áp dụng phân trang
+                        response.IsSuccess = true;
+                    }
+                    else
+                    {
+                        response.IsSuccess = false;
+                        response.Message = "No matching products found.";
                     }
                 }
                 else
                 {
                     response.IsSuccess = false;
-                    response.Message = "Not found any Product or search string is null";
+                    response.Message = "Search string cannot be empty.";
                 }
             }
             catch (Exception ex)
@@ -565,6 +598,7 @@ namespace ProductMicroservice.Repostories
             }
             return response;
         }
+
         public async Task<ResponseDTO> Filter(decimal? minrange, decimal? maxrange, int? sold, bool? Discount, int? Platform, string? Category, int page, int pageSize)
         {
             ResponseDTO response = new();
@@ -642,7 +676,16 @@ namespace ProductMicroservice.Repostories
             ResponseDTO response = new();
             try
             {
-                # region Kiểm tra trùng lặp trong danh sách categories
+                #region Kiểm tra số ảnh tối đa
+                if(imageFiles.Count > 7)
+                {
+                    response.IsSuccess = false;
+                    response.Message = $"Maximum 7 image files.";
+                    return response; // Ngưng hàm và trả về response
+                }
+                #endregion
+
+                #region Kiểm tra trùng lặp trong danh sách categories
                 var duplicateCategories = Product.Categories
                     .GroupBy(c => c.CategoryName.ToLower())
                     .Where(g => g.Count() > 1)
@@ -787,98 +830,110 @@ namespace ProductMicroservice.Repostories
                 }
                 #endregion
 
-                #region Kiểm duyệt và add product
-                if (imageFiles != null || imageFiles.Count != 0)
+                #region Kiểm duyệt description, name
+                // Kiểm duyệt nội dung
+                if (!_helper.IsContentAppropriate(Product.Description) || !_helper.IsContentAppropriate(Product.Name))
                 {
-                    /*response.Result = _mapper.Map<Products>(product);*/
-
-                    Products productEntity = null;
-                    var client = new ContentSafetyClient(new Uri(initializationModel.EndpointContentSafety), new AzureKeyCredential(initializationModel.ApiKeyContentSafety));
-                    var linkModel = new List<LinkModel>();
-                    var listUnsafe = new List<bool>();
-
-                    var imageTasks = imageFiles.Select(async imageFile =>
+                    response.IsSuccess = false;
+                    response.Message = "The Content is not for community";
+                    return response;
+                }
+                else
+                {
+                    #region Kiểm duyệt hình ảnh, quét virus và add product
+                    if (imageFiles != null || imageFiles.Count != 0)
                     {
-                        using var imageStream = new MemoryStream();
-                        await imageFile.CopyToAsync(imageStream);
-                        imageStream.Position = 0;
+                        /*response.Result = _mapper.Map<Products>(product);*/
 
-                        var imageData = new ContentSafetyImageData(BinaryData.FromBytes(imageStream.ToArray()));
-                        var request = new AnalyzeImageOptions(imageData);
-                        try
+                        Products productEntity = null;
+                        var client = new ContentSafetyClient(new Uri(initializationModel.EndpointContentSafety), new AzureKeyCredential(initializationModel.ApiKeyContentSafety));
+                        var linkModel = new List<LinkModel>();
+                        var listUnsafe = new List<bool>();
+
+                        var imageTasks = imageFiles.Select(async imageFile =>
                         {
-                            var response = await client.AnalyzeImageAsync(request);
-                            var result = response.Value;
+                            using var imageStream = new MemoryStream();
+                            await imageFile.CopyToAsync(imageStream);
+                            imageStream.Position = 0;
 
-                            // Kiểm tra kết quả kiểm duyệt
-                            if (result.CategoriesAnalysis.Any(c => c.Severity > 4))
+                            var imageData = new ContentSafetyImageData(BinaryData.FromBytes(imageStream.ToArray()));
+                            var request = new AnalyzeImageOptions(imageData);
+                            try
+                            {
+                                var response = await client.AnalyzeImageAsync(request);
+                                var result = response.Value;
+
+                                // Kiểm tra kết quả kiểm duyệt
+                                if (result.CategoriesAnalysis.Any(c => c.Severity > 4))
+                                {
+                                    listUnsafe.Add(true);
+                                    return; // Nếu hình ảnh không đạt, ngừng xử lý
+                                }
+
+                                // Hình ảnh đạt yêu cầu, upload lên Cloudinary và thêm link mới vào danh sách
+                                var imageLink = await _helper.UploadImageCloudinary(imageFile);
+                                linkModel.Add(new LinkModel
+                                {
+                                    ProviderName = "Cloudinary",
+                                    Url = imageLink,
+                                    Type = LinkType.External,
+                                    Status = LinkStatus.Active,
+                                    Censorship = new CensorshipModel
+                                    {
+                                        ProviderName = "Azure Content Safety",
+                                        Description = "Content Safety",
+                                        Status = CensorshipStatus.Access
+                                    }
+                                });
+                            }
+                            catch (RequestFailedException)
                             {
                                 listUnsafe.Add(true);
-                                return; // Nếu hình ảnh không đạt, ngừng xử lý
                             }
-
-                            // Hình ảnh đạt yêu cầu, upload lên Cloudinary và thêm link mới vào danh sách
-                            var imageLink = await _helper.UploadImageCloudinary(imageFile);
+                        });
+                        string scan = await _helper.ScanFileForVirus(gameFiles);
+                        if (scan != "OK")
+                        {
+                            listUnsafe.Add(true);
+                        }
+                        else
+                        {
+                            var gameLink = await _helper.UploadFileToGoogleDrive(gameFiles);
                             linkModel.Add(new LinkModel
                             {
-                                ProviderName = "Cloudinary",
-                                Url = imageLink,
+                                ProviderName = "Google Drive",
+                                Url = gameLink,
                                 Type = LinkType.External,
                                 Status = LinkStatus.Active,
                                 Censorship = new CensorshipModel
                                 {
-                                    ProviderName = "Azure Content Safety",
-                                    Description = "Content Safety",
+                                    ProviderName = "VirusTotal",
+                                    Description = "Scan Virus",
                                     Status = CensorshipStatus.Access
                                 }
                             });
                         }
-                        catch (RequestFailedException)
+                        await Task.WhenAll(imageTasks);
+                        // Kiểm tra nếu có file không hợp lệ
+                        if (listUnsafe.Any())
                         {
-                            listUnsafe.Add(true);
+                            response.IsSuccess = false;
+                            response.Message = "Have any file not Safety";
+                            return response; // Ngưng hàm và trả về response
                         }
-                    });
-                    string scan = await _helper.ScanFileForVirus(gameFiles);
-                    if (scan != "OK")
-                    {
-                        listUnsafe.Add(true);
+
+                        productEntity = await _helper.CreateProduct(Product, linkModel, username);
+                        response.Result = _mapper.Map<Products>(productEntity);// Thực hiện cập nhật sản phẩm
+
+                        var totalRequest = await TotalRequest();
+                        _message.SendingMessageStatistiscal(totalRequest.Result);
                     }
                     else
                     {
-                        var gameLink = await _helper.UploadFileToGoogleDrive(gameFiles);
-                        linkModel.Add(new LinkModel
-                        {
-                            ProviderName = "Google Drive",
-                            Url = gameLink,
-                            Type = LinkType.External,
-                            Status = LinkStatus.Active,
-                            Censorship = new CensorshipModel
-                            {
-                                ProviderName = "VirusTotal",
-                                Description = "Scan Virus",
-                                Status = CensorshipStatus.Access
-                            }
-                        });
-                    }
-                    await Task.WhenAll(imageTasks);
-                    // Kiểm tra nếu có file không hợp lệ
-                    if (listUnsafe.Any())
-                    {
                         response.IsSuccess = false;
-                        response.Message = "Have any file not Safety";
-                        return response; // Ngưng hàm và trả về response
+                        response.Message = "Not found any File to create Product";
                     }
-
-                    productEntity = await _helper.CreateProduct(Product, linkModel, username);
-                    response.Result = _mapper.Map<Products>(productEntity);// Thực hiện cập nhật sản phẩm
-
-                    var totalRequest = await TotalRequest();
-                    _message.SendingMessageStatistiscal(totalRequest.Result);
-                }
-                else
-                {
-                    response.IsSuccess = false;
-                    response.Message = "Not found any File to create Product";
+                    #endregion
                 }
                 #endregion
             }
@@ -943,9 +998,10 @@ namespace ProductMicroservice.Repostories
 
                 if (products.Count == 0)
                 {
-                    throw new Exception("This user doesn't have any product");
+                    response.IsSuccess = false;
+                    response.Message = "This user doesn't have any product";
+                    return response;
                 }
-
                 response.Message = "Get All Products Success";
                 response.Result = _mapper.Map<ICollection<Products>>(products);
             }
@@ -1051,7 +1107,7 @@ namespace ProductMicroservice.Repostories
                 List<Products> products;
 
                 var listPro = await _db.Products.Where(p => p.Categories.Any(c => c.CategoryName.Contains(viewString))).ToListAsync();
-                if (listPro != null)
+                if (listPro != null && listPro.Count != 0)
                 {
                     products = listPro;
                     response.IsSuccess = true;
@@ -1134,6 +1190,55 @@ namespace ProductMicroservice.Repostories
             result.Solds = products.Sum(p => p.Sold);  // Tổng số sản phẩm đã bán
 
             return result;
+        }
+
+        public async Task<ResponseDTO> GetProductByStatus(int Status)
+        {
+            ResponseDTO response = new();
+            try
+            {
+                var products = await _db.Products.Where(p => p.Status == (ProductStatus)Status).ToListAsync();
+
+                if (products.Count == 0)
+                {
+                    response.IsSuccess = false;
+                    response.Message = "This Status doesn't have any product";
+                    return response;
+                }
+
+                response.Message = "Get Products Success";
+                response.Result = _mapper.Map<ICollection<Products>>(products);
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+            }
+            return response;
+        }
+        public async Task<ResponseDTO> GetProductByPlatform(int Platform)
+        {
+            ResponseDTO response = new();
+            try
+            {
+                var products = await _db.Products.Where(p => p.Platform == (PlatformType)Platform).ToListAsync();
+
+                if (products.Count == 0)
+                {
+                    response.IsSuccess = false;
+                    response.Message = "This Platform doesn't have any product";
+                    return response;
+                }
+
+                response.Message = "Get Products Success";
+                response.Result = _mapper.Map<ICollection<Products>>(products);
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+            }
+            return response;
         }
     }
 }
