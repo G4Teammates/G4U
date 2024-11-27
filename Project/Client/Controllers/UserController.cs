@@ -932,13 +932,13 @@ namespace Client.Controllers
             // Kiểm tra và gán oderitem nếu ItemResponse thành công
             if (ProResponese != null && ProResponese.IsSuccess)
             {
-                productViewModel.oderitem = JsonConvert.DeserializeObject<List<OrderItemModel>>(Convert.ToString(ProResponese.Result))
-                    ?? new List<OrderItemModel>();
+                productViewModel.Product = JsonConvert.DeserializeObject<List<ProductModel>>(Convert.ToString(ProResponese.Result))
+                    ?? new List<ProductModel>();
             }
             else
             {
                 // Nếu không có ItemResponse hợp lệ, gán danh sách trống
-                productViewModel.oderitem = new List<OrderItemModel>();
+                productViewModel.Product = new List<ProductModel>();
             }
 
 
