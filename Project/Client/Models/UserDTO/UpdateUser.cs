@@ -20,9 +20,15 @@ namespace Client.Models.UserDTO
         [Phone(ErrorMessage = "The {0} field is not a valid phone number.")]
         public string? PhoneNumber { get; set; }
 
-        [RegularExpression(@"^(?!\s)(?!.*\s{2,}).*(?<!\s)$", ErrorMessage = "The input must not have leading or trailing spaces, and must not contain more than one consecutive space.")]
+        private string? _displayName;
         [StringLength(256, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
-        public string? DisplayName { get; set; }
+        [RegularExpression(@"^(?!\s)(?!.*\s{2,}).*(?<!\s)$", ErrorMessage = "The input must not have leading or trailing spaces, and must not contain more than one consecutive space.")]
+        public string? DisplayName
+        {
+            get => string.IsNullOrEmpty(_displayName) ? Username : _displayName;
+            set => _displayName = value;
+        }
+
 
         [StringLength(17, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 5)]
         [RegularExpression(@"^\d+$", ErrorMessage = "The {0} field can only contain numbers.")]
