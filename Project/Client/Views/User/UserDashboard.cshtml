@@ -138,9 +138,19 @@
                         }
                         <div class="project-info">
                             <strong class="d-inline-block text-truncate" style="max-width: 150px;">@product.Name</strong>
-                            <div><small style="min-width: 150px"><a asp-controller="User" asp-action="EditProduct" asp-route-id="@product.Id">Edit</a> | <a href="">Analytics</a> | <a href="">Widget</a> | <a href="">More</a> <a asp-controller="User" asp-action="DeleteProduct" asp-route-id="@product.Id" class="text-danger">Delete</a></small></div>
+                            <div>
+                                <small style="min-width: 150px">
+                                    <a class="text-decoration-none" asp-controller="User" asp-action="EditProduct" asp-route-id="@product.Id">Edit</a> |
+                                    <a class="text-decoration-none text-secondary">Analytics</a> |
+                                    @* <a href="">Widget</a> |  *@
+                                    <a class="text-decoration-none text-secondary">More</a> |
+                                    @* <a class="text-decoration-none text-secondary">More</a> | *@
+                                    <a asp-controller="User" asp-action="DeleteProduct" asp-route-id="@product.Id" class="text-danger text-decoration-none">Delete</a>
+                                </small>
+                            </div>
                         </div>
-                        <span class="badge bg-secondary">DRAFT</span>
+                        @* <span class="badge bg-secondary">DRAFT</span> *@
+                        <span class="badge bg-primary">PUBLIC</span>
                     }
                 </div>
             }
