@@ -3,6 +3,7 @@ using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Driver;
 using MongoDB.EntityFrameworkCore.Extensions;
+using System.Text.RegularExpressions;
 using UserMicroservice.DBContexts.Entities;
 
 namespace UserMicroservice.DBContexts
@@ -21,6 +22,7 @@ namespace UserMicroservice.DBContexts
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<User>().ToCollection("Users");
+
         }
     }
 }

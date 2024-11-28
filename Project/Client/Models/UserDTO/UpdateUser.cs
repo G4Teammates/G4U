@@ -12,14 +12,22 @@ namespace Client.Models.UserDTO
         // Chỉ cần bắt buộc Id, các thuộc tính khác có thể là null
         [Required(ErrorMessage = "The {0} field is required.")]
         [StringLength(320, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+        [RegularExpression(@"^[a-zA-Z0-9_@-]*$", ErrorMessage = "The {0} can only contain letters, numbers, underscores (_), at (@) and hyphens (-).")]
         public string? Username { get; set; }
 
+        [RegularExpression(@"^\d+$", ErrorMessage = "The {0} field can only contain numbers.")]
         [StringLength(15, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 7)]
         [Phone(ErrorMessage = "The {0} field is not a valid phone number.")]
         public string? PhoneNumber { get; set; }
 
+        [RegularExpression(@"^(?!\s)(?!.*\s{2,}).*(?<!\s)$", ErrorMessage = "The input must not have leading or trailing spaces, and must not contain more than one consecutive space.")]
         [StringLength(256, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
         public string? DisplayName { get; set; }
+
+        [StringLength(17, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 5)]
+        [RegularExpression(@"^\d+$", ErrorMessage = "The {0} field can only contain numbers.")]
+        public string? BankAccount { get; set; }
+
 
         [Required(ErrorMessage = "The {0} field is required.")]
         [StringLength(320, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 3)]
