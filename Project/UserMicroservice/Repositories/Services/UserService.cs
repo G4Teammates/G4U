@@ -308,14 +308,15 @@ namespace UserMicroservice.Repositories.Services
                     (!isEmailChanged || count.NumEmail == 0))
                 {
                     // Cập nhật thông tin từ UserModel vào đối tượng User
-                    user.DisplayName = updatedUserModel.DisplayName ?? user.DisplayName;
+                    user.DisplayName = updatedUserModel.DisplayName;
                     user.Username = updatedUserModel.Username ?? user.Username;
-                    user.PhoneNumber = updatedUserModel.PhoneNumber ?? user.PhoneNumber;
+                    user.PhoneNumber = updatedUserModel.PhoneNumber;
                     user.Email = updatedUserModel.Email ?? user.Email;
-                    user.Avatar = updatedUserModel.Avatar ?? user.Avatar;
+                    user.Avatar = updatedUserModel.Avatar ?? "https://static.vecteezy.com/system/resources/previews/020/911/747/non_2x/user-profile-icon-profile-avatar-user-icon-male-icon-face-icon-profile-icon-free-png.png";
                     user.Role = updatedUserModel.Role ?? user.Role;
                     user.EmailConfirmation = updatedUserModel.EmailConfirmation ?? user.EmailConfirmation;
                     user.Status = updatedUserModel.Status ?? user.Status;
+                    user.BankAccount = updatedUserModel.BankAccount;
                     user.UpdatedAt = DateTime.UtcNow;
                     // Lưu các thay đổi vào cơ sở dữ liệu
                     _context.Users.Update(user);

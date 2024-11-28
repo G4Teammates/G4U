@@ -12,7 +12,7 @@ namespace Client.Models.UserDTO
         // Chỉ cần bắt buộc Id, các thuộc tính khác có thể là null
         [Required(ErrorMessage = "The {0} field is required.")]
         [StringLength(320, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
-        [RegularExpression(@"^[a-zA-Z0-9_@-]*$", ErrorMessage = "The {0} can only contain letters, numbers, underscores (_), at (@) and hyphens (-).")]
+        [RegularExpression(@"^[a-zA-Z0-9_@.-]*$", ErrorMessage = "The {0} can only contain letters, numbers, underscores (_), at (@) and hyphens (-).")]
         public string? Username { get; set; }
 
         [RegularExpression(@"^\d+$", ErrorMessage = "The {0} field can only contain numbers.")]
