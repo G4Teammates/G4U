@@ -427,6 +427,8 @@ namespace Client.Controllers
 
                 //}
 
+                var response = await _userService.UpdateUser(updateUser);
+
 
                 IEnumerable<Claim> claim = HttpContext.User.Claims;
                 UserClaimModel user = new UserClaimModel
@@ -440,8 +442,6 @@ namespace Client.Controllers
                 };
 
                 await _helperService.UpdateClaim(user, HttpContext);
-                var response = await _userService.UpdateUser(updateUser);
-
 
                 if (response.IsSuccess)
                 {
@@ -474,7 +474,10 @@ namespace Client.Controllers
         {
             // Đọc cookie giỏ hàng
             string cartJson = HttpContext.Request.Cookies["cart"];
-            CartModel cart = new();
+            CartModel cart = new()
+            {
+                Order = new OrderModel()
+            };
             if (!string.IsNullOrEmpty(cartJson))
             {
                 // Chuyển đổi JSON thành đối tượng CartViewModel

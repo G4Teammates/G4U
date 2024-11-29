@@ -23,6 +23,10 @@ using System.Text;
 using System;
 using Newtonsoft.Json;
 
+/*hiện tại bọn em đang làm chức năng trả lương cho nhân viên bằng ngân hàng, nhưng em chưa tìm được keyword để nghiên cứu. 
+Cho em hỏi dịch vụ chi hộ của ngân hàng có phải dùng để trả lương không,
+
+ */
 namespace UserMicroservice.Repositories.Services
 {
     public class AuthenticationService : IAuthenticationService
@@ -202,9 +206,9 @@ namespace UserMicroservice.Repositories.Services
             }
             return response;
         }
-             
-        
-        
+
+
+
         public async Task<ResponseModel> LoginWithoutPassword(string email)
         {
             var response = new ResponseModel();
@@ -261,31 +265,32 @@ namespace UserMicroservice.Repositories.Services
             {
 
                 var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == registerRequestModel.Email);
-                if (user.Status != UserStatus.Inactive && user.EmailConfirmation !=EmailStatus.Unconfirmed)
+                if (user != null)
                 {
-                    response.Message = "User is exist";
-                    response.IsSuccess = false;
-                    return response;
+                    if (user.Status != UserStatus.Inactive && user.EmailConfirmation != EmailStatus.Unconfirmed)
+                    {
+                        response.Message = "User is exist";
+                        response.IsSuccess = false;
+                        return response;
+                    }
+                    await _userService.DeleteUser(user.Id);
+
+                    // Step 2: Check if username or email already exists
+                    response = await _helper.IsUserNotExist(registerRequestModel.Username, registerRequestModel.Email);
+                    if (!response.IsSuccess)
+                    {
+                        response.Message = "Failed to verify if user exists.";
+                        return response;
+                    }
+
+                    CountModel count = (CountModel)response.Result;
+                    if (count.NumUsername != 0)
+                    {
+                        response.IsSuccess = false;
+                        response.Message = "Username already exists.";
+                        return response;
+                    }
                 }
-
-                await _userService.DeleteUser(user.Id);
-
-                // Step 2: Check if username or email already exists
-                response = await _helper.IsUserNotExist(registerRequestModel.Username, registerRequestModel.Email);
-                if (!response.IsSuccess)
-                {
-                    response.Message = "Failed to verify if user exists.";
-                    return response;
-                }
-
-                CountModel count = (CountModel)response.Result;
-                if (count.NumUsername != 0)
-                {
-                    response.IsSuccess = false;
-                    response.Message = "Username already exists.";
-                    return response;
-                }
-
                 UserModel userModel = _mapper.Map<UserModel>(registerRequestModel);
                 userModel.Id = ObjectId.GenerateNewId().ToString();
                 User userCreate = _mapper.Map<User>(userModel);

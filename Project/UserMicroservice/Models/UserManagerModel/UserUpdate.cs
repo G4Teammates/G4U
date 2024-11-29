@@ -20,7 +20,7 @@ namespace UserMicroservice.Models.UserManagerModel
         /// </summary>
         [Required(ErrorMessage = "The {0} field is required.")]
         [StringLength(320, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
-        [WhiteSpaceValidation(ErrorMessage = "{0} cannot have leading or trailing spaces and must not contain more than one consecutive space.")]
+        [RegularExpression(@"^[a-zA-Z0-9_@.-]*$", ErrorMessage = "The {0} can only contain letters, numbers, underscores (_), at (@), dot(.) and hyphens (-).")]
         public required string Username { get; set; }
 
         /// <summary>
@@ -33,7 +33,7 @@ namespace UserMicroservice.Models.UserManagerModel
 
 
         [StringLength(15, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 7)]
-        [WhiteSpaceValidation(ErrorMessage = "{0} cannot have leading or trailing spaces and must not contain more than one consecutive space.")]
+        [RegularExpression(@"^\d+$", ErrorMessage = "The {0} field can only contain numbers.")]
         [Phone(ErrorMessage = "The {0} field is not a valid phone number.")]
         public string? PhoneNumber { get; set; }
 
@@ -42,9 +42,9 @@ namespace UserMicroservice.Models.UserManagerModel
         /// <br/>
         /// Tên hiển thị của người dùng.
         /// </summary>
-        [StringLength(256, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
-        [WhiteSpaceValidation(ErrorMessage = "{0} cannot have leading or trailing spaces and must not contain more than one consecutive space.")]
         private string? _displayName;
+        [StringLength(256, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+        [RegularExpression(@"^(?!\s)(?!.*\s{2,}).*(?<!\s)$", ErrorMessage = "The input must not have leading or trailing spaces, and must not contain more than one consecutive space.")]
         public string? DisplayName
         {
             get => string.IsNullOrEmpty(_displayName) ? Username : _displayName;

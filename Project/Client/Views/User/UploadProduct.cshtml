@@ -316,7 +316,10 @@
 
         <!-- Nút tạo sản phẩm -->
         <div class="col-12 text-end m-4">
-            <a asp-controller="Product" asp-action="ProductDetail" asp-route-id="@Model.Id" class="mx-3 text-secondary">View Page</a>
+            @if (Model.Id != null)
+            {
+                <a asp-controller="Product" asp-action="ProductDetail" asp-route-id="@Model.Id" class="mx-3 text-secondary">View Page</a>
+            }
             <input type="submit" value="Public" class="btn btn-danger" />
         </div>
     </form>

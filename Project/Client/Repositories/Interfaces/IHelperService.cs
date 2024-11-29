@@ -13,5 +13,6 @@ namespace Client.Repositories.Interfaces
 		public ResponseModel CheckAndReadToken(string token);
 		public Task<ResponseModel> Moderate(Stream imageFiles);
 		public Task<HttpContext> UpdateClaim(UserClaimModel user, HttpContext context);
+		public Task<ResponseModel> SendMail(SendMailModel model);
     }
 }
