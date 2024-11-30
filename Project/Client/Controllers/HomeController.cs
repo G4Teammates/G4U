@@ -5,10 +5,9 @@ using Client.Repositories.Interfaces.Authentication;
 using Client.Repositories.Interfaces.Product;
 
 using Google.Apis.Auth;
-
-
-
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
 using Newtonsoft.Json;
 using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
@@ -79,7 +78,12 @@ namespace Client.Controllers
                 }
 
                 // Lấy token và kiểm tra tính hợp lệ, nhưng luôn tiếp tục để lấy sản phẩm
-                var token = _tokenProvider.GetToken();
+                string token = _tokenProvider.GetToken();
+                if (token == null)
+                {
+                    ViewData["IsLogin"] = false;
+                    await HttpContext.SignOutAsync();
+                }
                 var response = _helperService.CheckAndReadToken(token);
                 if (response.IsSuccess)
                 {
