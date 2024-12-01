@@ -27,6 +27,7 @@ using Client.Models.OrderModel;
 using MongoDB.Bson;
 using System.Collections.ObjectModel;
 using AutoMapper;
+using Azure;
 
 namespace Client.Controllers
 {
@@ -223,6 +224,16 @@ namespace Client.Controllers
             var response = await _authenService.ResetPasswordAsync(model);
             if (response.IsSuccess)
             {
+                IEnumerable<Claim> claim = HttpContext.User.Claims;
+                string email = claim.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value!;
+                string username = claim.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value!;
+
+                var responseResetPassword = await _helperService.SendMail(new Models.SendMailModel()
+                {
+                    Email = email,
+                    Subject = "Reset password was success",
+                    Body = $"Account with {username} used Forgot password and Reset password success"
+                });
                 TempData["success"] = "Reset password is success";
                 return RedirectToAction(nameof(Logout));
             }
@@ -261,7 +272,7 @@ namespace Client.Controllers
                     if (user != null)
                     {
                         TempData["success"] = "Registration successful. Check your email to activate your account.";
-                        return View(register);
+                        return View();
                     }
                     else
                     {
@@ -359,21 +370,20 @@ namespace Client.Controllers
             }
         }
 
-        //[HttpGet]
-        //public IActionResult ActiveUser()
-        //{
-
-        //    return View();
-        //}
-
-
+        
 
 
 
         [HttpGet]
         public async Task<IActionResult> Information()
         {
-            var token = _tokenProvider.GetToken();
+            string token = _tokenProvider.GetToken();
+            bool isLogin = Convert.ToBoolean(HttpContext.Request.Cookies["IsLogin"]);
+            if (token == null || !isLogin)
+            {
+                TempData["error"] = "Session expired, please login again.";
+                return View(nameof(Login));
+            }
             var handler = new JwtSecurityTokenHandler();
             var jsonToken = handler.ReadToken(token) as JwtSecurityToken;
             var id = jsonToken?.Claims.First(claim => claim.Type == ClaimTypes.NameIdentifier).Value;
@@ -427,6 +437,8 @@ namespace Client.Controllers
 
                 //}
 
+                var response = await _userService.UpdateUser(updateUser);
+
 
                 IEnumerable<Claim> claim = HttpContext.User.Claims;
                 UserClaimModel user = new UserClaimModel
@@ -440,8 +452,6 @@ namespace Client.Controllers
                 };
 
                 await _helperService.UpdateClaim(user, HttpContext);
-                var response = await _userService.UpdateUser(updateUser);
-
 
                 if (response.IsSuccess)
                 {
@@ -472,9 +482,25 @@ namespace Client.Controllers
         [HttpGet]
         public IActionResult Cart()
         {
+            string token = _tokenProvider.GetToken();
+            bool isLogin = Convert.ToBoolean(HttpContext.Request.Cookies["IsLogin"]);
+            if (token == null || !isLogin)
+            {
+                TempData["error"] = "Session expired, please login again.";
+                //return View(nameof(Login));
+                return Json(new { });
+            }
+
+
+
+
+
             // Đọc cookie giỏ hàng
             string cartJson = HttpContext.Request.Cookies["cart"];
-            CartModel cart = new();
+            CartModel cart = new()
+            {
+                Order = new OrderModel()
+            };
             if (!string.IsNullOrEmpty(cartJson))
             {
                 // Chuyển đổi JSON thành đối tượng CartViewModel
@@ -491,6 +517,10 @@ namespace Client.Controllers
         [HttpPost]
         public IActionResult Cart(ProductViewModel product)
         {
+            if (!ModelState.IsValid) 
+            {
+                return View();
+            }
             // Đọc cookie giỏ hàng
             string cartJsonCookie = HttpContext.Request.Cookies["cart"];
             CartModel cart = new();
@@ -547,7 +577,6 @@ namespace Client.Controllers
 
             // Trả về dữ liệu giỏ hàng dạng JSON
             return View(cart);
-            return RedirectToAction("Payment", "Order", cart);
         }
 
 
@@ -582,21 +611,40 @@ namespace Client.Controllers
         [HttpGet]
         public IActionResult PasswordSecurity()
         {
+            string token = _tokenProvider.GetToken();
+            bool isLogin = Convert.ToBoolean(HttpContext.Request.Cookies["IsLogin"]);
+            if (token == null || !isLogin)
+            {
+                TempData["error"] = "Session expired, please login again.";
+                return View(nameof(Login));
+            }
             return View();
         }
 
         [HttpPost]
         public async Task<IActionResult> PasswordSecurity(ChangePasswordModel model)
         {
-            model.Id = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)!.Value;
-            var response = await _authenService.ChangePasswordAsync(model);
-            if (response.IsSuccess)
+            if (!ModelState.IsValid)
             {
-                TempData["success"] = response.Message;
+                return View();
+            }
+            model.Id = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)!.Value;
+            string email = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)!.Value;
+            string username = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)!.Value;
+            var responseChangePass = await _authenService.ChangePasswordAsync(model);
+            if (responseChangePass.IsSuccess)
+            {
+                var responseSendMail = await _helperService.SendMail(new Models.SendMailModel()
+                {
+                    Email = email,
+                    Subject = "Change password was success",
+                    Body = $"Account with username {username} was change password at {DateTime.Today}"
+                });
+                TempData["success"] = responseChangePass.Message + " and " + responseSendMail.Message;
             }
             else
             {
-                TempData["error"] = response.Message;
+                TempData["error"] = responseChangePass.Message;
             }
             return View();
         }
@@ -921,6 +969,13 @@ namespace Client.Controllers
 
         public async Task<IActionResult> UserDashboard()
         {
+            string token = _tokenProvider.GetToken();
+            bool isLogin = Convert.ToBoolean(HttpContext.Request.Cookies["IsLogin"]);
+            if (token == null || !isLogin)
+            {
+                TempData["error"] = "Session expired, please login again.";
+                return View(nameof(Login));
+            }
             IEnumerable<Claim> claim = HttpContext.User.Claims;
             ProductViewModel productViewModel = new ProductViewModel();
             string un = claim.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value!;

@@ -23,6 +23,10 @@ using System.Text;
 using System;
 using Newtonsoft.Json;
 
+/*hiện tại bọn em đang làm chức năng trả lương cho nhân viên bằng ngân hàng, nhưng em chưa tìm được keyword để nghiên cứu. 
+Cho em hỏi dịch vụ chi hộ của ngân hàng có phải dùng để trả lương không,
+
+ */
 namespace UserMicroservice.Repositories.Services
 {
     public class AuthenticationService : IAuthenticationService
@@ -106,6 +110,27 @@ namespace UserMicroservice.Repositories.Services
                     };
                 }
 
+
+                if(user.Status == UserStatus.Inactive || user.EmailConfirmation == EmailStatus.Unconfirmed)
+                {
+                    return new ResponseModel
+                    {
+                        IsSuccess = false,
+                        Message = "Account is not active, please check your email to active account"
+                    };
+                }
+
+                
+                if(user.Status == UserStatus.Block )
+                {
+                    return new ResponseModel
+                    {
+                        IsSuccess = false,
+                        Message = $"Account is {user.Status.ToString()}, please contact to us."
+                    };
+                }
+
+
                 // Xác minh mật khẩu
                 bool isPasswordCorrect = BCrypt.Net.BCrypt.Verify(loginRequestModel.Password, user.PasswordHash);
                 if (!isPasswordCorrect)
@@ -173,7 +198,9 @@ namespace UserMicroservice.Repositories.Services
                         Username = loginGoogleRequestModel.Email!,
                         Role = UserRole.User,
                         Avatar = loginGoogleRequestModel.Picture!,
-                        DisplayName = loginGoogleRequestModel.DisplayName
+                        DisplayName = loginGoogleRequestModel.DisplayName,
+                        Status = UserStatus.Active,
+                        EmailConfirmation = EmailStatus.Confirmed
                     };
                     user = _mapper.Map<User>(userCreateModel);
                     await _context.AddAsync(user);
@@ -202,9 +229,9 @@ namespace UserMicroservice.Repositories.Services
             }
             return response;
         }
-             
-        
-        
+
+
+
         public async Task<ResponseModel> LoginWithoutPassword(string email)
         {
             var response = new ResponseModel();
@@ -261,31 +288,32 @@ namespace UserMicroservice.Repositories.Services
             {
 
                 var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == registerRequestModel.Email);
-                if (user.Status != UserStatus.Inactive && user.EmailConfirmation !=EmailStatus.Unconfirmed)
+                if (user != null)
                 {
-                    response.Message = "User is exist";
-                    response.IsSuccess = false;
-                    return response;
+                    if (user.Status != UserStatus.Inactive && user.EmailConfirmation != EmailStatus.Unconfirmed)
+                    {
+                        response.Message = "User is exist";
+                        response.IsSuccess = false;
+                        return response;
+                    }
+                    await _userService.DeleteUser(user.Id);
+
+                    // Step 2: Check if username or email already exists
+                    response = await _helper.IsUserNotExist(registerRequestModel.Username, registerRequestModel.Email);
+                    if (!response.IsSuccess)
+                    {
+                        response.Message = "Failed to verify if user exists.";
+                        return response;
+                    }
+
+                    CountModel count = (CountModel)response.Result;
+                    if (count.NumUsername != 0)
+                    {
+                        response.IsSuccess = false;
+                        response.Message = "Username already exists.";
+                        return response;
+                    }
                 }
-
-                await _userService.DeleteUser(user.Id);
-
-                // Step 2: Check if username or email already exists
-                response = await _helper.IsUserNotExist(registerRequestModel.Username, registerRequestModel.Email);
-                if (!response.IsSuccess)
-                {
-                    response.Message = "Failed to verify if user exists.";
-                    return response;
-                }
-
-                CountModel count = (CountModel)response.Result;
-                if (count.NumUsername != 0)
-                {
-                    response.IsSuccess = false;
-                    response.Message = "Username already exists.";
-                    return response;
-                }
-
                 UserModel userModel = _mapper.Map<UserModel>(registerRequestModel);
                 userModel.Id = ObjectId.GenerateNewId().ToString();
                 User userCreate = _mapper.Map<User>(userModel);
@@ -385,8 +413,8 @@ namespace UserMicroservice.Repositories.Services
                 // Tạo URL thủ công nếu không có ngữ cảnh HttpRequest
                 string confirmationLink = $"{gateway}/User/ResetPassword?userId={model.Id}&token={token}";
 
-                var emailSubject = "Đặt lại mật khẩu của bạn";
-                var emailBody = $"Nhấp vào liên kết sau để đặt lại mật khẩu: <a href='{confirmationLink}'>Đặt lại mật khẩu</a>";
+                var emailSubject = "Reset your password";
+                var emailBody = $"Click to link to reset password: <a href='{confirmationLink}'>Reset Password</a>";
 
                 // Kiểm tra và gửi email
                 if (model.Email != null)
@@ -484,8 +512,8 @@ namespace UserMicroservice.Repositories.Services
                 // Tạo URL thủ công nếu không có ngữ cảnh HttpRequest
                 string confirmationLink = $"{gateway}/User/ActiveUser?userId={model.Id}";
 
-                var emailSubject = "Kích hoạt tài khoản của bạn";
-                var emailBody = $"Nhấp vào liên kết sau để kích hoạt tài khoản: <a href='{confirmationLink}'>Kích hoạt tài khoản</a>";
+                var emailSubject = "Active your account";
+                var emailBody = $"Click to link to active account: <a href='{confirmationLink}'>Active account</a>";
 
                 // Kiểm tra và gửi email
                 if (model.Email != null)

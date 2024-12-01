@@ -5,26 +5,13 @@
 @model LoginRequestModel
 
 
-<div class="login-container" style="height:100vh;">
+<div class="login-container" style="min-height:100vh; max-height:auto">
     <div class="login-box">
         
         <div class="login-logo">
             <a asp-controller="Home" asp-action="Index"><img src="~/image/logo.png" alt="Logo" /></a>
         </div>
         <h2 class="login-title">Log in</h2>
-        @if (TempData["success"] != null)
-        {
-            <div class="alert alert-success">
-                @TempData["success"]
-            </div>
-        }
-
-        @if (TempData["error"] != null)
-        {
-            <div class="alert alert-danger">
-                @TempData["error"]
-            </div>
-        }
         <form asp-action="Login">
             <div class="login-input input-group row">
                 

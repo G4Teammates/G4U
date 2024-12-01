@@ -2,19 +2,25 @@
 using Client.Models;
 using Client.Models.Enum.OrderEnum;
 using Client.Models.OrderModel;
+using Client.Repositories.Interfaces;
+using Client.Repositories.Interfaces.Authentication;
 using Client.Repositories.Interfaces.Order;
 using CloudinaryDotNet;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
 using Newtonsoft.Json;
 using System;
+using System.Security.Claims;
 
 namespace Client.Controllers
 {
-    public class OrderController(IOrderService orderService, IPaymentService paymentService, IMapper mapper) : Controller
+    public class OrderController(IOrderService orderService, IPaymentService paymentService, IMapper mapper, IHelperService helperService, ITokenProvider tokenProvider) : Controller
     {
         private readonly IMapper _mapper = mapper;
         private readonly IOrderService _orderService = orderService;
         private readonly IPaymentService _paymentService = paymentService;
+        private readonly IHelperService _helperService = helperService;
+        private readonly ITokenProvider _tokenProvider = tokenProvider;
         public IActionResult Index()
         {
             return View();
@@ -27,6 +33,15 @@ namespace Client.Controllers
 
         public async Task<IActionResult> Checkout(string orderJson, PaymentMethod paymentMethod)
         {
+            string token = _tokenProvider.GetToken();
+            bool isLogin = Convert.ToBoolean(HttpContext.Request.Cookies["IsLogin"]);
+            if (token == null || !isLogin)
+            {
+                TempData["error"] = "You should login first";
+                return RedirectToAction("Login", "User");
+            }
+
+
             CartModel cart = JsonConvert.DeserializeObject<CartModel>(orderJson);
             cart.PaymentMethod = paymentMethod;
             cart.Order.PaymentName = "Pending";
@@ -150,6 +165,13 @@ namespace Client.Controllers
                 OrderType = orderType,
                 ResponseTime = responseTime,
             };
+            string email = User.FindFirst(ClaimTypes.Email)?.Value;
+            _helperService.SendMail(new SendMailModel()
+            {
+                Email = email,
+                Subject = "Payment Success",
+                Body = $"Your payment for order {orderId} is successful. Thank you for shopping with us."
+            });
 
             return View(model);
         }
@@ -190,6 +212,15 @@ namespace Client.Controllers
                 OrderType = "PayOS",
                 ResponseTime = ((DateTimeOffset)payosOrder.UpdatedAt).ToUnixTimeMilliseconds(),
             };
+            string email = User.FindFirst(ClaimTypes.Email)?.Value;
+            await _helperService.SendMail(new SendMailModel()
+            {
+                Email = email,
+                Subject = "Payment Success",
+                Body = $"Your payment for order {orderId} is successful. Thank you for shopping with us."
+            });
+
+
             return View("PaymentSuccess", model);
         }
 

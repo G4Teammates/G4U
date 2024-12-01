@@ -85,13 +85,12 @@
         </div>
         <!-- Your Payment & Gifting Details Section -->
         <div class="col-lg-5">
-
             @if (Model.Order.TotalPrice != 0)
             {
 
                 <h5 class="fw-bold"><i class="fas fa-user"></i>YOUR PAYMENT & GIFTING DETAILS</h5>
 
-                <div class="custom-bg-light p-3 mt-3 shadow-sm border">
+@*                 <div class="custom-bg-light p-3 mt-3 shadow-sm border">
                     <!-- Wallet Payment Method -->
                     <div class="form-check text-secondary  d-flex align-items-center">
                         <input type="radio" id="wallet" name="payment" class="form-check-input">
@@ -100,11 +99,11 @@
                             Use Wallet Funds (Balance $0.00)
                         </label>
                     </div>
-                </div>
+                </div> *@
 
-                <div class="custom-bg-light p-3 d-flex shadow-sm border fw-bold">
+@*                 <div class="custom-bg-light p-3 d-flex shadow-sm border fw-bold">
                     <a href="#" class="text-muted">Purchase more Wallet funds & learn more</a>
-                </div>
+                </div> *@
 
 
                 <div class="custom-bg-light p-3 shadow-sm border">
@@ -128,13 +127,13 @@
                     </div>
                 </div>
 
-                <div class="custom-bg-light p-3 mt-3 shadow-sm border">
+               @*  <div class="custom-bg-light p-3 mt-3 shadow-sm border">
                     <!-- Gift this order Checkbox -->
                     <div class="form-check text-secondary">
                         <input type="checkbox" id="gift" name="gift" class="form-check-input">
                         <label for="gift" class="form-check-label">GIFT THIS ORDER</label>
                     </div>
-                </div>
+                </div> *@
 
             }
             else
@@ -143,7 +142,7 @@
                 <div class="custom-bg-light p-3 shadow-sm border">
                     <!-- Free Payment Method -->
                     <div class="form-check text-secondary d-flex align-items-center">
-                        <input asp-for="@Model.PaymentMethod" value="Free" type="radio" id="free" name="PaymentMethod" class="form-check-input">
+                        <input asp-for="@Model.PaymentMethod" value="Free" type="radio" checked name="PaymentMethod" class="form-check-input">
                         <label for="payos" class="form-check-label d-flex align-items-center">
                             <img src="~/image/freeicon.png" alt="free icon" class="mx-3 payment-icon me-2" />
                             FREE
