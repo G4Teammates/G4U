@@ -14,6 +14,7 @@ using System.Text;
 using Newtonsoft.Json;
 using AutoMapper;
 using ProductMicroservice.DBContexts;
+using System.Text.RegularExpressions;
 
 namespace ProductMicroservice.Repostories.Helper
 {
@@ -285,16 +286,34 @@ namespace ProductMicroservice.Repostories.Helper
         }
         public bool IsContentAppropriate(string content)
         {
-            // Kiểm tra xem content có chứa từ bị cấm hay không
+            var violatedWords = GetViolatedWords(content);
+
+            if (violatedWords.Any())
+            {
+                Console.WriteLine($"Nội dung không phù hợp. Từ vi phạm: {string.Join(", ", violatedWords)}");
+                return false;
+            }
+
+            Console.WriteLine("Nội dung phù hợp.");
+            return true;
+        }
+        private List<string> GetViolatedWords(string content)
+        {
+            var violatedWords = new List<string>();
+
             foreach (var bannedWord in _bannedWords)
             {
-                if (content.Contains(bannedWord, StringComparison.OrdinalIgnoreCase))
+                // Tạo biểu thức regex để khớp toàn bộ từ (có ranh giới từ \b)
+                string pattern = $@"\b{Regex.Escape(bannedWord)}\b";
+                if (Regex.IsMatch(content, pattern, RegexOptions.IgnoreCase))
                 {
-                    return false; // Nội dung không phù hợp
+                    violatedWords.Add(bannedWord); // Thêm từ vi phạm vào danh sách
                 }
             }
-            return true; // Nội dung phù hợp
+
+            return violatedWords; // Trả về danh sách từ vi phạm
         }
+
         private readonly List<string> _bannedWords = new List<string>
         {
             // Tiếng Việt - Nội dung không phù hợp và các biến thể lách luật
@@ -338,7 +357,7 @@ namespace ProductMicroservice.Repostories.Helper
             // Tiếng Pháp - Mots offensants et inappropriés et leurs variations
             "idiot", "IDIOTTTT", "imbécile", "IMBECiLeee", "connard", "CONNardDD", "salaud", "SAlAUDddd", "ordure", "OrDureEEE",
             "merde", "MERRRRDDE", "putain", "PUTainNNN", "crétin", "CRETiiiiNNN", "débile", "dEBILEee", "abruti", "ABRUtiiiiii",
-            "goujat", "goujATttt", "dégénéré", "DEGENEREEEEE", "salopard", "saloPARDddd", "con", "connNNNN", "imbécile heureux",
+            "goujat", "goujATttt", "dégénéré", "DEGENEREEEEE", "salopard", "saloPARDddd", "connNNNN", "imbécile heureux",
             "IMBECILEEEEE", "branleur", "branleEEEur", "impoli", "IMPolIeee", "inculte", "INculteeeee", "imbu de lui-même",
             "imbUUU", "fainéant", "fAINNEEANTtt", "paresseux", "PAREsSEuxxx", "épais", "EPaaaiss", "salopard", "saloPARDD",
     
