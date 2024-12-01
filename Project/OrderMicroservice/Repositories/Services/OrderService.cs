@@ -9,16 +9,17 @@ using OrderMicroservice.Models.OrderModel;
 using OrderMicroservice.Models.PaymentModel;
 using OrderMicroservice.Models.UserModel;
 using OrderMicroservice.Repositories.Interfaces;
+using System.ComponentModel.Design;
 using X.PagedList.Extensions;
 
 namespace OrderMicroservice.Repositories.Services
 {
-    public class OrderService(OrderDbContext context, IMapper mapper, IMessage message) : IOrderService
+    public class OrderService(OrderDbContext context, IMapper mapper, IMessage message, IHelperService helpService) : IOrderService
     {
         OrderDbContext _context = context;
         IMapper _mapper = mapper;
         IMessage _message = message;
-
+        IHelperService _helperService = helpService;
         public async Task<ResponseModel> Create(OrderModel orderModel)
         {
             ResponseModel response = new();

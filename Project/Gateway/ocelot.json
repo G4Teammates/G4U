@@ -397,6 +397,21 @@
     },
 
 
+    //login-without-password
+    {
+      "DownstreamPathTemplate": "/api/Auth/login-without-password",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7107
+        }
+      ],
+      "UpstreamPathTemplate": "/Auth/login-without-password",
+      "UpstreamHttpMethod": [ "Post" ]
+    },
+
+
     //Forgot password
     {
       "DownstreamPathTemplate": "/api/Auth/forgot-password",

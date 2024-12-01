@@ -244,25 +244,25 @@
                         <!-- Censorship Status -->
                         <div class="text-center">
                             <label class="d-block" style="font-weight: bold; color: #00A97F; padding-bottom: 5px;">Censorship Status</label>
-                            <input type="text" name="Links[@i].Censorship.Status" value="@link.Censorship.Status" class="form-control bg-white text-[#00A97F] border-[#00A97F] text-center" style="width: 100%; border: 1px solid #00A97F;" />
+                            <input type="text" name="Links[@i].Censorship.Status" value="@link.Censorship.Status" class="form-control bg-white text-[#00A97F] border-[#00A97F] text-center" style="width: 100%; border: 1px solid #00A97F;" readonly />
                         </div>
 
                         <!-- Censorship Provider Name -->
                         <div class="text-center">
                             <label class="d-block" style="font-weight: bold; color: #00A97F; padding-bottom: 5px;">Provider Name</label>
-                            <input type="text" name="Links[@i].Censorship.ProviderName" value="@link.Censorship.ProviderName" class="form-control bg-white text-[#00A97F] border-[#00A97F] text-center" style="width: 100%; border: 1px solid #00A97F;" />
+                            <input type="text" name="Links[@i].Censorship.ProviderName" value="@link.Censorship.ProviderName" class="form-control bg-white text-[#00A97F] border-[#00A97F] text-center" style="width: 100%; border: 1px solid #00A97F;" readonly />
                         </div>
 
                         <!-- Censorship Description -->
                         <div class="text-center">
                             <label class="d-block" style="font-weight: bold; color: #00A97F; padding-bottom: 5px;">Description</label>
-                            <input type="text" name="Links[@i].Censorship.Description" value="@link.Censorship.Description" class="form-control bg-white text-[#00A97F] border-[#00A97F] text-center" style="width: 100%; border: 1px solid #00A97F;" />
+                            <input type="text" name="Links[@i].Censorship.Description" value="@link.Censorship.Description" class="form-control bg-white text-[#00A97F] border-[#00A97F] text-center" style="width: 100%; border: 1px solid #00A97F;" readonly />
                         </div>
 
                         <!-- Provider Name -->
                         <div class="text-center" >
                             <label class="d-block" style="font-weight: bold; color: #00A97F; padding-bottom: 5px;">Provider</label>
-                            <input type="text" name="Links[@i].ProviderName" value="@link.ProviderName" class="form-control bg-white text-[#00A97F] border-[#00A97F] text-center" style="width: 100%; border: 1px solid #00A97F;" />
+                            <input type="text" name="Links[@i].ProviderName" value="@link.ProviderName" class="form-control bg-white text-[#00A97F] border-[#00A97F] text-center" style="width: 100%; border: 1px solid #00A97F;" readonly />
                         </div>
                         <div class="text-center" hidden>
                             <label class="d-block" style="font-weight: bold; color: #00A97F; padding-bottom: 5px;"></label>
@@ -294,7 +294,7 @@
                 <div class=col-md-4>
                     <div class="form-group" style="border: 1px solid #00A97F; border-radius: 8px; padding: 10px;">
                         <label for="UserName" class="d-block" style="font-weight: bold; color: #00A97F;">UserName</label>
-                        <input type="text" class="form-control" asp-for="UserName" style="border: 1px solid #00A97F; padding-left: 10px; padding-right: 10px;" />
+                        <input type="text" class="form-control" asp-for="UserName" style="border: 1px solid #00A97F; padding-left: 10px; padding-right: 10px;" readonly/>
                         <span asp-validation-for="UserName" class="text-danger"></span>
                     </div>
                 </div>

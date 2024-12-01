@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Models\CustomValidation\TrimAndCleanBinder.cs" />
     <Compile Remove="Models\SearchCriteria.cs" />
     <Compile Remove="Models\UserViewModel.cs" />
     <Compile Remove="Utility\SearchCriteriaBuilder.cs" />

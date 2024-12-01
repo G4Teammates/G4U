@@ -18,6 +18,7 @@ namespace OrderMicroservice.Configure
 
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IPaymentService, PaymentService>();
+            services.AddScoped<IHelperService, HelperService>();
             services.AddHostedService<Background>();
             services.AddSingleton<IMessage, Message>();
             services.AddScoped<CheckPurchaseReceive>();
