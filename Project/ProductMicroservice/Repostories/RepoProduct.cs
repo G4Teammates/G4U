@@ -92,7 +92,7 @@ namespace ProductMicroservice.Repostories
             try
             {
                 #region Kiểm tra số lượng hình ảnh
-                if((imageFiles.Count + Product.Links.Count) > 7)
+                if (imageFiles != null && (imageFiles.Count + Product.Links.Count > 7))
                 {
                     response.IsSuccess = false;
                     response.Message = $"Maximum 7 image files.";

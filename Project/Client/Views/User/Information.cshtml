@@ -30,22 +30,20 @@
                     </a>
                 </div>
                 <div class="custom-nav-item">
-                    <button type="button">
-                        <i class="fas fa-info-circle"></i> Privacy
-                    </button>
+                    <a asp-controller="User" asp-action="UserDashboard">
+                        <button type="button">
+                            <i class="fas fa-heart"></i> User Dashboard
+                        </button>
+                    </a>
                 </div>
-                <div class="custom-nav-item">
-                    <button type="button">
-                        <i class="fas fa-heart"></i> Order History
-                    </button>
+                <div class="custom-nav-item text-end">
+                    <a asp-controller="User" asp-action="Logout">
+                        <button type="button">
+                            <i class="fas fa-heart"></i> Logout
+                        </button>
+                    </a>
                 </div>
-
             </div>
-@*             <div class="custom-nav-item text-end">
-                <button type="button">
-                    <i class="fas fa-heart"></i> Logout
-                </button>
-            </div> *@
         </div>
 
         <div class="col-md-9 p-4">
@@ -128,7 +126,7 @@
                                 <input type="text" class="form-control" id="phoneNumber" name="PhoneNumber" asp-for="@Model.PhoneNumber">
                                 <span asp-validation-for="@Model.PhoneNumber" class="text-danger"></span>
                             </div>
-                        </div>      
+                        </div>
                         <div class="row mb-3 px-3">
                             <div class="col-md-3 align-content-center">
                                 <div class="text-center fw-bold">
