@@ -24,7 +24,8 @@
                 <span asp-validation-for="Type" class="text-danger"></span>
             </div>
             <div class="mb-2">
-                <select asp-for="Status" class="form-select" aria-label="Status">
+                <label asp-for="Status" class="form-label">Status</label>
+                <select asp-for="Status" class="form-select" aria-label="Status" disabled>
                     <option value="0">Active</option>
                     <option value="1">Inactive</option>
                     <option value="2">Block</option>
