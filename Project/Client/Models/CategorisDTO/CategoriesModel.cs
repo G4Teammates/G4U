@@ -14,10 +14,12 @@ namespace Client.Models.CategorisDTO
         /// <summary>
         /// The Name of the category.
         /// </summary>
-        [Required(ErrorMessage = "Category name is required.")]
-        [StringLength(32, ErrorMessage = "Category name must be at least {2} and at most {1} characters long.", MinimumLength = 2)]
-        [RegularExpression(@"^[a-zA-Z\s]+$", ErrorMessage = "Category name cannot contain numbers or special characters.")]
-        public required string Name { get; set; }
+
+        [Required(ErrorMessage = "Name is required")]
+        [StringLength(256, MinimumLength = 2, ErrorMessage = "The Name must be at least {2} and at max {1} characters long.")]
+        [RegularExpression(@"^(?!.*\s{2})[a-zA-Z0-9\s]+$", ErrorMessage = "The Name cannot contain special characters or consecutive spaces.")]
+        public string Name { get; set; }
+
 
         /// <summary>
         /// The Type of the category.

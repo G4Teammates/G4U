@@ -40,18 +40,18 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
-                <form class="d-flex">
-                    <input class="form-control me-2" type="search" placeholder="Search.." aria-label="Search">
+                <form class="d-flex" action="/home" method="get">
+                    <button type="submit" class="btn btn-success" style="">Trang chủ</button>
                 </form>
 
 
                 <ul class="navbar-nav">
-                    <li class="nav-item mx-2">
+                    @* <li class="nav-item mx-2">
                         <a class="nav-link"><i class="fa-solid fa-bell"></i></a>
                     </li>
                     <li class="nav-item mx-2">
                         <a class="nav-link"><i class="fa-solid fa-bars"></i></a>
-                    </li>
+                    </li> *@
                     @if (ViewBag.User != null)
                     {
                         <li class="nav-item mx-2">

@@ -29,6 +29,7 @@ using X.PagedList.Extensions;
 using ProductMicroservice.Models.Message;
 using ProductMicroservice.Repostories.Messages;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace ProductMicroservice.Repostories
 {
@@ -41,9 +42,10 @@ namespace ProductMicroservice.Repostories
         private readonly Cloudinary _cloudinary;
         private readonly IHelper _helper;
         private readonly IMessage _message;
+        private readonly IMemoryCache _memoryCache;
 
 
-        public RepoProduct(IConfiguration configuration, ProductDbContext db, IMapper mapper, IHelper helper, IMessage message)
+        public RepoProduct(IConfiguration configuration, ProductDbContext db, IMapper mapper, IHelper helper, IMessage message, IMemoryCache memoryCache)
         {
             _message = message;
             _helper = helper;
@@ -52,6 +54,7 @@ namespace ProductMicroservice.Repostories
             _mapper = mapper;
             var account = new Account(initializationModel.cloudNameCloudinary, initializationModel.apiKeyCloudinary, initializationModel.apiSecretCloudinary);
             _cloudinary = new Cloudinary(account);
+            _memoryCache = memoryCache;
         }
         #endregion
 
@@ -445,9 +448,25 @@ namespace ProductMicroservice.Repostories
                 var product = await _db.Products.FindAsync(id);
                 if (product != null)
                 {
-                    product.Interactions.NumberOfViews++;
-                    _db.Products.Update(product);
-                    _db.SaveChanges();
+                    // Tạo key cache cho thời gian lượt xem cuối cùng của sản phẩm
+                    string cacheKey = $"Product_{id}_LastViewedTime";
+
+                    // Lấy thời gian lượt xem cuối cùng từ cache
+                    DateTime? lastViewedTime = _memoryCache.Get<DateTime?>(cacheKey);
+
+                    if (lastViewedTime == null || (DateTime.Now - lastViewedTime.Value).TotalMinutes >= 1)
+                    {
+                        // Nếu chưa đủ 15 phút, tăng lượt xem và cập nhật thời gian
+                        product.Interactions.NumberOfViews++;
+
+                        // Cập nhật thời gian lượt xem vào cache
+                        _memoryCache.Set(cacheKey, DateTime.Now, TimeSpan.FromMinutes(1)); // Lưu trong cache 15 phút
+
+                        // Cập nhật lại sản phẩm trong cơ sở dữ liệu
+                        _db.Products.Update(product);
+                        await _db.SaveChangesAsync();
+                    }
+
                     response.Result = _mapper.Map<Products>(product);
 
                     var totalRequest = await TotalRequest();
@@ -466,6 +485,7 @@ namespace ProductMicroservice.Repostories
             }
             return response;
         }
+
         public async Task<ResponseDTO> DeleteProduct(string id)
         {
             ResponseDTO response = new();
@@ -1111,7 +1131,7 @@ namespace ProductMicroservice.Repostories
                 {
                     products = listPro;
                     response.IsSuccess = true;
-                    response.Result = _mapper.Map<List<Products>>(products);
+                    response.Result = products;
                     return response;
                 }
                 switch (viewString.ToLower())
@@ -1158,7 +1178,7 @@ namespace ProductMicroservice.Repostories
 
                 if (products != null && products.Any())
                 {
-                    response.Result = _mapper.Map<List<Products>>(products);
+                    response.Result = products;
                     response.IsSuccess = true;
                 }
                 else

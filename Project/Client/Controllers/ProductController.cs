@@ -43,49 +43,40 @@ namespace Client.Controllers
             ProductViewModel product = new();
             try
             {
-
+                // Lấy tất cả danh mục sản phẩm
                 ResponseModel? response1 = await _categoryService.GetAllCategoryAsync(1, 99);
 
+                // Lấy dữ liệu sản phẩm của trang hiện tại
                 ResponseModel? response = await _productService.GetAllProductAsync(pageNumber, pageSize);
 
-                ResponseModel? response2 = await _productService.GetAllProductAsync(1, 99);
+                // Lấy tất cả sản phẩm để tính tổng số
+                ResponseModel? response2 = await _productService.GetAllProductAsync(1, int.MaxValue);
 
-
+                // Giải mã dữ liệu tổng số sản phẩm
                 var total = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response2.Result.ToString()!));
 
                 if (response != null && response.IsSuccess)
                 {
-
+                    // Dữ liệu của sản phẩm trong trang hiện tại
                     product.Product = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response.Result.ToString()!));
 
+                    // Danh mục sản phẩm
                     product.CategoriesModel = JsonConvert.DeserializeObject<ICollection<CategoriesModel>>(Convert.ToString(response1.Result.ToString()!));
 
-                    var data = product.Product;
+                    // Thông tin phân trang
                     product.pageNumber = pageNumber;
-                    product.totalItem = data.Count;
+                    product.totalItem = total?.Count ?? 0; // Tổng số sản phẩm từ toàn bộ dữ liệu
                     product.pageSize = pageSize;
-                    product.pageCount = (int)Math.Ceiling(total.Count / (double)pageSize);
-
+                    product.pageCount = (int)Math.Ceiling(product.totalItem / (double)pageSize);
                 }
                 else
                 {
                     TempData["error"] = response?.Message;
                 }
-
             }
             catch (Exception ex)
             {
                 TempData["error"] = ex.Message;
-            }
-
-            // Tạo mã QR cho từng sản phẩm
-            foreach (var item in product.Product)
-            {
-                string qrCodeUrl = Url.Action("UpdateProduct", "Admin", new { id = item.Id }, Request.Scheme);
-                item.QrCode = _productService.GenerateQRCode(qrCodeUrl); // Tạo mã QR và lưu vào thuộc tính
-
-                /*string barCodeUrl = Url.Action("UpdateProduct", "Admin", new { id = item.Id }, Request.Scheme);
-                item.BarCode = _productService.GenerateBarCode(11111111111); // Tạo mã QR và lưu vào thuộc tính*/
             }
 
             return View(product);
