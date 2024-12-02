@@ -451,11 +451,22 @@ namespace OrderMicroservice.Repositories.Services
         {
             var result = new OrderGroupByUserData();
 
-            // Đảm bảo response.CreateAt là UTC và có thời gian là 00:00:00
+            /*// Đảm bảo response.CreateAt là UTC và có thời gian là 00:00:00
             var startOfDayUtc = DateTime.SpecifyKind(response.CreateAt.Date, DateTimeKind.Utc);
 
             var orders = await _context.Orders
-                .Where(p => p.Items.Any(x=> x.PublisherName==response.UserName)  && p.CreatedAt <= startOfDayUtc).ToListAsync();
+                .Where(p => p.Items.Any(x=> x.PublisherName==response.UserName)  && p.CreatedAt <= startOfDayUtc).ToListAsync();*/
+
+            // Lấy tháng và năm từ response.CreateAt
+            var targetMonth = response.CreateAt.Month;
+            var targetYear = response.CreateAt.Year;
+
+            // Query các sản phẩm có UserName trùng và tháng, năm của CreatedAt trùng với tháng, năm được truyền vào
+            var orders = await _context.Orders
+                .Where(p => p.Items.Any(x => x.PublisherName == response.UserName) &&
+                            p.CreatedAt.Month == targetMonth &&
+                            p.CreatedAt.Year == targetYear)
+                .ToListAsync();
 
             result.Revenue =orders.Sum(x=>x.TotalProfit);
 

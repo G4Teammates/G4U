@@ -324,12 +324,12 @@ namespace ProductMicroservice.Repostories
                         if (gameFiles != null)
                         {
                             // Tìm link Google Drive cũ
-                            var existingGoogleDriveLink = Product.Links.FirstOrDefault(l => l.ProviderName == "Google Drive");
+                            var existingGoogleDriveLink = linkModel.FirstOrDefault(l => l.ProviderName == "Google Drive");
 
                             if (existingGoogleDriveLink != null)
                             {
                                 // Xóa link cũ
-                                Product.Links.Remove(existingGoogleDriveLink);
+                                linkModel.Remove(existingGoogleDriveLink);
                             }
                             string scan = await _helper.ScanFileForVirus(gameFiles);
                             if (scan != "OK")
@@ -500,60 +500,62 @@ namespace ProductMicroservice.Repostories
             ResponseDTO response = new();
             try
             {
-                var Products = _db.Products.AsQueryable();
-                if (Products != null)
+                var Products = _db.Products.AsQueryable();  // Lấy dữ liệu từ cơ sở dữ liệu
+
+                var productList = await Products.ToListAsync();  // Thực thi truy vấn và lấy toàn bộ danh sách sản phẩm
+
+                // Sắp xếp trong bộ nhớ (sau khi tải dữ liệu)
+                switch (sort)
                 {
-                    if (sort == "ascPrice")
-                    {
-                        Products = Products.OrderBy(x => x.Price);
-                    }
-                    else if (sort == "descPrice")
-                    {
-                        Products = Products.OrderByDescending(x => x.Price);
-                    }
-                    else if (sort == "ascView")
-                    {
-                        Products = Products.OrderBy(x => x.Interactions.NumberOfViews);
-                    }
-                    else if (sort == "descView")
-                    {
-                        Products = Products.OrderByDescending(x => x.Interactions.NumberOfViews);
-                    }
-                    else if (sort == "ascLike")
-                    {
-                        Products = Products.OrderBy(x => x.Interactions.NumberOfLikes);
-                    }
-                    else if (sort == "descLike")
-                    {
-                        Products = Products.OrderByDescending(x => x.Interactions.NumberOfLikes);
-                    }
-                    else if (sort == "ascSold")
-                    {
-                        Products = Products.OrderBy(x => x.Sold);
-                    }
-                    else if (sort == "descSold")
-                    {
-                        Products = Products.OrderByDescending(x => x.Sold);
-                    }
-                    else if (sort == "free")
-                    {
-                        Products = Products.Where(x => x.Sold == 0);
-                    }
-                    response.Result = _mapper.Map<ICollection<Products>>(Products).ToPagedList(page, pageSize);
+                    case "ascPrice":
+                        productList = productList.OrderBy(x => x.Price).ToList();
+                        break;
+                    case "descPrice":
+                        productList = productList.OrderByDescending(x => x.Price).ToList();
+                        break;
+                    case "ascView":
+                        productList = productList.OrderBy(x => x.Interactions.NumberOfViews).ToList();
+                        break;
+                    case "descView":
+                        productList = productList.OrderByDescending(x => x.Interactions.NumberOfViews).ToList();
+                        break;
+                    case "ascLike":
+                        productList = productList.OrderBy(x => x.Interactions.NumberOfLikes).ToList();
+                        break;
+                    case "descLike":
+                        productList = productList.OrderByDescending(x => x.Interactions.NumberOfLikes).ToList();
+                        break;
+                    case "ascSold":
+                        productList = productList.OrderBy(x => x.Sold).ToList();
+                        break;
+                    case "descSold":
+                        productList = productList.OrderByDescending(x => x.Sold).ToList();
+                        break;
+                    case "free":
+                        productList = productList.Where(x => x.Sold == 0).ToList();
+                        break;
+                    default:
+                        break;
                 }
-                else
+
+                // Ánh xạ kết quả và phân trang
+                response.Result = productList.ToPagedList(page, pageSize);
+
+                if (response.Result == null)
                 {
                     response.IsSuccess = false;
-                    response.Message = "Not found any Product";
+                    response.Message = "No products found.";
                 }
             }
             catch (Exception ex)
             {
                 response.IsSuccess = false;
-                response.Message = ex.Message;
+                response.Message = $"Error: {ex.Message}";
             }
+
             return response;
         }
+
 
         public async Task<ResponseDTO> Search(string searchstring, int page, int pageSize)
         {
@@ -655,7 +657,17 @@ namespace ProductMicroservice.Repostories
                         query = query.Where(p => p.Categories.Any(c => c.CategoryName.Equals(Category, StringComparison.OrdinalIgnoreCase)));
                     }
 
+                    // Kiểm tra nếu không có sản phẩm nào sau khi lọc
+                    if (!query.Any())
+                    {
+                        response.IsSuccess = false;
+                        response.Message = "Not found any Product";
+                        return response; // Kết thúc tại đây nếu không có sản phẩm nào
+                    }
+
+                    // Phân trang và trả về kết quả
                     response.Result = _mapper.Map<ICollection<Products>>(query.ToList()).ToPagedList(page, pageSize);
+                    response.IsSuccess = true; // Đánh dấu là thành công
                 }
                 else
                 {
@@ -1178,11 +1190,23 @@ namespace ProductMicroservice.Repostories
         {
             var result = new ProductGroupByUserData();
 
-            // Đảm bảo response.CreateAt là UTC và có thời gian là 00:00:00
+            /*// Đảm bảo response.CreateAt là UTC và có thời gian là 00:00:00
             var startOfDayUtc = DateTime.SpecifyKind(response.CreateAt.Date, DateTimeKind.Utc);
 
             // Query the products where UserName matches and CreateAt is less than or equal to the provided date
-            var products = await _db.Products.Where(p => p.UserName == response.UserName && p.CreatedAt <= startOfDayUtc).ToListAsync();
+            var products = await _db.Products.Where(p => p.UserName == response.UserName && p.CreatedAt <= startOfDayUtc).ToListAsync();*/
+
+
+            // Lấy tháng và năm từ response.CreateAt
+            var targetMonth = response.CreateAt.Month;
+            var targetYear = response.CreateAt.Year;
+
+            // Query các sản phẩm có UserName trùng và tháng, năm của CreatedAt trùng với tháng, năm được truyền vào
+            var products = await _db.Products
+                .Where(p => p.UserName == response.UserName &&
+                            p.CreatedAt.Month == targetMonth &&
+                            p.CreatedAt.Year == targetYear)
+                .ToListAsync();
 
             // Tính toán các giá trị cần thiết từ danh sách sản phẩm
             result.Views = products.Sum(p => p.Interactions?.NumberOfViews ?? 0);  // Tổng số lượt xem
