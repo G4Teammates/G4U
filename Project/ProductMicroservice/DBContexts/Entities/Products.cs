@@ -162,6 +162,10 @@ namespace ProductMicroservice.DBContexts.Entities
         public required string UserName { get; set; }
 
 
+        [BsonElement("winrarPassword")]
+        /*[BsonRepresentation(BsonType.ObjectId)]*/
+
+        public required string WinrarPassword { get; set; }
     }
     #endregion
 }
