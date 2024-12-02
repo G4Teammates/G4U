@@ -30,6 +30,9 @@ using ProductMicroservice.Models.Message;
 using ProductMicroservice.Repostories.Messages;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using Microsoft.Extensions.Caching.Memory;
+using SharpCompress.Archives;
+using SharpCompress.Common;
+using System.Diagnostics;
 
 namespace ProductMicroservice.Repostories
 {
@@ -314,7 +317,7 @@ namespace ProductMicroservice.Repostories
                                             Description = "Content Safety",
                                             Status = CensorshipStatus.Access
                                         }
-                                    });                                  
+                                    });
                                 }
                                 catch (RequestFailedException)
                                 {
@@ -434,7 +437,7 @@ namespace ProductMicroservice.Repostories
                 }
             }
             catch (Exception ex)
-             {
+            {
                 response.IsSuccess = false;
                 response.Message = ex.Message;
             }
@@ -697,7 +700,7 @@ namespace ProductMicroservice.Repostories
             try
             {
                 #region Kiểm tra số ảnh tối đa
-                if(imageFiles.Count > 7)
+                if (imageFiles.Count > 7)
                 {
                     response.IsSuccess = false;
                     response.Message = $"Maximum 7 image files.";
@@ -972,7 +975,7 @@ namespace ProductMicroservice.Repostories
                 .ToListAsync();
         }
 
-        
+
         public async Task<ResponseDTO> TotalRequest()
         {
             ResponseDTO response = new();
@@ -1481,6 +1484,13 @@ namespace ProductMicroservice.Repostories
                                 listUnsafe.Add(true);
                             }
                         });
+
+                        // Check password của file game
+                        if (!IsCorrectPassword(gameFiles, Product.WinrarPassword))
+                        {
+                            throw new Exception("Rar password is incorrect please enter the correct password");
+                        }
+
                         string scan = await _helper.ScanFileForVirus(gameFiles);
                         if (scan != "OK")
                         {
@@ -1533,6 +1543,68 @@ namespace ProductMicroservice.Repostories
                 response.Message = ex.Message;
             }
             return response;
+        }
+
+        public bool IsCorrectPassword(IFormFile formFile, string password)
+        {
+            // Tạo file tạm
+            string tempFilePath = Path.GetTempFileName();
+
+            try
+            {
+                // Lưu file vào vị trí tạm thời
+                using (var stream = new FileStream(tempFilePath, FileMode.Create))
+                {
+                    formFile.CopyTo(stream);
+                }
+
+                // Đường dẫn đến 7z.exe
+                string sevenZipPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Tools", "7z.exe");
+
+                // Lệnh kiểm tra file với mật khẩu
+                string arguments = $"t \"{tempFilePath}\" -p\"{password}\""; // "t" để kiểm tra file, "-p" cung cấp mật khẩu
+
+                ProcessStartInfo startInfo = new ProcessStartInfo
+                {
+                    FileName = sevenZipPath,
+                    Arguments = arguments,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                };
+
+                using (Process process = Process.Start(startInfo))
+                {
+                    string output = process.StandardError.ReadToEnd(); // Đọc lỗi
+                    string standardOutput = process.StandardOutput.ReadToEnd(); // Đọc output chính
+
+                    process.WaitForExit(); // Chờ tiến trình kết thúc
+
+                    if (process.ExitCode == 0)
+                    {
+                        return true; // Mật khẩu đúng (hoặc không cần mật khẩu)
+                    }
+                    else if (output.Contains("Wrong password"))
+                    {
+                        return false; // Sai mật khẩu
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+            }
+            finally
+            {
+                // Xóa file tạm
+                if (File.Exists(tempFilePath))
+                {
+                    File.Delete(tempFilePath);
+                }
+            }
+
+            return false;
         }
     }
 }

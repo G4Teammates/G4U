@@ -327,7 +327,8 @@ namespace ProductMicroservice.Repostories.Helper
                 Platform = Product.Platform,
                 Status = Product.Status,
                 Links = linkModel,
-                UserName = username
+                UserName = username,
+                WinrarPassword = Product.WinrarPassword,
             };
             var productEntity = _mapper.Map<Products>(newProduct);
             await _db.AddAsync(productEntity);

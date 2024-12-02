@@ -256,7 +256,7 @@ namespace ProductMicroService.Controllers
                     Description = description,
                     Price = price,
                     Sold = sold,
-                    Interactions = new InteractionModel { NumberOfLikes = numOfLike, NumberOfViews = numOfView , NumberOfDisLikes = numOfDisLike, UserDisLikes =userDisLikeModel, UserLikes = userLikeModel},
+                    Interactions = new InteractionModel { NumberOfLikes = numOfLike, NumberOfViews = numOfView, NumberOfDisLikes = numOfDisLike, UserDisLikes = userDisLikeModel, UserLikes = userLikeModel },
                     Discount = discount,
                     Categories = categoryModels,
                     Platform = (PlatformType)platform,
@@ -557,7 +557,8 @@ namespace ProductMicroService.Controllers
                             [FromForm] int status,
                             [FromForm] List<IFormFile> imageFiles,
                             [FromForm] ScanFileRequest request,
-                            [FromForm] string username
+                            [FromForm] string username,
+                            [FromForm] string winrarPassword
                             )
         {
             if (!ModelState.IsValid)
@@ -612,7 +613,8 @@ namespace ProductMicroService.Controllers
                     Discount = discount,
                     Categories = categoryModels,
                     Platform = (PlatformType)platform,
-                    Status = (ProductStatus)status
+                    Status = (ProductStatus)status,
+                    WinrarPassword = winrarPassword
                 };
 
                 var newProduct = await _repoProduct.ModerateClone(imageFiles, product, gameFile, username);
