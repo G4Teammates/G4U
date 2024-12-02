@@ -2,7 +2,7 @@
 
 namespace UserMicroservice.Models.AuthModel
 {
-    public class ChangePasswordModel
+    public class ChangePasswordModel : IValidatableObject
     {
         public string? Id { get; set; }
 
@@ -12,7 +12,6 @@ namespace UserMicroservice.Models.AuthModel
 
         [Required(ErrorMessage = "Please enter the new password.")]
         [StringLength(64, ErrorMessage = "The new password must be at least {2} and at most {1} characters long.", MinimumLength = 6)]
-        [Compare(nameof(OldPassword), ErrorMessage = "The new password cannot be the same as the old password.")]
         public string? NewPassword { get; set; }
 
         [Required(ErrorMessage = "Please enter the password confirmation.")]
@@ -20,5 +19,14 @@ namespace UserMicroservice.Models.AuthModel
         [StringLength(64, ErrorMessage = "The password confirmation must be at least {2} and at most {1} characters long.", MinimumLength = 6)]
         public string? ConfirmPassword { get; set; }
 
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if (!string.IsNullOrEmpty(OldPassword) && OldPassword == NewPassword)
+            {
+                yield return new ValidationResult(
+                    "The new password cannot be the same as the old password.",
+                    new[] { nameof(NewPassword) });
+            }
+        }
     }
 }

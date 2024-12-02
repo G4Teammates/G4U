@@ -41,14 +41,18 @@ namespace UserMicroservice.Repositories.Services
                 new Claim(ClaimTypes.GivenName, user.DisplayName),
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim("Avatar", user.Avatar),
-                new Claim(ClaimTypes.Role, user.Role.ToString())
+                new Claim(ClaimTypes.Role, user.Role.ToString()),
+                new Claim("LoginType", user.LoginType.ToString())
             };
+            if (user.LoginType != DBContexts.Enum.UserLoginType.Local)
+                user.IsRememberMe = true;
+            DateTime expiresTime = user.IsRememberMe?DateTime.Now.AddDays(7) : DateTime.Now.AddDays(1);
 
             var token = new JwtSecurityToken(
                 issuer: JwtOptionModel.Issuer,
                 audience: JwtOptionModel.Audience,
                 claims,
-                expires: DateTime.Now.AddDays(1),
+                expires: expiresTime,
                 signingCredentials: credentials
             );
             return new JwtSecurityTokenHandler().WriteToken(token);

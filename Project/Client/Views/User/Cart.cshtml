@@ -32,12 +32,11 @@
         <div class="col-lg-7">
             <h5 class="fw-bold"><i class="fas fa-user"></i>YOUR ORDER</h5>
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            @* <input type="hidden" id="cartJson" name="cartJson" value="@Html.Raw(JsonConvert.SerializeObject(Model.Order))" /> *@
-            @*         <input type="hidden" id="cartJson" name="cartJson"
-            value="@Html.Raw(HttpUtility.HtmlEncode(JsonConvert.SerializeObject(Model)))" />
-            *@
+         
+
+
             <input hidden id="orderJson" name="orderJson" value='@Html.Raw(HttpUtility.HtmlEncode(JsonConvert.SerializeObject(Model)))' />
-            @if (Model.Order != null)
+            @if (Model != null && Model.Order!=null)
             {
                 @if (Model.Order.Items != null)
                     foreach (var item in Model.Order.Items)
@@ -70,13 +69,12 @@
                     {
                     <div class="fw-bold">ORDER TOTAL: 0 vnđ</div>
                     } *@
-                    @if (Model.Order != null)
+                    @if (Model !=null && Model.Order != null)
                     {
                         @if (Model.Order.Items != null)
                         {
                             <div class="fw-bold">
-                                ORDER TOTA
-                                L: @Model.Order.TotalPrice.ToString("N0") vnđ
+                                ORDER TOTAL: @Model.Order.TotalPrice.ToString("N0") vnđ
                             </div>
                         }
                     }
@@ -154,7 +152,7 @@
             <div class="custom-bg-light p-3 mt-3 shadow-sm border">
                 <!-- Total and Google Pay Button -->
                 <div class="d-flex align-items-center justify-content-between">
-                    @if (Model.Order != null)
+                    @if (Model!=null && Model.Order != null)
                     {
                         @if (Model.Order.Items != null)
                         {
@@ -177,50 +175,3 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 }
-
-@* <script>
-    $(document).ready(function () {
-        $('#checkoutForm').on('submit', function (e) {
-            e.preventDefault(); // Ngăn form submit theo cách thông thường
-
-            // Lấy phương thức thanh toán từ form
-            const paymentMethod = $('#paymentMethod').val();
-
-            // Lấy dữ liệu từ cookie (nếu lưu giỏ hàng trong cookie)
-            const cartJson = getCookie('cart'); // Hàm getCookie để đọc cookie
-            if (!cartJson) {
-                alert("Cart is empty!");
-                return;
-            }
-
-            const cart = JSON.parse(cartJson);
-
-            // Cập nhật phương thức thanh toán vào cart
-            cart.paymentMethod = paymentMethod;
-
-            // Gửi dữ liệu qua AJAX
-            $.ajax({
-                url: '/Order/Checkout', // URL tới controller action xử lý
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify(cart), // Chuyển dữ liệu thành JSON
-                success: function (response) {
-                    console.log('Order processed:', response);
-                    alert("Order successful!");
-                },
-                error: function (xhr, status, error) {
-                    console.error('Error:', error);
-                    alert("Failed to process order!");
-                }
-            });
-        });
-    });
-
-    // Hàm để lấy cookie
-    function getCookie(name) {
-        const value = `; ${document.cookie}`;
-        const parts = value.split(`; ${name}=`);
-        if (parts.length === 2) return parts.pop().split(';').shift();
-    }
-
-</script> *@

@@ -42,7 +42,7 @@ namespace Client.Repositories.Services
 				// Thêm Token nếu cần
 				if (withBearer)
 				{
-					var token = _tokenProvider.GetToken();
+					var token = _tokenProvider.GetToken("JWT");
 					if (!string.IsNullOrEmpty(token))
 					{
 						message.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);

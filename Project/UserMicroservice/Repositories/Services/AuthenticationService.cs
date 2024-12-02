@@ -111,7 +111,7 @@ namespace UserMicroservice.Repositories.Services
                 }
 
 
-                if(user.Status == UserStatus.Inactive || user.EmailConfirmation == EmailStatus.Unconfirmed)
+                if(user.Status == UserStatus.Inactive && user.EmailConfirmation == EmailStatus.Unconfirmed)
                 {
                     return new ResponseModel
                     {
@@ -121,7 +121,7 @@ namespace UserMicroservice.Repositories.Services
                 }
 
                 
-                if(user.Status == UserStatus.Block )
+                if(user.Status != UserStatus.Active )
                 {
                     return new ResponseModel
                     {
@@ -144,6 +144,7 @@ namespace UserMicroservice.Repositories.Services
 
                 // Tạo JWT Token
                 UserModel userModel = _mapper.Map<UserModel>(user);
+                userModel.IsRememberMe = loginRequestModel.IsRememberMe;
                 string token = _helper.GenerateJwtAsync(userModel);
 
                 // Chuẩn bị response thành công
@@ -155,7 +156,9 @@ namespace UserMicroservice.Repositories.Services
                     Id = user.Id,
                     Email = user.Email,
                     Avatar = user.Avatar!,
-                    Role = user.Role.ToString()
+                    Role = user.Role.ToString(),
+                    LoginType = user.LoginType.ToString(),
+                    IsRememberMe = userModel.IsRememberMe
                 };
                 response.IsSuccess = true;
                 response.Message = "Login successful";
@@ -182,16 +185,29 @@ namespace UserMicroservice.Repositories.Services
                 return new ResponseModel
                 {
                     IsSuccess = false,
-                    Message = "RegisterRequestModel is null"
+                    Message = "LoginGoogleRequestModel is null"
                 };
             }
 
             try
             {
+                // Kiểm tra tài khoản có tồn tại hay không
                 var user = await _context.Users.FirstOrDefaultAsync(x => x.Email == loginGoogleRequestModel.Email);
+
+                if (user != null)
+                {
+                    // Nếu user tồn tại nhưng chưa được active hoặc email chưa được xác nhận, xóa user
+                    if (user.Status == UserStatus.Inactive || user.EmailConfirmation == EmailStatus.Unconfirmed)
+                    {
+                        await _userService.DeleteUser(user.Id);
+                        user = null; // Đặt lại user để tạo mới
+                    }
+                }
+
                 if (user == null)
                 {
-                    UserModel userCreateModel = new UserModel
+                    // Tạo tài khoản mới
+                    var userCreateModel = new UserModel
                     {
                         Id = ObjectId.GenerateNewId().ToString(),
                         Email = loginGoogleRequestModel.Email!,
@@ -200,36 +216,44 @@ namespace UserMicroservice.Repositories.Services
                         Avatar = loginGoogleRequestModel.Picture!,
                         DisplayName = loginGoogleRequestModel.DisplayName,
                         Status = UserStatus.Active,
-                        EmailConfirmation = EmailStatus.Confirmed
+                        EmailConfirmation = EmailStatus.Confirmed,
+                        LoginType = UserLoginType.Google,
+                        IsRememberMe = true
                     };
+
                     user = _mapper.Map<User>(userCreateModel);
                     await _context.AddAsync(user);
                     await _context.SaveChangesAsync();
                 }
 
-                UserModel userModel = _mapper.Map<UserModel>(user);
+                // Tạo token và trả về response
+                var userModel = _mapper.Map<UserModel>(user);
                 string token = _helper.GenerateJwtAsync(userModel);
+
                 response.Result = new LoginResponseModel
                 {
                     Token = token,
-                    Username = user!.Username,
+                    Username = user.Username,
                     Id = user.Id,
                     DisplayName = user.DisplayName,
                     Avatar = user.Avatar,
                     Email = user.Email,
-                    Role = user.Role.ToString()
+                    Role = user.Role.ToString(),
+                    LoginType = user.LoginType.ToString(),
+                    IsRememberMe = true
                 };
-                response.Message = "Login successful";
 
+                response.Message = "Login successful";
+                response.IsSuccess = true;
             }
             catch (Exception ex)
             {
                 response.IsSuccess = false;
                 response.Message = ex.Message;
             }
+
             return response;
         }
-
 
 
         public async Task<ResponseModel> LoginWithoutPassword(string email)
@@ -258,7 +282,9 @@ namespace UserMicroservice.Repositories.Services
                     DisplayName = user.DisplayName,
                     Avatar = user.Avatar,
                     Email = user.Email,
-                    Role = user.Role.ToString()
+                    Role = user.Role.ToString(),
+                    LoginType = UserLoginType.Local.ToString(),
+                    IsRememberMe = false
                 };
                 response.Message = "Login successful";
 
@@ -348,6 +374,14 @@ namespace UserMicroservice.Repositories.Services
                     response.Message = "User need change password is null";
                     return response;
                 }
+
+                if(user.LoginType != UserLoginType.Local)
+                {
+                    response.IsSuccess = false;
+                    response.Message = $"User login by {user.LoginType.ToString()} don't need change password";
+                    return response;
+                }
+
                 else
                 {
                     bool isPasswordCorrect = BCrypt.Net.BCrypt.Verify(model.OldPassword, user.PasswordHash);

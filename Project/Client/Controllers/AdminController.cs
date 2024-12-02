@@ -48,7 +48,9 @@ namespace Client.Controllers
 
         private readonly IOrderService _orderService = orderService;
         private readonly IRepoStastistical _statisticalService = repoStatistical;
-
+        private string JWT = "JWT";
+        private string IsLogin = "IsLogin";
+        private string RememberMe = "RememberMe";
         #endregion
         public IActionResult Index()
 
@@ -56,45 +58,6 @@ namespace Client.Controllers
             return View();
         }
 
-
-        //public IActionResult AdminDashboard()
-        //{
-        //    try
-        //    {
-        //        #region Check IsLogin Cookie
-        //        var isLogin = HttpContext.Request.Cookies["IsLogin"];
-        //        if (string.IsNullOrEmpty(isLogin))
-        //        {
-        //            // Trường hợp cookie không tồn tại
-        //            ViewData["IsLogin"] = false;
-        //        }
-        //        else
-        //        {
-        //            ViewData["IsLogin"] = isLogin;
-        //        }
-        //        #endregion
-
-
-        //        var token = _tokenProvider.GetToken();
-        //        ResponseModel response = _helperService.CheckAndReadToken(token);
-        //        if (!response.IsSuccess)
-        //        {
-        //            ViewData["IsLogin"] = false;
-        //            return View();
-        //        }
-        //        LoginResponseModel user = _helperService.GetUserFromJwtToken((JwtSecurityToken)response.Result);
-
-        //        ViewBag.User = user;
-
-
-        //        return View();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        TempData["Error"] = ex.Message;
-        //    }
-        //    return View();
-        //}
         #region Admindasboard
         public async Task<IActionResult> AdminDashboard(int? page, int pageSize = 99)
         {
@@ -104,8 +67,22 @@ namespace Client.Controllers
             {
                 #region Check IsLogin Cookie and Token
 
-                var isLogin = HttpContext.Request.Cookies["IsLogin"];
-                if (string.IsNullOrEmpty(isLogin))
+                bool isLogin = false;
+                bool rememberMe = Convert.ToBoolean(_tokenProvider.GetToken(RememberMe));
+                string token;
+
+                if (rememberMe)
+                {
+                    token = _tokenProvider.GetToken(JWT);
+                    isLogin = Convert.ToBoolean(_tokenProvider.GetToken(IsLogin));
+                }
+                else
+                {
+                    token = _tokenProvider.GetToken(JWT, false);
+                    isLogin = Convert.ToBoolean(_tokenProvider.GetToken(IsLogin,false));
+                }
+
+                if (!isLogin)
                 {
                     ViewData["IsLogin"] = false;
                     TempData["error"] = "Please login first";
@@ -116,8 +93,8 @@ namespace Client.Controllers
                     ViewData["IsLogin"] = isLogin;
                 }
 
-                // Lấy token và kiểm tra tính hợp lệ, nhưng luôn tiếp tục để lấy sản phẩm
-                var token = _tokenProvider.GetToken();
+
+
                 var response = _helperService.CheckAndReadToken(token);
                 if (response.IsSuccess)
                 {

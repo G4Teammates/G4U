@@ -266,21 +266,22 @@ namespace OrderMicroservice.Repositories.Services
                 _context.Orders.Update(order);
                 await _context.SaveChangesAsync();
 
+                // Gửi thông điệp thống kê
+                var totalRequest = await TotalRequest();
+                _message.SendingMessageStatistiscal(totalRequest.Result);
+
+
                 // Trả về thông báo cập nhật
                 response.Message = string.Join(" and ", updateMessages);
                 response.Result = _mapper.Map<OrderModel>(order);
                 response.IsSuccess = true;
 
-                // Gửi thông điệp thống kê
-                var totalRequest = await TotalRequest();
-                _message.SendingMessageStatistiscal(totalRequest.Result);
-
-                return response;
             }
             catch (Exception ex)
             {
                 return CreateErrorResponse($"Failed to update order with ID '{id}'. Error: {ex.Message}");
             }
+            return response;
         }
 
         // Tạo phản hồi lỗi
