@@ -1,0 +1,214 @@
+﻿/* Chatbox Container */
+#chatContainer {
+    display: none;
+    position: fixed;
+    bottom: 2.5vw;
+    right: 7vw;
+    width: 23vw;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    z-index: 1000;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Header */
+#chatHeader {
+    background-color: #00A97F;
+    color: white;
+    padding: 12px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    position: relative;
+    border-bottom: 2px solid #008E6E;
+}
+
+    #chatHeader button {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: white;
+        font-size: 20px;
+        cursor: pointer;
+        transition: transform 0.2s;
+    }
+
+        #chatHeader button:hover {
+            transform: translateY(-50%) scale(1.2);
+        }
+
+/* Message Area */
+#chatContent {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Đẩy các phần tử còn lại lên trên và phần topicSelection xuống dưới */
+    height: 30vw; /* Chiều cao cố định cho form chat */
+    padding: 10px;
+    overflow-y: auto;
+}
+
+#messageArea {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+    max-height: 70%; /* Giới hạn chiều cao phần tin nhắn */
+    overflow-y: auto;
+    flex-grow: 1; /* Cho phép phần này chiếm hết không gian còn lại */
+}
+
+    #messageArea div {
+        margin-bottom: 10px;
+        padding: 10px;
+        border-radius: 8px;
+        max-width: 70%;
+        font-size: 14px;
+    }
+
+        #messageArea div.system {
+            background-color: #E8F8F5;
+            align-self: flex-start;
+            color: #006D57;
+        }
+
+        #messageArea div.user {
+            background-color: #00A97F;
+            align-self: flex-end;
+            color: white;
+        }
+
+.userMessage {
+    background-color: #00A97F;
+    color: white;
+    padding: 10px;
+    border-radius: 8px;
+    max-width: 70%;
+    align-self: flex-end; /* Căn phải */
+    font-size: 14px;
+    margin-bottom: 10px; /* Khoảng cách giữa các tin nhắn */
+    word-wrap: break-word;
+}
+.systemMessage {
+    background-color: #f0f0f0;
+    color: black;
+    padding: 10px;
+    border-radius: 8px;
+    max-width: 70%;
+    align-self: flex-start; /* Căn trái */
+    font-size: 14px;
+    margin-bottom: 10px;
+    word-wrap: break-word;
+}
+/* Topic Buttons */
+#topicSelection {
+    margin-top: 20px; /* Khoảng cách giữa messageArea và topicSelection */
+    padding-top: 10px;
+    background-color: #f9f9f9;
+}
+
+#topics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+}
+
+.topicButton {
+    flex: 1 1 calc(50% - 10px);
+    padding: 10px 12px;
+    border: none;
+    background-color: #00A97F;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+    font-size: 14px;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+    .topicButton:hover {
+        background-color: #008E6E;
+        transform: scale(1.05);
+    }
+
+/* User Input */
+#userInput {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-top: 2px solid #008E6E;
+}
+
+#reportForm div {
+    margin-bottom: 10px;
+}
+
+#reportForm label {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 5px;
+    color: #006D57;
+}
+
+#reportForm input,
+#reportForm textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+    #reportForm input:focus,
+    #reportForm textarea:focus {
+        border-color: #00A97F;
+        box-shadow: 0 0 5px rgba(0, 169, 127, 0.3);
+    }
+
+#sendReport {
+    padding: 10px 15px;
+    border: none;
+    background-color: #00A97F;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+    #sendReport:hover {
+        background-color: #008E6E;
+        transform: translateY(-2px);
+    }
+
+/* Open Chat Button */
+#openChat {
+    position: fixed;
+    bottom: 6.5vw;
+    right: 2.5vw;
+    width: 3.5vw; /* Chiều dài */
+    height: 3.5vw; /* Chiều cao */
+    background-color: #004aad;
+    color: white;
+    border: none;
+    border-radius: 50%; /* Tạo hình tròn */
+    display: flex; /* Để căn chỉnh nội dung */
+    align-items: center; /* Căn giữa dọc */
+    justify-content: center; /* Căn giữa ngang */
+    cursor: pointer;
+    z-index: 999;
+    font-size: 1.5vw;
+}
+
+
+    #openChat:hover {
+        background-color: #003080;
+    }

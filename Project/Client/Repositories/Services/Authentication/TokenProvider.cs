@@ -24,8 +24,17 @@ namespace Client.Repositories.Services.Authentication
 
         public void SetToken(string token)
         {
-            _contextAccessor.HttpContext?.Response.Cookies.Append(StaticTypeApi.TokenCookie, token);
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true, // Bảo vệ cookie khỏi bị truy cập bởi JavaScript
+                Secure = true, // Chỉ gửi cookie qua HTTPS
+                //SameSite = SameSiteMode.Strict, // Ngăn chặn cookie gửi từ bên thứ ba
+                Expires = DateTime.UtcNow.AddDays(1) // Đặt thời hạn hết hạn là 1 ngày
+            };
+
+            _contextAccessor.HttpContext?.Response.Cookies.Append(StaticTypeApi.TokenCookie, token, cookieOptions);
         }
+
         //public string GetIdentityToken()
         //{
 

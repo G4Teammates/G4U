@@ -10,16 +10,18 @@ using OrderMicroservice.Models.OrderModel;
 using OrderMicroservice.Models.PaymentModel.MoMo;
 using OrderMicroservice.DBContexts.Enum;
 using OrderMicroservice.Models.Message;
+using OrderMicroservice.Models.PaymentModel.PayOsModel;
 
 namespace OrderMicroservice.Repositories.Services
 {
-    public class PaymentService(IOrderService orderService, IMessage message) : IPaymentService
+    public class PaymentService(IOrderService orderService, IMessage message, IHelperService helperService) : IPaymentService
     {
         private readonly IOrderService _orderService = orderService;
+        private readonly IHelperService _helperService = helperService;
         private static readonly HttpClient client = new();
         private static readonly string Gateway = "https://localhost:7296";
         private static readonly string MoMoGateway = "https://test-payment.momo.vn/v2/gateway/api/create";
-        private static readonly string IpnMomo = "   https://930a-42-113-221-81.ngrok-free.app" + "/api/payment/ipn/momo";
+        private static readonly string IpnMomo = "https://930a-42-113-221-81.ngrok-free.app" + "/api/payment/ipn/momo";
         private IMessage _message = message;
         public async Task<ResponseModel> MoMoPayment(MoMoRequestFromClient requestClient)
         {
@@ -79,28 +81,23 @@ namespace OrderMicroservice.Repositories.Services
             return response;
         }
 
-        public async Task<ResponseModel> VierQRPayment(string id, int amount, ICollection<OrderItemModel> items)
+        public async Task<ResponseModel> VierQRPayment(VietQRRequest request)
         {
-
             ResponseModel response = new();
             try
             {
                 PayOS payOS = new PayOS(PayOSOptionModel.ClientId!, PayOSOptionModel.ApiKey!, PayOSOptionModel.ChecksumKey!);
                 Random random = new Random();
-                long orderId = ((long)random.Next(int.MinValue, int.MaxValue) << 32) | (long)random.Next(int.MinValue, int.MaxValue);
+                int orderId = random.Next(1, int.MaxValue);
 
-                List<ItemData> itemData = items.Select(i => new ItemData(i.ProductName, i.Quantity, (int)i.Price)).ToList();
+                List<ItemData> itemData = request.Items.Select(i => new ItemData(i.ProductName, i.Quantity, (int)i.Price)).ToList();
 
-                PaymentData paymentData = new PaymentData(orderId, amount, $"Payment for order: {id}",
-                     itemData, cancelUrl: $"{Gateway}/Order/PaymentFailure", returnUrl: $"{Gateway}/Order/PaymentSuccess");
+                PaymentData paymentData = new PaymentData(orderId, (int)request.Amount, $"Payment with G4T",
+                     itemData, cancelUrl: $"{Gateway}/Order/PaymentFailure", returnUrl: $"{Gateway}/Order/PaymentSuccessPayOsAsync");
 
                 CreatePaymentResult createPayment = await payOS.createPaymentLink(paymentData);
 
-                response.Result = new VietQRResponse
-                {
-                    CheckoutUrl = createPayment.checkoutUrl,
-                    PaymentTransactionId = orderId.ToString()
-                };
+                response.Result = createPayment.checkoutUrl;
                 response.Message = "Create VietQR payment success";
             }
             catch (Exception ex)
@@ -119,18 +116,9 @@ namespace OrderMicroservice.Repositories.Services
                 string accessKey = MoMoOptionModel.AccessKey!;
                 string secretKey = MoMoOptionModel.SecretKey!;
 
-                ResponseModel orderResult = await _orderService.GetOrderById(request.OrderId);
-
-                OrderModel order = (OrderModel)orderResult.Result;
-                //MoMoSignature orderSignature = new MoMoSignature()
-                //{
-                //    AccessKey = accessKey,
-                //    Amount = (long)order.TotalPrice,
-                //    PartnerCode = "MOMO",
-                //    OrderId = order.Id
-                //};
-
-                //string signature = GenarateSignatureResponseMoMo(orderSignature, secretKey);
+                ResponseModel orderResult = await _orderService.GetOrderById(request.OrderId, 1,1);
+                ICollection<OrderModel> orders = (ICollection<OrderModel>)orderResult.Result;
+                OrderModel order = orders.FirstOrDefault();
 
                 if (request.Amount == order.TotalPrice && request.PartnerCode == "MOMO" && request.OrderId == order.Id)
                 {
@@ -139,7 +127,14 @@ namespace OrderMicroservice.Repositories.Services
                     response = await Paid(new PaidModel
                     {
                         OrderId = request.OrderId,
-                        TransactionId = request.TransId.ToString()
+                        TransactionId = request.TransId.ToString(),
+                        Status = new PaymentStatusModel()
+                        {
+                            OrderStatus = OrderStatus.Paid,
+                            PaymentMethod = PaymentMethod.Wallet,
+                            PaymentName = "MoMo",
+                            PaymentStatus = PaymentStatus.Paid
+                        }
                     }); 
                 }
                 else
@@ -147,11 +142,6 @@ namespace OrderMicroservice.Repositories.Services
                     response.IsSuccess = false;
                     response.Message = "IPN signature MoMo is invalid";
                 }
-
-
-
-
-
             }
             catch (Exception ex)
             {
@@ -168,18 +158,21 @@ namespace OrderMicroservice.Repositories.Services
             try
             {
                 // 1. Lấy thông tin order
-                var findOrder = await _orderService.GetOrderById(model.OrderId);
-                if (!findOrder.IsSuccess)
+                ResponseModel responseFindOrder = await _orderService.GetOrderById(model.OrderId, 1, 1);
+                var pagedOrders = responseFindOrder.Result as X.PagedList.IPagedList<OrderModel>;
+                if (pagedOrders == null)
                 {
                     return new ResponseModel
                     {
                         IsSuccess = false,
-                        Message = $"Order not found for OrderId: {model.OrderId}"
+                        Message = "Failed to cast Result to IPagedList<OrderModel>."
                     };
                 }
 
-                var order = (OrderModel)findOrder.Result!;
+                // Nếu cần chuyển đổi sang ICollection<OrderModel>
+                ICollection<OrderModel> orders = pagedOrders.ToList();
 
+                var order = orders.FirstOrDefault();
                 // 2. Cập nhật TransactionId
                 var updateTransIdResponse = await _orderService.UpdateTransId(model.OrderId, model.TransactionId);
                 if (!updateTransIdResponse.IsSuccess)
@@ -192,13 +185,7 @@ namespace OrderMicroservice.Repositories.Services
                 }
 
                 // 3. Cập nhật trạng thái thanh toán
-                var updateStatusResponse = await _orderService.UpdateStatus(model.OrderId, new PaymentStatusModel
-                {
-                    PaymentStatus = PaymentStatus.Paid,
-                    OrderStatus = OrderStatus.Paid,
-                    PaymentMethod = PaymentMethod.Wallet,
-                    PaymentName = "MoMo"
-                });
+                var updateStatusResponse = await _orderService.UpdateStatus(model.OrderId, model.Status);
 
                 if (!updateStatusResponse.IsSuccess)
                 {
@@ -232,6 +219,7 @@ namespace OrderMicroservice.Repositories.Services
                 // 5. Hoàn tất thanh toán
                 response.IsSuccess = true;
                 response.Message = "Order paid successfully";
+                response.Result = order;
             }
             catch (Exception ex)
             {
@@ -242,6 +230,33 @@ namespace OrderMicroservice.Repositories.Services
 
             return response;
         }
+
+        public async Task<ResponseModel> SendNotification(SendMailModel model)
+        {
+            try
+            {
+                await _helperService.SendEmailAsync(model.Email, model.Subject, model.Body);
+                return new ResponseModel
+                {
+                    IsSuccess = true,
+                    Message = "Send notification success"
+                };
+            }
+            catch (Exception ex)
+            {
+                // Ghi log lỗi nếu cần thiết
+                return new ResponseModel
+                {
+                    IsSuccess = false,
+                    Message = $"Failed to send notification: {ex.Message}"
+                };
+            }
+        }
+
+
+
+
+
 
         public async Task<ResponseModel> UpdateSold(ProductSoldRequest request)
         {

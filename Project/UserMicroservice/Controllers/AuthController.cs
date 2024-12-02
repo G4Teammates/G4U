@@ -83,11 +83,30 @@ namespace UserMicroservice.Controllers
             }
         }
 
+        [AllowAnonymous]
+        [HttpPost("login-without-password")]
+        public async Task<ActionResult> LoginWithoutPassword([FromBody]string email)
+        {
+            try
+            {
+                ResponseModel response = await _authService.LoginWithoutPassword(email);
+                if (response.IsSuccess)
+                    return Ok(response);
+                return BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                // Trả về lỗi 500 cho các lỗi chưa dự đoán
+                return StatusCode(500, new { message = "An unexpected error occurred. Detail" + ex.Message });
+            }
+        }
+
 
         /// Bắt đầu quá trình đăng nhập bằng Google.
         /// </summary>
         /// <returns>Chuyển hướng đến trang đăng nhập của Google.</returns>
         [HttpGet("signin-google")]
+        [AllowAnonymous]
         public IActionResult ExternalLoginGoogle()
         {
             var properties = new AuthenticationProperties { RedirectUri = Url.Action("ExternalLoginCallback") };
@@ -99,6 +118,7 @@ namespace UserMicroservice.Controllers
         /// </summary>
         /// <returns>Chuyển hướng về frontend với token JWT (nếu thành công đăng nhập thành công).</returns>
         [HttpGet("external-login-callback")]
+        [AllowAnonymous]
         public async Task<IActionResult> ExternalLoginCallback()
         {
             ResponseModel response = new();
@@ -135,6 +155,7 @@ namespace UserMicroservice.Controllers
         }
 
         [HttpPost("active-user")]
+        [AllowAnonymous]
         public async Task<IActionResult> ActiveUser(string email)
         {
             try

@@ -11,17 +11,21 @@
         <h3>Order Summary</h3>
         <p><strong>Order ID:</strong> @Model.OrderId</p>
         <p>
-            @if (Model.OrderType.Contains("momo"))
+            @if (Model.OrderType.ToLower().Contains("momo"))
             {
                 <strong>Payment Method: MoMo</strong>
             }
-            else
+            else if (Model.OrderType.ToLower().Contains("payos"))
             {
                 <strong>Payment Method: Pay OS</strong>
             }
+            else
+            {
+                <strong>Payment Method: Free</strong>
+            }
         </p>
         
-        <p title="UTC time: @Model.ResponseUtcDateTime"><strong>Order Date:</strong>@Model.ResponseLocalDateTime</p>
+        <p title="UTC Datetime: @Model.ResponseUtcDateTime"><strong>Local Datetime:</strong>@Model.ResponseLocalDateTime</p>
         <p><strong>Total Price:</strong> @string.Format("{0:N0}", Model.Amount) vnđ</p>
 
     </div>

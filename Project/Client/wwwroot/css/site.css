@@ -450,7 +450,7 @@ header {
 }
 
     .navbar-nav .nav-link:hover {
-        color: #fff ;  /* Màu chữ khi hover */
+        color: #028f68; /* Màu chữ khi hover */
     }
 
 /* Định dạng cho dropdown-menu */
@@ -1298,40 +1298,53 @@ body.dark-theme .card_other {
 
     /*Srcoll To Top*/
     /* CSS cho Nút Scroll to Top */
-    #scrollToTopBtn {
-        display: none; /* Ẩn nút khi chưa cuộn */
-        position: fixed; /* Cố định vị trí */
-        bottom: 40px; /* Khoảng cách từ dưới cùng */
-        right: 40px; /* Khoảng cách từ bên phải */
-        z-index: 1000; /* Đảm bảo nút nằm trên các phần tử khác */
-        background-color: #00A97F; /* Màu nền nút */
-        color: white; /* Màu icon */
-        border: none; /* Không có viền */
-        outline: none; /* Không có đường viền khi focus */
-        width: 50px; /* Chiều rộng nút */
-        height: 50px; /* Chiều cao nút */
-        border-radius: 50%; /* Làm tròn nút */
-        cursor: pointer; /* Con trỏ khi hover */
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Thêm bóng */
-        transition: opacity 0.3s ease, visibility 0.3s ease; /* Hiệu ứng mượt mà */
-    }
+#scrollToTopBtn {
+    display: flex;
+    position: fixed;
+    bottom: 2.5vw;
+    right: 2.5vw;
+    z-index: 9999;
+    background-color: #00A97F;
+    color: white;
+    border: none;
+    outline: none;
+    width: 3.5vw;
+    height: 3.5vw;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 1s ease;
+    align-items: center; /* Căn giữa icon */
+    justify-content: center; /* Căn giữa icon */
+    font-size: 1.5vw;
+}
 
-    /* Hiển thị nút khi cuộn */
-    #scrollToTopBtn.show {
-        display: block;
-        opacity: 1;
-        visibility: visible;
-    }
-
-    /* Hiệu ứng hover cho nút */
     #scrollToTopBtn:hover {
         background-color: #028f68; /* Màu nền khi hover */
     }
 
-    /* Kiểu icon bên trong nút */
+    /* Tạo hiệu ứng cho icon */
     #scrollToTopBtn i {
         font-size: 20px;
+        transition: transform 1s ease; /* Chuyển đổi mượt */
     }
+
+    /* Khi hover vào nút, icon di chuyển lên xuống */
+    #scrollToTopBtn:hover i {
+        animation: bounce 1s infinite; /* Gọi animation */
+    }
+
+/* Keyframes cho hiệu ứng bounce */
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0); /* Vị trí ban đầu */
+    }
+
+    50% {
+        transform: translateY(-5px); /* Di chuyển lên */
+    }
+}
+
 
 
 

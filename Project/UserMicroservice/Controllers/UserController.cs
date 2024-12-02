@@ -45,6 +45,7 @@ namespace UserMicroService.Controllers
         }
 
 
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult> Add([FromBody] AddUserModel user)
         {
@@ -61,13 +62,14 @@ namespace UserMicroService.Controllers
                 return StatusCode(500, new { message = "An unexpected error occurred. Detail" + ex.Message });
             }
         }
-
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         [HttpGet("search")]
-        public async Task<ActionResult> FindUsers([FromQuery] string? query)
+        public async Task<ActionResult> FindUsers([FromQuery] string? query, int? page, int pageSize)
         {
             try
             {
-                ResponseModel response = await _userService.FindUsers(query)!;
+                int pageNumber = (page ?? 1);
+                ResponseModel response = await _userService.FindUsers(query, pageNumber, pageSize)!;
                 if (response.IsSuccess)
                     return Ok(response);
                 return BadRequest(response);
@@ -80,7 +82,7 @@ namespace UserMicroService.Controllers
         }
 
 
-        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin, User")]
         [HttpGet("{id}")]
         public async Task<ActionResult> GetUser(string id)
         {
@@ -99,7 +101,7 @@ namespace UserMicroService.Controllers
         }
 
 
-        //[Authorize(Roles = "Admin")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         [HttpDelete("delete/{id}")]
         public async Task<ActionResult> DeleteUser(string id)
         {
@@ -117,6 +119,7 @@ namespace UserMicroService.Controllers
         }
 
         // Phương thức cập nhật người dùng
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin, User")]
         [HttpPut]
         public async Task<ActionResult> UpdateUser([FromBody] UserUpdate updatedUserModel)
         {
@@ -132,7 +135,7 @@ namespace UserMicroService.Controllers
                 return StatusCode(500, new { message = "An unexpected error occurred. Detail: " + ex.Message });
             }
         }
-
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         [HttpPut("status/{id}")]
         public async Task<ActionResult> UpdateUser(string id, [FromBody]UserStatus status)
         {
@@ -149,7 +152,7 @@ namespace UserMicroService.Controllers
             }
         }
 
-
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin, User")]
         [HttpGet("getAllProductsInWishList/{id}")]
         public async Task<ActionResult> GetAllProductsInWishList(string id)
         {
@@ -171,6 +174,7 @@ namespace UserMicroService.Controllers
             }
         }
 
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin, User")]
         [HttpPut("addWishList/{userName}")]
         public async Task<ActionResult> AddToWishList(UserWishlistModel userWishlistModel, [FromRoute] string userName)
         {
@@ -192,6 +196,7 @@ namespace UserMicroService.Controllers
             }
         }
 
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin, User")]
         [HttpPut("removeWishList/{userName}/{productId}")]
         public async Task<ActionResult> RemoveWishList([FromRoute] string productId, [FromRoute] string userName)
         {

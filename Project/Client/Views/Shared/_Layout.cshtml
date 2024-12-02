@@ -14,15 +14,30 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.css" integrity="sha512-oe8OpYjBaDWPt2VmSFR+qYOdnTjeV9QPLJUeqZyprDEQvQLJ9C5PCFclxwNuvb/GQgQngdCXzKSFltuHD3eCxA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
+    @* Sweet Alert *@
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     @* Owl Carousel min.css *@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css" integrity="sha512-tS3S5qG0BlhnQROyJXvNjeEM4UpMXHrQfTGmbQ1gKmelCxlSEBUaxhRBj/EFTzpbP4RVSrpEikbmdJobCvhE3g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     @* Owl.Theme.default.min.css *@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css" integrity="sha512-sMXtMNL1zRzolHYKEujM2AqCLUR9F2C4/05cdbxjjLSRvMQIciEPCQZo++nk7go3BtSuK9kfa/s+a4f4i5pLkw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
-        
+        canvas {
+            background: #d4f1f4;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        #score {
+            position: absolute;
+            top: 20px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #444;
+        }
     </style>
+    <link rel="stylesheet" href="~/css/chatbox.css" asp-append-version="true" />   
+    @* Sweet Alert *@
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
@@ -69,16 +84,16 @@
                                     Blog
                                 </a>
                             </li>
-                            <li class="nav-item dropdown">
+                            @* <li class="nav-item dropdown">
                                 <a class="nav-link btn fw-bold" id="navbarDropdown1" role="button">
                                     Help
                                 </a>
                             </li>
                             <li class="nav-item dropdown">
-                                <a class="nav-link btn fw-bold" id="navbarDropdown2" role="button">
+                                <a class="nav-link btn fw-bold" id="navbarDropdown2" role="button" asp-action="Play" asp-controller="Home">
                                     Play
                                 </a>
-                            </li>
+                            </li> *@
                            
                         </ul>
 
@@ -123,7 +138,7 @@
                                 {
                                     <a class="nav-link d-flex" asp-controller="User" asp-action="Login">
                                         <img src="~/Image/avatar.jpeg" alt="Profile" class="rounded-circle" width="30" height="30">
-                                        <span class="align-content-center px-1">Login</span>
+                                        <span class="align-content-center px-1">Account</span>
                                     </a>
                                 }
                             </li>
@@ -143,7 +158,7 @@
                                             <a class="navelement" asp-controller="Admin" asp-action="AdminDashboard">Admin Dashboard</a>
                                         }
                                         <br />
-                                        <a class="navelement" asp-controller="User" asp-action="Login">Logout</a>
+                                        <a class="navelement" asp-controller="User" asp-action="Logout">Logout</a>
                                     </div>
                                 </li>
                             }
@@ -157,8 +172,54 @@
         <div class="container mb-5">
             <main role="main">
                 @RenderBody()
-                <partial name="_Notificate">
+                <partial name="_Notificate">                
             </main>
+
+            
+
+            <!-- Open Chat Button -->
+            <button id="openChat"><i class="fa-solid fa-comment"></i></button>
+
+            <!-- Chatbox -->
+            <div id="chatContainer">
+                <div id="chatHeader">
+                    Pixels Support
+                    <button id="closeChat">×</button>
+                </div>
+                <div id="chatContent">
+                    <div id="messageArea"></div>
+                    <div id="topicSelection">
+                        <p>Which of the following would you like assistance with?</p>
+                        <div id="topics">
+                            <button class="topicButton">Commission fee</button>
+                            <button class="topicButton">Policy and Terms</button>
+
+                            <button class="topicButton" id="reportProblem">Report Problem</button>
+                        </div>
+                    </div>
+                    <div id="userInput" style="display: none;">
+                        <form id="reportForm" enctype="multipart/form-data">
+                            <div>
+                                <label for="related">Related To:</label>
+                                <input id="related" name="Related" type="text" placeholder="E.g., payment, downloading game..." />
+                            </div>
+                            <div>
+                                <label for="email">Email to get results :</label>
+                                <input id="email" name="Email" type="text" placeholder="example@gmail.com" />
+                            </div>
+                            <div>
+                                <label for="description">Issue Description:</label>
+                                <textarea id="description" name="Description" rows="4" placeholder="Describe the issue..."></textarea>
+                            </div>
+                            <button type="submit" id="sendReport">Send</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!-- Nút Scroll to Top -->
+            <button id="scrollToTopBtn" title="Go to top">
+                <i class="fa-solid fa-chevron-up"></i>
+            </button>
         </div>
         <footer style="background-color: #222; color: white; padding: 40px 20px; font-size: 14px;">
             <div class="footer-container" style="display: flex; justify-content: space-between; max-width: 1200px; margin: 0 auto;">
@@ -185,7 +246,7 @@
 
             <div style="text-align: center; margin-top: 20px; border-top: 1px solid #444; padding-top: 20px;">
                 <p>© 2024 G4T Game Studio. All rights reserved.</p>
-                <img src="~/Image/Logo-remove.png" alt="Visa" width="50">
+                <img src="~/Image/logore.png" alt="Logo" width="50">
             </div>
         </footer>
 
@@ -284,5 +345,167 @@
             localStorage.setItem('theme', 'light');  // Lưu theme vào localStorage
         }
     });
+</script>
+<script>
+    // Toggle Chat Box
+    const chatContainer = document.getElementById('chatContainer');
+    document.getElementById('openChat').addEventListener('click', () => {
+        chatContainer.style.display = 'block';
+    });
+
+    document.getElementById('closeChat').addEventListener('click', () => {
+        chatContainer.style.display = 'none';
+    });
+
+    // Handle Topic Selection
+    document.querySelectorAll('.topicButton').forEach(button => {
+        button.addEventListener('click', () => {
+            const topic = button.textContent;
+            const systemMessage = document.createElement('div');
+            systemMessage.classList.add('system');
+
+            switch (topic) {
+                case "Commission fee":
+                    systemMessage.innerHTML = `<strong>Commission fee</strong><br><br>
+                                               The general commission fee when using our platform is fixed at 10% of the original value of the product.";`
+                    break;
+                case "Policy and Terms":
+                    // Content for Policy and Terms
+                    systemMessage.innerHTML = `
+                        <strong>Terms and Conditions</strong><br><br>
+                        <strong>Welcome to our game trading platform!</strong> Our website is designed to provide a safe and fair trading experience for all parties. Below are the important policies and terms that you need to understand when participating in our platform.<br><br>
+
+                        <strong>1. General Terms</strong><br>
+                        Our website operates as an online platform where users can buy and sell games. By participating in our system, you agree to abide by all the terms and policies outlined below. We are committed to providing a safe and fair environment for both sellers and buyers.<br><br>
+
+                        <strong>2. Profit Sharing Policy</strong><br>
+                        We are committed to sharing profits fairly between the seller and the platform, ensuring the sustainable development of our service. The profit-sharing policy is as follows:<br><br>
+                        <strong>Number of purchases and payments:</strong> Each game sold on the platform will be counted based on the number of purchases made during the month. At the end of the month, we will compile the number of purchases and the revenue generated from game transactions.<br>
+                        <strong>Profit sharing:</strong> After compiling the revenue from purchases, we will divide the profit as follows:<br>
+                        10% of the revenue from each transaction will be retained for platform operational costs and related services.<br>
+                        90% of the remaining revenue will be transferred directly to the seller’s bank account.<br>
+                        <strong>Payment timing:</strong> At the end of each month, we will compile the number of purchases and pay the profits to the seller within 5 working days. Payments will be made via bank transfer to the account provided by the seller.<br><br>
+
+                        <strong>3. Seller’s Rights and Responsibilities</strong><br>
+                        <strong>Game copyright assurance:</strong> The seller must ensure that the game listed on our platform is legal and does not infringe the intellectual property rights of any individual or organization.<br>
+                        <strong>Clear product information:</strong> The seller must provide complete information about the game, including detailed descriptions, images, and other essential details that buyers need to know. This information must be accurate and understandable.<br>
+                        <strong>Game quality:</strong> The seller is responsible for providing a quality product. If the game has defects or does not match the advertised description, the seller is responsible for handling complaints from buyers.<br>
+                        <strong>Commitment to protect buyers:</strong> If a game listed by the seller is of poor quality or does not function as promised, the buyer has the right to file a complaint and request resolution from the admin. In case of suspected fraud or asset misappropriation, we will handle it according to legal regulations.<br><br>
+
+                        <strong>4. Buyer’s Rights and Responsibilities</strong><br>
+                        <strong>Safe game purchase:</strong> Buyers have the right to search, select appropriate games, and make safe payments through online payment methods.<br>
+                        <strong>Requesting support:</strong> After purchasing a game, if the buyer encounters technical issues or errors during use, they have the right to request support from the seller or admin. The seller is responsible for resolving any related issues.<br>
+                        <strong>Complaints:</strong> If a game has significant errors or does not match the description, the buyer has the right to request a refund. However, the refund process will be carried out after the platform resolves the complaint. Refunds will be made within 5 working days from the date the platform issues a resolution for the complaint.<br><br>
+
+                        <strong>5. Payment and Refund Policy</strong><br>
+                        <strong>Payment:</strong> Transactions will be processed through online payment methods such as credit cards, e-wallets, or bank transfers.<br>
+                        <strong>Refunds:</strong> If a game has defects or does not match the description, the buyer has the right to request a refund. However, the refund process will only be carried out after the platform reviews and resolves the complaint. All parties will work together to resolve the issue fairly and reasonably. In cases of suspected fraud or deception, we will intervene and resolve the matter according to legal regulations.<br><br>
+
+                        <strong>6. Complaints and Violation Handling</strong><br>
+                        <strong>Complaints:</strong> If the buyer encounters issues with the game or the seller’s services, they may file a complaint directly with the platform admin. Complaints will be reviewed and addressed as soon as possible.<br>
+                        <strong>Fraud handling:</strong> If fraudulent behavior, misappropriation of assets, or any other illegal activity related to the buying and selling of games is discovered, we will take strict measures, including notifying relevant authorities and resolving the matter according to legal regulations.<br><br>
+
+                        <strong>7. Privacy and Confidentiality</strong><br>
+                        We are committed to protecting your personal information and will only use this information for processing transactions, payments, and customer support. Your personal information will not be shared with third parties without your consent, except as required by law or to protect the interests of the parties involved.<br><br>
+
+                        <strong>8. Policy Change Notice</strong><br>
+                        We reserve the right to change and update these terms and policies without prior notice. Continuing to use our service after any changes means that you agree to the updated terms.<br><br>
+
+                        We hope that these terms will help ensure a safe and transparent game trading environment for all parties. Thank you for choosing our service!
+                    `;
+                    break;
+                case "Report Problem":
+                    document.getElementById('topicSelection').style.display = 'none';
+                    document.getElementById('userInput').style.display = 'block';
+                    systemMessage.textContent = "System: Please fill out the form below to report your issue.";
+                    document.getElementById('messageArea').appendChild(systemMessage);
+                    return; // Open input form
+                default:
+                    systemMessage.textContent = `System: Your request for "${topic}" is being processed.`;
+                    break;
+            }
+
+            document.getElementById('messageArea').appendChild(systemMessage);
+        });
+    });
+
+    // Handle Report Submission
+    document.getElementById('reportForm').addEventListener('submit', function (e) {
+        e.preventDefault(); // Ngăn chặn form submit mặc định
+
+        // Lấy dữ liệu từ form
+        const description = document.getElementById('description').value.trim();
+        const related = document.getElementById('related').value.trim();
+        const email = document.getElementById('email').value.trim();
+
+        if (!description || !related || !email) {
+            const errorMessage = document.createElement('div');
+            errorMessage.classList.add('system');
+            errorMessage.textContent = "System: Both fields are required.";
+            document.getElementById('messageArea').appendChild(errorMessage);
+            return;
+        }
+
+        // Hiển thị dữ liệu người dùng nhập vào giao diện chat
+        const userMessageDiv = document.createElement('div');
+        userMessageDiv.classList.add('userMessage');
+        userMessageDiv.innerHTML = `<strong>Description:</strong> ${description} <br> <strong>Related To:</strong> ${related} <br> <strong>Email:</strong> ${email}`;
+        document.getElementById('messageArea').appendChild(userMessageDiv);
+
+        // Lấy dữ liệu từ form
+        var formData = new FormData(document.getElementById('reportForm'));
+
+        // Gửi dữ liệu qua AJAX
+        $.ajax({
+            url: '@Url.Action("CreateReport", "Report")', // Địa chỉ API endpoint
+            type: 'POST',
+            data: formData, // Dữ liệu form đã lấy
+            contentType: false, // Để jQuery không tự động thêm Content-Type
+            processData: false, // Để jQuery không xử lý dữ liệu
+            success: function (response) {
+                // Hiển thị thông báo xác nhận
+                const confirmationMessage = document.createElement('div');
+                confirmationMessage.classList.add('system');
+                confirmationMessage.textContent = response.success
+                    ? "System: Your report has been submitted. We will review it soon."
+                    : `System: ${response.message}`;
+                document.getElementById('messageArea').appendChild(confirmationMessage);
+
+                // Reset form và ẩn các trường nhập liệu
+                document.getElementById('reportForm').reset();
+                document.getElementById('userInput').style.display = 'none';
+                document.getElementById('topicSelection').style.display = 'block';
+            },
+            error: function () {
+                // Hiển thị thông báo lỗi nếu có
+                console.error('Error:', error);
+                const errorMessage = document.createElement('div');
+                errorMessage.classList.add('system');
+                errorMessage.textContent = "System: There was an error submitting your report. Please try again.";
+                document.getElementById('messageArea').appendChild(errorMessage);
+            }
+        });
+    });
+
+    // Đảm bảo khi nhấn ra ngoài form report, form này sẽ tự động đóng lại
+    document.addEventListener('click', function (event) {
+        const userInput = document.getElementById('userInput');
+        const chatContainer = document.getElementById('chatContainer');
+        const topicSelection = document.getElementById('topicSelection');
+
+        // Kiểm tra xem người dùng có nhấn vào phần tử nào ngoài form báo cáo không
+        if (!userInput.contains(event.target) && !topicSelection.contains(event.target) && !chatContainer.contains(event.target)) {
+            userInput.style.display = 'none'; // Đóng form report
+        }
+    });
+
+    // Đảm bảo rằng việc mở form report khi người dùng nhấp vào nút nào đó
+    document.getElementById('reportProblem').addEventListener('click', function () {
+        const userInput = document.getElementById('userInput');
+        userInput.style.display = 'block'; // Hiển thị form khi nhấn vào nút "Report Problem"
+    });
+
+
+
 </script>
 

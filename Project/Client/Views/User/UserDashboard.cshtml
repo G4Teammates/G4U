@@ -112,36 +112,46 @@
             foreach (var product in Model.Product)
             {
                 <div class="project-item">
-                @if (product.Links != null)
-                {
-                    string secondImageUrl = null; // Biến để lưu URL hình ảnh thứ hai
-                    int imageCount = 0; // Biến đếm hình ảnh
-
-                    foreach (var link in product.Links) // Lặp qua từng đối tượng LinkModel
+                    @if (product.Links != null)
                     {
-                        if (link.Url.Contains("cloudinary"))
-                        {
-                            imageCount++; // Tăng biến đếm khi gặp hình ảnh
+                        string secondImageUrl = null; // Biến để lưu URL hình ảnh thứ hai
+                        int imageCount = 0; // Biến đếm hình ảnh
 
-                            if (imageCount == 2) // Kiểm tra nếu đây là hình ảnh thứ hai
+                        foreach (var link in product.Links) // Lặp qua từng đối tượng LinkModel
+                        {
+                            if (link.Url.Contains("cloudinary"))
                             {
-                                secondImageUrl = link.Url; // Lưu URL của hình ảnh thứ hai
-                                break; // Thoát khỏi vòng lặp khi đã tìm thấy hình ảnh thứ hai
+                                imageCount++; // Tăng biến đếm khi gặp hình ảnh
+
+                                if (imageCount == 2) // Kiểm tra nếu đây là hình ảnh thứ hai
+                                {
+                                    secondImageUrl = link.Url; // Lưu URL của hình ảnh thứ hai
+                                    break; // Thoát khỏi vòng lặp khi đã tìm thấy hình ảnh thứ hai
+                                }
                             }
                         }
-                    }
 
-                    // Hiển thị hình ảnh thứ hai nếu có
-                    if (secondImageUrl != null)
-                    {
-                        <img src="@secondImageUrl" alt="Cloudinary Image" />
-                    }
+                        // Hiển thị hình ảnh thứ hai nếu có
+                        if (secondImageUrl != null)
+                        {
+                            <img src="@secondImageUrl" alt="Cloudinary Image" />
+                        }
                         <div class="project-info">
                             <strong class="d-inline-block text-truncate" style="max-width: 150px;">@product.Name</strong>
-                            <div><small style="min-width: 150px"><a asp-controller="User" asp-action="EditProduct" asp-route-id="@product.Id">Edit</a> | <a href="">Analytics</a> | <a href="">Widget</a> | <a href="">More</a> <a asp-controller="User" asp-action="DeleteProduct" asp-route-id="@product.Id" class="text-danger">Delete</a></small></div>
+                            <div>
+                                <small style="min-width: 150px">
+                                    <a class="text-decoration-none" asp-controller="User" asp-action="EditProduct" asp-route-id="@product.Id">Edit</a> |
+                                    <a class="text-decoration-none text-secondary">Analytics</a> |
+                                    @* <a href="">Widget</a> |  *@
+                                    <a class="text-decoration-none text-secondary">More</a> |
+                                    @* <a class="text-decoration-none text-secondary">More</a> | *@
+                                    <a asp-controller="User" asp-action="DeleteProduct" asp-route-id="@product.Id" class="text-danger text-decoration-none">Delete</a>
+                                </small>
+                            </div>
                         </div>
-                        <span class="badge bg-secondary">DRAFT</span>
-                }
+                        @* <span class="badge bg-secondary">DRAFT</span> *@
+                        <span class="badge bg-primary">PUBLIC</span>
+                    }
                 </div>
             }
         }
@@ -161,6 +171,59 @@
             <a asp-controller="Product" asp-action="Collection" class="chart text-decoration-none">Wishlist</a>
             <a asp-controller="Product" asp-action="Product" class="chart text-decoration-none">All Products</a>
         </div>
+        <div class="card col m-3 p-3">
+            <h4>Total Revenue</h4>
+            <p style="font-size: 1.2em; font-weight: bold;">
+                $120000 <span style="color: green;">▲ 0%</span>
+            </p>
+            <div style="background-color: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+                <canvas id="revenueChart"></canvas>
+            </div>
+        </div>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctx = document.getElementById('revenueChart').getContext('2d');
+    const revenueChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['31 October', '04 November', '05 November', '07 November', '10 November', '12 November', '14 November', '15 November', '18 November', '20 November'],
+            datasets: [{
+                label: 'Revenue',
+                data: [0, 0, 0, 0, 0, 0, 120000, 120000, 120000, 120000],
+                borderColor: '#4C6EF5', // Màu đường
+                backgroundColor: 'rgba(76, 110, 245, 0.1)', // Màu bóng phía dưới (chỉnh lại nếu cần)
+                tension: 0.3, // Độ cong của đường
+                pointRadius: 5, // Kích thước điểm
+                pointBackgroundColor: '#4C6EF5', // Màu điểm
+                fill: true, // Làm đầy vùng bên dưới đường
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false, // Ẩn chú thích
+                },
+            },
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Date',
+                    },
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Revenue (USD)',
+                    },
+                    beginAtZero: true,
+                },
+            },
+        }
+    });
+</script>
 

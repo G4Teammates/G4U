@@ -397,6 +397,21 @@
     },
 
 
+    //login-without-password
+    {
+      "DownstreamPathTemplate": "/api/Auth/login-without-password",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7107
+        }
+      ],
+      "UpstreamPathTemplate": "/Auth/login-without-password",
+      "UpstreamHttpMethod": [ "Post" ]
+    },
+
+
     //Forgot password
     {
       "DownstreamPathTemplate": "/api/Auth/forgot-password",
@@ -834,7 +849,7 @@
 
     //Update order status
     {
-      "DownstreamPathTemplate": "/api/Order",
+      "DownstreamPathTemplate": "/api/Order/{id}",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
@@ -842,7 +857,7 @@
           "Port": 7297
         }
       ],
-      "UpstreamPathTemplate": "/Order",
+      "UpstreamPathTemplate": "/Order/{id}",
       "UpstreamHttpMethod": [ "Put" ]
     },
     //Update trans id
@@ -905,6 +920,34 @@
       "UpstreamHttpMethod": [ "Post" ]
     },
 
+    //paid
+    {
+      "DownstreamPathTemplate": "/api/Payment/paid",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7297
+        }
+      ],
+      "UpstreamPathTemplate": "/Payment/paid",
+      "UpstreamHttpMethod": [ "Post" ]
+    },
+
+
+    //send notification
+    {
+      "DownstreamPathTemplate": "/api/Payment/send-notification",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7297
+        }
+      ],
+      "UpstreamPathTemplate": "/Payment/send-notification",
+      "UpstreamHttpMethod": [ "Post" ]
+    },
 
 
 
@@ -940,7 +983,39 @@
       ],
       "UpstreamPathTemplate": "/Statistical/GetStastisticalByUser",
       "UpstreamHttpMethod": [ "Get" ]
+    },
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //                                                                                                                    //
+    //                                                REPORT                                                              //
+    //                                                                                                                    //
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    {
+      "DownstreamPathTemplate": "/api/Reports",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7039
+        }
+      ],
+      "UpstreamPathTemplate": "/Reports",
+      "UpstreamHttpMethod": [ "Get" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/Reports/userName/{UserName}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7039
+        }
+      ],
+      "UpstreamPathTemplate": "/Reports/userName/{UserName}",
+      "UpstreamHttpMethod": [ "Post" ]
     }
+
   ],
   "GlobalConfiguration": {
     "BaseUrl": "https://localhost:7260",
