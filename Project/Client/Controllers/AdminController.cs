@@ -607,6 +607,7 @@ namespace Client.Controllers
                     product.CategoriesModel = JsonConvert.DeserializeObject<ICollection<CategoriesModel>>(Convert.ToString(response1.Result.ToString()!));
 
                     product.pageNumber = pageNumber;
+                    ViewData["CurrentAction"] = "ProductsManager";
                     product.totalItem = allProducts?.Count ?? 0; // Tổng số sản phẩm
                     product.pageSize = pageSize;
                     product.pageCount = (int)Math.Ceiling(product.totalItem / (double)pageSize);
@@ -689,7 +690,9 @@ namespace Client.Controllers
                 }
                 else
                 {
-                    return BadRequest(response.Message); // Trả về lỗi từ service
+                    TempData["error"] = "Product updated fail by error: "+ response.Message;
+                    return RedirectToAction(nameof(ProductsManager));
+                    /*return BadRequest(response.Message); // Trả về lỗi từ service*/
                 }
             }
             catch (Exception ex)
@@ -799,24 +802,28 @@ namespace Client.Controllers
             {
                 // Gọi API để tìm kiếm sản phẩm theo từ khóa
                 ResponseModel? response = await _productService.SearchProductAsync(searchString, page, pageSize);
-                ResponseModel? response2 = await _productService.GetAllProductAsync(1, 99);
-                ResponseModel? response3 = await _categoryService.GetAllCategoryAsync(1, 99);
+                ResponseModel? response2 = await _productService.GetAllProductAsync(1, 9999);
+                ResponseModel? response3 = await _categoryService.GetAllCategoryAsync(1, 9999);
+                ResponseModel? response4 = await _productService.SearchProductAsync(searchString, 1, 9999);
                 var total = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response2.Result.ToString()!));
-
+                var resultCount = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response4.Result.ToString()!));
                 if (response != null && response.IsSuccess)
                 {
                     productViewModel.Product = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response.Result.ToString()!));
                     productViewModel.CategoriesModel = JsonConvert.DeserializeObject<ICollection<CategoriesModel>>(Convert.ToString(response3.Result.ToString()!));
                     var data = productViewModel.Product;
                     productViewModel.pageNumber = pageNumber;
-                    productViewModel.totalItem = data.Count;
+                    productViewModel.totalItem = resultCount.Count;
                     productViewModel.pageSize = pageSize;
                     productViewModel.pageCount = (int)Math.Ceiling(total.Count / (double)pageSize);
                     TempData["success"] = "Search product successfully";
+                    ViewData["Parameters"] = searchString;
+                    ViewData["NamePara"] = "searchString";
                 }
                 else
                 {
                     TempData["error"] = response?.Message;
+                    return RedirectToAction(nameof(ProductsManager));
                 }
             }
             catch (Exception ex)
@@ -849,21 +856,28 @@ namespace Client.Controllers
                 ResponseModel? response = await _productService.SortProductAsync(sort, page, pageSize);
                 ResponseModel? response2 = await _productService.GetAllProductAsync(1, 99);
                 ResponseModel? response3 = await _categoryService.GetAllCategoryAsync(1, 99);
+                ResponseModel? response4 = await _productService.SortProductAsync(sort, 1, 999);
                 var total = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response2.Result.ToString()!));
+                var resultCount = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response4.Result.ToString()!));
                 if (response != null && response.IsSuccess)
                 {
                     productViewModel.Product = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response.Result.ToString()!));
                     productViewModel.CategoriesModel = JsonConvert.DeserializeObject<ICollection<CategoriesModel>>(Convert.ToString(response.Result.ToString()!));
                     var data = productViewModel.Product;
                     productViewModel.pageNumber = pageNumber;
-                    productViewModel.totalItem = data.Count;
+                    productViewModel.totalItem = resultCount.Count;
                     productViewModel.pageSize = pageSize;
                     productViewModel.pageCount = (int)Math.Ceiling(total.Count / (double)pageSize);
                     TempData["success"] = "Sort product successfully";
+                    ViewData["CurrentAction"] = "SortProducts";
+                    ViewData["Parameters"] = sort;
+                    ViewData["NamePara"] = "sort";
+
                 }
                 else
                 {
-                    TempData["error"] = response?.Message;
+                    TempData["error"] = "Product Sort fail by error: " + response.Message;
+                    return RedirectToAction(nameof(ProductsManager));
                 }
             }
             catch (Exception ex)
@@ -903,21 +917,35 @@ namespace Client.Controllers
                 ResponseModel? response = await _productService.FilterProductAsync(minRange, maxRange, sold, discount, platform, category, page, pageSize);
                 ResponseModel? response2 = await _productService.GetAllProductAsync(1, 99);
                 ResponseModel? response3 = await _categoryService.GetAllCategoryAsync(1, 99);
-                var total = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response2.Result.ToString()!));
+                ResponseModel? response4 = await _productService.FilterProductAsync(minRange, maxRange, sold, discount, platform, category, 1, 9999);
+                var total = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response.Result.ToString()!));
+                var resultCount = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response4.Result.ToString()!));
                 if (response != null && response.IsSuccess)
                 {
                     productViewModel.Product = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response.Result.ToString()!));
                     productViewModel.CategoriesModel = JsonConvert.DeserializeObject<ICollection<CategoriesModel>>(Convert.ToString(response3.Result.ToString()!));
                     var data = productViewModel.Product;
                     productViewModel.pageNumber = pageNumber;
-                    productViewModel.totalItem = data.Count;
+                    productViewModel.totalItem = total.Count;
                     productViewModel.pageSize = pageSize;
                     productViewModel.pageCount = (int)Math.Ceiling(total.Count / (double)pageSize);
                     TempData["success"] = "Filer product successfully";
+                    ViewData["CurrentAction"] = "FilterProducts";
+                    // Tạo đối tượng FilterParams để chứa các giá trị
+                    var filterParams = new Dictionary<string, object>
+                    {
+                        { "minRange", minRange },
+                        { "maxRange", maxRange },
+                        { "sold", sold },
+                        { "discount", discount },
+                        { "category", category }
+                    };
+                    ViewData["Parameters"] = filterParams;
                 }
                 else
                 {
-                    TempData["error"] = response?.Message;
+                    TempData["error"] = "Product filter fail by error: " + response.Message;
+                    return RedirectToAction(nameof(ProductsManager));
                 }
             }
             catch (Exception ex)
@@ -1229,9 +1257,12 @@ namespace Client.Controllers
                     var data = categories.Categories;
 
                     categories.pageNumber = pageNumber;
+
+                    ViewData["CurrentAction"] = "CategoriesManager";
                     categories.totalItem = allData?.Count ?? 0; // Tổng số bản ghi
                     categories.pageSize = pageSize;
                     categories.pageCount = (int)Math.Ceiling(categories.totalItem / (double)pageSize);
+
                 }
                 else
                 {
@@ -1392,17 +1423,19 @@ namespace Client.Controllers
                 // Gọi API để tìm kiếm sản phẩm theo từ khóa
                 ResponseModel? response = await _categoryService.SearchProductAsync(searchString, page, pageSize);
                 ResponseModel? response2 = await _categoryService.GetAllCategoryAsync(1, 99);
+                ResponseModel? response3 = await _categoryService.SearchProductAsync(searchString, page, pageSize);
                 var total = JsonConvert.DeserializeObject<ICollection<CategoriesModel>>(Convert.ToString(response2.Result.ToString()!));
-
+                var resultCount = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response3.Result.ToString()!));
                 if (response != null && response.IsSuccess)
                 {
                     categoryViewModel.Categories = JsonConvert.DeserializeObject<ICollection<CategoriesModel>>(Convert.ToString(response.Result.ToString()!));
                     var data = categoryViewModel.Categories;
                     categoryViewModel.pageNumber = pageNumber;
-                    categoryViewModel.totalItem = data.Count;
+                    categoryViewModel.totalItem = resultCount.Count;
                     categoryViewModel.pageSize = pageSize;
                     categoryViewModel.pageCount = (int)Math.Ceiling(total.Count / (double)pageSize);
                     TempData["success"] = "Search category successfully";
+                    ViewData["CurrentAction"] = "SearchCategory";
                 }
                 else
                 {
@@ -1430,6 +1463,7 @@ namespace Client.Controllers
                 // Lấy dữ liệu trang hiện tại
                 ResponseModel? response = await _commentService.GetAllCommentAsync(pageNumber, pageSize);
 
+
                 // Lấy toàn bộ dữ liệu để tính tổng số comment
                 ResponseModel? responseTotal = await _commentService.GetAllCommentAsync(1, int.MaxValue);
                 var allComments = JsonConvert.DeserializeObject<ICollection<CommentDTOModel>>(Convert.ToString(responseTotal.Result.ToString()!));
@@ -1440,9 +1474,13 @@ namespace Client.Controllers
                     var data = comment.Comment;
 
                     comment.pageNumber = pageNumber;
+
+                    ViewData["CurrentAction"] = "CommentManager";
+
                     comment.totalItem = allComments?.Count ?? 0; // Tổng số comment
                     comment.pageSize = pageSize;
                     comment.pageCount = (int)Math.Ceiling(comment.totalItem / (double)pageSize);
+
                 }
                 else
                 {
@@ -1456,39 +1494,6 @@ namespace Client.Controllers
 
             return View(comment);
         }
-        /* [HttpPost]
-         public async Task<IActionResult> CreateComment(CreateCommentDTOModel model)
-         {
-             if (!ModelState.IsValid)
-             {
-                 var errors = ModelState.Values.SelectMany(v => v.Errors)
-                                               .Select(e => e.ErrorMessage);
-                 return BadRequest(new { Errors = errors });
-             }
-
-             try
-             {
-                 // Gọi service CreateCommentAsync
-                 var response = await _commentService.CreateCommentAsync(model);
-
-                 if (response != null && response.IsSuccess)
-                 {
-                     TempData["success"] = "Category created successfully";
-                     return RedirectToAction(nameof(CommentManager));
-                 }
-                 else
-                 {
-                     TempData["error"] = response?.Message ?? "An unknown error occurred.";
-                     return RedirectToAction(nameof(CommentManager));
-                 }
-             }
-             catch (Exception ex)
-             {
-                 TempData["error"] = $"An error occurred: {ex.Message}";
-                 return RedirectToAction(nameof(CommentManager));
-             }
-
-         }*/
 
         public async Task<IActionResult> UpdateComment(string id)
         {
@@ -1541,7 +1546,7 @@ namespace Client.Controllers
                 return StatusCode(500); // Trả về view với dữ liệu đã nhập và lỗi
             }
         }
-        public async Task<IActionResult> CommentDelete(string id, int? page, int pageSize = 999)
+        public async Task<IActionResult> CommentDelete(string id, int? page, int pageSize = 9999999)
         {
             int pageNumber = (page ?? 1);
             ResponseModel? response = await _commentService.GetListByIdAsync(id, pageNumber, pageSize);
@@ -1549,7 +1554,7 @@ namespace Client.Controllers
             if (response != null && response.IsSuccess)
             {
                 List<CommentDTOModel>? commentsModel = JsonConvert.DeserializeObject<List<CommentDTOModel>>(Convert.ToString(response.Result));
-                TempData["success"] = "Get comment for update successfully";
+                TempData["success"] = "Get comment for deleted successfully";
                 ViewBag.Comments = commentsModel;  // Gán dữ liệu vào ViewBag
                 return View();
             }
@@ -1595,17 +1600,19 @@ namespace Client.Controllers
                 // Gọi API để tìm kiếm sản phẩm theo từ khóa
                 ResponseModel? response = await _commentService.SearchCmtAsync(searchString, page, pageSize);
                 ResponseModel? response2 = await _commentService.GetAllCommentAsync(1, 99);
+                ResponseModel? response3 = await _commentService.SearchCmtAsync(searchString, 1, 9999);
                 var total = JsonConvert.DeserializeObject<ICollection<CommentDTOModel>>(Convert.ToString(response2.Result.ToString()!));
-
+                var resultCount = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response3.Result.ToString()!));
                 if (response != null && response.IsSuccess)
                 {
                     cmtViewModel.Comment = JsonConvert.DeserializeObject<ICollection<CommentDTOModel>>(Convert.ToString(response.Result.ToString()!));
                     var data = cmtViewModel.Comment;
                     cmtViewModel.pageNumber = pageNumber;
-                    cmtViewModel.totalItem = data.Count;
+                    cmtViewModel.totalItem = total.Count;
                     cmtViewModel.pageSize = pageSize;
                     cmtViewModel.pageCount = (int)Math.Ceiling(total.Count / (double)pageSize);
                     TempData["success"] = "Search comment successfully";
+                    ViewData["CurrentAction"] = "SearchCmt";
                 }
                 else
                 {

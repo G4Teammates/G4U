@@ -151,11 +151,13 @@
                                 <input type="text" class="form-control form-control-sm" id="textInput" name="UserName" placeholder="Nhập vào đây" required>
                             </div>
                             <div class="mb-3 mx-2 mt-2">
-                                <label for="dateInput" class="form-label sr-only">Chọn ngày</label>
-                                <input type="month" class="form-control form-control-sm" id="dateInput" name="CreateAt" required>
+                                <label for="monthInput" class="form-label sr-only">Chọn tháng</label>
+                                <input type="month" class="form-control form-control-sm" id="monthInput" name="CreateAt" required>
+
                             </div>
                             <button type="submit" class="btn btn-danger btn-sm">Submit</button>
                         </form>
+
                     </div>
                 </div>
 
@@ -266,7 +268,7 @@
             e.preventDefault();
 
             var userName = $("#textInput").val();
-            var createAt = $("#dateInput").val();
+            var createAt = $("#monthInput").val();
 
             // Gửi yêu cầu AJAX tới server
             $.ajax({
