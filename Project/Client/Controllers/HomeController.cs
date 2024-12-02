@@ -20,7 +20,9 @@ namespace Client.Controllers
         private readonly ITokenProvider _tokenProvider = tokenProvider;
         private readonly IHelperService _helperService = helperService;
         public readonly IRepoProduct _productService = repoProduct;
-
+        private string JWT = "JWT";
+        private string IsLogin = "IsLogin";
+        private string RememberMe = "RememberMe";
 
         //public IActionResult Index()
         //{
@@ -66,19 +68,22 @@ namespace Client.Controllers
             try
             {
                 #region Check IsLogin Cookie and Token
-                var isLogin = HttpContext.Request.Cookies["IsLogin"];
+                // Lấy token và kiểm tra tính hợp lệ, nhưng luôn tiếp tục để lấy sản phẩm
+                bool isLogin = false;
+                bool rememberMe = Convert.ToBoolean(_tokenProvider.GetToken(RememberMe));
+                string token;
 
-                if (string.IsNullOrEmpty(isLogin))
+                if (rememberMe)
                 {
-                    ViewData["IsLogin"] = false;
+                    token = _tokenProvider.GetToken(JWT);
+                    isLogin = Convert.ToBoolean(_tokenProvider.GetToken(IsLogin));
                 }
                 else
                 {
-                    ViewData["IsLogin"] = isLogin;
+                    token = _tokenProvider.GetToken(JWT, false);
+                    isLogin = Convert.ToBoolean(_tokenProvider.GetToken(IsLogin,false));
                 }
 
-                // Lấy token và kiểm tra tính hợp lệ, nhưng luôn tiếp tục để lấy sản phẩm
-                string token = _tokenProvider.GetToken();
                 if (token == null)
                 {
                     ViewData["IsLogin"] = false;

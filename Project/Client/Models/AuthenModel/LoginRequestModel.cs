@@ -10,6 +10,6 @@ namespace Client.Models.AuthenModel
         public required string UsernameOrEmail { get; set; }
         [StringLength(64, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
         public required string Password { get; set; }
-
+        public bool IsRememberMe { get; set; } = false;
     }
 }

@@ -6,43 +6,101 @@
     Layout = "_LayoutAdmin";
     ViewData["Title"] = "Confirm Delete Category";
 }
+<style>
+    .card-header {
+        background: linear-gradient(45deg, #ff4b5c, #ff0000);
+        border-radius: 0.5rem 0.5rem 0 0;
+    }
 
-<h2>Confirm Delete Category</h2>
+    .card-body {
+        background-color: #f8f9fa;
+        padding: 2rem;
+    }
 
-<form asp-action="CategoryDeleteConfirmed" method="post">
-    <div class="form-group">
-        <label asp-for="Id">Category ID</label>
-        <input asp-for="Id" class="form-control" readonly="readonly" />
-        <span asp-validation-for="Id" class="text-danger"></span>
+    .btn-danger {
+        background-color: #ff4b5c;
+        border-color: #ff0000;
+    }
+
+        .btn-danger:hover {
+            background-color: #c70039;
+            border-color: #900c3f;
+        }
+
+    .btn-secondary {
+        background-color: #6c757d;
+        border-color: #6c757d;
+    }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+            border-color: #545b62;
+        }
+
+</style>
+
+<div class="container my-5">
+    <div class="card shadow-lg border-0">
+        <div class="card-header bg-danger text-white text-center">
+            <h3 class="mb-0">Confirm Delete Category</h3>
+            <p class="small mb-0">Please review the category details below before confirming deletion.</p>
+        </div>
+        <div class="card-body">
+            <form asp-action="CategoryDeleteConfirmed" method="post">
+                <!-- Category ID -->
+                <div class="mb-3">
+                    <label asp-for="Id" class="form-label fw-bold">Category ID</label>
+                    <input asp-for="Id" class="form-control" readonly />
+                    <span asp-validation-for="Id" class="text-danger"></span>
+                </div>
+
+                <!-- Category Name -->
+                <div class="mb-3">
+                    <label asp-for="Name" class="form-label fw-bold">Category Name</label>
+                    <input asp-for="Name" class="form-control" readonly />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+                <!-- Type -->
+                <div class="mb-3">
+                    <label asp-for="Type" class="form-label fw-bold">Type</label>
+                    <input asp-for="Type" class="form-control" readonly />
+                    <span asp-validation-for="Type" class="text-danger"></span>
+                </div>
+
+                <!-- Description -->
+                <div class="mb-3">
+                    <label asp-for="Description" class="form-label fw-bold">Description</label>
+                    <textarea asp-for="Description" class="form-control" rows="3" readonly></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+
+                <!-- Status -->
+                <div class="mb-3">
+                    <label asp-for="Status" class="form-label fw-bold">Status</label>
+                    <input asp-for="Status" class="form-control" readonly />
+                    <span asp-validation-for="Status" class="text-danger"></span>
+                </div>
+                <!-- Confirmation -->
+                <div class="alert alert-warning text-center" role="alert">
+                    Are you sure you want to delete category? This action cannot be undone.
+                </div>
+                <!-- Buttons -->
+                <div class="d-flex justify-content-between mt-4">
+                    <a asp-action="CategoriesManager" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left-circle"></i> Back to List
+                    </a>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash"></i> Delete
+                    </button>
+                    <button type="" class="btn btn-warning">
+                        <i class="bi bi-trash"></i> Delete Mềm
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
-
-    <div class="form-group">
-        <label asp-for="Name">Category Name</label>
-        <input asp-for="Name" class="form-control" readonly="readonly" />
-        <span asp-validation-for="Name" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="Type">Type</label>
-        <input asp-for="Type" class="form-control" readonly="readonly" />
-        <span asp-validation-for="Type" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="Description">Description</label>
-        <textarea asp-for="Description" class="form-control" rows="3" readonly="readonly"></textarea>
-        <span asp-validation-for="Description" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="Status">Status</label>
-        <input asp-for="Status" class="form-control" readonly="readonly" />
-        <span asp-validation-for="Status" class="text-danger"></span>
-    </div>
-
-    <input type="submit" value="Delete" class="btn btn-danger" />
-    <a asp-action="CategoriesManager" class="btn btn-secondary">Back to List</a>
-</form>
+</div>
 
 @section Scripts {
     @{

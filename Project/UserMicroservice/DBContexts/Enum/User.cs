@@ -18,4 +18,10 @@
         Admin,
         Developer
     }
+    public enum UserLoginType
+    {
+        Local,
+        Google,
+        Other
+    }
 }

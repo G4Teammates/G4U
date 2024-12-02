@@ -21,7 +21,7 @@ namespace OrderMicroservice.Repositories.Services
         private static readonly HttpClient client = new();
         private static readonly string Gateway = "https://localhost:7296";
         private static readonly string MoMoGateway = "https://test-payment.momo.vn/v2/gateway/api/create";
-        private static readonly string IpnMomo = "https://930a-42-113-221-81.ngrok-free.app" + "/api/payment/ipn/momo";
+        private static readonly string IpnMomo = "https://eb97-2402-800-6346-23b3-70ad-453c-67b9-85a3.ngrok-free.app" + "/api/payment/ipn/momo";
         private IMessage _message = message;
         public async Task<ResponseModel> MoMoPayment(MoMoRequestFromClient requestClient)
         {
@@ -93,7 +93,7 @@ namespace OrderMicroservice.Repositories.Services
                 List<ItemData> itemData = request.Items.Select(i => new ItemData(i.ProductName, i.Quantity, (int)i.Price)).ToList();
 
                 PaymentData paymentData = new PaymentData(orderId, (int)request.Amount, $"Payment with G4T",
-                     itemData, cancelUrl: $"{Gateway}/Order/PaymentFailure", returnUrl: $"{Gateway}/Order/PaymentSuccessPayOsAsync");
+                     itemData, cancelUrl: $"{Gateway}/Order/PaymentFailure", returnUrl: $"{Gateway}/Order/PaymentSuccessPayOs");
 
                 CreatePaymentResult createPayment = await payOS.createPaymentLink(paymentData);
 

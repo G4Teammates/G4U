@@ -43,16 +43,17 @@
     <!-- Price -->
     <div class="form-group">
         <label asp-for="@Model.Price" class="control-label"></label>
-        <input asp-for="@Model.Price" class="form-control" type="number" step="0.01" />
+        <input asp-for="@Model.Price" class="form-control" type="number" step="0.01" placeholder="Nhập giá trị VNĐ"/>
         <span asp-validation-for="@Model.Price" class="text-danger"></span>
     </div>
 
     <!-- Discount -->
     <div class="form-group">
         <label asp-for="@Model.Discount" class="control-label"></label>
-        <input asp-for="@Model.Discount" class="form-control" type="number" step="0.01" />
+        <input asp-for="@Model.Discount" class="form-control" type="number" step="0.01" max="99.99" />
         <span asp-validation-for="@Model.Discount" class="text-danger"></span>
     </div>
+
 
     <!-- Categories -->
     <!-- Categories -->
@@ -86,7 +87,7 @@
     <!-- Status -->
     <div class="form-group">
         <label asp-for="@Model.Status" class="form-label"></label>
-        <select asp-for="@Model.Status" class="form-select" aria-label="Status">
+        <select asp-for="@Model.Status" class="form-select" aria-label="Status" disabled>
             <option value="0" selected>Inactive</option>
             <option value="1">Active</option>
             <option value="2">Block</option>
@@ -99,7 +100,7 @@
     <!-- ImageFiles (Upload multiple images) -->
     <div class="form-group">
         <label class="control-label" asp-for="@Model.imageFiles" >Upload Images</label>
-        <input type="file" name="imageFiles" multiple class="form-control" asp-for="@Model.imageFiles" />
+        <input type="file" name="imageFiles" multiple class="form-control" asp-for="@Model.imageFiles" accept="image/*" />
         <span asp-validation-for="@Model.imageFiles" class="text-danger"></span>
     </div>
 
@@ -113,7 +114,7 @@
     <!-- Game File (Upload game file) -->
     <div class="form-group">
         <label class="control-label" asp-for="@Model.gameFile">Upload Game File</label>
-        <input type="file" name="gameFile" class="form-control" asp-for="@Model.gameFile" />
+        <input type="file" name="gameFile" multiple class="form-control" asp-for="@Model.gameFile" accept=".rar, .zip" />
         <span asp-validation-for="@Model.gameFile" class="text-danger"></span>
     </div>
 

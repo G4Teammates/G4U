@@ -162,9 +162,21 @@
             </form>
 
             <div class="w-100">
-                @* <div class="text-end">
-                    <button class="btn btn-success" data-toggle="modal" data-target="#modalComment">+ Add</button>
-                </div> *@
+                <div class="text-end">
+                    <!-- Dropdown cho User Status -->
+                    <span class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" style="width:100px" id="statusDropdown" data-bs-toggle="dropdown">
+                            Status
+                        </button>
+                        <span class="dropdown-menu" aria-labelledby="statusDropdown">
+                            <a class="dropdown-item" href="">Active</a>
+                            <a class="dropdown-item" href="">Inactive</a>
+                            <a class="dropdown-item" href="">Block</a>
+                            <a class="dropdown-item" href="">Deleted</a>
+                        </span>
+                    </span>
+                    @* <button class="btn btn-success" data-toggle="modal" data-target="#modalComment">+ Add</button> *@
+                </div> 
             </div>
         </div>
 

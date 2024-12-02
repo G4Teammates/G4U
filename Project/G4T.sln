@@ -27,7 +27,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gateway", "Gateway\Gateway.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StatisticalMicroservice", "StatisticalMicroservice\StatisticalMicroservice.csproj", "{C6D2E0CC-5228-4B93-89E8-85D19860DC90}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReportMicroservice", "ReportMicroservice\ReportMicroservice.csproj", "{391AC503-8C05-4521-9BF3-1B524A8974BF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReportMicroservice", "ReportMicroservice\ReportMicroservice.csproj", "{391AC503-8C05-4521-9BF3-1B524A8974BF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

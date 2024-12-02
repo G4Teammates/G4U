@@ -24,6 +24,13 @@ builder.Services.AddControllers()
     .AddJsonOptions(options =>
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 builder.Services.AddStartupService(builder.Configuration);
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30); // Thời gian timeout
+    options.Cookie.HttpOnly = true; // Cookie chỉ sử dụng trong HTTP
+    options.Cookie.IsEssential = true; // Đảm bảo hoạt động ngay cả khi bật Cookie consent
+}); 
+builder.Services.AddDistributedMemoryCache();
 
 /*builder.Services.AddControllersWithViews();*/
 /*builder.Services.AddRazorComponents();*/

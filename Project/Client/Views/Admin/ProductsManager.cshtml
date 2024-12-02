@@ -185,7 +185,7 @@
     <!-- Thanh tìm kiếm và nút Thêm -->
     <div class="row d-flex justify-content-between align-items-center mb-3 text-center">
         <!-- Form tìm kiếm sản phẩm -->
-        <form class="col-md-3 d-flex justify-content-center" asp-action="SearchProduct" asp-controller="Admin" method="post">
+        <form class="col-md-2 d-flex justify-content-center" asp-action="SearchProduct" asp-controller="Admin" method="post">
             <input class="form-control w-75" type="text" placeholder="Search by..." name="searchString" />
         </form>
 
@@ -195,7 +195,7 @@
         </div>
 
         <!-- Form sắp xếp sản phẩm với viền border -->
-        <form class="col-md-4 sort-form d-flex justify-content-center align-items-center" asp-action="SortProducts" asp-controller="Admin" method="post">
+        <form class="col-md-3 sort-form d-flex justify-content-center align-items-center" asp-action="SortProducts" asp-controller="Admin" method="post">
             <select name="sort" class="form-select me-2 w-75" aria-label="Type">
                 <option value="ascPrice">Price Ascending</option>
                 <option value="descPrice">Price Descending</option>
@@ -211,7 +211,19 @@
         </form>
 
         <!-- Nút Thêm sản phẩm -->
-        <div class="col-md-2 d-flex justify-content-center">
+        <div class="col-md-4 d-flex justify-content-center">
+            <!-- Dropdown cho User Status -->
+            <span class="dropdown me-2">
+                <button class="btn btn-secondary dropdown-toggle" type="button" style="width:100px" id="statusDropdown" data-bs-toggle="dropdown">
+                    Status
+                </button>
+                <span class="dropdown-menu" aria-labelledby="statusDropdown">
+                    <a class="dropdown-item" href="">Active</a>
+                    <a class="dropdown-item" href="">Inactive</a>
+                    <a class="dropdown-item" href="">Block</a>
+                    <a class="dropdown-item" href="">Deleted</a>
+                </span>
+            </span>
             <button class="btn btn-success w-75" data-toggle="modal" data-target="#modalProduct">+ Add</button>
         </div>
     </div>
@@ -250,7 +262,7 @@
                         <img src="@product.QrCode" alt="QR Code" width="100" height="100" class="qr-thumbnail" data-bs-toggle="modal" data-bs-target="#qrModal" data-qr="@product.QrCode" style="cursor:pointer;" />
                     </td>
                     <td class="text-center">@product.Name</td>
-                    <td class="text-center">@product.Price.ToString("C")</td>
+                    <td class="text-center">@string.Format("{0:N0} VNĐ", product.Price)</td>
                     <td class="text-center">@product.Sold</td>
                     <td class="text-center">
                         <div>Likes: @product.Interactions?.NumberOfLikes</div>

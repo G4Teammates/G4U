@@ -3,6 +3,7 @@ using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson.Serialization.IdGenerators;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using UserMicroservice.DBContexts.Entities;
 using UserMicroservice.DBContexts.Enum;
 using UserMicroservice.Models.CustomValidation;
@@ -87,8 +88,12 @@ namespace UserMicroservice.Models.UserManagerModel
         [RegularExpression(@"^\d+$", ErrorMessage = "The {0} field can only contain numbers.")]
 
         public string? BankAccount { get; set; }
-
-
+        /// <summary>
+        /// The type of login user account, include <see cref="UserLoginType.Local"/>(login with username and password),<see cref="UserLoginType.Google"/> or <see cref="UserLoginType.Other"/>.
+        /// <br/>
+        /// Vai trò của tài khoản người dùng, bao gồm <see cref="UserLoginType.Local"/>(đăng nhập bằng username và password),<see cref="UserLoginType.Google"/> hoặc <see cref="UserLoginType.Other"/>.
+        /// </summary>
+        public UserLoginType LoginType { get; set; }
 
         /// <summary>
         /// The avatar URL of the user.
@@ -119,6 +124,14 @@ namespace UserMicroservice.Models.UserManagerModel
         /// Tổng số tiền lời cuối cùng mà người dùng kiếm được từ việc bán game.
         /// </summary>
         public decimal TotalProfit { get; set; } = 0;
+
+        /// <summary>
+        /// Indicates whether the "Remember Me" option is selected for the user.
+        /// <br/>
+        /// Cho biết tùy chọn "Ghi nhớ đăng nhập" có được người dùng chọn hay không.
+        /// </summary>
+        [NotMapped]
+        public bool IsRememberMe { get; set; } = false;
 
         /// <summary>
         /// The collection of games added by the user to their wishlist.
