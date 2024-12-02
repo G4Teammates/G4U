@@ -187,7 +187,9 @@
                         @*             <td><input type="checkbox" class="order-checkbox"></td> *@
                         <td scope="col" class="text-truncate" title="@order.Id" style="max-width:100px">@order.Id</td>
                         <td scope="col" class="text-truncate" title="@order.PaymentTransactionId" style="max-width:100px">@order.PaymentTransactionId</td>
-                        <td scope="col" class="text-truncate" title="@order.TotalPrice" style="max-width:100px">@order.TotalPrice</td>
+                        <td scope="col" class="text-truncate" title="@string.Format("{0:N0} VNĐ", order.TotalPrice)" style="max-width:100px">
+                            @string.Format("{0:N0} VNĐ", order.TotalPrice)
+                        </td>
                         @if (order.OrderStatus == Client.Models.Enum.OrderEnum.OrderStatus.Pending)
                         {
 
@@ -268,9 +270,9 @@
 
                         </td>
 
-                        <td>
+                        @* <td>
                             <a asp-action="UpdateOrderStatus" asp-route-Id="@order.Id" class="text-danger mx-2"><span><i class="fa-regular fa-pen-to-square"></i></span></a>
-                        </td>
+                        </td> *@
                         @* <td>-</td> *@
                     </tr>
                 }

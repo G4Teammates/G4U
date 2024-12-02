@@ -213,7 +213,7 @@ namespace CategoryMicroservice.Repositories.Services
                 if (!string.IsNullOrEmpty(searchstring))
                 {
                     var resultByName = Category.Where(x => x.Name.Contains(searchstring)).ToPagedList(page, pageSize);
-                    response.Result = _mapper.Map<Category>(resultByName);
+                    response.Result = _mapper.Map<List<Category>>(resultByName);
                 }
                 else
                 {

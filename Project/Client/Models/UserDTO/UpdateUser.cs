@@ -19,7 +19,9 @@ namespace Client.Models.UserDTO
         public string? PhoneNumber { get; set; }
 
         [StringLength(256, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+        [RegularExpression(@"^(?!.*\s{2})[\w\s]*$", ErrorMessage = "The {0} must not contain consecutive spaces.")]
         public string? DisplayName { get; set; }
+
 
         [Required(ErrorMessage = "The {0} field is required.")]
         [StringLength(320, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 3)]
