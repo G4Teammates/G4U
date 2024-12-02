@@ -1710,5 +1710,17 @@ namespace Client.Controllers
             }
         }
         #endregion
+
+
+        #region Report
+        public async Task<IActionResult> ReportManager()
+        {
+            return View();
+        }
+        public async Task<IActionResult> UpdateReport()
+        {
+            return View();
+        }
+        #endregion
     }
 }
