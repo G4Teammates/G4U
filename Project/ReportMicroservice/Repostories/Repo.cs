@@ -9,6 +9,10 @@ using ReportMicroservice.Models;
 using System.Net.Mail;
 using System.Net;
 using X.PagedList.Extensions;
+using Microsoft.Extensions.Configuration;
+using System.Threading.Tasks;
+using System;
+using System.Collections.Generic;
 
 namespace ReportMicroservice.Repostories
 {
