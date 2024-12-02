@@ -1,4 +1,5 @@
 ﻿using ReportMicroservice.Models;
+using System.Threading.Tasks;
 
 namespace ReportMicroservice.Repostories
 {
