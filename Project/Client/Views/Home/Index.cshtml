@@ -14,7 +14,7 @@
         {
             // Lọc và lấy 4 sản phẩm mới nhất theo CreatedAt
             var latestProducts = Model.Product
-            .OrderBy(p => p.CreatedAt) // Sắp xếp theo CreatedAt từ mới đến cũ
+            .OrderByDescending(p => p.CreatedAt) // Sắp xếp theo CreatedAt từ mới đến cũ
             .Take(4); // Lấy 4 sản phẩm đầu tiên
 
             // Biến để kiểm tra xem sản phẩm đầu tiên có được đánh dấu là "active" không
@@ -27,14 +27,14 @@
                     {
                         string secondImageUrl = null; // Biến để lưu URL hình ảnh thứ hai
 
-                        // Tìm hình ảnh thứ hai
+                        // Tìm hình ảnh thứ hai có chứa "cloudinary"
                         int imageCount = 0; // Biến đếm số lượng hình ảnh đã tìm thấy
                         foreach (var link in product.Links)
                         {
                             if (link.Url.Contains("cloudinary"))
                             {
                                 imageCount++;
-                                if (imageCount == 2)
+                                if (imageCount == 2) // Lấy hình ảnh thứ hai
                                 {
                                     secondImageUrl = link.Url; // Lưu URL hình ảnh thứ hai
                                     break; // Thoát khỏi vòng lặp khi đã tìm thấy
@@ -46,7 +46,7 @@
                         if (secondImageUrl != null)
                         {
                             <div class="carousel-image-container">
-                                <img src="@secondImageUrl" alt="Cloudinary Image" class="d-block w-100 carousel-image" />
+                                <img src="@secondImageUrl" alt="Product Image" class="d-block w-100 carousel-image" />
                             </div>
                         }
                     }
@@ -66,6 +66,8 @@
         <span class="visually-hidden">Next</span>
     </button>
 </div>
+
+
 
 @if (TempData["success"] != null)
 {

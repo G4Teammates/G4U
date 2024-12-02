@@ -457,13 +457,13 @@ namespace ProductMicroservice.Repostories
                     // Lấy thời gian lượt xem cuối cùng từ cache
                     DateTime? lastViewedTime = _memoryCache.Get<DateTime?>(cacheKey);
 
-                    if (lastViewedTime == null || (DateTime.Now - lastViewedTime.Value).TotalMinutes >= 1)
+                    if (lastViewedTime == null || (DateTime.Now - lastViewedTime.Value).TotalSeconds >= 30)
                     {
-                        // Nếu chưa đủ 15 phút, tăng lượt xem và cập nhật thời gian
+                        // Nếu chưa đủ 30 giây, tăng lượt xem và cập nhật thời gian
                         product.Interactions.NumberOfViews++;
 
                         // Cập nhật thời gian lượt xem vào cache
-                        _memoryCache.Set(cacheKey, DateTime.Now, TimeSpan.FromMinutes(1)); // Lưu trong cache 15 phút
+                        _memoryCache.Set(cacheKey, DateTime.Now, TimeSpan.FromSeconds(30)); // Lưu trong cache 30 giây
 
                         // Cập nhật lại sản phẩm trong cơ sở dữ liệu
                         _db.Products.Update(product);
