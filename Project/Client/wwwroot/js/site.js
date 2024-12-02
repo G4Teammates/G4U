@@ -40,26 +40,18 @@ document.addEventListener('DOMContentLoaded', function () {
 /*Scroll To Top*/
 document.addEventListener('DOMContentLoaded', function () {
     const scrollToTopBtn = document.getElementById('scrollToTopBtn');
-    const scrollOffset = 10; // Số pixel cuộn xuống để hiển thị nút
-
-    // Hiển thị hoặc ẩn nút dựa trên vị trí cuộn
-    window.addEventListener('scroll', function () {
-        if (window.scrollY > scrollOffset) {
-            scrollToTopBtn.classList.add('show');
-        } else {
-            scrollToTopBtn.classList.remove('show');
-        }
-    });
 
     // Xử lý khi nhấp vào nút
     scrollToTopBtn.addEventListener('click', function () {
         // Cuộn mượt mà lên đầu trang
         window.scrollTo({
             top: 0,
-            behavior: 'smooth'
+            behavior: 'smooth',
         });
     });
 });
+
+
 
 
 // Owl carousel

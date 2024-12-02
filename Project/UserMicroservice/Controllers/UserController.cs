@@ -22,7 +22,7 @@ namespace UserMicroService.Controllers
         private readonly IAuthenService _authenService = authenservice;
         private readonly IUserService _userService = userService;
 
-
+        private ResponseModel _responseModel = new ResponseModel();
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
 
@@ -158,9 +158,14 @@ namespace UserMicroService.Controllers
         {
             try
             {
-                ResponseModel response = await _userService.GetAllProductsInWishList(id);
+                var response = await _userService.GetAllProductsInWishList(id);
                 if (response.IsSuccess)
+                {
+                    _responseModel.Result = response.Result;
                     return Ok(response);
+                }
+                _responseModel.IsSuccess= false;
+                _responseModel.Message = response.Message;
                 return BadRequest(response);
             }
             catch (Exception ex)
@@ -175,9 +180,14 @@ namespace UserMicroService.Controllers
         {
             try
             {
-                ResponseModel response = await _userService.AddToWishList(userWishlistModel, userName);
+                var response = await _userService.AddToWishList(userWishlistModel, userName);
                 if (response.IsSuccess)
+                {
+                    _responseModel.Result = response.Result;
                     return Ok(response);
+                }
+                _responseModel.IsSuccess = false;
+                _responseModel.Message = response.Message;
                 return BadRequest(response);
             }
             catch (Exception ex)

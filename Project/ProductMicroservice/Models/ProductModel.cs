@@ -119,6 +119,13 @@ namespace ProductMicroservice.Models
         public required string UserName { get; set; }
 
         /// <summary>
+        /// Password of security issue with password rar or zip
+        /// <br/>
+        /// Mật khẩu có vấn đề bảo mật với mật khẩu rar hoặc zip
+        /// </summary>
+        public string WinrarPassword { get; set; }
+
+        /// <summary>
         /// Calculates the price of the product after applying the discount.
         /// <br/>
         /// Tính toán giá của sản phẩm sau khi áp dụng giảm giá.

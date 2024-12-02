@@ -10,8 +10,9 @@ namespace Client.Models.ProductDTO
     {
         [Required(ErrorMessage = "Name is required")]
         [StringLength(256, MinimumLength = 2, ErrorMessage = "The Name must be at least {2} and at max {1} characters long.")]
-        [RegularExpression(@"^[a-zA-Z0-9\s]+$", ErrorMessage = "The Name cannot contain special characters.")]   /*Khong dc chua ky tu dac biet*/
+        [RegularExpression(@"^(?!.*\s{2})[a-zA-Z0-9\s]+$", ErrorMessage = "The Name cannot contain special characters or consecutive spaces.")]
         public string Name { get; set; }
+
 
         [MaxLength(10000, ErrorMessage = "The {0} must be at max {1} characters long.")]
         public string? Description { get; set; }

@@ -588,25 +588,28 @@ namespace Client.Controllers
             ProductViewModel product = new();
             try
             {
+                // Lấy tất cả danh mục
                 ResponseModel? response1 = await _categoryService.GetAllCategoryAsync(1, 99);
 
+                // Lấy dữ liệu của trang hiện tại
                 ResponseModel? response = await _productService.GetAllProductAsync(pageNumber, pageSize);
 
-                ResponseModel? response2 = await _productService.GetAllProductAsync(1, 99);
-
-                var total = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response2.Result.ToString()!));
+                // Lấy toàn bộ sản phẩm để tính tổng số mục
+                ResponseModel? responseTotal = await _productService.GetAllProductAsync(1, int.MaxValue);
+                var allProducts = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(responseTotal.Result.ToString()!));
 
                 if (response != null && response.IsSuccess)
                 {
+                    // Dữ liệu trang hiện tại
                     product.Product = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response.Result.ToString()!));
 
+                    // Danh mục sản phẩm
                     product.CategoriesModel = JsonConvert.DeserializeObject<ICollection<CategoriesModel>>(Convert.ToString(response1.Result.ToString()!));
 
-                    var data = product.Product;
                     product.pageNumber = pageNumber;
-                    product.totalItem = data.Count;
+                    product.totalItem = allProducts?.Count ?? 0; // Tổng số sản phẩm
                     product.pageSize = pageSize;
-                    product.pageCount = (int)Math.Ceiling(total.Count / (double)pageSize);
+                    product.pageCount = (int)Math.Ceiling(product.totalItem / (double)pageSize);
                 }
                 else
                 {
@@ -618,14 +621,11 @@ namespace Client.Controllers
                 TempData["error"] = ex.Message;
             }
 
-            // Tạo mã QR cho từng sản phẩm
+            // Tạo mã QR cho từng sản phẩm trong trang hiện tại
             foreach (var item in product.Product)
             {
-                string qrCodeUrl = Url.Action("UpdateProduct", "Admin", new { id = item.Id }, Request.Scheme);
-                item.QrCode = _productService.GenerateQRCode(qrCodeUrl); // Tạo mã QR và lưu vào thuộc tính
-
-                /*string barCodeUrl = Url.Action("UpdateProduct", "Admin", new { id = item.Id }, Request.Scheme);
-                item.BarCode = _productService.GenerateBarCode(11111111111); // Tạo mã QR và lưu vào thuộc tính*/
+                string qrCodeUrl = Url.Action("ProductDetail", "Product", new { id = item.Id }, Request.Scheme);
+                item.QrCode = _productService.GenerateQRCode(qrCodeUrl);
             }
 
             return View(product);
@@ -1216,26 +1216,27 @@ namespace Client.Controllers
             CategoriesViewModel categories = new();
             try
             {
+                // Lấy dữ liệu của trang hiện tại
                 ResponseModel? response = await _categoryService.GetAllCategoryAsync(pageNumber, pageSize);
-                ResponseModel? response2 = await _categoryService.GetAllCategoryAsync(1, 99);
-                var total = JsonConvert.DeserializeObject<ICollection<CategoriesModel>>(Convert.ToString(response2.Result.ToString()!));
 
+                // Lấy tất cả dữ liệu (dùng pageSize lớn để tải hết dữ liệu)
+                ResponseModel? responseTotal = await _categoryService.GetAllCategoryAsync(1, int.MaxValue);
+                var allData = JsonConvert.DeserializeObject<ICollection<CategoriesModel>>(Convert.ToString(responseTotal.Result.ToString()!));
 
                 if (response != null && response.IsSuccess)
                 {
                     categories.Categories = JsonConvert.DeserializeObject<ICollection<CategoriesModel>>(Convert.ToString(response.Result.ToString()!));
                     var data = categories.Categories;
-                    categories.pageNumber = pageNumber;
-                    categories.totalItem = data.Count;
-                    categories.pageSize = pageSize;
-                    categories.pageCount = (int)Math.Ceiling(total.Count / (double)pageSize);
 
+                    categories.pageNumber = pageNumber;
+                    categories.totalItem = allData?.Count ?? 0; // Tổng số bản ghi
+                    categories.pageSize = pageSize;
+                    categories.pageCount = (int)Math.Ceiling(categories.totalItem / (double)pageSize);
                 }
                 else
                 {
                     TempData["error"] = response?.Message;
                 }
-
             }
             catch (Exception ex)
             {
@@ -1420,37 +1421,38 @@ namespace Client.Controllers
 
 
         #region Comment
-        public async Task<IActionResult> CommentManager(int? page, int pageSize = 5)
+        public async Task<IActionResult> CommentManager(int? page, int pageSize = 20)
         {
             int pageNumber = (page ?? 1);
             CommentViewModel comment = new();
             try
-
             {
+                // Lấy dữ liệu trang hiện tại
                 ResponseModel? response = await _commentService.GetAllCommentAsync(pageNumber, pageSize);
-                ResponseModel? response2 = await _commentService.GetAllCommentAsync(1, 99);
-                var total = JsonConvert.DeserializeObject<ICollection<CommentDTOModel>>(Convert.ToString(response2.Result.ToString()!));
+
+                // Lấy toàn bộ dữ liệu để tính tổng số comment
+                ResponseModel? responseTotal = await _commentService.GetAllCommentAsync(1, int.MaxValue);
+                var allComments = JsonConvert.DeserializeObject<ICollection<CommentDTOModel>>(Convert.ToString(responseTotal.Result.ToString()!));
+
                 if (response != null && response.IsSuccess)
                 {
                     comment.Comment = JsonConvert.DeserializeObject<ICollection<CommentDTOModel>>(Convert.ToString(response.Result.ToString()!));
                     var data = comment.Comment;
-                    comment.pageNumber = pageNumber;
-                    comment.totalItem = data.Count;
-                    comment.pageSize = pageSize;
-                    comment.pageCount = (int)Math.Ceiling(total.Count / (double)pageSize);
 
+                    comment.pageNumber = pageNumber;
+                    comment.totalItem = allComments?.Count ?? 0; // Tổng số comment
+                    comment.pageSize = pageSize;
+                    comment.pageCount = (int)Math.Ceiling(comment.totalItem / (double)pageSize);
                 }
                 else
                 {
                     TempData["error"] = response?.Message;
                 }
-
             }
             catch (Exception ex)
             {
                 TempData["error"] = ex.Message;
             }
-
 
             return View(comment);
         }
@@ -1683,6 +1685,18 @@ namespace Client.Controllers
                 TempData["error"] = "An unknown error occurred: " + ex.Message;
                 return RedirectToAction("Collection", "Product");
             }
+        }
+        #endregion
+
+
+        #region Report
+        public async Task<IActionResult> ReportManager()
+        {
+            return View();
+        }
+        public async Task<IActionResult> UpdateReport()
+        {
+            return View();
         }
         #endregion
     }

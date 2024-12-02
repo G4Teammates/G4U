@@ -876,6 +876,11 @@ namespace Client.Controllers
         {
             try
             {
+                if (TempData["updateProductModel"] != null)
+                {
+                    updateProductModel = JsonConvert.DeserializeObject<UpdateProductModel>(TempData["UpdateProductModel"].ToString());
+                }
+
                 // Lay du lieu category
                 var response = await _categoriesService.GetAllCategoryAsync(1, 99);
                 ICollection<CategoriesModel>? cate = JsonConvert.DeserializeObject<ICollection<CategoriesModel>>(Convert.ToString(response.Result.ToString()!));
@@ -894,14 +899,17 @@ namespace Client.Controllers
 
                 ViewBag.Categories = listCate;
 
-                updateProductModel.Categories.Add(listCate[0]);
+                if (updateProductModel.Categories.Count <= 0)
+                {
+					updateProductModel.Categories.Add(listCate[0]);
+				}
 
-                //if (updateProductModel != null)
-                //{
-                //    updateProductModel = updateProductModel;
-                //}
+				//if (updateProductModel != null)
+				//{
+				//    updateProductModel = updateProductModel;
+				//}
 
-                return View(updateProductModel);
+				return View(updateProductModel);
             }
             catch (Exception ex)
             {
@@ -956,7 +964,8 @@ namespace Client.Controllers
                 else
                 {
                     TempData["error"] = response?.Message ?? "An unknown error occurred.";
-                    return RedirectToAction(nameof(UploadProduct), new { updateProductModel = updateProductModel });
+                    TempData["updateProductModel"] = JsonConvert.SerializeObject(updateProductModel);
+                    return RedirectToAction(nameof(UploadProduct));
                 }
             }
             catch (Exception ex)

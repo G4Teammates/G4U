@@ -124,9 +124,6 @@
                                 </label>
                                 <p class="ms-2 mt-3" id="theme-text" style="display:none;">Light</p>
                             </li>
-                            <li class="nav-item mx-2">
-                                <a class="nav-link"><i class="fa-solid fa-bell"></i></a>
-                            </li>
                             <li class="nav-item" style="max-width:160px">
                                 @if (User.Identity.IsAuthenticated)
                                 {
@@ -177,8 +174,11 @@
                 @RenderBody()
                 <partial name="_Notificate">                
             </main>
+
+            
+
             <!-- Open Chat Button -->
-            <button id="openChat">Chat</button>
+            <button id="openChat"><i class="fa-solid fa-comment"></i></button>
 
             <!-- Chatbox -->
             <div id="chatContainer">
@@ -216,7 +216,10 @@
                     </div>
                 </div>
             </div>
-
+            <!-- Nút Scroll to Top -->
+            <button id="scrollToTopBtn" title="Go to top">
+                <i class="fa-solid fa-chevron-up"></i>
+            </button>
         </div>
         <footer style="background-color: #222; color: white; padding: 40px 20px; font-size: 14px;">
             <div class="footer-container" style="display: flex; justify-content: space-between; max-width: 1200px; margin: 0 auto;">
@@ -243,7 +246,7 @@
 
             <div style="text-align: center; margin-top: 20px; border-top: 1px solid #444; padding-top: 20px;">
                 <p>© 2024 G4T Game Studio. All rights reserved.</p>
-                <img src="~/Image/Logo-remove.png" alt="Visa" width="50">
+                <img src="~/Image/logore.png" alt="Logo" width="50">
             </div>
         </footer>
 
@@ -445,7 +448,7 @@
 
         // Hiển thị dữ liệu người dùng nhập vào giao diện chat
         const userMessageDiv = document.createElement('div');
-        userMessageDiv.classList.add('user');
+        userMessageDiv.classList.add('userMessage');
         userMessageDiv.innerHTML = `<strong>Description:</strong> ${description} <br> <strong>Related To:</strong> ${related} <br> <strong>Email:</strong> ${email}`;
         document.getElementById('messageArea').appendChild(userMessageDiv);
 
@@ -484,6 +487,23 @@
         });
     });
 
+    // Đảm bảo khi nhấn ra ngoài form report, form này sẽ tự động đóng lại
+    document.addEventListener('click', function (event) {
+        const userInput = document.getElementById('userInput');
+        const chatContainer = document.getElementById('chatContainer');
+        const topicSelection = document.getElementById('topicSelection');
+
+        // Kiểm tra xem người dùng có nhấn vào phần tử nào ngoài form báo cáo không
+        if (!userInput.contains(event.target) && !topicSelection.contains(event.target) && !chatContainer.contains(event.target)) {
+            userInput.style.display = 'none'; // Đóng form report
+        }
+    });
+
+    // Đảm bảo rằng việc mở form report khi người dùng nhấp vào nút nào đó
+    document.getElementById('reportProblem').addEventListener('click', function () {
+        const userInput = document.getElementById('userInput');
+        userInput.style.display = 'block'; // Hiển thị form khi nhấn vào nút "Report Problem"
+    });
 
 
 

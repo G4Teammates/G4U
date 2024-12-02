@@ -256,7 +256,7 @@ namespace ProductMicroService.Controllers
                     Description = description,
                     Price = price,
                     Sold = sold,
-                    Interactions = new InteractionModel { NumberOfLikes = numOfLike, NumberOfViews = numOfView , NumberOfDisLikes = numOfDisLike, UserDisLikes =userDisLikeModel, UserLikes = userLikeModel},
+                    Interactions = new InteractionModel { NumberOfLikes = numOfLike, NumberOfViews = numOfView, NumberOfDisLikes = numOfDisLike, UserDisLikes = userDisLikeModel, UserLikes = userLikeModel },
                     Discount = discount,
                     Categories = categoryModels,
                     Platform = (PlatformType)platform,
@@ -540,6 +540,97 @@ namespace ProductMicroService.Controllers
             {
                 _responseDTO.IsSuccess = false;
                 _responseDTO.Message = "An error occurred while get view more: " + ex.Message;
+                return StatusCode(500, _responseDTO);
+            }
+        }
+
+        [HttpPost("ProductClone")]
+        [RequestSizeLimit(60 * 1024 * 1024)] // 50MB
+        [RequestFormLimits(MultipartBodyLengthLimit = 60 * 1024 * 1024)] // Đặt giới hạn cho form multipart
+        public async Task<IActionResult> CreateProductClone(
+                            [FromForm] string name,
+                            [FromForm] string description,
+                            [FromForm] decimal price,
+                            [FromForm] float discount,
+                            [FromForm] List<string> categories,
+                            [FromForm] int platform,
+                            [FromForm] int status,
+                            [FromForm] List<IFormFile> imageFiles,
+                            [FromForm] ScanFileRequest request,
+                            [FromForm] string username,
+                            [FromForm] string winrarPassword
+                            )
+        {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors)
+                                              .Select(e => e.ErrorMessage);
+                return BadRequest(new { Errors = errors });
+            }
+            try
+            {
+                // Kiểm tra tệp hình ảnh
+                if (imageFiles == null || !imageFiles.Any())
+                {
+                    _responseDTO.IsSuccess = false;
+                    _responseDTO.Message = "Image files cannot be null or empty.";
+                    return BadRequest(_responseDTO);
+                }
+
+                // Kiểm tra tệp game
+                if (request?.gameFile == null || request.gameFile.Length == 0)
+                {
+                    _responseDTO.IsSuccess = false;
+                    _responseDTO.Message = "IGame file cannot be null or empty.";
+                    return BadRequest(_responseDTO);
+                }
+
+                // Kiểm tra giá trị Platform
+                if (!Enum.IsDefined(typeof(PlatformType), platform))
+                {
+                    _responseDTO.IsSuccess = false;
+                    _responseDTO.Message = "Invalid platform value.";
+                    return BadRequest(_responseDTO);
+                }
+
+                // Kiểm tra giá trị Status
+                if (!Enum.IsDefined(typeof(ProductStatus), status))
+                {
+                    _responseDTO.IsSuccess = false;
+                    _responseDTO.Message = "Invalid status value.";
+                    return BadRequest(_responseDTO);
+                }
+
+                // Chuyển đổi danh sách chuỗi thành danh sách CategoryModel
+                var categoryModels = categories.Select(c => new CategoryModel { CategoryName = c }).ToList();
+                var gameFile = request.gameFile;
+
+                var product = new CreateProductModel
+                {
+                    Name = name,
+                    Description = description,
+                    Price = price,
+                    Discount = discount,
+                    Categories = categoryModels,
+                    Platform = (PlatformType)platform,
+                    Status = (ProductStatus)status,
+                    WinrarPassword = winrarPassword
+                };
+
+                var newProduct = await _repoProduct.ModerateClone(imageFiles, product, gameFile, username);
+                if (newProduct.IsSuccess)
+                {
+                    _responseDTO.Result = newProduct.Result;
+                    return Ok(_responseDTO);
+                }
+                _responseDTO.IsSuccess = false;
+                _responseDTO.Message = newProduct.Message;
+                return BadRequest(_responseDTO);
+            }
+            catch (Exception ex)
+            {
+                _responseDTO.IsSuccess = false;
+                _responseDTO.Message = "An error occurred while creating the Product: " + ex.Message;
                 return StatusCode(500, _responseDTO);
             }
         }

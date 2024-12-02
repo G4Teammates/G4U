@@ -6,11 +6,12 @@ namespace Client.Models.UserDTO
 {
     public class CreateUser
 	{
-		[Required(ErrorMessage = "The {0} field is required.")]
-		[StringLength(320, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
-        [RegularExpression(@"^[a-zA-Z0-9_@.-]*$", ErrorMessage = "The {0} can only contain letters, numbers, underscores (_), at (@) and hyphens (-).")]
+        [Required(ErrorMessage = "The {0} field is required.")]
+        [StringLength(320, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+        [RegularExpression(@"^(?!.*\s{2})[a-zA-Z0-9_-]*$", ErrorMessage = "The {0} can only contain letters, numbers, underscores (_), hyphens (-), and must not contain consecutive spaces.")]
         public string Username { get; set; }
-		[Required(ErrorMessage = "The {0} field is required.")]
+
+        [Required(ErrorMessage = "The {0} field is required.")]
 		[StringLength(320, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 3)]
 		[EmailAddress(ErrorMessage = "The {0} field is not a valid e-mail address.")]
 		public string Email { get; set; }
