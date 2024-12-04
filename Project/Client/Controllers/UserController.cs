@@ -452,10 +452,6 @@ namespace Client.Controllers
                         updateUser.Avatar = imageUrl;
                     }
                 }
-                //else
-                //{
-
-                //}
 
                 var response = await _userService.UpdateUser(updateUser);
 
@@ -468,7 +464,8 @@ namespace Client.Controllers
                     Email = claim.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value!,
                     Role = claim.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value!,
                     DisplayName = updateUser.DisplayName!,
-                    Avatar = updateUser.Avatar!
+                    Avatar = updateUser.Avatar!,
+                    LoginType = claim.FirstOrDefault(c=>c.Type == "LoginType")?.Value
                 };
 
                 await _helperService.UpdateClaim(user, HttpContext);

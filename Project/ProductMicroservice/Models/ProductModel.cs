@@ -123,7 +123,7 @@ namespace ProductMicroservice.Models
         /// <br/>
         /// Mật khẩu có vấn đề bảo mật với mật khẩu rar hoặc zip
         /// </summary>
-        public string WinrarPassword { get; set; }
+        public string? WinrarPassword { get; set; }
 
         /// <summary>
         /// Calculates the price of the product after applying the discount.
