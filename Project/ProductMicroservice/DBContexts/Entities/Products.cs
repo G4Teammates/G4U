@@ -165,7 +165,7 @@ namespace ProductMicroservice.DBContexts.Entities
         [BsonElement("winrarPassword")]
         /*[BsonRepresentation(BsonType.ObjectId)]*/
 
-        public string WinrarPassword { get; set; }
+        public string? WinrarPassword { get; set; }
     }
     #endregion
 }
