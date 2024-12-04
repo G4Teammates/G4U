@@ -817,6 +817,7 @@ namespace Client.Controllers
                     productViewModel.pageSize = pageSize;
                     productViewModel.pageCount = (int)Math.Ceiling(total.Count / (double)pageSize);
                     TempData["success"] = "Search product successfully";
+                    ViewData["CurrentAction"] = "SearchProduct";
                     ViewData["Parameters"] = searchString;
                     ViewData["NamePara"] = "searchString";
                 }
