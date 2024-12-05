@@ -20,6 +20,7 @@ namespace OrderMicroservice.Repositories.Interfaces
         Task<ResponseModel> TotalRequest();
         Task<bool> CheckPurchaseAsync(CheckPurchaseReceive order);
         Task<OrderGroupByUserData> Data(TotalGroupByUserResponse Response);
+        Task<ResponseModel> UpdateUserName(UpdateUserNameModel model);
 
     }
 }

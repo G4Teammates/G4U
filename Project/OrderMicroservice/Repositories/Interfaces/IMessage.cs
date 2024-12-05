@@ -10,5 +10,6 @@
         public void SendingMessageStastisticalGroupByUserToOrder<T>(T message);
         public void ReceiveMessageStastisticalGroupByUserToOrder();
         public void SendingMessageProduct<T>(T message);
+        public void ReceiveMessageFromUser();
     }
 }

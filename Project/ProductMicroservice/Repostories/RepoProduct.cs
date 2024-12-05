@@ -1630,5 +1630,44 @@ namespace ProductMicroservice.Repostories
 
             return false;
         }
+
+        public async Task<ResponseDTO> UpdateUserName(UpdateUserNameModel model)
+        {
+            ResponseDTO response = new();
+
+            try
+            {
+                // Tìm tất cả sản phẩm có username trùng với oldusername
+                var products = await _db.Products.Where(p => p.UserName == model.OldUserName).ToListAsync();
+
+                if (products.Count > 0)
+                {
+                    // Cập nhật username của tất cả các sản phẩm tìm được
+                    foreach (var product in products)
+                    {
+                        product.UserName = model.NewUserName;
+                    }
+
+                    // Lưu thay đổi vào cơ sở dữ liệu
+                    await _db.SaveChangesAsync();
+
+                    response.Message = "Update successfully";
+                    response.IsSuccess = true;
+                }
+                else
+                {
+                    response.Message = "Not found any product";
+                    response.IsSuccess = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+            }
+
+            return response;
+        }
+
     }
 }

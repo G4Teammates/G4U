@@ -23,5 +23,7 @@ namespace ProductMicroservice.Repostories.Messages
         public void ReceiveMessageStastisticalGroupByUserToProduct();
         //receive-order-to-product
         public void ReceiveMessageSoldProduct();
+        //updateusername
+        public void ReceiveMessageFromUser();
     }
 }

@@ -177,7 +177,43 @@ namespace ReportMicroservice.Repostories
             }
             return response;
         }
+        public async Task<ResponseDTO> UpdateUserName(UpdateUserNameModel model)
+        {
+            ResponseDTO response = new();
 
+            try
+            {
+                // Tìm tất cả sản phẩm có username trùng với oldusername
+                var rps = await _db.reports.Where(p => p.UserName == model.OldUserName).ToListAsync();
+
+                if (rps.Count > 0)
+                {
+                    // Cập nhật username của tất cả các sản phẩm tìm được
+                    foreach (var rp in rps)
+                    {
+                        rp.UserName = model.NewUserName;
+                    }
+
+                    // Lưu thay đổi vào cơ sở dữ liệu
+                    await _db.SaveChangesAsync();
+
+                    response.Message = "Update successfully";
+                    response.IsSuccess = true;
+                }
+                else
+                {
+                    response.Message = "Not found any report";
+                    response.IsSuccess = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+            }
+
+            return response;
+        }
 
         #region method
         private void SendEmailAsync(string email, string subject, string htmlMessage)

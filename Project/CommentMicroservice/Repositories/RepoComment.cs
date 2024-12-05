@@ -473,6 +473,67 @@ namespace CommentMicroservice.Repositories
 
         }
 
+        public async Task<ResponseModel> UpdateUserName(UpdateUserNameModel model)
+        {
+            ResponseModel response = new();
+
+            try
+            {
+                // Tìm tất cả sản phẩm có username trùng với oldusername
+                var comt = await _db.Comments.Where(p => p.UserName == model.OldUserName).ToListAsync();
+
+                if (comt.Count > 0)
+                {
+                    // Cập nhật username của tất cả các sản phẩm tìm được
+                    foreach (var cmt in comt)
+                    {
+                        cmt.UserName = model.NewUserName;
+
+                        // Cập nhật username trong danh sách UserDisLikes
+                        if (cmt.UserDisLikes != null)
+                        {
+                            foreach (var dislike in cmt.UserDisLikes)
+                            {
+                                if (dislike.UserName == model.OldUserName)
+                                {
+                                    dislike.UserName = model.NewUserName;
+                                }
+                            }
+                        }
+
+                        // Cập nhật username trong danh sách UserLikes
+                        if (cmt.UserLikes != null)
+                        {
+                            foreach (var like in cmt.UserLikes)
+                            {
+                                if (like.UserName == model.OldUserName)
+                                {
+                                    like.UserName = model.NewUserName;
+                                }
+                            }
+                        }
+                    }
+
+                    // Lưu thay đổi vào cơ sở dữ liệu
+                    await _db.SaveChangesAsync();
+
+                    response.Message = "Update successfully";
+                    response.IsSuccess = true;
+                }
+                else
+                {
+                    response.Message = "Not found any cmt";
+                    response.IsSuccess = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+            }
+
+            return response;
+        }
 
 
         #region method

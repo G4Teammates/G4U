@@ -473,6 +473,52 @@ namespace OrderMicroservice.Repositories.Services
 
             return result;
         }
+        public async Task<ResponseModel> UpdateUserName(UpdateUserNameModel model)
+        {
+            ResponseModel response = new();
+
+            try
+            {
+                // Tìm tất cả đơn hàng có Items chứa PublisherName trùng với oldusername
+                var orders = await _context.Orders.Where(o => o.Items.Any(i => i.PublisherName == model.OldUserName)).ToListAsync();
+
+                if (orders.Count > 0)
+                {
+                    // Cập nhật PublisherName của tất cả các sản phẩm trong danh sách Items
+                    foreach (var order in orders)
+                    {
+                        if (order.Items != null)
+                        {
+                            foreach (var item in order.Items)
+                            {
+                                if (item.PublisherName == model.OldUserName)
+                                {
+                                    item.PublisherName = model.NewUserName;
+                                }
+                            }
+                        }
+                    }
+
+                    // Lưu thay đổi vào cơ sở dữ liệu
+                    await _context.SaveChangesAsync();
+
+                    response.Message = "Update successfully";
+                    response.IsSuccess = true;
+                }
+                else
+                {
+                    response.Message = "Not found any order with matching PublisherName";
+                    response.IsSuccess = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+            }
+
+            return response;
+        }
 
     }
 }
