@@ -8,5 +8,6 @@ namespace ReportMicroservice.Repostories
         Task<ResponseDTO> GetAll(int page, int pageSize);
         Task<ResponseDTO> CreateReport(CreateReportsModels model, string UserName);
         Task<ResponseDTO> UpdateReport(string reportId, int status);
+        Task<ResponseDTO> UpdateUserName(UpdateUserNameModel model);
     }
 }

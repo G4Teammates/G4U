@@ -307,6 +307,11 @@ namespace UserMicroservice.Repositories.Services
                     (!isPhoneNumberChanged || count.NumPhoneNumber == 0) &&
                     (!isEmailChanged || count.NumEmail == 0))
                 {
+                    var data = new UpdateUserNameModel()
+                    {
+                        OldUserName = user.Username,
+                        NewUserName = updatedUserModel.Username
+                    };
                     // Cập nhật thông tin từ UserModel vào đối tượng User
                     user.DisplayName = updatedUserModel.DisplayName;
                     user.Username = updatedUserModel.Username ?? user.Username;
@@ -321,6 +326,10 @@ namespace UserMicroservice.Repositories.Services
                     // Lưu các thay đổi vào cơ sở dữ liệu
                     _context.Users.Update(user);
                     await _context.SaveChangesAsync();
+                    _message.SendingMessageUpdateUserNameCMT(data);
+                    _message.SendingMessageUpdateUserNameOD(data);
+                    _message.SendingMessageUpdateUserNamePRO(data);
+                    _message.SendingMessageUpdateUserNameRP(data);
 
                     // Trả về thông báo thành công cùng với thông tin người dùng đã cập nhật
                     response.IsSuccess = true;

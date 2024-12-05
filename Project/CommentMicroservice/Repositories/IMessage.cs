@@ -8,5 +8,6 @@ namespace CommentMicroservice.Repositories
         public event Action<CheckPurchasedResponse> OnResponseReceived;
         public void SendingMessageCheckPurchased<T>(T message);
         public void ReceiveMessageCheckPurchased();
+        public void ReceiveMessageFromUser();
     }
 }

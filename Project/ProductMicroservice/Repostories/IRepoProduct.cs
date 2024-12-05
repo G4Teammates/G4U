@@ -29,5 +29,6 @@ namespace ProductMicroservice.Repostories
         Task<ResponseDTO> GetProductByPlatform(int Platform);
 
         Task<ResponseDTO> ModerateClone(List<IFormFile> imageFiles, CreateProductModel Product, IFormFile gameFiles, string username);
+        Task<ResponseDTO> UpdateUserName(UpdateUserNameModel model);
     }
 }
