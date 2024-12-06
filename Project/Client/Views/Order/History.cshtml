@@ -1,52 +1,174 @@
-﻿
-<div class="px-5" style="min-height:1000px;">
-    <table class="table">
-        <thead>
-            <tr>
-                <th scope="col">Order#</th>
-                <th scope="col">Tên Game</th>
-                <th scope="col">Hình Ảnh</th>
-                <th scope="col">Ngày Tải</th>
-                <th scope="col">Giá</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <th scope="row">1</th>
-                <td>Jua Mikami</td>
-                <td><img src="~/image/history-game-1.jpg" style="height:70px;width:70px;" /></td>
+﻿@using System.Security.Claims
+@* @model Client.Models.AuthenModel.ChangePasswordModel *@
+@model Client.Models.UserDTO.UpdateUser
+@using static Client.Models.Enum.UserEnum.User
 
-                <td>01/09/2024</td>
-                <td>Free</td>
-            </tr>
-            <tr>
-                <th scope="row">2</th>
-                <td>Jua Mikami</td>
-                <td><img src="~/image/history-game-1.jpg" style="height:70px;width:70px;" /></td>
-                <td>02/09/2024</td>
-                <td>$7.5</td>
-            </tr>
-            <tr>
-                <th scope="row">3</th>
-                <td>Jua Mikami</td>
-                <td><img src="~/image/history-game-1.jpg" style="height:70px;width:70px;" /></td>
-                <td>03/09/2024</td>
-                <td>Free</td>
-            </tr>
-            <tr>
-                <th scope="row">4</th>
-                <td>Jua Mikami</td>
-                <td><img src="~/image/history-game-1.jpg" style="height:70px;width:70px;" /></td>
-                <td>04/09/2024</td>
-                <td>$9.99</td>
-            </tr>
-            <tr>
-                <th scope="row">5</th>
-                <td>Jua Mikami</td>
-                <td><img src="~/image/history-game-1.jpg" style="height:70px;width:70px;" /></td>
-                <td>05/09/2024</td>
-                <td>Free</td>
-            </tr>
-        </tbody>
-    </table>
+
+@{
+    var avatar = User.Claims.FirstOrDefault(a => a.Type == "Avatar")?.Value;
+    var email = @User.Claims.FirstOrDefault(a => a.Type == ClaimTypes.Email)?.Value;
+    var displayName = @User.Claims.FirstOrDefault(a => a.Type == ClaimTypes.GivenName)?.Value;
+    var username = @User.Claims.FirstOrDefault(a => a.Type == ClaimTypes.Name)?.Value;
+}
+
+
+<style>
+    .bt {
+        background-color: #f8f9fa;
+        color: #6c757d;
+        border: none;
+        border-radius: 10px;
+        margin-top: 2px;
+        width: 100%;
+        text-align: left;
+        padding: 10px;
+    }
+</style>
+
+
+<div class="main">
+    <div class="row justify-content-center">
+        <div class="col-md-3 p-3">
+            <div class="d-flex align-items-center mb-3 p-2 rounded border border-1">
+                <img src="@avatar" class="rounded me-3" alt="Avatar" style="width:80px; height:80px;" />
+                <div class="d-flex flex-column text-truncate">
+                    <h5 class="mb-0" title="@displayName">@displayName</h5>
+                    <p class="mb-0 text-muted" title="@username">@username</p>
+                    <p class="mb-0 text-muted" title="@email">@email</p>
+                </div>
+            </div>
+
+            <!-- Danh Muc -->
+            <div class="nav flex-column">
+                <div class="custom-nav-item">
+                    <a asp-controller="User" asp-action="Information">
+                        <button type="submit">
+                            <i class="fas fa-user"></i> User information
+                        </button>
+                    </a>
+                </div>
+                @if (User.Identity.IsAuthenticated)
+                {
+                    string loginTypeAsString = User.FindFirst("LoginType")?.Value;
+                    UserLoginType loginType;
+                    if (Enum.TryParse(loginTypeAsString, out loginType))
+                    {
+                        if (loginType == UserLoginType.Local)
+                        {
+                                          <div class="custom-nav-item">
+                                <a asp-controller="User" asp-action="PasswordSecurity">
+                                    <button type="button">
+                                        <i class="fas fa-lock"></i> Password and Security
+                                    </button>
+                                </a>
+                            </div>
+                        }
+                    }
+
+                }
+                <div class="custom-nav-item">
+                    <a asp-controller="Order" asp-action="History">
+                        <button type="button" class="bg-success text-white">
+                            <i class="fas fa-heart"></i> History Order
+                        </button>
+                    </a>
+                </div>
+                <div class="custom-nav-item text-end">
+                    <a asp-controller="User" asp-action="Logout">
+                        <button type="button">
+                            <i class="fas fa-heart"></i> Logout
+                        </button>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-9 p-4">
+            <div class="px-5" style="min-height:1000px;">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Order#</th>
+                            <th scope="col">Tên Game</th>
+                            <th scope="col">Hình Ảnh</th>
+                            <th scope="col">Ngày Tải</th>
+                            <th scope="col">Giá</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th scope="row">1</th>
+                            <td>Jua Mikami</td>
+                            <td><img src="~/image/history-game-1.jpg" style="height:70px;width:70px;" /></td>
+
+                            <td>01/09/2024</td>
+                            <td>Free</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">2</th>
+                            <td>Jua Mikami</td>
+                            <td><img src="~/image/history-game-1.jpg" style="height:70px;width:70px;" /></td>
+                            <td>02/09/2024</td>
+                            <td>$7.5</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">3</th>
+                            <td>Jua Mikami</td>
+                            <td><img src="~/image/history-game-1.jpg" style="height:70px;width:70px;" /></td>
+                            <td>03/09/2024</td>
+                            <td>Free</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">4</th>
+                            <td>Jua Mikami</td>
+                            <td><img src="~/image/history-game-1.jpg" style="height:70px;width:70px;" /></td>
+                            <td>04/09/2024</td>
+                            <td>$9.99</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">5</th>
+                            <td>Jua Mikami</td>
+                            <td><img src="~/image/history-game-1.jpg" style="height:70px;width:70px;" /></td>
+                            <td>05/09/2024</td>
+                            <td>Free</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
+
+
+
+    <script>
+        // Mở hộp thoại chọn file khi nhấp vào nút "Change Avatar"
+        document.getElementById('changeAvatarBtn').addEventListener('click', function () {
+            document.getElementById('avatarInput').click();
+        });
+
+        // Xử lý sự kiện khi file ảnh được chọn
+        document.getElementById('avatarInput').addEventListener('change', function (event) {
+            const input = event.target;
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    // Hiển thị ảnh vừa chọn lên thẻ img
+                    document.getElementById('avatarPreview').src = e.target.result;
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        });
+    </script>
+
+
+    @section Scripts {
+        @{
+            await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        }
+    }
+
+
+
+
+
