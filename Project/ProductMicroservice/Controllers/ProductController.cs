@@ -558,7 +558,7 @@ namespace ProductMicroService.Controllers
                             [FromForm] List<IFormFile> imageFiles,
                             [FromForm] ScanFileRequest request,
                             [FromForm] string username,
-                            [FromForm] string winrarPassword
+                            [FromForm] string? winrarPassword
                             )
         {
             if (!ModelState.IsValid)
