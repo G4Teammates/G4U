@@ -38,6 +38,27 @@ namespace Client.Repositories.Interfaces.Product
                                                      List<string> userLikes,
                                                      List<string> userDisLike);
 
+        Task<ResponseModel> UpdateProductCloneAsync(string id,
+                                             string name,
+                                             string description,
+                                             decimal price,
+                                             int sold,
+                                             int numOfView,
+                                             int numOfLike,
+                                             int numOfDisLike,
+                                             float discount,
+                                             List<LinkModel> links,
+                                             List<string> categories,
+                                             int platform,
+                                             int status,
+                                             DateTime createdAt,
+                                             List<IFormFile> imageFiles,
+                                             ScanFileRequest? request,
+                                             string username,
+                                             List<string> userLikes,
+                                             List<string> userDisLike,
+                                             string? winrarPassword);
+
         Task<ResponseModel> CreateProductAsync(string name,
             string description,
             decimal price,

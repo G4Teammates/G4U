@@ -750,19 +750,25 @@ namespace Client.Controllers
                 var numOfView = product.Interactions.NumberOfViews;
                 var numOfLike = product.Interactions.NumberOfLikes;
                 var numOfDisLike = product.Interactions.NumberOfDisLikes;
-                // Tạo đối tượng ScanFileRequest
-                var request = new ScanFileRequest
+
+
+                    // Tạo đối tượng ScanFileRequest
+                    var request = new ScanFileRequest
+                    {
+                        gameFile = updateProductModel.gameFile
+                    };
+                if (updateProductModel.gameFile == null)
                 {
-                    gameFile = updateProductModel.gameFile
-                };
+                    updateProductModel.WinrarPassword = product.WinrarPassword;
+                }
 
                 // Gọi service UpdateProduct từ phía Client
-                var response = await _productService.UpdateProductAsync(
+                var response = await _productService.UpdateProductCloneAsync(
                     updateProductModel.Id, updateProductModel.Name, updateProductModel.Description, updateProductModel.Price, updateProductModel.Sold,
                    numOfView, numOfLike, numOfDisLike, updateProductModel.Discount,
                     updateProductModel.Links, updateProductModel.Categories, (int)updateProductModel.Platform,
                     (int)updateProductModel.Status, updateProductModel.CreatedAt, updateProductModel.ImageFiles,
-                    request, updateProductModel.UserName, updateProductModel.Interactions.UserLikes, updateProductModel.Interactions.UserDisLikes);
+                    request, updateProductModel.UserName, updateProductModel.Interactions.UserLikes, updateProductModel.Interactions.UserDisLikes, updateProductModel.WinrarPassword);
 
                 if (response.IsSuccess)
                 {
@@ -803,6 +809,7 @@ namespace Client.Controllers
                 updateProductModel.Categories = model.Categories.Select(x => x.CategoryName).ToList();
                 updateProductModel.Platform = model.Platform;
                 updateProductModel.Status = model.Status;
+                updateProductModel.WinrarPassword = model.WinrarPassword;
                 //updateProductModel.Links = model.Links;
 
                 List<LinkModel> listLinks = new List<LinkModel>();
