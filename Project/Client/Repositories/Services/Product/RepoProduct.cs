@@ -123,7 +123,7 @@ namespace Client.Repositories.Services.Product
             List<IFormFile> imageFiles,
             ScanFileRequest request,
             string username,
-            string winrarPassword)
+            string? winrarPassword)
         {
             // Tạo MultipartFormDataContent để gửi dữ liệu
             var formData = new MultipartFormDataContent();
@@ -168,7 +168,11 @@ namespace Client.Repositories.Services.Product
                 };
                 formData.Add(gameFileContent);
 
-                formData.Add();
+                if (winrarPassword == null)
+                {
+                    winrarPassword = "";
+                }
+                formData.Add(new StringContent(winrarPassword), "winrarPassword");
             }
 
             // Gửi yêu cầu POST thông qua base service
@@ -176,7 +180,7 @@ namespace Client.Repositories.Services.Product
             {
                 ApiType = StaticTypeApi.ApiType.POST,
                 Data = formData,
-                Url = StaticTypeApi.APIGateWay + "/Product"
+                Url = StaticTypeApi.APIGateWay + "/Product/ProductClone"
             });
 
             return response;

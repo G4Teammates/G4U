@@ -59,7 +59,7 @@ namespace Client.Repositories.Interfaces.Product
             List<IFormFile> imageFiles,
             ScanFileRequest request,
             string username,
-            string winrarPassword);
+            string? winrarPassword);
 
         Task<ResponseModel> DeleteProductAsync(string Id);
         Task<ResponseModel> IncreaseLike(string productId, UserLikesModel userLikes);

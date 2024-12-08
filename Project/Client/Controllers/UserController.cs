@@ -875,7 +875,8 @@ namespace Client.Controllers
             {
                 if (TempData["updateProductModel"] != null)
                 {
-                    updateProductModel = JsonConvert.DeserializeObject<UpdateProductModel>(TempData["UpdateProductModel"].ToString());
+                    var tempdata = TempData["updateProductModel"];
+                    updateProductModel = JsonConvert.DeserializeObject<UpdateProductModel>(tempdata.ToString());
                 }
 
                 // Lay du lieu category
@@ -911,7 +912,8 @@ namespace Client.Controllers
             catch (Exception ex)
             {
                 TempData["error"] = $"An error occurred: {ex.Message}";
-                return View();
+                TempData["updateProductModel"] = null;
+                return RedirectToAction(nameof(UserDashboard));
             }
         }
 
@@ -961,15 +963,22 @@ namespace Client.Controllers
                 }
                 else
                 {
-                    TempData["error"] = response?.Message ?? "An unknown error occurred.";
-                    TempData["updateProductModel"] = JsonConvert.SerializeObject(updateProductModel);
-                    return RedirectToAction(nameof(UploadProduct));
+                    //updateProductModel.Id = null;
+                    //TempData["error"] = response?.Message ?? "An unknown error occurred.";
+                    //TempData["updateProductModel"] = JsonConvert.SerializeObject(updateProductModel);
+                    //return RedirectToAction(nameof(UploadProduct));
+
+                    throw new Exception(response?.Message ?? "An unknown error occurred.");
                 }
             }
             catch (Exception ex)
             {
+                updateProductModel.Id = null;
+                updateProductModel.gameFile = null;
+                updateProductModel.ImageFiles = null;
                 TempData["error"] = $"An error occurred: {ex.Message}";
-                return RedirectToAction(nameof(UserDashboard));
+                TempData["updateProductModel"] = JsonConvert.SerializeObject(updateProductModel);
+                return RedirectToAction(nameof(UploadProduct));
             }
         }
 
