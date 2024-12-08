@@ -27,5 +27,6 @@ namespace Client.Models.ProductDTO
         public List<IFormFile>? ImageFiles { get; set; } = new List<IFormFile>(); // Để xử lý file upload
         public IFormFile? gameFile { get; set; } // Giả sử bạn có model này cho game file 
         public string UserName { get; set; }
+        public string? WinrarPassword { get; set; }
     }
 }

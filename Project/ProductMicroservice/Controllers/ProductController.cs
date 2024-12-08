@@ -634,5 +634,119 @@ namespace ProductMicroService.Controllers
                 return StatusCode(500, _responseDTO);
             }
         }
+
+
+        [HttpPut("ProductClone")]
+        public async Task<IActionResult> UpdateProductClone(
+                                                    [FromForm] string id,
+                                                    [FromForm] string name,
+                                                    [FromForm] string description,
+                                                    [FromForm] decimal price,
+                                                    [FromForm] int sold,
+                                                    [FromForm] int numOfView,
+                                                    [FromForm] int numOfLike,
+                                                    [FromForm] int numOfDisLike,
+                                                    [FromForm] float discount,
+                                                    [FromForm] List<string> categories,
+                                                    [FromForm] int platform,
+                                                    [FromForm] int status,
+                                                    [FromForm] DateTime createdAt,
+                                                    [FromForm] List<string>? links, // Thay đổi kiểu thành List<string>
+                                                    [FromForm] List<IFormFile>? imageFiles,
+                                                    [FromForm] ScanFileRequest? request,
+                                                    [FromForm] string username,
+                                                    [FromForm] List<string> userLikes,
+                                                    [FromForm] List<string> userDisLike,
+                                                    [FromForm] string? winrarPassword)
+        {
+            try
+            {
+                // Chuyển đổi danh sách chuỗi thành danh sách Model
+                var categoryModels = categories.Select(c => new CategoryModel { CategoryName = c }).ToList();
+                var userLikeModel = userLikes.Select(c => new UserLikesModel { UserName = c }).ToList();
+                var userDisLikeModel = userDisLike.Select(c => new UserDisLikesModel { UserName = c }).ToList();
+
+                var gameFile = request?.gameFile;
+                // Tạo danh sách links mới từ các chuỗi JSON
+                var linkModels = links.Select(linkJson => JsonConvert.DeserializeObject<LinkModel>(linkJson)).ToList();
+
+                var product = new UpdateProductModel
+                {
+                    Id = id,
+                    Name = name,
+                    Description = description,
+                    Price = price,
+                    Sold = sold,
+                    Interactions = new InteractionModel { NumberOfLikes = numOfLike, NumberOfViews = numOfView, NumberOfDisLikes = numOfDisLike, UserDisLikes = userDisLikeModel, UserLikes = userLikeModel },
+                    Discount = discount,
+                    Categories = categoryModels,
+                    Platform = (PlatformType)platform,
+                    Status = (ProductStatus)status,
+                    CreatedAt = createdAt,
+                    Links = linkModels, // Lưu links dưới dạng LinkModel
+                    UserName = username,
+                    WinrarPassword = winrarPassword,
+                };
+
+                // Kiểm tra nếu không có tệp image nào được gửi
+                if (imageFiles == null || imageFiles.Count == 0)
+                {
+                    // Thực hiện cập nhật sản phẩm mà không cần tệp
+                    var newProductNoFiles = await _repoProduct.UpdateProductClone(null, product, gameFile);
+                    if (newProductNoFiles.IsSuccess)
+                    {
+                        _responseDTO.Result = newProductNoFiles.Result;
+                        return Ok(_responseDTO);
+                    }
+                    _responseDTO.IsSuccess = false;
+                    _responseDTO.Message = newProductNoFiles.Message;
+                    return BadRequest(_responseDTO);
+                }
+                // Kiểm tra nếu không có tệp game nào được gửi
+                else if (gameFile == null)
+                {
+                    // Thực hiện cập nhật sản phẩm mà không cần tệp
+                    var newProductNoFilesGame = await _repoProduct.UpdateProductClone(imageFiles, product, null);
+                    if (newProductNoFilesGame.IsSuccess)
+                    {
+                        _responseDTO.Result = newProductNoFilesGame.Result;
+                        return Ok(_responseDTO);
+                    }
+                    _responseDTO.IsSuccess = false;
+                    _responseDTO.Message = newProductNoFilesGame.Message;
+                    return BadRequest(_responseDTO);
+                }
+                // Kiểm tra nếu không có tệp game nào được gửi
+                else if (gameFile == null && imageFiles == null)
+                {
+                    // Thực hiện cập nhật sản phẩm mà không cần tệp
+                    var newProductNoFiles = await _repoProduct.UpdateProductClone(null, product, null);
+                    if (newProductNoFiles.IsSuccess)
+                    {
+                        _responseDTO.Result = newProductNoFiles.Result;
+                        return Ok(_responseDTO);
+                    }
+                    _responseDTO.IsSuccess = false;
+                    _responseDTO.Message = newProductNoFiles.Message;
+                    return BadRequest(_responseDTO);
+                }
+
+                var newProduct = await _repoProduct.UpdateProductClone(imageFiles, product, gameFile);
+                if (newProduct.IsSuccess)
+                {
+                    _responseDTO.Result = newProduct.Result;
+                    return Ok(_responseDTO);
+                }
+                _responseDTO.IsSuccess = false;
+                _responseDTO.Message = newProduct.Message;
+                return BadRequest(_responseDTO);
+            }
+            catch (Exception ex)
+            {
+                _responseDTO.IsSuccess = false;
+                _responseDTO.Message = "An error occurred while updatting the Products: " + ex.Message;
+                return StatusCode(500, _responseDTO); // Trả về mã lỗi 500 với thông báo lỗi chi tiết
+            }
+        }
     }
 }

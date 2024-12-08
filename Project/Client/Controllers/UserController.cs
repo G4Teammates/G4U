@@ -941,7 +941,7 @@ namespace Client.Controllers
                 };
 
                 // Gọi API CreateProductAsync
-                var response = await _productService.CreateProductAsync(
+                var response = await _productService.CreateProductCloneAsync(
                     updateProductModel.Name,
                     updateProductModel.Description,
                     updateProductModel.Price,
@@ -951,7 +951,8 @@ namespace Client.Controllers
                     (int)updateProductModel.Status,
                     updateProductModel.ImageFiles,
                     request,
-                    updateProductModel.UserName);
+                    updateProductModel.UserName,
+                    updateProductModel.WinrarPassword);
 
                 if (response != null && response.IsSuccess)
                 {

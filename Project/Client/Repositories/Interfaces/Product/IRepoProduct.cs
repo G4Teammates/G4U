@@ -48,6 +48,19 @@ namespace Client.Repositories.Interfaces.Product
             List<IFormFile> imageFiles,
             ScanFileRequest request,
             string username);
+
+        Task<ResponseModel> CreateProductCloneAsync(string name,
+            string description,
+            decimal price,
+            float discount,
+            List<string> categories,
+            int platform,
+            int status,
+            List<IFormFile> imageFiles,
+            ScanFileRequest request,
+            string username,
+            string winrarPassword);
+
         Task<ResponseModel> DeleteProductAsync(string Id);
         Task<ResponseModel> IncreaseLike(string productId, UserLikesModel userLikes);
         Task<ResponseModel> DecreaseLike(string productId, UserDisLikesModel userDisLikes);
