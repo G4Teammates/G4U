@@ -15,5 +15,6 @@ namespace StatisticalMicroservice.Repostories
         Task<ResponseDTO> UpdateStastisticalUser(UserResponse userResponse);
         Task<ResponseDTO> UpdateStastisticalOder(OrderResponse orderResponse);
         Task<ResponseDTO> GetStastisticalByUser(TotalGroupByUserRequest totalGroupByUserRequest);
+
     }
 }

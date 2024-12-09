@@ -26,5 +26,19 @@
             Google,
             Other
         }
+        public enum BankName
+        {
+            Unknown,
+            Vietcombank,
+            VietinBank,
+            Techcombank,
+            BIDV,
+            MBBank,
+            VPBank,
+            ACB,
+            TPBank,
+            VIB,
+            Agribank
+        }
     }
 }

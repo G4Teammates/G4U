@@ -78,6 +78,12 @@ namespace UserMicroservice.Models.UserManagerModel
         }
 
 
+        /// <summary>
+        /// The Bank Name of the user.
+        /// <br/>
+        /// Tên ngân hàng của người dùng.
+        /// </summary>
+        public BankName BankName { get; set; }
 
         /// <summary>
         /// The Bank Account of the user.

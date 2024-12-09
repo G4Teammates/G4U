@@ -81,7 +81,7 @@ namespace OrderMicroservice.Repositories.Services
                     .Where(o => o.Items.Any(i => i.ProductId == id))
                     .ToListAsync();
 
-                
+
                 if (ordersByOrderId.Any())
                 {
                     // Nếu tìm thấy theo Order.Id
@@ -135,6 +135,11 @@ namespace OrderMicroservice.Repositories.Services
                     .Where(o => o.Items.Any(i => i.ProductName.ToLower().Contains(id.ToLower())))
                     .ToListAsync();
 
+                // Tìm đơn hàng theo Publisher Name trong Items
+                var ordersByPublisherName = await _context.Orders
+                    .Where(o => o.Items.Any(i => i.PublisherName.ToLower().Contains(id.ToLower())))
+                    .ToListAsync();
+
                 // Kiểm tra kết quả và thiết lập phản hồi
                 if (ordersByProductName.Any())
                 {
@@ -147,6 +152,12 @@ namespace OrderMicroservice.Repositories.Services
                     response.Result = _mapper.Map<ICollection<OrderModel>>(ordersByTransactionId).ToPagedList(pageNumber, pageSize);
                     response.IsSuccess = true;
                     response.Message = $"Order with payment transaction ID '{id}' retrieved successfully.";
+                }
+                else if (ordersByPublisherName.Any())
+                {
+                    response.Result = _mapper.Map<ICollection<OrderModel>>(ordersByPublisherName).ToPagedList(pageNumber, pageSize);
+                    response.IsSuccess = true;
+                    response.Message = $"Order with payment publisher name '{id}' retrieved successfully.";
                 }
                 else
                 {
@@ -266,6 +277,28 @@ namespace OrderMicroservice.Repositories.Services
                 _context.Orders.Update(order);
                 await _context.SaveChangesAsync();
 
+                if (order.PaymentMethod == DBContexts.Enum.PaymentMethod.Free)
+                {
+                    var updateSoldResponse = UpdateSold(new ProductSoldRequest
+                    {
+                        IsExist = true,
+                        ProductSoldModels = order.Items.Select(item => new ProductSoldModel
+                        {
+                            ProductId = item.ProductId,
+                            Quantity = item.Quantity
+                        }).ToList()
+                    });
+                    if (!updateSoldResponse.IsSuccess)
+                    {
+                        return new ResponseModel
+                        {
+                            IsSuccess = false,
+                            Message = "Failed to update sold product information"
+                        };
+                    }
+                }
+
+
                 // Gửi thông điệp thống kê
                 var totalRequest = await TotalRequest();
                 _message.SendingMessageStatistiscal(totalRequest.Result);
@@ -292,6 +325,29 @@ namespace OrderMicroservice.Repositories.Services
                 IsSuccess = false,
                 Message = message
             };
+        }
+
+
+        public ResponseModel UpdateSold(ProductSoldRequest request)
+        {
+            try
+            {
+                _message.SendingMessageProduct(request);
+                return new ResponseModel
+                {
+                    IsSuccess = true,
+                    Message = "Update sold product success"
+                };
+            }
+            catch (Exception ex)
+            {
+                // Ghi log lỗi nếu cần thiết
+                return new ResponseModel
+                {
+                    IsSuccess = false,
+                    Message = $"Failed to update sold product: {ex.Message}"
+                };
+            }
         }
 
 
@@ -432,6 +488,73 @@ namespace OrderMicroservice.Repositories.Services
             return response;
         }
 
+
+
+        public async Task<ResponseModel> GroupByProfitOrder(DateTime dateTime)
+        {
+            ResponseModel response = new();
+            try
+            {
+                response = await GetAll(1, 9999);
+                if (!response.IsSuccess)
+                {
+                    return response;
+                }
+                var pagedOrders = response.Result as X.PagedList.IPagedList<OrderModel>;
+                if (pagedOrders == null)
+                {
+                    return new ResponseModel
+                    {
+                        IsSuccess = false,
+                        Message = "Failed to cast Result to IPagedList<OrderModel>."
+                    };
+                }
+
+                ICollection<OrderModel> orders = pagedOrders.ToList();
+
+
+                if (orders == null)
+                {
+                    return new ResponseModel { IsSuccess = false, Message = "Invalid data format." };
+                }
+                orders = orders.Where(p =>
+                        p.UpdatedAt.Year == dateTime.Year &&
+                        p.UpdatedAt.Month == dateTime.Month
+                    ).ToList();
+
+                List<ExportUserModel> groupedData = orders
+                    .SelectMany(order => order.Items) // Lấy tất cả OrderItemModel từ các đơn hàng
+                    .GroupBy(item => item.PublisherName) // Nhóm theo PublisherName
+                    .Select(group => new ExportUserModel
+                    {
+                        PublisherName = group.Key, // Tên của publisher
+                        TotalProfit = group.Sum(item => item.TotalProfit), // Tổng lợi nhuận
+                        TotalPrice = group.Sum(item => item.TotalPrice) // Tổng giá trị đơn hàng
+                    })
+                    .ToList();
+                ExportResult result = new ExportResult()
+                {
+                    ExportProfits = groupedData,
+                    CreateAt = DateTime.UtcNow
+                };
+                
+                response.Result = result;
+                response.IsSuccess = true;
+                response.Message = "Group by success";
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+            }
+
+            return response;
+        }
+
+
+
+
+
         public async Task<bool> CheckPurchaseAsync(CheckPurchaseReceive order)
         {
             // Check if any order contains the specified UserId
@@ -469,7 +592,7 @@ namespace OrderMicroservice.Repositories.Services
                             p.CreatedAt.Year == targetYear)
                 .ToListAsync();
 
-            result.Revenue =orders.Sum(x=>x.TotalProfit);
+            result.Revenue = orders.Sum(x => x.TotalProfit);
 
             return result;
         }

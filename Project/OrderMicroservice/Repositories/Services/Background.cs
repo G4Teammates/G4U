@@ -15,7 +15,8 @@ namespace OrderMicroservice.Repositories.Services
             // Chạy ReceiveMessage trong một tác vụ nền
             await Task.WhenAll(
                 Task.Run(() => _messageComsumer.ReceiveMessageCheckPurchased(), stoppingToken),
-                Task.Run(() => _messageComsumer.ReceiveMessageStastisticalGroupByUserToOrder(), stoppingToken)
+                Task.Run(() => _messageComsumer.ReceiveMessageStastisticalGroupByUserToOrder(), stoppingToken),
+                Task.Run(() => _messageComsumer.ReceiveMessageExport(), stoppingToken)
             );
             // Giữ cho dịch vụ chạy liên tục
             while (!stoppingToken.IsCancellationRequested)
