@@ -23,7 +23,7 @@ using System.Security.Claims;
 
 namespace Client.Controllers
 {
-    public class ProductController(ICompositeViewEngine viewEngine ,IHelperService helperService, IRepoProduct repoProduct, ICategoriesService categoryService, ICommentService commentService, IUserService userService, IOrderService orderService) : Controller
+    public class ProductController(ICompositeViewEngine viewEngine, IHelperService helperService, IRepoProduct repoProduct, ICategoriesService categoryService, ICommentService commentService, IUserService userService, IOrderService orderService) : Controller
     {
 
         private readonly IHelperService _helperService = helperService;
@@ -204,7 +204,7 @@ namespace Client.Controllers
 
             ResponseModel? productReponse = await _productService.GetDetailByIdAsync(id);
             ResponseModel? cmtResponse = await _commentService.GetByproductId(id, 1, 9999);
-            ResponseModel? productsReponse = await _productService.GetAllProductAsync(1,99);
+            ResponseModel? productsReponse = await _productService.GetAllProductAsync(1, 99);
 
             string un = claim.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value!;
             string i = claim.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value!;
@@ -212,31 +212,34 @@ namespace Client.Controllers
 
             if (productReponse != null && productReponse.IsSuccess)
             {
-                
+
                 ProductModel? ProductModel = JsonConvert.DeserializeObject<ProductModel>(Convert.ToString(productReponse.Result));
 
                 List<ProductModel>? ProductsModel = JsonConvert.DeserializeObject<List<ProductModel>>(Convert.ToString(productsReponse.Result));
-                
+
                 List<CommentDTOModel>? commentsModel = JsonConvert.DeserializeObject<List<CommentDTOModel>>(Convert.ToString(cmtResponse.Result));
 
                 if (ProductModel != null)
                 {
                     // Gán model vào ProductViewModel
-                    productViewModel.Prod = new ProductModel {Name = ProductModel.Name,
-                                                                Price = ProductModel.Price,
-                                                                UserName = ProductModel.UserName,
-                                                                Description = ProductModel.Description,
-                                                                Categories = ProductModel.Categories,
-                                                                CreatedAt = ProductModel.CreatedAt,
-                                                                UpdatedAt = ProductModel.UpdatedAt,
-                                                                Platform = ProductModel.Platform,
-                                                                Interactions = ProductModel.Interactions,
-                                                                Links = ProductModel.Links,
-                                                                Sold = ProductModel.Sold,
-                                                                Status = ProductModel.Status,
-                                                                Id = ProductModel.Id,
-                                                                Discount = ProductModel.Discount,
-                                                                QrCode = ProductModel.QrCode };
+                    productViewModel.Prod = new ProductModel
+                    {
+                        Name = ProductModel.Name,
+                        Price = ProductModel.Price,
+                        UserName = ProductModel.UserName,
+                        Description = ProductModel.Description,
+                        Categories = ProductModel.Categories,
+                        CreatedAt = ProductModel.CreatedAt,
+                        UpdatedAt = ProductModel.UpdatedAt,
+                        Platform = ProductModel.Platform,
+                        Interactions = ProductModel.Interactions,
+                        Links = ProductModel.Links,
+                        Sold = ProductModel.Sold,
+                        Status = ProductModel.Status,
+                        Id = ProductModel.Id,
+                        Discount = ProductModel.Discount,
+                        QrCode = ProductModel.QrCode
+                    };
 
                     productViewModel.Product = ProductsModel ?? new List<ProductModel>();
                     // Gán danh sách comments vào ProductViewModel
@@ -244,18 +247,15 @@ namespace Client.Controllers
 
                     productViewModel.userName = claim.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value!;
 
-                }
 
-                if (ItemResponse != null && ItemResponse.IsSuccess)
-                {
-                    List<OrderItemModel>? orderProducts = JsonConvert.DeserializeObject<List<OrderItemModel>>(Convert.ToString(ItemResponse.Result));
-
-                    ViewBag.HasOwned = false;
-                    foreach (var item in orderProducts)
+                    if (ItemResponse != null && ItemResponse.IsSuccess)
                     {
-                        if (item.ProductId == id)
+                        List<OrderItemModel>? orderProducts = JsonConvert.DeserializeObject<List<OrderItemModel>>(Convert.ToString(ItemResponse.Result));
+
+                        ViewBag.HasOwned = false;
+
+                        if (un == ProductModel.UserName)
                         {
-                            ViewBag.HasOwned = true;
                             List<LinkModel> urls = new List<LinkModel>();
                             foreach (var link in productViewModel.Prod.Links)
                             {
@@ -265,7 +265,26 @@ namespace Client.Controllers
                                 }
                             }
                             ViewBag.UrlsDownLoad = urls;
-                            break;
+                        }
+                        else
+                        {
+                            foreach (var item in orderProducts)
+                            {
+                                if (item.ProductId == id)
+                                {
+                                    ViewBag.HasOwned = true;
+                                    List<LinkModel> urls = new List<LinkModel>();
+                                    foreach (var link in productViewModel.Prod.Links)
+                                    {
+                                        if (link.Url.Contains("drive.google.com"))
+                                        {
+                                            urls.Add(link);
+                                        }
+                                    }
+                                    ViewBag.UrlsDownLoad = urls;
+                                    break;
+                                }
+                            }
                         }
                     }
                 }
@@ -285,7 +304,7 @@ namespace Client.Controllers
         {
             IEnumerable<Claim> claim = HttpContext.User.Claims;
             ProductViewModel productViewModel = new ProductViewModel();
-            ResponseModel? response = await _commentService.GetByParentIdAsync(parentId,1,9999);
+            ResponseModel? response = await _commentService.GetByParentIdAsync(parentId, 1, 9999);
             if (response != null && response.IsSuccess)
             {
                 List<CommentDTOModel>? comments = JsonConvert.DeserializeObject<List<CommentDTOModel>>(Convert.ToString(response.Result));
@@ -370,7 +389,7 @@ namespace Client.Controllers
                 // Gọi service CreateCommentAsync
                 var response = await _commentService.CreateCommentAsync(model, userid);
                 var modelCmt = JsonConvert.DeserializeObject<CommentDTOModel>(Convert.ToString(response.Result.ToString()!));
-                
+
                 if (response != null && response.IsSuccess)
                 {
                     TempData["success"] = "Comment created successfully";
@@ -378,7 +397,7 @@ namespace Client.Controllers
                     // Render PartialView to string
                     var html = await RenderViewAsync("_CommentPartial", modelCmt);
 
-                    return Json(new { success = true, html = html , message = TempData["success"] });
+                    return Json(new { success = true, html = html, message = TempData["success"] });
                 }
                 else
                 {
@@ -405,12 +424,12 @@ namespace Client.Controllers
                 {
                     UserName = userName
                 };
-                if(userName != null)
+                if (userName != null)
                 {
                     ResponseModel? response = await _commentService.IncreaseLike(commentID, userLikes);
                     if (response != null && response.IsSuccess)
                     {
-                        return Json(new { success = true, commentId = commentID, newLikeCount = response.Result , message = response.Message });
+                        return Json(new { success = true, commentId = commentID, newLikeCount = response.Result, message = response.Message });
                     }
                     else
                     {
@@ -421,7 +440,7 @@ namespace Client.Controllers
                 {
                     return Json(new { success = false, message = "Please login first" });
                 }
-               
+
             }
             catch (Exception ex)
             {
@@ -447,7 +466,7 @@ namespace Client.Controllers
                     ResponseModel? response = await _commentService.DecreaseLike(commentID, userDisLikes);
                     if (response != null && response.IsSuccess)
                     {
-                        return Json(new { success = true, commentId = commentID, newDislikeCount = response.Result , message = response.Message });
+                        return Json(new { success = true, commentId = commentID, newDislikeCount = response.Result, message = response.Message });
                     }
                     else
                     {
@@ -584,7 +603,7 @@ namespace Client.Controllers
                 return Json(new { success = false, message = $"Đã xảy ra lỗi: {ex.Message}" });
             }
         }
-            // Phương thức hỗ trợ để render PartialView thành chuỗi HTML
+        // Phương thức hỗ trợ để render PartialView thành chuỗi HTML
         private async Task<string> RenderViewAsync(string viewName, object model)
         {
             ViewData.Model = model;
@@ -629,11 +648,11 @@ namespace Client.Controllers
                 int pageSize = 5;
                 if (ProductsModel != null)
                 {
-                    
+
 
                     productViewModel.Product = ProductsModel ?? new List<ProductModel>();
                     // Gán danh sách comments vào ProductViewModel
-                   
+
                     productViewModel.userName = claim.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value!;
                     var data = productViewModel.Product;
                     productViewModel.pageNumber = 1;
@@ -650,7 +669,7 @@ namespace Client.Controllers
             }
 
             // Trả về View với ProductViewModel
-            return View("Product",productViewModel);
+            return View("Product", productViewModel);
         }
 
         [HttpPost]
