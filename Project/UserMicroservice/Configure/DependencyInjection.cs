@@ -17,6 +17,7 @@ namespace UserMicroService.Configure
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IHelperService, HelperService>();
             services.AddScoped<IAuthenticationService,AuthenticationService>();
+            services.AddScoped<IExportService, ExportService>();
             services.AddHostedService<Background>();
             services.AddSingleton<IMessage, Message>();
 
