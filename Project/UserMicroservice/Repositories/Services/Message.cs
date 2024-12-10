@@ -542,8 +542,6 @@ namespace UserMicroservice.Repositories.Services
 
                     if (!string.IsNullOrEmpty(message))
                     {
-                        Console.WriteLine("User received message: " + message); // Log raw message
-
 
                         // Use IServiceScopeFactory to create a scope for the scoped service IRepo_Products
                         using (var scope = _scopeFactory.CreateScope())
@@ -552,6 +550,7 @@ namespace UserMicroservice.Repositories.Services
 
                             // Check if cateID exists in products
                             ExportResult result = JsonConvert.DeserializeObject<ExportResult>(message);
+                            Console.WriteLine($"User service received request from Order service. Order service need {result.ExportProfits.Count} user(s) information");
                             ResponseModel response = await GetUserFromListUsername(repoUser, result);
                             if (!response.IsSuccess)
                             {
@@ -560,10 +559,9 @@ namespace UserMicroservice.Repositories.Services
                             else
                             {
                                 FindUsernameModel userDataExport = (FindUsernameModel)response.Result;
-                                Console.WriteLine("User service is preparing send all data user for order service");
                                 SendingMessagePrepareDataExcel<FindUsernameModel>(userDataExport);
                                 var jsonString = System.Text.Json.JsonSerializer.Serialize(response);
-                                Console.WriteLine("User sending message: " + jsonString); // Log raw message
+                                Console.WriteLine($"User service received message from Order service.Have {userDataExport.UsersExport.Count} user(s) can export.Have {userDataExport.MissingUsers.Count} user(s) missing"); // Log raw message
                             }
                         }
                     }

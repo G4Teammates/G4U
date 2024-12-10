@@ -60,7 +60,7 @@ namespace UserMicroservice.Repositories.Services
                     worksheet.Cells[i + 2, 3].Value = usersExport[i].BankName;              // Cột Bank Name
                     worksheet.Cells[i + 2, 4].Value = usersExport[i].BankAccount;           // Cột Bank Account
                     worksheet.Cells[i + 2, 5].Value = usersExport[i].Email;                 // Cột Email
-                    worksheet.Cells[i + 2, 6].Value = usersExport[i].Phone;                 // Cột Phone
+                    worksheet.Cells[i + 2, 6].Value = usersExport[i].PhoneNumber;                 // Cột Phone
                     worksheet.Cells[i + 2, 7].Value = usersExport[i].ProfitOfMonth;         // Cột Profit of Month
                     worksheet.Cells[i + 2, 8].Value = usersExport[i].OriginalPriceOfMonth;  // Cột Original Price of Month
                 }

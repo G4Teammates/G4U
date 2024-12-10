@@ -146,7 +146,7 @@ namespace OrderMicroservice.Repositories.Services
                         worksheet.Cells[i + 2, 3].Value = usersExport[i].BankName;
                         worksheet.Cells[i + 2, 4].Value = usersExport[i].BankAccount;
                         worksheet.Cells[i + 2, 5].Value = usersExport[i].Email;
-                        worksheet.Cells[i + 2, 6].Value = usersExport[i].Phone;
+                        worksheet.Cells[i + 2, 6].Value = usersExport[i].PhoneNumber;
                         worksheet.Cells[i + 2, 7].Value = usersExport[i].ProfitOfMonth;
                         worksheet.Cells[i + 2, 8].Value = usersExport[i].OriginalPriceOfMonth;
                     }

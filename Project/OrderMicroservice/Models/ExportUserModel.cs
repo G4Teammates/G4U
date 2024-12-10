@@ -11,7 +11,7 @@ namespace OrderMicroservice.Models
         public BankName BankName { get; set; }
         public string BankAccount { get; set; }
         public string Email {  get; set; }
-        public string Phone { get; set; }
+        public string PhoneNumber { get; set; }
         public decimal ProfitOfMonth { get; set; }
         public decimal OriginalPriceOfMonth { get; set; }
     }

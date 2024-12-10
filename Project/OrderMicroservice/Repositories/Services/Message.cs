@@ -640,26 +640,16 @@ namespace OrderMicroservice.Repositories.Services
                 {
                     var boby = eventArgs.Body.ToArray();
                     var message = Encoding.UTF8.GetString(boby);
-                    //Giải quyết vấn đề chuỗi bị "escape"
-                    //if (message.StartsWith("\"") && message.EndsWith("\""))
-                    //{
-                    //    // Nếu chuỗi bắt đầu và kết thúc bằng dấu ngoặc kép, hãy giải tuần tự hóa nó
-                    //    message = System.Text.Json.JsonSerializer.Deserialize<string>(message);
-                    //}
                     if (!string.IsNullOrEmpty(message))
                     {
-                        Console.WriteLine("User received message: " + message); // Log raw message
                         FindUsernameModel models = Newtonsoft.Json.JsonConvert.DeserializeObject<FindUsernameModel>(message);
-
+                        Console.WriteLine($"Order service received message from User service." +
+                            $"Have {models.UsersExport.Count} user(s) can export." +
+                            $"Have {models.MissingUsers.Count} user(s) missing"); // Log raw message
                         // Use IServiceScopeFactory to create a scope for the scoped service IRepo_Products
                         using (var scope = _scopeFactory.CreateScope())
                         {
-                            //var repoUser = scope.ServiceProvider.GetRequiredService<IExportService>();
                             OnFindUserModelResponseReceived?.Invoke(models); // Gọi event để thông báo có phản hồi
-                            // Check if cateID exists in products
-                            //PrepareData(repoUser, models);
-                            //var mes = Newtonsoft.Json.JsonConvert.SerializeObject(response.Message);
-                            //Console.WriteLine("User received message finish. Message: " + mes); // Log raw message
 
                         }
                     }
@@ -682,12 +672,6 @@ namespace OrderMicroservice.Repositories.Services
             }
 
         }
-
-
-        //private void PrepareData(IExportService repo, FindUsernameModel models)
-        //{
-        //     repo.PrepareData(models);
-        //}
         #endregion
     }
 }
