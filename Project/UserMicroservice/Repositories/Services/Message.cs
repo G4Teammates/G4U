@@ -4,12 +4,12 @@ using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Collections.Immutable;
-using System.Text;
-using System.Text.Json;
 using UserMicroservice.Models;
 using UserMicroservice.Models.Message;
 using UserMicroservice.Models.UserManagerModel;
 using UserMicroservice.Repositories.Interfaces;
+using Newtonsoft;
+using System.Text;
 namespace UserMicroservice.Repositories.Services
 {
     public class Message : IMessage
@@ -261,7 +261,7 @@ namespace UserMicroservice.Repositories.Services
                     exchange: ExchangeName,
                     routingKey: QueueName); // Routing Key phải khớp với tên hàng chờ
 
-                var jsonString = JsonSerializer.Serialize(message);
+                var jsonString = JsonConvert.SerializeObject(message);
 
                 var Body = Encoding.UTF8.GetBytes(jsonString);
 
@@ -315,7 +315,7 @@ namespace UserMicroservice.Repositories.Services
                     exchange: ExchangeName,
                     routingKey: QueueName); // Routing Key phải khớp với tên hàng chờ
 
-                var jsonString = JsonSerializer.Serialize(message);
+                var jsonString = JsonConvert.SerializeObject(message);
 
                 var Body = Encoding.UTF8.GetBytes(jsonString);
 
@@ -369,7 +369,7 @@ namespace UserMicroservice.Repositories.Services
                     exchange: ExchangeName,
                     routingKey: QueueName); // Routing Key phải khớp với tên hàng chờ
 
-                var jsonString = JsonSerializer.Serialize(message);
+                var jsonString = JsonConvert.SerializeObject(message);
 
                 var Body = Encoding.UTF8.GetBytes(jsonString);
 
@@ -423,7 +423,7 @@ namespace UserMicroservice.Repositories.Services
                     exchange: ExchangeName,
                     routingKey: QueueName); // Routing Key phải khớp với tên hàng chờ
 
-                var jsonString = JsonSerializer.Serialize(message);
+                var jsonString = JsonConvert.SerializeObject(message);
 
                 var Body = Encoding.UTF8.GetBytes(jsonString);
 
