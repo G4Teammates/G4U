@@ -792,7 +792,6 @@ namespace Client.Controllers
 
 
 
-        [HttpPost]
         public async Task<IActionResult> SearchProduct(string searchString, int? page, int pageSize = 5)
         {
             int pageNumber = (page ?? 1);
@@ -815,7 +814,7 @@ namespace Client.Controllers
                     productViewModel.pageNumber = pageNumber;
                     productViewModel.totalItem = resultCount.Count;
                     productViewModel.pageSize = pageSize;
-                    productViewModel.pageCount = (int)Math.Ceiling(total.Count / (double)pageSize);
+                    productViewModel.pageCount = (int)Math.Ceiling(resultCount.Count / (double)pageSize);
                     TempData["success"] = "Search product successfully";
                     ViewData["CurrentAction"] = "SearchProduct";
                     ViewData["Parameters"] = searchString;
@@ -845,7 +844,6 @@ namespace Client.Controllers
             return View("ProductsManager", productViewModel); // Trả về view ProductsManager với danh sách sản phẩm đã tìm kiếm
         }
 
-        [HttpPost]
         public async Task<IActionResult> SortProducts(string sort, int? page, int pageSize = 5)
         {
             int pageNumber = (page ?? 1);
@@ -868,7 +866,7 @@ namespace Client.Controllers
                     productViewModel.pageNumber = pageNumber;
                     productViewModel.totalItem = resultCount.Count;
                     productViewModel.pageSize = pageSize;
-                    productViewModel.pageCount = (int)Math.Ceiling(total.Count / (double)pageSize);
+                    productViewModel.pageCount = (int)Math.Ceiling(resultCount.Count / (double)pageSize);
                     TempData["success"] = "Sort product successfully";
                     ViewData["CurrentAction"] = "SortProducts";
                     ViewData["Parameters"] = sort;
@@ -898,7 +896,6 @@ namespace Client.Controllers
             return View("ProductsManager", productViewModel); // Trả về view ProductsManager với danh sách sản phẩm đã sắp xếp
         }
 
-        [HttpPost]
         public async Task<IActionResult> FilterProducts(
                                                         decimal? minRange,
                                                         decimal? maxRange,
@@ -919,7 +916,7 @@ namespace Client.Controllers
                 ResponseModel? response2 = await _productService.GetAllProductAsync(1, 99);
                 ResponseModel? response3 = await _categoryService.GetAllCategoryAsync(1, 99);
                 ResponseModel? response4 = await _productService.FilterProductAsync(minRange, maxRange, sold, discount, platform, category, 1, 9999);
-                var total = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response.Result.ToString()!));
+                var total = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response2.Result.ToString()!));
                 var resultCount = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response4.Result.ToString()!));
                 if (response != null && response.IsSuccess)
                 {
@@ -927,9 +924,9 @@ namespace Client.Controllers
                     productViewModel.CategoriesModel = JsonConvert.DeserializeObject<ICollection<CategoriesModel>>(Convert.ToString(response3.Result.ToString()!));
                     var data = productViewModel.Product;
                     productViewModel.pageNumber = pageNumber;
-                    productViewModel.totalItem = total.Count;
+                    productViewModel.totalItem = resultCount.Count;
                     productViewModel.pageSize = pageSize;
-                    productViewModel.pageCount = (int)Math.Ceiling(total.Count / (double)pageSize);
+                    productViewModel.pageCount = (int)Math.Ceiling(resultCount.Count / (double)pageSize);
                     TempData["success"] = "Filer product successfully";
                     ViewData["CurrentAction"] = "FilterProducts";
                     // Tạo đối tượng FilterParams để chứa các giá trị
@@ -1413,7 +1410,6 @@ namespace Client.Controllers
         }
 
 
-        [HttpPost]
         public async Task<IActionResult> SearchCategory(string searchString, int? page, int pageSize = 5)
         {
             int pageNumber = (page ?? 1);
@@ -1590,7 +1586,6 @@ namespace Client.Controllers
             return RedirectToAction("CommentManager");
         }
 
-        [HttpPost]
         public async Task<IActionResult> SearchCmt(string searchString, int? page, int pageSize = 5)
         {
             int pageNumber = (page ?? 1);

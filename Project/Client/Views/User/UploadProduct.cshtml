@@ -230,7 +230,7 @@
                 </div>
 
                 <input asp-for="gameFile" type="file" name="gameFile" id="fileInput" class="d-none" accept=".rar, .zip" onchange="displayFileInfo()" />
-                <button type="button" class="btn btn-danger" onclick="document.getElementById('fileInput').click()">Upload</button>
+                <button type="button" class="btn btn-danger" onclick="confirmDelete()">Upload</button>
                 <span asp-validation-for="gameFile" class="m-2">File size limit: 1 GB</span>
             </div>
             <!-- Game File (Upload game file) -->
@@ -239,6 +239,18 @@
             <input type="file" name="gameFile" multiple class="form-control" asp-for="@Model.gameFile" />
             <span asp-validation-for="@Model.gameFile" class="text-danger"></span>
             </div> *@
+
+            <!-- Modal Xác nhận Xóa -->
+            <div id="deleteModal" class="modal">
+                <div class="modal-content">
+                    <p>Are you sure you want to upload a new game file? This action will delete the current game file</p>
+                    <form class="modal-buttons">
+                        <button type="button" onclick="confirmUploadGame()" class="btn-confirm">Upload Game</button>
+                        <a style="text-decoration:none" onclick="closeModal()" class="btn-cancel">No</a>
+                    </form>
+                </div>
+            </div>
+            <!-- Modal Xác nhận Xóa -->
 
             <!-- Details -->
             <div class="mb-3">
@@ -398,7 +410,32 @@
         </div>
     </form>
 </div>
+<script>
+    function confirmDelete() {
+        const modal = document.getElementById(`deleteModal`);
+        if (modal) {
+            modal.classList.add("show");
+        }
+    }
 
+    function closeModal() {
+        const modal = document.getElementById(`deleteModal`);
+        if (modal) {
+            modal.classList.remove("show");
+        }
+    }
+
+    function confirmUploadGame() {
+
+        // Mở file explorer (tạo event click giả lập)
+        document.getElementById('fileInput').click();
+        const modal = document.getElementById(`deleteModal`);
+        if (modal) {
+            modal.classList.remove("show");
+        }
+    }
+
+</script>
 <script type="text/javascript">
     // Sự kiện khi nhấn vào nút "+" để thêm select mới
     document.getElementById('add-category').addEventListener('click', function () {

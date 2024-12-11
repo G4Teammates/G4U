@@ -31,11 +31,11 @@ namespace CategoryMicroservice.Repositories.Services
                 const string QueueName = "delete_category_confirm_queue";
                 var connectionFactory = new ConnectionFactory
                 {
-                    UserName = "guest",
-                    Password = "guest",
-                    VirtualHost = "/",
+                    UserName = "slcmuomn",
+                    Password = "lJMdS2a41fOGNU0f7UwAxISP1bZwSMUZ",
+                    VirtualHost = "slcmuomn",
                     Port = 5672,
-                    HostName = "localhost"
+                    HostName = "armadillo-01.rmq.cloudamqp.com"
                 };
 
                 using var connection = connectionFactory.CreateConnection();
@@ -99,11 +99,11 @@ namespace CategoryMicroservice.Repositories.Services
 
             ConnectionFactory factory = new()
             {
-                UserName = "guest",
-                Password = "guest",
-                VirtualHost = "/",
+                UserName = "slcmuomn",
+                Password = "lJMdS2a41fOGNU0f7UwAxISP1bZwSMUZ",
+                VirtualHost = "slcmuomn",
                 Port = 5672,
-                HostName = "localhost"
+                HostName = "armadillo-01.rmq.cloudamqp.com"
             };
             using var connection = factory.CreateConnection();
             using (var channel = connection.CreateModel())

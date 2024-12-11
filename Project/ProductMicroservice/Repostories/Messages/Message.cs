@@ -36,11 +36,11 @@ namespace ProductMicroservice.Repostories.Messages
 
                 var connectionFactory = new ConnectionFactory
                 {
-                    UserName = "guest",
-                    Password = "guest",
-                    VirtualHost = "/",
+                    UserName = "slcmuomn",
+                    Password = "lJMdS2a41fOGNU0f7UwAxISP1bZwSMUZ",
+                    VirtualHost = "slcmuomn",
                     Port = 5672,
-                    HostName = "localhost"
+                    HostName = "armadillo-01.rmq.cloudamqp.com"
                 };
                 using var connection = connectionFactory.CreateConnection();
                 using var channel = connection.CreateModel();
@@ -119,11 +119,11 @@ namespace ProductMicroservice.Repostories.Messages
 
             ConnectionFactory factory = new()
             {
-                UserName = "guest",
-                Password = "guest",
-                VirtualHost = "/",
+                UserName = "slcmuomn",
+                Password = "lJMdS2a41fOGNU0f7UwAxISP1bZwSMUZ",
+                VirtualHost = "slcmuomn",
                 Port = 5672,
-                HostName = "localhost"
+                HostName = "armadillo-01.rmq.cloudamqp.com"
             };
             using var conn = factory.CreateConnection();
             using (var channel = conn.CreateModel())
@@ -708,7 +708,7 @@ namespace ProductMicroservice.Repostories.Messages
                 // tên cổng
                 /*const string ExchangeName = "delete_category";*/
                 // tên queue
-                const string QueueName = "updateUserName_queue";
+                const string QueueName = "updateUserName_queue_pro";
                 var connectionFactory = new ConnectionFactory
                 {
                     UserName = "guest",

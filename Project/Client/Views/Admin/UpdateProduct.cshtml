@@ -292,7 +292,8 @@
                 <div class=col-md-4>
                     <div class="form-group" style="border: 1px solid #00A97F; border-radius: 8px; padding: 10px;">
                         <label for="gameFile" class="d-block" style="font-weight: bold; color: #00A97F;">Upload Game File</label>
-                        <input type="file" class="form-control" name="gameFile" style="border: 1px solid #00A97F; padding-left: 10px; padding-right: 10px;" accept=".rar, .zip"/>
+                        <a type="file" class="form-control" onclick="confirmDelete()" id="gameFileConfirm" style="border: 1px solid #00A97F; padding-left: 10px; padding-right: 10px; text-decoration:none">Upload file</a>
+                        <input type="file" class="form-control" name="gameFile" id="gameFile" accept=".rar, .zip" style="border: 1px solid #00A97F; padding-left: 10px; padding-right: 10px; display: none;" />
                     </div>
                 </div>
                 <div class=col-md-4>
@@ -304,7 +305,16 @@
                 </div>
             </div>
             
-            
+            <!-- Modal Xác nhận Xóa -->
+            <div id="deleteModal" class="modal">
+                <div class="modal-content">
+                    <p>Are you sure you want to upload a new game file? This action will delete the current game file</p>
+                    <form class="modal-buttons">
+                        <button type="button" onclick="confirmUploadGame()" class="btn-confirm">Upload Game</button>
+                        <a style="text-decoration:none" onclick="closeModal()" class="btn-cancel">No</a>
+                    </form>
+                </div>
+            </div>
 
             
 
@@ -320,7 +330,34 @@
     </div>
     
 </form>
+<script>
+    function confirmDelete() {
+        const modal = document.getElementById(`deleteModal`);
+        if (modal) {
+            modal.classList.add("show");
+        }
+    }
 
+    function closeModal() {
+        const modal = document.getElementById(`deleteModal`);
+        if (modal) {
+            modal.classList.remove("show");
+        } 
+    }
+
+    function confirmUploadGame() {
+
+            // Mở file explorer (tạo event click giả lập)
+            document.getElementById('gameFile').click();
+        document.getElementById('gameFileConfirm').style.display = 'none';
+        document.getElementById('gameFile').style.display = 'block';
+        const modal = document.getElementById(`deleteModal`);
+        if (modal) {
+            modal.classList.remove("show");
+        }
+    }
+
+</script>
 @section Scripts {
     <script type="text/javascript">
         $(document).ready(function () {

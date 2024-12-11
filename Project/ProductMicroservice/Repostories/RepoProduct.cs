@@ -555,7 +555,7 @@ namespace ProductMicroservice.Repostories
                         productList = productList.OrderByDescending(x => x.Sold).ToList();
                         break;
                     case "free":
-                        productList = productList.Where(x => x.Sold == 0).ToList();
+                        productList = productList.Where(x => x.Price == 0).ToList();
                         break;
                     default:
                         break;
@@ -629,30 +629,36 @@ namespace ProductMicroservice.Repostories
             ResponseDTO response = new();
             try
             {
+                if(maxrange < minrange)
+                {
+                    response.IsSuccess = false;
+                    response.Message = "The maxrange should not be less than the minrange ...";
+                    return response;
+                }
                 // Bắt đầu với tất cả các sản phẩm
                 var query = _db.Products.AsQueryable();
-
-                if (query != null)
+                var productList = await query.ToListAsync();  // Thực thi truy vấn và lấy toàn bộ danh sách sản phẩm
+                if (productList != null)
                 {
                     /*response.Result = _mapper.Map<ICollection<Products>>(Pros).ToPagedList(page, pageSize);*/
                     // Lọc theo khoảng giá
                     if (minrange.HasValue && maxrange.HasValue)
                     {
-                        query = query.Where(p => p.Price >= minrange.Value && p.Price <= maxrange.Value);
+                        productList = productList.Where(p => p.Price >= minrange.Value && p.Price <= maxrange.Value).ToList();
                     }
                     else if (minrange.HasValue)
                     {
-                        query = query.Where(p => p.Price >= minrange.Value);
+                        productList = productList.Where(p => p.Price >= minrange.Value).ToList();
                     }
                     else if (maxrange.HasValue)
                     {
-                        query = query.Where(p => p.Price <= maxrange.Value);
+                        productList = productList.Where(p => p.Price <= maxrange.Value).ToList();
                     }
 
                     // Lọc theo số lượng đã bán
                     if (sold.HasValue)
                     {
-                        query = query.Where(p => p.Sold >= sold.Value);
+                        productList = productList.Where(p => p.Sold >= sold.Value).ToList();
                     }
 
                     // Lọc theo giảm giá
@@ -660,28 +666,28 @@ namespace ProductMicroservice.Repostories
                     {
                         if (Discount.Value)
                         {
-                            query = query.Where(p => p.Discount > 0); // Lọc các sản phẩm có giảm giá
+                            productList = productList.Where(p => p.Discount > 0).ToList(); // Lọc các sản phẩm có giảm giá
                         }
                         else
                         {
-                            query = query.Where(p => p.Discount == 0); // Lọc các sản phẩm không giảm giá
+                            productList = productList.Where(p => p.Discount == 0).ToList(); // Lọc các sản phẩm không giảm giá
                         }
                     }
 
                     // Lọc theo nền tảng
                     if (Platform.HasValue)
                     {
-                        query = query.Where(p => (int)p.Platform == Platform.Value); // so sánh với enum PlatformType
+                        productList = productList.Where(p => (int)p.Platform == Platform.Value).ToList(); // so sánh với enum PlatformType
                     }
 
                     // Lọc theo category
                     if (!string.IsNullOrEmpty(Category))
                     {
-                        query = query.Where(p => p.Categories.Any(c => c.CategoryName.Equals(Category, StringComparison.OrdinalIgnoreCase)));
+                        productList = productList.Where(p => p.Categories.Any(c => c.CategoryName.Equals(Category, StringComparison.OrdinalIgnoreCase))).ToList();
                     }
 
                     // Kiểm tra nếu không có sản phẩm nào sau khi lọc
-                    if (!query.Any())
+                    if (!productList.Any())
                     {
                         response.IsSuccess = false;
                         response.Message = "Not found any Product";
@@ -689,7 +695,7 @@ namespace ProductMicroservice.Repostories
                     }
 
                     // Phân trang và trả về kết quả
-                    response.Result = _mapper.Map<ICollection<Products>>(query.ToList()).ToPagedList(page, pageSize);
+                    response.Result = _mapper.Map<ICollection<Products>>(productList.ToList()).ToPagedList(page, pageSize);
                     response.IsSuccess = true; // Đánh dấu là thành công
                 }
                 else

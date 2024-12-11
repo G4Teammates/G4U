@@ -126,7 +126,7 @@
                 <!-- Modal Xác nhận Xóa -->
                 <div id="deleteModal-@image.ProductId" class="modal">
                     <div class="modal-content">
-                        <p>Bạn có muốn xóa Game khỏi Wishlist?</p>
+                        <p>Are you sure you want to remove this game from Wishlist?</p>
                         <form asp-action="RemoveWishList" asp-controller="Admin" method="post" class="modal-buttons">
                             <input type="hidden" name="productId" value="@image.ProductId" />
                             <input type="submit" value="Yes" class="btn-confirm" />
@@ -138,7 +138,7 @@
         }
         else
         {
-            <p>khong co wishlist</p>
+            <p>Wishlist is empty</p>
         }
     </div>
 </div>
