@@ -60,7 +60,7 @@
                                 </a>
                             </div>
                             <div class="mx-3">
-                                <form asp-action="SearchProduct" asp-controller="Home" method="post">
+                                <form asp-action="SearchProduct" asp-controller="Product" method="post">
                                     
                                     <input class="form-control me-2" type="text" placeholder="Search.." aria-label="Search" name="searchString">
                                 </form>
@@ -124,9 +124,6 @@
                                 </label>
                                 <p class="ms-2 mt-3" id="theme-text" style="display:none;">Light</p>
                             </li>
-                            <li class="nav-item mx-2">
-                                <a class="nav-link"><i class="fa-solid fa-bell"></i></a>
-                            </li>
                             <li class="nav-item" style="max-width:160px">
                                 @if (User.Identity.IsAuthenticated)
                                 {
@@ -156,6 +153,7 @@
                                         <a class="navelement" asp-controller="User" asp-action="Information">Information & Password</a>
                                         <a class="navelement" asp-controller="Product" asp-action="Collection">Wishlist & Library</a>
                                         <a class="navelement" asp-controller="User" asp-action="Cart">Cart</a>
+                                        <a class="navelement" asp-controller="Order" asp-action="History">History</a>
                                         @if (User.IsInRole("Admin"))
                                         {
                                             <a class="navelement" asp-controller="Admin" asp-action="AdminDashboard">Admin Dashboard</a>
@@ -186,7 +184,7 @@
             <!-- Chatbox -->
             <div id="chatContainer">
                 <div id="chatHeader">
-                    Pixels Support
+                    G4T Support
                     <button id="closeChat">×</button>
                 </div>
                 <div id="chatContent">
@@ -240,7 +238,7 @@
                     </a>
                     <a href="#" style="color: white; font-size: 24px; margin-right: 20px;">
                         <i class="fab fa-instagram"></i>
-                    </a>
+                    </a> 
                     <a href="#" style="color: white; font-size: 24px;">
                         <i class="fab fa-linkedin-in"></i>
                     </a>

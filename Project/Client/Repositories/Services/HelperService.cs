@@ -15,10 +15,12 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
 using static Google.Apis.Requests.BatchRequest;
 using Client.Utility;
+using static Client.Models.Enum.UserEnum.User;
+using Client.Repositories.Interfaces.Authentication;
 
 namespace Client.Repositories.Services
 {
-    public class HelperService(IBaseService baseService) : IHelperService
+    public class HelperService(IBaseService baseService, ITokenProvider tokenProvider) : IHelperService
     {
         private readonly Cloudinary _cloudinary = new Cloudinary(
             new Account(
@@ -26,6 +28,7 @@ namespace Client.Repositories.Services
             apiKey: ConfigKeyModel.CloudinaryKey,
             apiSecret: ConfigKeyModel.CloudinarySecret));
         private IBaseService _baseService = baseService;
+        private ITokenProvider _tokenProvider = tokenProvider;
         
 
         public async Task<string> UploadImageAsync(Stream imageStream, string fileName)
@@ -56,7 +59,8 @@ namespace Client.Repositories.Services
                 Avatar = token?.Claims.FirstOrDefault(claim => claim.Type == "Avatar")?.Value,
                 DisplayName = token?.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.GivenName)?.Value,
                 Role = token?.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.Role)?.Value,
-                Token = token.ToString()
+                Token = token.ToString(),
+                LoginType = token?.Claims.FirstOrDefault(claim => claim.Type == "LoginType")?.Value,
             };
         }
 
@@ -196,7 +200,7 @@ namespace Client.Repositories.Services
             {
                 // Lấy thông tin người dùng hiện tại
                 var authenticateResult = await context.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-
+                bool isRememberMe = Convert.ToBoolean(_tokenProvider.GetToken("RememberMe"));
                 if (authenticateResult.Succeeded)
                 {
                     // Xóa claim cũ nếu tồn tại
@@ -207,7 +211,8 @@ namespace Client.Repositories.Services
                         new Claim(ClaimTypes.GivenName, user.DisplayName),
                         new Claim(ClaimTypes.Email, user.Email),
                         new Claim("Avatar", user.Avatar),
-                        new Claim(ClaimTypes.Role, user.Role.ToString())
+                        new Claim(ClaimTypes.Role, user.Role),
+                        new Claim("LoginType", user.LoginType)
                     };
 
                     // Đăng xuất người dùng
@@ -220,7 +225,8 @@ namespace Client.Repositories.Services
                         new ClaimsPrincipal(newIdentity),
                         new AuthenticationProperties
                         {
-                            IsPersistent = true
+                            IsPersistent = true,
+                            ExpiresUtc = isRememberMe ? DateTimeOffset.Now.AddDays(7) : DateTimeOffset.Now.AddDays(1)
                         }
                     );
                 }
@@ -233,7 +239,8 @@ namespace Client.Repositories.Services
                         new Claim(ClaimTypes.GivenName, user.DisplayName),
                         new Claim(ClaimTypes.Email, user.Email),
                         new Claim("Avatar", user.Avatar),
-                        new Claim(ClaimTypes.Role, user.Role.ToString())
+                        new Claim(ClaimTypes.Role, user.Role),
+                        new Claim("LoginType", user.LoginType)
                     };
 
                     var newIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -242,7 +249,8 @@ namespace Client.Repositories.Services
                         new ClaimsPrincipal(newIdentity),
                         new AuthenticationProperties
                         {
-                            IsPersistent = true
+                            IsPersistent = true,
+                            ExpiresUtc = isRememberMe ? DateTimeOffset.Now.AddDays(7) : DateTimeOffset.Now.AddDays(1)
                         }
                     );
                 }

@@ -45,6 +45,8 @@ namespace ProductMicroservice.Models.DTO
 
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
+        public string? WinrarPassword { get; set; }
+
         public required string UserName { get; set; }
 
         public decimal GetPrice()

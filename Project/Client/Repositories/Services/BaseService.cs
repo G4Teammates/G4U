@@ -42,8 +42,18 @@ namespace Client.Repositories.Services
 				// Thêm Token nếu cần
 				if (withBearer)
 				{
-					var token = _tokenProvider.GetToken();
-					if (!string.IsNullOrEmpty(token))
+                    bool rememberMe = Convert.ToBoolean(_tokenProvider.GetToken("RememberMe"));
+                    string token;
+
+                    if (rememberMe)
+                    {
+                        token = _tokenProvider.GetToken("JWT");
+                    }
+                    else
+                    {
+                        token = _tokenProvider.GetToken("JWT", false);
+                    }
+                    if (!string.IsNullOrEmpty(token))
 					{
 						message.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 					}

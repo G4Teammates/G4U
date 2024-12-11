@@ -13,6 +13,7 @@ using System.Security.Claims;
 using UserMicroservice.Models.UserManagerModel;
 using UserMicroservice.DBContexts.Enum;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using UserMicroservice.Models.Message;
 namespace UserMicroService.Controllers
 {
     [ApiController]
@@ -22,7 +23,7 @@ namespace UserMicroService.Controllers
         private readonly IAuthenService _authenService = authenservice;
         private readonly IUserService _userService = userService;
 
-
+        private ResponseModel _responseModel = new ResponseModel();
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
 
@@ -158,9 +159,14 @@ namespace UserMicroService.Controllers
         {
             try
             {
-                ResponseModel response = await _userService.GetAllProductsInWishList(id);
+                var response = await _userService.GetAllProductsInWishList(id);
                 if (response.IsSuccess)
+                {
+                    _responseModel.Result = response.Result;
                     return Ok(response);
+                }
+                _responseModel.IsSuccess= false;
+                _responseModel.Message = response.Message;
                 return BadRequest(response);
             }
             catch (Exception ex)
@@ -175,9 +181,14 @@ namespace UserMicroService.Controllers
         {
             try
             {
-                ResponseModel response = await _userService.AddToWishList(userWishlistModel, userName);
+                var response = await _userService.AddToWishList(userWishlistModel, userName);
                 if (response.IsSuccess)
+                {
+                    _responseModel.Result = response.Result;
                     return Ok(response);
+                }
+                _responseModel.IsSuccess = false;
+                _responseModel.Message = response.Message;
                 return BadRequest(response);
             }
             catch (Exception ex)
@@ -203,20 +214,23 @@ namespace UserMicroService.Controllers
             }
         }
 
-        //[HttpGet("find")]
-        //public async Task<ActionResult> SearchAsync([FromQuery]SearchCriteria query)
+    //      [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        //[HttpPost("GetUserByListUsername")]
+        //public async Task<ActionResult> GetUserByListUsername(ICollection<UserOrderModel> models)
         //{
-        //    var criteria = new SearchCriteriaBuilder()
-        //     .SetDisplay(query.DisplayName)
-        //     .SetStatus(query.Status)
-        //     .SetEmail(query.Email)
-        //     .SetPhoneNumber(query.PhoneNumber)
-        //     .SetUsername(query.Username)
-        //     .Build();
-
-        //    var users = await _userService.FindUsers(criteria);
-        //    return Ok(users);
+        //    try
+        //    {
+        //        ResponseModel response = await _userService.GetUserByListUsername(models);
+        //        if (response.IsSuccess)
+        //            return Ok(response);
+        //        return BadRequest(response);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(500, new { message = "An unexpected error occurred. Detail: " + ex.Message });
+        //    }
         //}
+
 
     }
 }

@@ -58,7 +58,7 @@ namespace Client.Repositories.Services.Order
             {
                 ApiType = StaticTypeApi.ApiType.PUT,
                 Data = order,
-                Url = StaticTypeApi.APIGateWay + "/Order?id=" + id
+                Url = StaticTypeApi.APIGateWay + "/Order/" + id
             });
         }
 

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using UserMicroservice.DBContexts.Entities;
 using UserMicroservice.Models.AuthModel;
+using UserMicroservice.Models.Message;
 using UserMicroservice.Models.UserManagerModel;
 
 namespace UserMicroService.Configure
@@ -29,6 +30,10 @@ namespace UserMicroService.Configure
                 cfg.CreateMap<UserModel, RegisterRequestModel>().ReverseMap();
                 cfg.CreateMap<UserModel, AddUserModel>().ReverseMap();
                 cfg.CreateMap<UserWishlist, UserWishlistModel>().ReverseMap();
+                cfg.CreateMap<User, ExportProfitModel>().ReverseMap();
+                cfg.CreateMap<UserOrderModel, ExportProfitModel>().ReverseMap()
+                .ForMember(dest => dest.TotalPrice, opt => opt.MapFrom(src => src.OriginalPriceOfMonth))
+                .ForMember(dest => dest.TotalProfit, opt => opt.MapFrom(src => src.ProfitOfMonth));
                 //Register mapper here⬆️
             });
         }

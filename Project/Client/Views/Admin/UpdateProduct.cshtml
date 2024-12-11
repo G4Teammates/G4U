@@ -25,7 +25,10 @@
                 <div class="col-md-5">
                     <div class="form-group mt-2">
                         <label class="fw-bold text-[#00A97F]" for="price">Price</label>
-                        <input type="number" class="form-control bg-white text-[#00A97F] border-[#00A97F]" asp-for="Price" required style="border: 1px solid #00A97F;" />
+                        <div class="input-group">
+                            <input type="number" id="price" class="form-control bg-white text-[#00A97F] border-[#00A97F]" asp-for="Price" required style="border: 1px solid #00A97F;" />
+                            <span class="input-group-text text-[#00A97F]" id="priceSuffix">VNĐ</span>
+                        </div>
                         <span asp-validation-for="Price" class="text-danger"></span>
                     </div>
                 </div>
@@ -51,7 +54,7 @@
                 <div class="col-md-4">
                     <div class="form-group mt-2">
                         <label class="fw-bold text-[#00A97F]" for="numOfView">Number of Views</label>
-                        <input type="number" class="form-control bg-white text-[#00A97F] border-[#00A97F]" asp-for="Interactions.NumberOfViews" required style="border: 1px solid #00A97F;" />
+                        <input type="number" class="form-control bg-white text-[#00A97F] border-[#00A97F]" asp-for="Interactions.NumberOfViews" required readonly style="border: 1px solid #00A97F;" />
                         <span asp-validation-for="Interactions.NumberOfViews" class="text-danger"></span>
                     </div>
                 </div>
@@ -65,9 +68,10 @@
                 <div class="col-md-4">
                     <div class="form-group mt-2">
                         <label class="fw-bold text-[#00A97F]" for="discount">Discount (%)</label>
-                        <input type="number" class="form-control bg-white text-[#00A97F] border-[#00A97F]" asp-for="Discount" step="0.01" required style="border: 1px solid #00A97F;" />
+                        <input type="number" class="form-control bg-white text-[#00A97F] border-[#00A97F]" asp-for="Discount" step="0.01" max="99.99" required style="border: 1px solid #00A97F;" />
                         <span asp-validation-for="Discount" class="text-danger"></span>
                     </div>
+
                 </div>
 
             </div>
@@ -282,19 +286,19 @@
                 <div class=col-md-4>
                     <div class="form-group" style="border: 1px solid #00A97F; border-radius: 8px; padding: 10px;">
                         <label for="ImageFiles" class="d-block" style="font-weight: bold; color: #00A97F;">Upload Images</label>
-                        <input type="file" class="form-control" name="ImageFiles" multiple style="border: 1px solid #00A97F; padding-left: 10px; padding-right: 10px;" />
+                        <input type="file" class="form-control" name="ImageFiles" multiple style="border: 1px solid #00A97F; padding-left: 10px; padding-right: 10px;" accept="image/*" />
                     </div>
                 </div>
                 <div class=col-md-4>
                     <div class="form-group" style="border: 1px solid #00A97F; border-radius: 8px; padding: 10px;">
                         <label for="gameFile" class="d-block" style="font-weight: bold; color: #00A97F;">Upload Game File</label>
-                        <input type="file" class="form-control" name="gameFile" style="border: 1px solid #00A97F; padding-left: 10px; padding-right: 10px;" />
+                        <input type="file" class="form-control" name="gameFile" style="border: 1px solid #00A97F; padding-left: 10px; padding-right: 10px;" accept=".rar, .zip"/>
                     </div>
                 </div>
                 <div class=col-md-4>
                     <div class="form-group" style="border: 1px solid #00A97F; border-radius: 8px; padding: 10px;">
                         <label for="UserName" class="d-block" style="font-weight: bold; color: #00A97F;">UserName</label>
-                        <input type="text" class="form-control" asp-for="UserName" style="border: 1px solid #00A97F; padding-left: 10px; padding-right: 10px;" readonly/>
+                        <input type="text" class="form-control" asp-for="UserName" style="border: 1px solid #00A97F; padding-left: 10px; padding-right: 10px;" readonly />
                         <span asp-validation-for="UserName" class="text-danger"></span>
                     </div>
                 </div>

@@ -1,6 +1,7 @@
 ﻿using CommentMicroservice.DBContexts.Entities;
 using CommentMicroservice.Models;
 using CommentMicroservice.Models.DTO;
+using CommentMicroservice.Models.Message;
 
 namespace CommentMicroservice.Repositories
 {
@@ -21,6 +22,7 @@ namespace CommentMicroservice.Repositories
 
         // Phương thức giảm lượt thích cho bình luận
         Task<ResponseModel> DecreaseLike(string commentId, UserDisLikesModel userDisLike);
+        Task<ResponseModel> UpdateUserName(UpdateUserNameModel model);
 
     }
 }

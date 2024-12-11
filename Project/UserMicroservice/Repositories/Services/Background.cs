@@ -14,7 +14,8 @@ namespace UserMicroservice.Repositories.Services
         {
             // Chạy ReceiveMessage trong một tác vụ nền
             await Task.WhenAll(
-                Task.Run(() => _messageComsumer.ReceiveMessageCheckExist(), stoppingToken)
+                Task.Run(() => _messageComsumer.ReceiveMessageCheckExist(), stoppingToken),
+                Task.Run(() => _messageComsumer.ReceiveMessageExport(), stoppingToken)
             );
 
 

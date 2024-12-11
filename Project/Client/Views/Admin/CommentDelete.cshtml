@@ -5,36 +5,88 @@
     ViewData["Title"] = "Delete Comments";
 }
 
-<h2>Delete Comments</h2>
-
-@if (ViewBag.Comments != null && ViewBag.Comments.Count > 0)
-{
-    foreach (var comment in ViewBag.Comments as List<CommentDTOModel>)
-    {
-        <div class="card mb-3">
-            <div class="card-body">
-                <h5 class="card-title">Comment ID: @comment.Id</h5>
-                <p class="card-text">Content: @comment.Content</p>
-                <p class="card-text">Number Of Likes: @comment.NumberOfLikes</p>
-                <p class="card-text">Status: @comment.Status</p>
-                <p class="card-text">UserId: @comment.UserName</p>
-                <p class="card-text">ProductId: @comment.ProductId</p>
-                <p class="card-text">ParentId: @comment.ParentId</p>
-                <p class="card-text">Created At: @comment.CreatedAt</p>
-                <p class="card-text">Updated At: @comment.UpdatedAt</p>
-                <p class="card-text">Number Of Dislikes: @comment.NumberOfDisLikes</p>
-            </div>
+<div class="container my-5">
+    <div class="card shadow-lg border-0">
+        <div class="card-header bg-danger text-white text-center">
+            <h3 class="mb-0">Delete Comments</h3>
+            <p class="small mb-0">Review the details of each comment before confirming deletion.</p>
         </div>
-    }
+        <div class="card-body">
+            @if (ViewBag.Comments != null && ViewBag.Comments.Count > 0)
+            {
+                @foreach (var comment in ViewBag.Comments as List<CommentDTOModel>)
+                {
+                    <div class="mb-4 p-3 border rounded shadow-sm">
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label for="commentId" class="form-label fw-bold">Comment ID</label>
+                                <input type="text" id="commentId" class="form-control" value="@comment.Id" readonly>
+                            </div>
+                            <div class="col-md-8">
+                                <label for="commentContent" class="form-label fw-bold">Content</label>
+                                <input type="text" id="commentContent" class="form-control" value="@comment.Content" readonly>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="numberOfLikes" class="form-label fw-bold">Number of Likes</label>
+                                <input type="text" id="numberOfLikes" class="form-control" value="@comment.NumberOfLikes" readonly>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="numberOfDislikes" class="form-label fw-bold">Number of Dislikes</label>
+                                <input type="text" id="numberOfDislikes" class="form-control" value="@comment.NumberOfDisLikes" readonly>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="status" class="form-label fw-bold">Status</label>
+                                <input type="text" id="status" class="form-control" value="@comment.Status" readonly>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="userName" class="form-label fw-bold">User Name</label>
+                                <input type="text" id="userName" class="form-control" value="@comment.UserName" readonly>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="productId" class="form-label fw-bold">Product ID</label>
+                                <input type="text" id="productId" class="form-control" value="@comment.ProductId" readonly>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="parentId" class="form-label fw-bold">Parent ID</label>
+                                <input type="text" id="parentId" class="form-control" value="@comment.ParentId" readonly>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="createdAt" class="form-label fw-bold">Created At</label>
+                                <input type="text" id="createdAt" class="form-control" value="@comment.CreatedAt.ToString("g")" readonly>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="updatedAt" class="form-label fw-bold">Updated At</label>
+                                <input type="text" id="updatedAt" class="form-control" value="@comment.UpdatedAt.ToString("g")" readonly>
+                            </div>
+                        </div>
+                    </div>
+                }
 
-    <p>Bạn có chắc chắn muốn xóa tất cả bình luận này?</p>
-    <form asp-action="CommentDeleteConfirmed" method="post">
-        <input type="hidden" name="ids" value="@string.Join(",", (ViewBag.Comments as List<CommentDTOModel>).Select(c => c.Id))" />
-        <input type="submit" value="Delete" class="btn btn-danger" />
-    </form>
-    <a asp-action="CommentManager" class="btn btn-secondary">Back to List</a>
-}
-else
-{
-    <p>Không tìm thấy bình luận nào.</p>
-}
+                <!-- Confirmation -->
+                <div class="alert alert-warning text-center" role="alert">
+                    Are you sure you want to delete all these comments? This action cannot be undone.
+                </div>
+
+                <!-- Actions -->
+                <form asp-action="CommentDeleteConfirmed" method="post" class="text-center">
+                    <input type="hidden" name="ids" value="@string.Join(",", (ViewBag.Comments as List<CommentDTOModel>).Select(c => c.Id))" />
+                    <button type="submit" class="btn btn-danger me-2">
+                        <i class="bi bi-trash"></i> Delete
+                    </button>
+                    <button type="" class="btn btn-warning me-2">
+                        <i class="bi bi-trash"></i> Delete Mềm
+                    </button>
+                    <a asp-action="CommentManager" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left-circle"></i> Back to List
+                    </a>
+                </form>
+            }
+            else
+            {
+                <div class="alert alert-info text-center" role="alert">
+                    <strong>No comments found.</strong>
+                </div>
+            }
+        </div>
+    </div>
+</div>

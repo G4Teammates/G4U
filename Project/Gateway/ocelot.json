@@ -50,6 +50,20 @@
       "UpstreamHttpMethod": [ "Post" ]
     },
 
+    //createClone
+    {
+      "DownstreamPathTemplate": "/api/Product/ProductClone",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7159
+        }
+      ],
+      "UpstreamPathTemplate": "/Product/ProductClone",
+      "UpstreamHttpMethod": [ "Post" ]
+    },
+
     //update
     {
       "DownstreamPathTemplate": "/api/Product",
@@ -61,6 +75,20 @@
         }
       ],
       "UpstreamPathTemplate": "/Product",
+      "UpstreamHttpMethod": [ "Put" ]
+    },
+
+    //updateClone
+    {
+      "DownstreamPathTemplate": "/api/Product/ProductClone",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7159
+        }
+      ],
+      "UpstreamPathTemplate": "/Product/ProductClone",
       "UpstreamHttpMethod": [ "Put" ]
     },
 

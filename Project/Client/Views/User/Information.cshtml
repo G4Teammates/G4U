@@ -1,5 +1,5 @@
-﻿@model Client.Models.UserDTO.UpdateUser
-
+﻿@using static Client.Models.Enum.UserEnum.User
+@model Client.Models.UserDTO.UpdateUser
 
 <div class="main">
     <div class="row justify-content-center">
@@ -22,17 +22,28 @@
                         </button>
                     </a>
                 </div>
+                @if (User.Identity.IsAuthenticated)
+                {
+                    string loginTypeAsString = User.FindFirst("LoginType")?.Value;
+                    UserLoginType loginType;
+                    if (Enum.TryParse(loginTypeAsString, out loginType))
+                    {
+                        if(loginType == UserLoginType.Local)
+                        {              <div class="custom-nav-item">
+                                <a asp-controller="User" asp-action="PasswordSecurity">
+                                    <button type="button">
+                                        <i class="fas fa-lock"></i> Password and Security
+                                    </button>
+                                </a>
+                            </div>
+                        }
+                    }
+
+                }
                 <div class="custom-nav-item">
-                    <a asp-controller="User" asp-action="PasswordSecurity">
+                    <a asp-controller="Order" asp-action="History">
                         <button type="button">
-                            <i class="fas fa-lock"></i> Password and Security
-                        </button>
-                    </a>
-                </div>
-                <div class="custom-nav-item">
-                    <a asp-controller="User" asp-action="UserDashboard">
-                        <button type="button">
-                            <i class="fas fa-heart"></i> User Dashboard
+                            <i class="fas fa-heart"></i> History Order
                         </button>
                     </a>
                 </div>
@@ -84,6 +95,8 @@
                     <div class="col-md-8">
                         <!-- Bắt đầu form -->
                         <input type="hidden" name="Id" asp-for="@Model.Id" />
+                        <input type="hidden" name="EmailConfirmation" asp-for="@Model.EmailConfirmation" />
+                        <input type="hidden" name="Status" asp-for="@Model.Status" />
                         <div class="row mb-3 px-3">
                             <div class="col-md-3 align-content-center">
                                 <div class="text-center fw-bold">

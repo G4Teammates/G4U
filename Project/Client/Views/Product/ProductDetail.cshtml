@@ -251,7 +251,7 @@
                                 <div class="col">
                                     <strong>Price: </strong>
                                     <span style="padding-left: 5px;">
-                                        @(product.Price == 0 ? " Free" : product.Price.ToString("C"))
+                                        @(product.Price == 0 ? "Free" : string.Format("{0:N0} VNĐ", product.Price))
                                     </span>
                                 </div>
                             </div>
@@ -374,18 +374,26 @@
                                 </div>
                             }
                         </div>
-                        <form class="align-content-center w-25 fw-bold" asp-action="Cart" asp-controller="User">
-                            <input type="text" hidden asp-for="Prod.Id" />
-                            <input type="text" hidden asp-for="Prod.Name" />
-                            <input type="text" hidden asp-for="Prod.UserName" />
-                            <input type="text" hidden asp-for="Prod.Discount" />
-                            <input type="text" hidden asp-for="Prod.Price" />
-                            @for (int i = 0; i < Model.Prod.Links.Count; i++)
-                            {
-                                <input type="hidden" name="Prod.Links[@i].Url" value="@Model.Prod.Links.ElementAt(i).Url" />
-                            }
-                            <button type="submit" class="btn btn-success ">Add To Cart</button>
-                        </form>
+                        @if ((int)Model.Prod.Status == 1)
+                        {
+                            <form class="align-content-center w-25 fw-bold" asp-action="Cart" asp-controller="User">
+                                <input type="text" hidden asp-for="Prod.Id" />
+                                <input type="text" hidden asp-for="Prod.Name" />
+                                <input type="text" hidden asp-for="Prod.UserName" />
+                                <input type="text" hidden asp-for="Prod.Discount" />
+                                <input type="text" hidden asp-for="Prod.Price" />
+                                @for (int i = 0; i < Model.Prod.Links.Count; i++)
+                                {
+                                    <input type="hidden" name="Prod.Links[@i].Url" value="@Model.Prod.Links.ElementAt(i).Url" />
+                                }
+                                <button type="submit" class="btn btn-success ">Add To Cart</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <h1> This game has been <span>@Model.Prod.Status</span> </h1>
+                        }
+                        
 
                     </div>
                 }

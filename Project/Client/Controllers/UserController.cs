@@ -28,6 +28,8 @@ using MongoDB.Bson;
 using System.Collections.ObjectModel;
 using AutoMapper;
 using Azure;
+using static Client.Models.Enum.UserEnum.User;
+using Microsoft.AspNetCore.Http;
 
 namespace Client.Controllers
 {
@@ -50,13 +52,16 @@ namespace Client.Controllers
         public readonly IOrderService _orderService = orderService;
         public readonly IMapper _mapper = mapper;
 
-        ICollection<ProductModel> productsAtCart = new List<ProductModel>();
+        private string JWT = "JWT";
+        private string IsLogin = "IsLogin";
+        private string cart = "cart";
+        private string RememberMe = "RememberMe";
+        private string GoogleToken = "g_csrf_token";
 
         [HttpGet]
         public IActionResult Login()
         {
-            var isLogin = HttpContext.Request.Cookies["IsLogin"];
-            ViewData["IsLogin"] = isLogin;
+            ViewData["IsLogin"] = _tokenProvider.GetToken(IsLogin);
             return View();
         }
 
@@ -71,21 +76,23 @@ namespace Client.Controllers
                     LoginResponseModel user = JsonConvert.DeserializeObject<LoginResponseModel>(response.Result.ToString()!);
                     if (user == null)
                     {
-                        TempData["error"] = "Login failed";
+                        TempData["error"] = response.Message;
                         return View();
                     }
 
-                    _tokenProvider.SetToken(user!.Token);
-
-                    var cookieOptions = new CookieOptions
+                    if (user.IsRememberMe)
                     {
-                        HttpOnly = true, // Bảo vệ cookie khỏi bị truy cập bởi JavaScript
-                        Secure = true, // Chỉ gửi cookie qua HTTPS
-                        //SameSite = SameSiteMode.Strict, // Ngăn chặn cookie gửi từ bên thứ ba
-                        Expires = DateTime.UtcNow.AddDays(1) // Đặt thời hạn hết hạn là 1 ngày
-                    };
-                    HttpContext.Response.Cookies.Append("IsLogin", response.IsSuccess.ToString(), cookieOptions);
+                        _tokenProvider.SetToken(JWT,user!.Token, 7);
+                        _tokenProvider.SetToken(IsLogin, response.IsSuccess.ToString(), 7);
+                        _tokenProvider.SetToken(RememberMe,user.IsRememberMe.ToString(), 7);
+                    }
+                    else
+                    {
+                        _tokenProvider.SetToken(JWT,user!.Token, 1,false);
+                        _tokenProvider.SetToken(IsLogin, response.IsSuccess.ToString(), 1, false);
+                        _tokenProvider.SetToken(RememberMe, user.IsRememberMe.ToString(), 1);
 
+                    }
                     IEnumerable<Claim> claim = HttpContext.User.Claims;
                     UserClaimModel userClaim = new UserClaimModel
                     {
@@ -94,7 +101,8 @@ namespace Client.Controllers
                         Email = user.Email!,
                         Role = user.Role!,
                         DisplayName = user.DisplayName!,
-                        Avatar = user.Avatar!
+                        Avatar = user.Avatar!,
+                        LoginType = user.LoginType,
                     };
                     await _helperService.UpdateClaim(userClaim, HttpContext);
 
@@ -112,7 +120,10 @@ namespace Client.Controllers
                         return RedirectToAction("Index", "Home");
                     }
                 }
-                TempData["error"] = "Login fail, check your username(or email) and password";
+                else
+                {
+                    TempData["error"] = response.Message;
+                }
             }
             return View();
 
@@ -121,16 +132,15 @@ namespace Client.Controllers
         [Route("google-response")]
         public async Task<ActionResult> GoogleResponse()
         {
-            var google_csrf_name = "g_csrf_token";
             try
             {
-                var cookie = Request.Cookies[google_csrf_name];
+                var cookie = Request.Cookies[GoogleToken];
 
                 if (cookie == null)
                 {
                     return StatusCode((int)HttpStatusCode.BadRequest);
                 }
-                var requestbody = Request.Form[google_csrf_name];
+                var requestbody = Request.Form[GoogleToken];
                 if (requestbody != cookie)
                 {
                     return StatusCode((int)HttpStatusCode.BadRequest);
@@ -146,10 +156,11 @@ namespace Client.Controllers
                     Picture = payload.Picture
                 };
                 var response = await _authenService.LoginGoogleAsync(loginGoogleRequestModel);
+
                 if (response.IsSuccess)
                 {
                     var user = JsonConvert.DeserializeObject<LoginResponseModel>(response.Result.ToString()!);
-
+                    
                     IEnumerable<Claim> claim = HttpContext.User.Claims;
                     UserClaimModel userClaim = new UserClaimModel
                     {
@@ -158,12 +169,15 @@ namespace Client.Controllers
                         Email = user.Email!,
                         Role = user.Role!,
                         DisplayName = user.DisplayName!,
-                        Avatar = user.Avatar
+                        Avatar = user.Avatar,
+                        LoginType = user.LoginType
                     };
                     await _helperService.UpdateClaim(userClaim, HttpContext);
 
-                    _tokenProvider.SetToken(user.Token);
-                    HttpContext.Response.Cookies.Append("IsLogin", response.IsSuccess.ToString());
+                    _tokenProvider.SetToken(JWT,user.Token, 7);
+                    _tokenProvider.SetToken(IsLogin,response.IsSuccess.ToString(), 7);
+                    _tokenProvider.SetToken(RememberMe,"true", 7);
+
                     return RedirectToAction("Index", "Home");
                 }
                 return RedirectToAction(nameof(Register), "User");
@@ -178,10 +192,10 @@ namespace Client.Controllers
         [HttpGet]
         public async Task<IActionResult> Logout()
         {
-            _tokenProvider.ClearToken();
-            HttpContext.Response.Cookies.Delete("IsLogin");
-            HttpContext.Response.Cookies.Delete("cart");
-            HttpContext.Response.Cookies.Delete("g_csrf_token");
+            _tokenProvider.ClearToken(IsLogin);
+            _tokenProvider.ClearToken(GoogleToken);
+            _tokenProvider.ClearToken(RememberMe);
+            _tokenProvider.ClearToken(JWT);
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
             return RedirectToAction("Index", "Home");
@@ -326,16 +340,9 @@ namespace Client.Controllers
                         return View();
                     }
 
-                    _tokenProvider.SetToken(userLogin!.Token);
-
-                    var cookieOptions = new CookieOptions
-                    {
-                        HttpOnly = true, // Bảo vệ cookie khỏi bị truy cập bởi JavaScript
-                        Secure = true, // Chỉ gửi cookie qua HTTPS
-                        //SameSite = SameSiteMode.Strict, // Ngăn chặn cookie gửi từ bên thứ ba
-                        Expires = DateTime.UtcNow.AddDays(1) // Đặt thời hạn hết hạn là 1 ngày
-                    };
-                    HttpContext.Response.Cookies.Append("IsLogin", response.IsSuccess.ToString(), cookieOptions);
+                    _tokenProvider.SetToken(JWT,userLogin!.Token, 7);
+                    _tokenProvider.SetToken(IsLogin,response.IsSuccess.ToString(), 7);
+                    _tokenProvider.SetToken(RememberMe,"true", 7);
 
                     IEnumerable<Claim> claim = HttpContext.User.Claims;
                     UserClaimModel userClaim = new UserClaimModel
@@ -370,15 +377,28 @@ namespace Client.Controllers
             }
         }
 
-        
+
 
 
 
         [HttpGet]
         public async Task<IActionResult> Information()
         {
-            string token = _tokenProvider.GetToken();
-            bool isLogin = Convert.ToBoolean(HttpContext.Request.Cookies["IsLogin"]);
+            bool isLogin = false;
+            bool rememberMe = Convert.ToBoolean(_tokenProvider.GetToken(RememberMe));
+            string token;
+
+            if (rememberMe)
+            {
+                token = _tokenProvider.GetToken(JWT);
+                isLogin = Convert.ToBoolean(_tokenProvider.GetToken(IsLogin));
+            }
+            else
+            {
+                token = _tokenProvider.GetToken(JWT, false);
+                isLogin = Convert.ToBoolean(_tokenProvider.GetToken(IsLogin,false));
+            }
+
             if (token == null || !isLogin)
             {
                 TempData["error"] = "Session expired, please login again.";
@@ -432,10 +452,6 @@ namespace Client.Controllers
                         updateUser.Avatar = imageUrl;
                     }
                 }
-                //else
-                //{
-
-                //}
 
                 var response = await _userService.UpdateUser(updateUser);
 
@@ -448,7 +464,8 @@ namespace Client.Controllers
                     Email = claim.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value!,
                     Role = claim.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value!,
                     DisplayName = updateUser.DisplayName!,
-                    Avatar = updateUser.Avatar!
+                    Avatar = updateUser.Avatar!,
+                    LoginType = claim.FirstOrDefault(c=>c.Type == "LoginType")?.Value
                 };
 
                 await _helperService.UpdateClaim(user, HttpContext);
@@ -482,13 +499,25 @@ namespace Client.Controllers
         [HttpGet]
         public IActionResult Cart()
         {
-            string token = _tokenProvider.GetToken();
-            bool isLogin = Convert.ToBoolean(HttpContext.Request.Cookies["IsLogin"]);
+            bool isLogin = false;
+            bool rememberMe = Convert.ToBoolean(_tokenProvider.GetToken(RememberMe));
+            string token;
+
+            if (rememberMe)
+            {
+                token = _tokenProvider.GetToken(JWT);
+                isLogin = Convert.ToBoolean(_tokenProvider.GetToken(IsLogin));
+            }
+            else
+            {
+                token = _tokenProvider.GetToken(JWT, false);
+                isLogin = Convert.ToBoolean(_tokenProvider.GetToken(IsLogin, false));
+            }
+
             if (token == null || !isLogin)
             {
                 TempData["error"] = "Session expired, please login again.";
-                //return View(nameof(Login));
-                return Json(new { });
+                return View(nameof(Login));
             }
 
 
@@ -517,10 +546,6 @@ namespace Client.Controllers
         [HttpPost]
         public IActionResult Cart(ProductViewModel product)
         {
-            if (!ModelState.IsValid) 
-            {
-                return View();
-            }
             // Đọc cookie giỏ hàng
             string cartJsonCookie = HttpContext.Request.Cookies["cart"];
             CartModel cart = new();
@@ -546,7 +571,7 @@ namespace Client.Controllers
             {
                 ProductId = product.Prod.Id,
                 ProductName = product.Prod.Name,
-                Price = product.Prod.Price,
+                Price = product.Prod.GetPrice(),
                 PublisherName = product.Prod.UserName,
                 Quantity = 1,
                 ImageUrl = product.Prod.Links.FirstOrDefault(link => link.Url.Contains("cloudinary"))?.Url
@@ -557,7 +582,7 @@ namespace Client.Controllers
             if (existingItem != null)
             {
                 // Nếu đã tồn tại, tăng số lượng
-                existingItem.Quantity += 1;
+                existingItem.Quantity = 1;
             }
             else
             {
@@ -572,7 +597,7 @@ namespace Client.Controllers
             string cartJson = JsonConvert.SerializeObject(cart);
             HttpContext.Response.Cookies.Append("cart", cartJson, new CookieOptions
             {
-                HttpOnly = true // Bảo vệ cookie không bị truy cập bởi JavaScript
+                HttpOnly = true, // Bảo vệ cookie không bị truy cập bởi JavaScript
             });
 
             // Trả về dữ liệu giỏ hàng dạng JSON
@@ -611,8 +636,21 @@ namespace Client.Controllers
         [HttpGet]
         public IActionResult PasswordSecurity()
         {
-            string token = _tokenProvider.GetToken();
-            bool isLogin = Convert.ToBoolean(HttpContext.Request.Cookies["IsLogin"]);
+            bool isLogin = false;
+            bool rememberMe = Convert.ToBoolean(_tokenProvider.GetToken(RememberMe));
+            string token;
+
+            if (rememberMe)
+            {
+                token = _tokenProvider.GetToken(JWT);
+                isLogin = Convert.ToBoolean(_tokenProvider.GetToken(IsLogin));
+            }
+            else
+            {
+                token = _tokenProvider.GetToken(JWT, false);
+                isLogin = Convert.ToBoolean(_tokenProvider.GetToken(IsLogin,false));
+            }
+
             if (token == null || !isLogin)
             {
                 TempData["error"] = "Session expired, please login again.";
@@ -628,10 +666,13 @@ namespace Client.Controllers
             {
                 return View();
             }
+
             model.Id = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)!.Value;
             string email = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)!.Value;
             string username = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)!.Value;
+
             var responseChangePass = await _authenService.ChangePasswordAsync(model);
+
             if (responseChangePass.IsSuccess)
             {
                 var responseSendMail = await _helperService.SendMail(new Models.SendMailModel()
@@ -640,12 +681,14 @@ namespace Client.Controllers
                     Subject = "Change password was success",
                     Body = $"Account with username {username} was change password at {DateTime.Today}"
                 });
-                TempData["success"] = responseChangePass.Message + " and " + responseSendMail.Message;
+                if (responseSendMail.IsSuccess)
+                    TempData["success"] = "Change password was success, email was send to you";
             }
             else
             {
                 TempData["error"] = responseChangePass.Message;
             }
+
             return View();
         }
 
@@ -707,19 +750,25 @@ namespace Client.Controllers
                 var numOfView = product.Interactions.NumberOfViews;
                 var numOfLike = product.Interactions.NumberOfLikes;
                 var numOfDisLike = product.Interactions.NumberOfDisLikes;
-                // Tạo đối tượng ScanFileRequest
-                var request = new ScanFileRequest
+
+
+                    // Tạo đối tượng ScanFileRequest
+                    var request = new ScanFileRequest
+                    {
+                        gameFile = updateProductModel.gameFile
+                    };
+                if (updateProductModel.gameFile == null)
                 {
-                    gameFile = updateProductModel.gameFile
-                };
+                    updateProductModel.WinrarPassword = product.WinrarPassword;
+                }
 
                 // Gọi service UpdateProduct từ phía Client
-                var response = await _productService.UpdateProductAsync(
+                var response = await _productService.UpdateProductCloneAsync(
                     updateProductModel.Id, updateProductModel.Name, updateProductModel.Description, updateProductModel.Price, updateProductModel.Sold,
                    numOfView, numOfLike, numOfDisLike, updateProductModel.Discount,
                     updateProductModel.Links, updateProductModel.Categories, (int)updateProductModel.Platform,
                     (int)updateProductModel.Status, updateProductModel.CreatedAt, updateProductModel.ImageFiles,
-                    request, updateProductModel.UserName, updateProductModel.Interactions.UserLikes, updateProductModel.Interactions.UserDisLikes);
+                    request, updateProductModel.UserName, updateProductModel.Interactions.UserLikes, updateProductModel.Interactions.UserDisLikes, updateProductModel.WinrarPassword);
 
                 if (response.IsSuccess)
                 {
@@ -760,6 +809,7 @@ namespace Client.Controllers
                 updateProductModel.Categories = model.Categories.Select(x => x.CategoryName).ToList();
                 updateProductModel.Platform = model.Platform;
                 updateProductModel.Status = model.Status;
+                updateProductModel.WinrarPassword = model.WinrarPassword;
                 //updateProductModel.Links = model.Links;
 
                 List<LinkModel> listLinks = new List<LinkModel>();
@@ -830,6 +880,12 @@ namespace Client.Controllers
         {
             try
             {
+                if (TempData["updateProductModel"] != null)
+                {
+                    var tempdata = TempData["updateProductModel"];
+                    updateProductModel = JsonConvert.DeserializeObject<UpdateProductModel>(tempdata.ToString());
+                }
+
                 // Lay du lieu category
                 var response = await _categoriesService.GetAllCategoryAsync(1, 99);
                 ICollection<CategoriesModel>? cate = JsonConvert.DeserializeObject<ICollection<CategoriesModel>>(Convert.ToString(response.Result.ToString()!));
@@ -848,19 +904,23 @@ namespace Client.Controllers
 
                 ViewBag.Categories = listCate;
 
-                updateProductModel.Categories.Add(listCate[0]);
+                if (updateProductModel.Categories.Count <= 0)
+                {
+					updateProductModel.Categories.Add(listCate[0]);
+				}
 
-                //if (updateProductModel != null)
-                //{
-                //    updateProductModel = updateProductModel;
-                //}
+				//if (updateProductModel != null)
+				//{
+				//    updateProductModel = updateProductModel;
+				//}
 
-                return View(updateProductModel);
+				return View(updateProductModel);
             }
             catch (Exception ex)
             {
                 TempData["error"] = $"An error occurred: {ex.Message}";
-                return View();
+                TempData["updateProductModel"] = null;
+                return RedirectToAction(nameof(UserDashboard));
             }
         }
 
@@ -890,7 +950,7 @@ namespace Client.Controllers
                 };
 
                 // Gọi API CreateProductAsync
-                var response = await _productService.CreateProductAsync(
+                var response = await _productService.CreateProductCloneAsync(
                     updateProductModel.Name,
                     updateProductModel.Description,
                     updateProductModel.Price,
@@ -900,7 +960,8 @@ namespace Client.Controllers
                     (int)updateProductModel.Status,
                     updateProductModel.ImageFiles,
                     request,
-                    updateProductModel.UserName);
+                    updateProductModel.UserName,
+                    updateProductModel.WinrarPassword);
 
                 if (response != null && response.IsSuccess)
                 {
@@ -909,14 +970,22 @@ namespace Client.Controllers
                 }
                 else
                 {
-                    TempData["error"] = response?.Message ?? "An unknown error occurred.";
-                    return RedirectToAction(nameof(UploadProduct), new { updateProductModel = updateProductModel });
+                    //updateProductModel.Id = null;
+                    //TempData["error"] = response?.Message ?? "An unknown error occurred.";
+                    //TempData["updateProductModel"] = JsonConvert.SerializeObject(updateProductModel);
+                    //return RedirectToAction(nameof(UploadProduct));
+
+                    throw new Exception(response?.Message ?? "An unknown error occurred.");
                 }
             }
             catch (Exception ex)
             {
+                updateProductModel.Id = null;
+                updateProductModel.gameFile = null;
+                updateProductModel.ImageFiles = null;
                 TempData["error"] = $"An error occurred: {ex.Message}";
-                return RedirectToAction(nameof(UserDashboard));
+                TempData["updateProductModel"] = JsonConvert.SerializeObject(updateProductModel);
+                return RedirectToAction(nameof(UploadProduct));
             }
         }
 
@@ -969,8 +1038,21 @@ namespace Client.Controllers
 
         public async Task<IActionResult> UserDashboard()
         {
-            string token = _tokenProvider.GetToken();
-            bool isLogin = Convert.ToBoolean(HttpContext.Request.Cookies["IsLogin"]);
+            bool isLogin = false;
+            bool rememberMe = Convert.ToBoolean(_tokenProvider.GetToken(RememberMe));
+            string token;
+
+            if (rememberMe)
+            {
+                token = _tokenProvider.GetToken(JWT);
+                isLogin = Convert.ToBoolean(_tokenProvider.GetToken(IsLogin));
+            }
+            else
+            {
+                token = _tokenProvider.GetToken(JWT, false);
+                isLogin = Convert.ToBoolean(_tokenProvider.GetToken(IsLogin,false));
+            }
+
             if (token == null || !isLogin)
             {
                 TempData["error"] = "Session expired, please login again.";

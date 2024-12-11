@@ -14,7 +14,7 @@
         {
             // Lọc và lấy 4 sản phẩm mới nhất theo CreatedAt
             var latestProducts = Model.Product
-            .OrderBy(p => p.CreatedAt) // Sắp xếp theo CreatedAt từ mới đến cũ
+            .OrderByDescending(p => p.CreatedAt) // Sắp xếp theo CreatedAt từ mới đến cũ
             .Take(4); // Lấy 4 sản phẩm đầu tiên
 
             // Biến để kiểm tra xem sản phẩm đầu tiên có được đánh dấu là "active" không
@@ -27,14 +27,14 @@
                     {
                         string secondImageUrl = null; // Biến để lưu URL hình ảnh thứ hai
 
-                        // Tìm hình ảnh thứ hai
+                        // Tìm hình ảnh thứ hai có chứa "cloudinary"
                         int imageCount = 0; // Biến đếm số lượng hình ảnh đã tìm thấy
                         foreach (var link in product.Links)
                         {
                             if (link.Url.Contains("cloudinary"))
                             {
                                 imageCount++;
-                                if (imageCount == 2)
+                                if (imageCount == 2) // Lấy hình ảnh thứ hai
                                 {
                                     secondImageUrl = link.Url; // Lưu URL hình ảnh thứ hai
                                     break; // Thoát khỏi vòng lặp khi đã tìm thấy
@@ -46,7 +46,7 @@
                         if (secondImageUrl != null)
                         {
                             <div class="carousel-image-container">
-                                <img src="@secondImageUrl" alt="Cloudinary Image" class="d-block w-100 carousel-image" />
+                                <img src="@secondImageUrl" alt="Product Image" class="d-block w-100 carousel-image" />
                             </div>
                         }
                     }
@@ -66,6 +66,8 @@
         <span class="visually-hidden">Next</span>
     </button>
 </div>
+
+
 
 @if (TempData["success"] != null)
 {
@@ -529,10 +531,10 @@
                                 <div class="col-md-2"></div>
                                 @* Day la trai tym ne *@
                                 <div title="Wishlist" class="col-md-1 heart-container">
-                                    <form asp-controller="Admin" asp-action="AddWishList" method="post">
-                                        <input type="hidden" name="ProductId" value="@product.Id" />
-                                        <input type="hidden" name="ProductName" value="@product.Name" />
-                                        <input type="hidden" name="ProductPrice" value="@product.Price" />
+                                    <form id="wishlistForm" method="post">
+                                        <input type="hidden" name="ProductId" id="ProductId" value="@product.Id" />
+                                        <input type="hidden" name="ProductName" id="ProductName" value="@product.Name" />
+                                        <input type="hidden" name="ProductPrice" id="ProductPrice" value="@product.Price" />
 
                                         @{
                                             string secondImageUrl2 = null;
@@ -543,33 +545,35 @@
                                             if (link.Url.Contains("cloudinary"))
                                             {
                                                 imageCount2++;
-                                                if (imageCount2 == 2) // Lấy hình ảnh thứ hai
+                                                if (imageCount2 == 2)
                                                 {
                                                     secondImageUrl2 = link.Url;
-                                                    break; // Thoát khỏi vòng lặp khi đã tìm thấy
+                                                    break;
                                                 }
                                             }
                                         }
-                                        <input type="hidden" name="ProductImage" value="@secondImageUrl2" />
+                                        <input type="hidden" name="ProductImage" id="ProductImage" value="@secondImageUrl2" />
 
-                                        <button type="submit" class="btn-heart" style="border: none; background: transparent; padding: 0;">
-                                            <div class="svg-container">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="svg-outline" viewBox="0 0 24 24">
-                                                    <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Zm-3.585,18.4a2.973,2.973,0,0,1-3.83,0C4.947,16.006,2,11.87,2,8.967a4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,11,8.967a1,1,0,0,0,2,0,4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,22,8.967C22,11.87,19.053,16.006,13.915,20.313Z"></path>
-                                                </svg>
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="svg-filled" viewBox="0 0 24 24">
-                                                    <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Z"></path>
-                                                </svg>
-                                                <svg xmlns="http://www.w3.org/2000/svg" height="100" width="100" class="svg-celebrate">
-                                                    <polygon points="10,10 20,20"></polygon>
-                                                    <polygon points="10,50 20,50"></polygon>
-                                                    <polygon points="20,80 30,70"></polygon>
-                                                    <polygon points="90,10 80,20"></polygon>
-                                                    <polygon points="90,50 80,50"></polygon>
-                                                    <polygon points="80,80 70,70"></polygon>
-                                                </svg>
-                                            </div>
-                                        </button>
+                                        <!-- Checkbox hidden -->
+                                        <input type="checkbox" id="wishlistCheckbox" class="checkbox" onclick="addToWishList('@product.Id', '@product.Name', '@product.Price', '@secondImageUrl2')" />
+
+                                        <!-- Icon trái tim -->
+                                        <div class="svg-container">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="svg-outline" viewBox="0 0 24 24">
+                                                <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Zm-3.585,18.4a2.973,2.973,0,0,1-3.83,0C4.947,16.006,2,11.87,2,8.967a4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,11,8.967a1,1,0,0,0,2,0,4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,22,8.967C22,11.87,19.053,16.006,13.915,20.313Z"></path>
+                                            </svg>
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="svg-filled" viewBox="0 0 24 24">
+                                                <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Z"></path>
+                                            </svg>
+                                            <svg xmlns="http://www.w3.org/2000/svg" height="100" width="100" class="svg-celebrate">
+                                                <polygon points="10,10 20,20"></polygon>
+                                                <polygon points="10,50 20,50"></polygon>
+                                                <polygon points="20,80 30,70"></polygon>
+                                                <polygon points="90,10 80,20"></polygon>
+                                                <polygon points="90,50 80,50"></polygon>
+                                                <polygon points="80,80 70,70"></polygon>
+                                            </svg>
+                                        </div>
                                     </form>
                                 </div>
                                
