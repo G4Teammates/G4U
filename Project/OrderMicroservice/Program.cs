@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using OrderMicroservice.Configure;
 using OrderMicroservice.DBContexts;
+using OrderMicroservice.Repositories.Services;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,8 +15,9 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
+builder.Services.AddSwaggerGen(); 
+builder.Services.AddHostedService<TempFileCleaner>();
+builder.Services.AddHttpContextAccessor();
 builder.Configuration.AddAzureKeyVault(new Uri("https://duantotnghiep.vault.azure.net/"),
     new DefaultAzureCredential());
 builder.Services.AddStartupService(builder.Configuration);
@@ -58,6 +60,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
+
+app.UseStaticFiles();
 
 app.UseAuthorization();
 

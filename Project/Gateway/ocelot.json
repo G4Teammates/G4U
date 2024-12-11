@@ -977,8 +977,19 @@
       "UpstreamHttpMethod": [ "Post" ]
     },
 
-
-
+    //------------Export
+    {
+      "DownstreamPathTemplate": "/api/Export",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7297
+        }
+      ],
+      "UpstreamPathTemplate": "/Export",
+      "UpstreamHttpMethod": [ "Post" ]
+    },
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //                                                                                                                    //
     //                                                Statistical                                                         //
