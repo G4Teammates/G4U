@@ -278,7 +278,7 @@ namespace OrderMicroservice.Repositories.Services
                 // tên cổng
                 /*const string ExchangeName = "delete_category";*/
                 // tên queue
-                const string QueueName = "updateUserName_queue";
+                const string QueueName = "updateUserName_queue_od";
                 var connectionFactory = new ConnectionFactory
                 {
                     UserName = "guest",
