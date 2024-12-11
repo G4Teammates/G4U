@@ -1,0 +1,13 @@
+{
+  "dependencies": {
+    "apis1": {
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.ApiManagement/service/CategoryMicroserviceapi/apis/CategoryMicroservice",
+      "type": "apis.azure"
+    },
+    "apis2": {
+      "apiEndpoint": "https://categorymicroserviceapi.azure-api.net/",
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.ApiManagement/service/CategoryMicroserviceapi/apis/CategoryMicroservice",
+      "type": "apis.azure"
+    }
+  }
+}
