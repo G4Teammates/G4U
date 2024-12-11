@@ -149,7 +149,7 @@ namespace CommentMicroservice.Repositories
                 // tên cổng
                 /*const string ExchangeName = "delete_category";*/
                 // tên queue
-                const string QueueName = "updateUserName_queue";
+                const string QueueName = "updateUserName_queue_cmt";
                 var connectionFactory = new ConnectionFactory
                 {
                     UserName = "guest",

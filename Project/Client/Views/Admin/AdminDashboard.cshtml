@@ -37,9 +37,10 @@
             </a>
         </div>
     </div>
- 
+
     <div class="row">
         <div class="row col-6">
+
             @{
                 var latestStat = Model.statis.LastOrDefault();
                 var previousStat = Model.statis.ElementAtOrDefault(Model.statis.Count - 2);
@@ -79,7 +80,7 @@
             <div class="col-12  mb-3">
                 <div class="card p-3">
                     <div class="stat-card">
-                        <h6>Total Views </h6> 
+                        <h6>Total Views </h6>
                         <p>
                             <span id="TotalViews">@latestStat.TotalWebsite.TotalViews</span>     <span style="font-size:small" class="stat-growth @(GetGrowthClass(CalculateGrowth(latestStat.TotalWebsite.TotalViews, previousStat.TotalWebsite.TotalViews)))">
                                 @(GetGrowthSymbol(CalculateGrowth(latestStat.TotalWebsite.TotalViews, previousStat.TotalWebsite.TotalViews)))
@@ -95,7 +96,7 @@
             <div class="col-12  mb-3">
                 <div class="card p-3">
                     <div class="stat-card">
-                        <h6>Total Products</h6> 
+                        <h6>Total Products</h6>
                         <p>
                             <span id="TotalProducts">@latestStat.TotalWebsite.TotalProducts</span>     <span style="font-size:small" class="stat-growth @(GetGrowthClass(CalculateGrowth(latestStat.TotalWebsite.TotalProducts, previousStat.TotalWebsite.TotalProducts)))">
                                 @(GetGrowthSymbol(CalculateGrowth(latestStat.TotalWebsite.TotalProducts, previousStat.TotalWebsite.TotalProducts)))
@@ -111,7 +112,7 @@
             <div class="col-12  mb-3">
                 <div class="card p-3">
                     <div class="stat-card">
-                        <h6>Total Solds</h6> 
+                        <h6>Total Solds</h6>
                         <p>
                             <span id="TotalSolds">@latestStat.TotalWebsite.TotalSolds</span>     <span style="font-size:small" class="stat-growth @(GetGrowthClass(CalculateGrowth(latestStat.TotalWebsite.TotalSolds, previousStat.TotalWebsite.TotalSolds)))">
                                 @(GetGrowthSymbol(CalculateGrowth(latestStat.TotalWebsite.TotalSolds, previousStat.TotalWebsite.TotalSolds)))
@@ -127,7 +128,7 @@
             <div class="col-12  mb-3">
                 <div class="card p-3">
                     <div class="stat-card">
-                        <h6>Total Users</h6> 
+                        <h6>Total Users</h6>
                         <p>
                             <span id="TotalUsers">@latestStat.TotalWebsite.TotalUsers</span>     <span style="font-size:small" class="stat-growth @(GetGrowthClass(CalculateGrowth(latestStat.TotalWebsite.TotalUsers, previousStat.TotalWebsite.TotalUsers)))">
                                 @(GetGrowthSymbol(CalculateGrowth(latestStat.TotalWebsite.TotalUsers, previousStat.TotalWebsite.TotalUsers)))
@@ -163,6 +164,23 @@
 
                 <!-- Vùng để hiển thị kết quả khi submit -->
                 <div id="statisticsResult" class="mt-3"></div>
+            </div>
+            
+            <div class="col-12 mt-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Export File Excel</h5>
+                        <form asp-action="Export" asp-controller="Admin" class="d-flex">
+                            <div class="mb-3 mx-2 mt-2">
+                                <label for="monthInputExcel" class="form-label sr-only">Chọn tháng</label>
+                                <input type="month" class="form-control form-control-sm" id="monthInputExcel" name="datetime" required>
+
+                            </div>
+                            <button type="submit" formtarget="_blank" class="btn btn-danger btn-sm">Submit</button>
+                        </form>
+
+                    </div>
+                </div>
             </div>
 
 
@@ -288,4 +306,4 @@
             });
         });
     </script>
-    }
+}

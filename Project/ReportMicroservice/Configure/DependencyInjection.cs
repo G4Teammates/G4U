@@ -13,6 +13,9 @@ namespace ReportMicroservice.Configure
         {
             //Register DI here ⬇️
             services.AddScoped<IRepo, Repo>();
+            // Register the BackgroundService
+            services.AddHostedService<Background>();
+            services.AddSingleton<IMessage, Message>();
             //Register DI here ⬆️
 
             return services;
