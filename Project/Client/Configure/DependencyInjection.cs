@@ -38,6 +38,7 @@ namespace Client.Configure
             services.AddScoped<IHelperService, HelperService>();
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IPaymentService, PaymentService>();
+            services.AddScoped<IExportService, ExportService>();
 
             services.AddScoped<IReportsService, ReportsService>();
 
