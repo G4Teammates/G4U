@@ -232,6 +232,30 @@ namespace ReportMicroservice.Repostories
             mail.IsBodyHtml=true;
             smtpClient.Send(mail);
         }
+
+        public async Task<ResponseDTO> GetById(string Id)
+        {
+            ResponseDTO response = new();
+            try
+            {
+                var report = await _db.reports.FindAsync(Id);
+                if (report != null)
+                {
+                    response.Result = _mapper.Map<Reports>(report);
+                }
+                else
+                {
+                    response.IsSuccess = false;
+                    response.Message = "Not found any Category";
+                }
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+            }
+            return response;
+        }
         #endregion
     }
 }
