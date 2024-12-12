@@ -30,15 +30,18 @@ using System.Security.Claims;
 using Client.Models.Enum.OrderEnum;
 using Azure;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Client.Repositories.Interfaces.Reports;
+using Client.Repositories.Services.Reports;
+using Client.Models.ReportDTO;
 using System;
+
 
 
 
 namespace Client.Controllers
 {
-
-    public class AdminController(IUserService userService, IHelperService helperService, IRepoProduct repoProduct, ITokenProvider tokenProvider, ICategoriesService categoryService, IOrderService orderService, ICommentService commentService, IRepoStastistical repoStatistical, IExportService exportService) : Controller
-    {
+    public class AdminController(IUserService userService, IHelperService helperService, IRepoProduct repoProduct, ITokenProvider tokenProvider, ICategoriesService categoryService, IOrderService orderService, ICommentService commentService, IRepoStastistical repoStatistical, IReportsService reportsService, IExportService exportService) : Controller
+    { 
         #region declaration and initialization
         public readonly IUserService _userService = userService;
         public readonly IHelperService _helperService = helperService;
@@ -46,8 +49,8 @@ namespace Client.Controllers
         public readonly IRepoProduct _productService = repoProduct;
         public readonly ICategoriesService _categoryService = categoryService;
         public readonly ICommentService _commentService = commentService;
+        public readonly IReportsService _reportService = reportsService;
         public readonly IExportService _exportService = exportService;
-
         private readonly IOrderService _orderService = orderService;
         private readonly IRepoStastistical _statisticalService = repoStatistical;
         private string JWT = "JWT";
@@ -1737,13 +1740,125 @@ namespace Client.Controllers
 
 
         #region Report
-        public async Task<IActionResult> ReportManager()
+        public async Task<IActionResult> ReportManager(int? page, int pageSize = 20)
         {
-            return View();
+            int pageNumber = (page ?? 1);
+            ReportViewModel report = new();
+            try
+            {
+                // Lấy dữ liệu trang hiện tại
+                ResponseModel? response = await _reportService.GetAll(pageNumber, pageSize);
+
+                // Lấy toàn bộ dữ liệu để tính tổng số comment
+                ResponseModel? responseTotal = await _reportService.GetAll(1, int.MaxValue);
+                var allComments = JsonConvert.DeserializeObject<ICollection<ReportsModel>>(Convert.ToString(responseTotal.Result.ToString()!));
+
+                if (response != null && response.IsSuccess)
+                {
+                    report.Report = JsonConvert.DeserializeObject<ICollection<ReportsModel>>(Convert.ToString(response.Result.ToString()!));
+                    var data = report.Report;
+
+                    report.pageNumber = pageNumber;
+                    report.totalItem = allComments?.Count ?? 0;
+                    report.pageSize = pageSize;
+                    report.pageCount = (int)Math.Ceiling(report.totalItem / (double)pageSize);
+                }
+                else
+                {
+                    TempData["error"] = response?.Message;
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = ex.Message;
+            }
+
+            return View(report);
         }
-        public async Task<IActionResult> UpdateReport()
+
+        [HttpPost]
+        public async Task<IActionResult> CreateReport(CreateReportsModels model)
         {
-            return View();
+            IEnumerable<Claim> claim = HttpContext.User.Claims;
+            string un = claim.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value!;
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors)
+                                              .Select(e => e.ErrorMessage);
+                return BadRequest(new { Errors = errors });
+            }
+
+            try
+            {
+                // Gọi service CreateCommentAsync
+                var response = await _reportService.CreateReport(model,un);
+
+                if (response != null && response.IsSuccess)
+                {
+                    TempData["success"] = "Report created successfully";
+                    return View("~/Views/G4T/ContactUs.cshtml");
+                }
+                else
+                {
+                    TempData["error"] = response?.Message ?? "An unknown error occurred.";
+                    return View("~/Views/G4T/ContactUs.cshtml");
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = $"An error occurred: {ex.Message}";
+                return View("~/Views/G4T/ContactUs.cshtml");
+            }
+
+        }
+        public async Task<IActionResult> UpdateReport(string id)
+        {
+            ResponseModel? response = await _reportService.GetById(id);
+
+            if (response != null && response.IsSuccess)
+            {
+                ReportsModel? model = JsonConvert.DeserializeObject<ReportsModel>(Convert.ToString(response.Result));
+                TempData["success"] = "Get Report for update successfully";
+                return View(model);
+            }
+            else
+            {
+                TempData["error"] = response?.Message;
+            }
+            return NotFound();
+        }
+        [HttpPost]
+        public async Task<IActionResult> UpdateReportConfirm(string reportId, int status)
+        {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors)
+                                              .Select(e => e.ErrorMessage);
+                return BadRequest(new { Errors = errors });
+            }
+
+            try
+
+            {
+                var response = await _reportService.UpdateReport(reportId, status);
+
+                if (response != null && response.IsSuccess)
+                {
+                    TempData["success"] = "Report updated successfully";
+                    return RedirectToAction(nameof(ReportManager));
+                }
+                else
+                {
+                    TempData["error"] = response?.Message ?? "An unknown error occurred.";
+                    return BadRequest(response.Message); // Trả về view với dữ liệu đã nhập
+
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = $"An error occurred: {ex.Message}";
+                return StatusCode(500); // Trả về view với dữ liệu đã nhập và lỗi
+            }
         }
         #endregion
     }
