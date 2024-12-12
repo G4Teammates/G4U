@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver.Linq;
 using OrderMicroservice.DBContexts;
 using OrderMicroservice.DBContexts.Entities;
+using OrderMicroservice.DBContexts.Enum;
 using OrderMicroservice.Models;
 using OrderMicroservice.Models.Message;
 using OrderMicroservice.Models.OrderModel;
@@ -435,8 +436,11 @@ namespace OrderMicroservice.Repositories.Services
             {
                 // Tìm tất cả đơn hàng của khách hàng dựa trên CustomerId
                 var orders = await _context.Orders
-                    .Where(i => i.CustomerId == id)
+                    .Where(i =>
+                        i.CustomerId == id &&
+                        i.OrderStatus == OrderStatus.Paid)
                     .ToListAsync();
+
 
                 // Kiểm tra nếu không tìm thấy đơn hàng nào
                 if (orders == null || !orders.Any())
