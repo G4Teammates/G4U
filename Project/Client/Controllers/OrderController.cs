@@ -187,6 +187,10 @@ namespace Client.Controllers
         [HttpGet]
         public IActionResult PaymentSuccess(string? partnerCode, string? orderId, string? requestId, decimal amount, string? orderInfo, string? orderType, string? transId, int? resultCode, string message, string payType, long responseTime, string extraData, string signature)
         {
+            if (resultCode != 0)
+            {
+                return RedirectToAction(nameof(PaymentFailure));
+            }
             var model = new PaymentSuccessModel
             {
                 OrderId = orderId,
