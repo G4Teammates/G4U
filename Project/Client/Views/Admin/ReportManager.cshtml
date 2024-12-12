@@ -3,6 +3,7 @@
     Layout = "_LayoutAdmin";
 }
 
+@model Client.Models.ReportDTO.ReportViewModel
 <style>
     /* Căn giữa nội dung của các ô trong bảng */
     .table td, .table th {
@@ -122,6 +123,7 @@
         <table class="table table-bordered table-hover align-middle">
             <thead class="table-light">
                 <tr>
+                    <th scope="col"><input type="checkbox" id="selectAll"></th>
                     <th scope="col">UserName</th>
                     <th scope="col">Email</th>
                     <th scope="col">Related</th>
@@ -131,22 +133,34 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>UserName</td>
-                    <td>Email</td>
-                    <td>Related</td>
-                    <td>Description</td>
-                    <td>CreatedAt</td>
-                    <td>Status</td>
-                    @*Đây là nút Update*@
-                    <td>
-                        <a asp-action="UpdateReport" class="text-danger mx-2"><span><i class="fa-regular fa-pen-to-square"></i></span></a>
+                @if (Model.Report != null)
+                {
+                    foreach (var report in Model.Report)
+                    {
+                        <tr>
+                            <td><input type="checkbox" class="user-checkbox" /></td>
+                            <td>@report.UserName</td>
+                            <td>@report.Email</td>
+                            <td>@report.Related</td>
+                            <td>@report.Description</td>
+                            <td>@report.CreatedAt</td>
+                            <td>@report.Status</td>
+                            @*Đây là nút Update*@
+                            <td>
+                                <a asp-action="UpdateReport" asp-route-id="@report.Id" class="text-danger mx-2"><span><i class="fa-regular fa-pen-to-square"></i></span></a>
 
-                    </td>
-
-                </tr>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="9" class="text-center">Không có người dùng nào để hiển thị.</td>
+                    </tr>
+                }
                 
-            </tbody>
+                </tbody>
         </table>
 
         <!-- Phân trang -->
@@ -154,11 +168,11 @@
             @* <div>Total: @(Model.totalItem) items</div> *@
             <div style=";font-size: 1em; font-weight: bold; color: #00A97F; display: flex; align-items: center; justify-content: center; padding: 15px 30px; background-color: transparent; border: 2px solid #00A97F; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 169, 127, 0.4), 0 0 15px rgba(0, 169, 127, 0.3); position: relative; text-align: center; transition: all 0.3s;">
                 <i class="fas fa-rocket" style="margin-right: 15px; color: #00A97F;"></i>
-                Total: <span style="color: #00A97F; padding-left: 5px; padding-right: 5px;">100000000</span> items
+                Total: <span style="color: #00A97F; padding-left: 5px; padding-right: 5px;">@(Model.totalItem)</span> items
                 <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(135deg, #00A97F, #800080); border-radius: 8px; opacity: 0.2; z-index: -1;"></div>
             </div>
             <div style="display: flex; align-items: center; justify-content: center;">
-                <form method="get" asp-controller="Admin" asp-action="CommentManager" class="d-inline">
+                <form method="get" asp-controller="Admin" asp-action="ReportManager" class="d-inline">
                     <select name="pageSize" class="form-select form-select-sm w-auto d-inline-block" onchange="this.form.submit()">
                         <option>Select records per page</option>
                         <option value="3">3 records per page</option>
@@ -168,28 +182,28 @@
                     <input type="hidden" name="page" value="1" />
                 </form>
 
-                @* <nav aria-label="Page navigation example" class="d-inline-block">
+                <nav aria-label="Page navigation example" class="d-inline-block">
                     <ul class="pagination pagination-sm mb-0">
                         <li class="page-item @(Model.pageNumber == 1 ? "disabled" : "")">
-                            <a class="page-link" asp-controller="Admin" asp-action="CommentManager" asp-route-page="@(Model.pageNumber - 1)" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
+                            <a class="page-link" asp-controller="Admin" asp-action="ReportManager" asp-route-page="@(Model.pageNumber - 1)" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
                                 Previous
                             </a>
                         </li>
                         @for (var pg = 1; pg <= Model.pageCount; pg++)
                         {
                             <li class="page-item @(pg == Model.pageNumber ? "active" : "")">
-                                <a class="page-link" asp-controller="Admin" asp-action="CommentManager" asp-route-page="@pg" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
+                                <a class="page-link" asp-controller="Admin" asp-action="ReportManager" asp-route-page="@pg" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
                                     @pg
                                 </a>
                             </li>
                         }
                         <li class="page-item @(Model.pageNumber == Model.pageCount ? "disabled" : "")">
-                            <a class="page-link" asp-controller="Admin" asp-action="CommentManager" asp-route-page="@(Model.pageNumber + 1)" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
+                            <a class="page-link" asp-controller="Admin" asp-action="ReportManager" asp-route-page="@(Model.pageNumber + 1)" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
                                 Next
                             </a>
                         </li>
                     </ul>
-                </nav> *@
+                </nav>
             </div>
         </div>
 

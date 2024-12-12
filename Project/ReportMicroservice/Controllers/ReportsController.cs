@@ -86,5 +86,28 @@ namespace ReportMicroservice.Controllers
                 return StatusCode(500, _responseDTO); // Trả về mã lỗi 500 với thông báo lỗi chi tiết
             }
         }
+
+        [HttpGet("{id?}")]
+        public async Task<IActionResult> GetById([FromRoute] string id)
+        {
+            try
+            {
+                var report = await _repo.GetById(id);
+                if (report.IsSuccess)
+                {
+                    _responseDTO.Result = report.Result;
+                    return Ok(_responseDTO);
+                }
+                _responseDTO.IsSuccess = false;
+                _responseDTO.Message = report.Message;
+                return BadRequest(_responseDTO);
+            }
+            catch (Exception ex)
+            {
+                _responseDTO.IsSuccess = false;
+                _responseDTO.Message = "An error occurred while getting the Report: " + ex.Message;
+                return StatusCode(500, _responseDTO); // Trả về mã lỗi 500 với thông báo lỗi chi tiết
+            }
+        }
     }
 }
