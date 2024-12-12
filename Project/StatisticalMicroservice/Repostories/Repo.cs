@@ -113,7 +113,7 @@ namespace StatisticalMicroservice.Repostories
                     upStas.TotalWebsite.TotalUsers = Stastistical.TotalWebsite.TotalUsers;
                     upStas.CreateAt=Stastistical.CreateAt;
                     upStas.UpdatedAt = DateTime.Now;
-
+                     
                     var Stastisticali = _mapper.Map<Statistical>(upStas);
                     _db.Update(Stastisticali);
                     await _db.SaveChangesAsync();

@@ -12,5 +12,8 @@ namespace ProductMicroservice.Repostories.Helper
         Task<Products> CreateProduct(CreateProductModel Product, List<LinkModel> linkModel, string username);
         Task<Products> UpdateProduct(UpdateProductModel Product);
         public bool IsContentAppropriate(string content);
+
+        Task<Products> CreateProductClone(CreateProductModel Product, List<LinkModel> linkModel, string username);
+        Task<Products> UpdateProductClone(UpdateProductModel Product);
     }
 }

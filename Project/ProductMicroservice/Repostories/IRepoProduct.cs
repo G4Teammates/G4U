@@ -27,5 +27,9 @@ namespace ProductMicroservice.Repostories
         Task<ResponseDTO> UpdateRangeSoldAsync(OrderItemsResponse model);
         Task<ResponseDTO> GetProductByStatus(int Status);
         Task<ResponseDTO> GetProductByPlatform(int Platform);
+
+        Task<ResponseDTO> ModerateClone(List<IFormFile> imageFiles, CreateProductModel Product, IFormFile gameFiles, string username);
+        Task<ResponseDTO> UpdateUserName(UpdateUserNameModel model);
+        Task<ResponseDTO> UpdateProductClone(List<IFormFile>? imageFiles, UpdateProductModel Product, IFormFile? gameFiles);
     }
 }

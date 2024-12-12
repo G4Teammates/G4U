@@ -124,6 +124,13 @@ namespace UserMicroservice.DBContexts.Entities
         [BsonElement("normalizedUserName")]
         public string? NormalizedUsername { get; set; }
 
+        /// <summary>
+        /// The Bank Name of the user.
+        /// <br/>
+        /// Tên ngân hàng của người dùng.
+        /// </summary>
+        [BsonElement("bankName")]
+        public BankName BankName { get; set; }
 
         /// <summary>
         /// The Bank Account of the user.
@@ -133,6 +140,13 @@ namespace UserMicroservice.DBContexts.Entities
         [BsonElement("bankAccount")]
         public string? BankAccount { get; set; }
 
+        /// <summary>
+        /// The type of login user account, include <see cref="UserLoginType.Local"/>(login with username and password),<see cref="UserLoginType.Google"/> or <see cref="UserLoginType.Other"/>.
+        /// <br/>
+        /// Vai trò của tài khoản người dùng, bao gồm <see cref="UserLoginType.Local"/>(đăng nhập bằng username và password),<see cref="UserLoginType.Google"/> hoặc <see cref="UserLoginType.Other"/>.
+        /// </summary>
+        [BsonElement("loginType")]
+        public UserLoginType LoginType { get; set; }
 
         /// <summary>
         /// The status of the user account.

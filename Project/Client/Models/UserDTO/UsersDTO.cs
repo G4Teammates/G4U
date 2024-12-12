@@ -20,5 +20,7 @@ namespace Client.Models.UserDTO
 		public DateTime UpdateAt { get; set; }
 		public decimal TotalProfit { get; set; } = 0;
         public ICollection<WishlistModel>? Wishlist { get; set; }
+        public UserLoginType LoginType { get; set; }
+
     }
 }

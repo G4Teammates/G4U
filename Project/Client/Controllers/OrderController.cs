@@ -16,11 +16,18 @@ namespace Client.Controllers
 {
     public class OrderController(IOrderService orderService, IPaymentService paymentService, IMapper mapper, IHelperService helperService, ITokenProvider tokenProvider) : Controller
     {
+        #region declare
         private readonly IMapper _mapper = mapper;
         private readonly IOrderService _orderService = orderService;
         private readonly IPaymentService _paymentService = paymentService;
         private readonly IHelperService _helperService = helperService;
-        private readonly ITokenProvider _tokenProvider = tokenProvider;
+        private readonly ITokenProvider _tokenProvider = tokenProvider; 
+        private string JWT = "JWT";
+        private string IsLogin = "IsLogin";
+        private string RememberMe = "RememberMe";
+        private string Cart = "cart";
+        #endregion
+
         public IActionResult Index()
         {
             return View();
@@ -33,12 +40,25 @@ namespace Client.Controllers
 
         public async Task<IActionResult> Checkout(string orderJson, PaymentMethod paymentMethod)
         {
-            string token = _tokenProvider.GetToken();
-            bool isLogin = Convert.ToBoolean(HttpContext.Request.Cookies["IsLogin"]);
+            bool isLogin = false;
+            bool rememberMe = Convert.ToBoolean(_tokenProvider.GetToken(RememberMe));
+            string token;
+
+            if (rememberMe)
+            {
+                token = _tokenProvider.GetToken(JWT);
+                isLogin = Convert.ToBoolean(_tokenProvider.GetToken(IsLogin));
+            }
+            else
+            {
+                token = _tokenProvider.GetToken(JWT, false);
+                isLogin = Convert.ToBoolean(_tokenProvider.GetToken(IsLogin,false));
+            }
+
             if (token == null || !isLogin)
             {
                 TempData["error"] = "You should login first";
-                return RedirectToAction("Login", "User");
+                return RedirectToAction("Cart", "User");
             }
 
 
@@ -46,10 +66,10 @@ namespace Client.Controllers
             cart.PaymentMethod = paymentMethod;
             cart.Order.PaymentName = "Pending";
 
-            if (cart == null)
+            if (cart.Order.Items == null)
             {
                 TempData["Error"] = "Cart is empty";
-                return RedirectToAction("Index", "Cart");
+                return RedirectToAction("Cart", "User");
             }
 
             if (cart.PaymentMethod == Models.Enum.OrderEnum.PaymentMethod.Wallet)
@@ -108,11 +128,11 @@ namespace Client.Controllers
                     Items = cart.Order.Items
                 };
                 ResponseModel responsePayment = await _paymentService.VietQRPayment(request);
-
+                TempData["orderId"] = newOrder.Id;
                 if (responsePayment.IsSuccess)
                 {
                     HttpContext.Response.Cookies.Delete("cart");
-                    return Redirect(responsePayment.Result.ToString() + $"&orderId={request.Id}");
+                    return Redirect(responsePayment.Result.ToString());
                 }
                 else
                 {
@@ -138,17 +158,26 @@ namespace Client.Controllers
                     PaymentStatus = PaymentStatus.Paid
                 };
                 ResponseModel responseUpdateOrder = await _orderService.UpdateStatus(newOrder.Id, status);
-                OrderModel freeOrder = JsonConvert.DeserializeObject<OrderModel>(responseUpdateOrder.Result.ToString());
-
-                return RedirectToAction("PaymentSuccess", "Order", new
+                if (responseUpdateOrder.IsSuccess)
                 {
-                    orderId = newOrder.Id,
-                    amount = 0,
-                    orderType = "Free",
-                    responseTime = ((DateTimeOffset)newOrder.UpdatedAt).ToUnixTimeMilliseconds()
-                });
-            }
+                    HttpContext.Response.Cookies.Delete("cart");
+                    OrderModel freeOrder = JsonConvert.DeserializeObject<OrderModel>(responseUpdateOrder.Result.ToString());
 
+                    return RedirectToAction("PaymentSuccess", "Order", new
+                    {
+                        orderId = newOrder.Id,
+                        amount = 0,
+                        orderType = "Free",
+                        responseTime = ((DateTimeOffset)newOrder.UpdatedAt).ToUnixTimeMilliseconds()
+                    });
+                }
+                else
+                {
+                    TempData["error"] = responseUpdateOrder.Message;
+                    return RedirectToAction("PaymentFailure");
+                }
+            }
+            TempData["error"] = responseCreateOrder.Message;
             return RedirectToAction("PaymentFailure");
         }
         #endregion
@@ -177,20 +206,23 @@ namespace Client.Controllers
         }
 
 
-        [HttpGet("Order/PaymentSuccessPayOsAsync")]
-        public async Task<IActionResult> PaymentSuccessPayOsAsync(
-      string? code,
-      string? id,
-      [FromQuery(Name = "cancel")] string? cancelParam, // Xử lý chuỗi cancel
-      string? status,
-      string? orderCode,
-      string? orderId)
+        [HttpGet]
+        public async Task<IActionResult> PaymentSuccessPayOs(
+     string? code,
+        string? id,
+         bool? cancel, 
+       string? status,
+         long? orderCode)
         {
-
+            string orderId = TempData["orderId"].ToString();
+            if(orderCode == null)
+            {
+                return RedirectToAction(nameof(PaymentFailure));
+            }
             ResponseModel response = await _paymentService.Paid(new PaidModel()
             {
                 OrderId = orderId,
-                TransactionId = orderCode,
+                TransactionId = orderCode.ToString(),
                 Status = new PaymentStatusModel()
                 {
                     OrderStatus = OrderStatus.Paid,
@@ -223,8 +255,6 @@ namespace Client.Controllers
 
             return View("PaymentSuccess", model);
         }
-
-
 
 
         public IActionResult PaymentFailure()

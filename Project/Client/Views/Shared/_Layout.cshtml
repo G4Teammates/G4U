@@ -60,7 +60,7 @@
                                 </a>
                             </div>
                             <div class="mx-3">
-                                <form asp-action="SearchProduct" asp-controller="Home" method="post">
+                                <form asp-action="SearchProduct" asp-controller="Product" method="post">
                                     
                                     <input class="form-control me-2" type="text" placeholder="Search.." aria-label="Search" name="searchString">
                                 </form>
@@ -153,6 +153,7 @@
                                         <a class="navelement" asp-controller="User" asp-action="Information">Information & Password</a>
                                         <a class="navelement" asp-controller="Product" asp-action="Collection">Wishlist & Library</a>
                                         <a class="navelement" asp-controller="User" asp-action="Cart">Cart</a>
+                                        <a class="navelement" asp-controller="Order" asp-action="History">History</a>
                                         @if (User.IsInRole("Admin"))
                                         {
                                             <a class="navelement" asp-controller="Admin" asp-action="AdminDashboard">Admin Dashboard</a>
@@ -183,7 +184,7 @@
             <!-- Chatbox -->
             <div id="chatContainer">
                 <div id="chatHeader">
-                    Pixels Support
+                    G4T Support
                     <button id="closeChat">×</button>
                 </div>
                 <div id="chatContent">
@@ -193,7 +194,7 @@
                         <div id="topics">
                             <button class="topicButton">Commission fee</button>
                             <button class="topicButton">Policy and Terms</button>
-
+                            <button class="topicButton">Donate for us 💖</button>
                             <button class="topicButton" id="reportProblem">Report Problem</button>
                         </div>
                     </div>
@@ -211,7 +212,16 @@
                                 <label for="description">Issue Description:</label>
                                 <textarea id="description" name="Description" rows="4" placeholder="Describe the issue..."></textarea>
                             </div>
-                            <button type="submit" id="sendReport">Send</button>
+                            <div class="row">
+                                <div class="col-4">
+                                    <button type="submit" id="sendReport">Send</button>
+                                </div>
+                                <div class="col-4">
+                                    <button id="cancel" class="topicButton">Cancel</button>
+                                </div>
+                                
+                            </div>
+                            
                         </form>
                     </div>
                 </div>
@@ -237,7 +247,7 @@
                     </a>
                     <a href="#" style="color: white; font-size: 24px; margin-right: 20px;">
                         <i class="fab fa-instagram"></i>
-                    </a>
+                    </a> 
                     <a href="#" style="color: white; font-size: 24px;">
                         <i class="fab fa-linkedin-in"></i>
                     </a>
@@ -246,7 +256,7 @@
 
             <div style="text-align: center; margin-top: 20px; border-top: 1px solid #444; padding-top: 20px;">
                 <p>© 2024 G4T Game Studio. All rights reserved.</p>
-                <img src="~/Image/logore.png" alt="Logo" width="50">
+                <img src="~/Image/logore.png" alt="Logo" width="50" >
             </div>
         </footer>
 
@@ -357,6 +367,7 @@
         chatContainer.style.display = 'none';
     });
 
+
     // Handle Topic Selection
     document.querySelectorAll('.topicButton').forEach(button => {
         button.addEventListener('click', () => {
@@ -365,6 +376,11 @@
             systemMessage.classList.add('system');
 
             switch (topic) {
+                case "Donate for us 💖":
+                    systemMessage.innerHTML = `<img src="https://img.vietqr.io/image/ICB-108873320543-print.png" width="170px" height="170px" alt="QR chuyển khoản">
+                                                    <br><br>
+                                                   Thank you for your help💖`
+                    break;
                 case "Commission fee":
                     systemMessage.innerHTML = `<strong>Commission fee</strong><br><br>
                                                The general commission fee when using our platform is fixed at 10% of the original value of the product.";`
@@ -414,6 +430,10 @@
                         We hope that these terms will help ensure a safe and transparent game trading environment for all parties. Thank you for choosing our service!
                     `;
                     break;
+                case "Cancel":
+                    document.getElementById('topicSelection').style.display = 'block';
+                    document.getElementById('userInput').style.display = 'none';
+                    return;
                 case "Report Problem":
                     document.getElementById('topicSelection').style.display = 'none';
                     document.getElementById('userInput').style.display = 'block';
@@ -486,26 +506,4 @@
             }
         });
     });
-
-    // Đảm bảo khi nhấn ra ngoài form report, form này sẽ tự động đóng lại
-    document.addEventListener('click', function (event) {
-        const userInput = document.getElementById('userInput');
-        const chatContainer = document.getElementById('chatContainer');
-        const topicSelection = document.getElementById('topicSelection');
-
-        // Kiểm tra xem người dùng có nhấn vào phần tử nào ngoài form báo cáo không
-        if (!userInput.contains(event.target) && !topicSelection.contains(event.target) && !chatContainer.contains(event.target)) {
-            userInput.style.display = 'none'; // Đóng form report
-        }
-    });
-
-    // Đảm bảo rằng việc mở form report khi người dùng nhấp vào nút nào đó
-    document.getElementById('reportProblem').addEventListener('click', function () {
-        const userInput = document.getElementById('userInput');
-        userInput.style.display = 'block'; // Hiển thị form khi nhấn vào nút "Report Problem"
-    });
-
-
-
 </script>
-

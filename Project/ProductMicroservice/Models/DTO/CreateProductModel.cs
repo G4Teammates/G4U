@@ -43,7 +43,8 @@ namespace ProductMicroservice.Models.DTO
 
         public ProductStatus Status { get; set; } = ProductStatus.Inactive;
 
- 
+        public string? WinrarPassword { get; set; }
+
         /*public DateTime CreatedAt { get; set; } = DateTime.UtcNow;*/
 
 

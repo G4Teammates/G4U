@@ -23,7 +23,7 @@ using System.Security.Claims;
 
 namespace Client.Controllers
 {
-    public class ProductController(ICompositeViewEngine viewEngine ,IHelperService helperService, IRepoProduct repoProduct, ICategoriesService categoryService, ICommentService commentService, IUserService userService, IOrderService orderService) : Controller
+    public class ProductController(ICompositeViewEngine viewEngine, IHelperService helperService, IRepoProduct repoProduct, ICategoriesService categoryService, ICommentService commentService, IUserService userService, IOrderService orderService) : Controller
     {
 
         private readonly IHelperService _helperService = helperService;
@@ -68,6 +68,7 @@ namespace Client.Controllers
                     product.totalItem = total?.Count ?? 0; // Tổng số sản phẩm từ toàn bộ dữ liệu
                     product.pageSize = pageSize;
                     product.pageCount = (int)Math.Ceiling(product.totalItem / (double)pageSize);
+                    ViewData["CurrentAction"] = "Product";
                 }
                 else
                 {
@@ -82,7 +83,6 @@ namespace Client.Controllers
             return View(product);
         }
 
-        [HttpPost]
         public async Task<IActionResult> FilterProducts(
                                                         decimal? minRange,
                                                         decimal? maxRange,
@@ -100,19 +100,31 @@ namespace Client.Controllers
             {
                 // Gọi API để lọc sản phẩm theo các điều kiện
                 ResponseModel? response = await _productService.FilterProductAsync(minRange, maxRange, sold, discount, platform, category, page, pageSize);
-                ResponseModel? response2 = await _productService.GetAllProductAsync(1, 99);
+                ResponseModel? response2 = await _productService.GetAllProductAsync(1, int.MaxValue);
                 ResponseModel? response3 = await _categoryService.GetAllCategoryAsync(1, 99);
-                var total = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response2.Result.ToString()!));
+                ResponseModel? response4 = await _productService.FilterProductAsync(minRange, maxRange, sold, discount, platform, category, page, int.MaxValue);
+                var total = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response4.Result.ToString()!));
                 if (response != null && response.IsSuccess)
                 {
                     productViewModel.Product = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response.Result.ToString()!));
                     productViewModel.CategoriesModel = JsonConvert.DeserializeObject<ICollection<CategoriesModel>>(Convert.ToString(response3.Result.ToString()!));
                     var data = productViewModel.Product;
                     productViewModel.pageNumber = pageNumber;
-                    productViewModel.totalItem = data.Count;
+                    productViewModel.totalItem = total?.Count ?? 0; // Tổng số sản phẩm từ toàn bộ dữ liệu
                     productViewModel.pageSize = pageSize;
                     productViewModel.pageCount = (int)Math.Ceiling(total.Count / (double)pageSize);
                     TempData["success"] = "Filter Products successfully";
+                    ViewData["CurrentAction"] = "FilterProducts";
+                    // Tạo đối tượng FilterParams để chứa các giá trị
+                    var filterParams = new Dictionary<string, object>
+                    {
+                        { "minRange", minRange },
+                        { "maxRange", maxRange },
+                        { "sold", sold },
+                        { "discount", discount },
+                        { "category", category }
+                    };
+                    ViewData["Parameters"] = filterParams;
                 }
                 else
                 {
@@ -192,7 +204,7 @@ namespace Client.Controllers
 
             ResponseModel? productReponse = await _productService.GetDetailByIdAsync(id);
             ResponseModel? cmtResponse = await _commentService.GetByproductId(id, 1, 9999);
-            ResponseModel? productsReponse = await _productService.GetAllProductAsync(1,99);
+            ResponseModel? productsReponse = await _productService.GetAllProductAsync(1, 99);
 
             string un = claim.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value!;
             string i = claim.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value!;
@@ -200,31 +212,34 @@ namespace Client.Controllers
 
             if (productReponse != null && productReponse.IsSuccess)
             {
-                
+
                 ProductModel? ProductModel = JsonConvert.DeserializeObject<ProductModel>(Convert.ToString(productReponse.Result));
 
                 List<ProductModel>? ProductsModel = JsonConvert.DeserializeObject<List<ProductModel>>(Convert.ToString(productsReponse.Result));
-                
+
                 List<CommentDTOModel>? commentsModel = JsonConvert.DeserializeObject<List<CommentDTOModel>>(Convert.ToString(cmtResponse.Result));
 
                 if (ProductModel != null)
                 {
                     // Gán model vào ProductViewModel
-                    productViewModel.Prod = new ProductModel {Name = ProductModel.Name,
-                                                                Price = ProductModel.Price,
-                                                                UserName = ProductModel.UserName,
-                                                                Description = ProductModel.Description,
-                                                                Categories = ProductModel.Categories,
-                                                                CreatedAt = ProductModel.CreatedAt,
-                                                                UpdatedAt = ProductModel.UpdatedAt,
-                                                                Platform = ProductModel.Platform,
-                                                                Interactions = ProductModel.Interactions,
-                                                                Links = ProductModel.Links,
-                                                                Sold = ProductModel.Sold,
-                                                                Status = ProductModel.Status,
-                                                                Id = ProductModel.Id,
-                                                                Discount = ProductModel.Discount,
-                                                                QrCode = ProductModel.QrCode };
+                    productViewModel.Prod = new ProductModel
+                    {
+                        Name = ProductModel.Name,
+                        Price = ProductModel.Price,
+                        UserName = ProductModel.UserName,
+                        Description = ProductModel.Description,
+                        Categories = ProductModel.Categories,
+                        CreatedAt = ProductModel.CreatedAt,
+                        UpdatedAt = ProductModel.UpdatedAt,
+                        Platform = ProductModel.Platform,
+                        Interactions = ProductModel.Interactions,
+                        Links = ProductModel.Links,
+                        Sold = ProductModel.Sold,
+                        Status = ProductModel.Status,
+                        Id = ProductModel.Id,
+                        Discount = ProductModel.Discount,
+                        QrCode = ProductModel.QrCode
+                    };
 
                     productViewModel.Product = ProductsModel ?? new List<ProductModel>();
                     // Gán danh sách comments vào ProductViewModel
@@ -232,18 +247,15 @@ namespace Client.Controllers
 
                     productViewModel.userName = claim.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value!;
 
-                }
 
-                if (ItemResponse != null && ItemResponse.IsSuccess)
-                {
-                    List<OrderItemModel>? orderProducts = JsonConvert.DeserializeObject<List<OrderItemModel>>(Convert.ToString(ItemResponse.Result));
-
-                    ViewBag.HasOwned = false;
-                    foreach (var item in orderProducts)
+                    if (ItemResponse != null && ItemResponse.IsSuccess)
                     {
-                        if (item.ProductId == id)
+                        List<OrderItemModel>? orderProducts = JsonConvert.DeserializeObject<List<OrderItemModel>>(Convert.ToString(ItemResponse.Result));
+
+                        ViewBag.HasOwned = false;
+
+                        if (un == ProductModel.UserName)
                         {
-                            ViewBag.HasOwned = true;
                             List<LinkModel> urls = new List<LinkModel>();
                             foreach (var link in productViewModel.Prod.Links)
                             {
@@ -253,7 +265,26 @@ namespace Client.Controllers
                                 }
                             }
                             ViewBag.UrlsDownLoad = urls;
-                            break;
+                        }
+                        else
+                        {
+                            foreach (var item in orderProducts)
+                            {
+                                if (item.ProductId == id)
+                                {
+                                    ViewBag.HasOwned = true;
+                                    List<LinkModel> urls = new List<LinkModel>();
+                                    foreach (var link in productViewModel.Prod.Links)
+                                    {
+                                        if (link.Url.Contains("drive.google.com"))
+                                        {
+                                            urls.Add(link);
+                                        }
+                                    }
+                                    ViewBag.UrlsDownLoad = urls;
+                                    break;
+                                }
+                            }
                         }
                     }
                 }
@@ -273,7 +304,7 @@ namespace Client.Controllers
         {
             IEnumerable<Claim> claim = HttpContext.User.Claims;
             ProductViewModel productViewModel = new ProductViewModel();
-            ResponseModel? response = await _commentService.GetByParentIdAsync(parentId,1,9999);
+            ResponseModel? response = await _commentService.GetByParentIdAsync(parentId, 1, 9999);
             if (response != null && response.IsSuccess)
             {
                 List<CommentDTOModel>? comments = JsonConvert.DeserializeObject<List<CommentDTOModel>>(Convert.ToString(response.Result));
@@ -295,8 +326,7 @@ namespace Client.Controllers
             return PartialView("_CommentReplies", productViewModel);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> SortProducts(string sort, int? page, int pageSize = 5)
+        public async Task<IActionResult> SortProducts(string sort, int? page, int pageSize = 99)
         {
             int pageNumber = (page ?? 1);
             ProductViewModel productViewModel = new();
@@ -305,19 +335,23 @@ namespace Client.Controllers
             {
                 // Gọi API để lấy danh sách sản phẩm đã sắp xếp
                 ResponseModel? response = await _productService.SortProductAsync(sort, page, pageSize);
-                ResponseModel? response2 = await _productService.GetAllProductAsync(1, 99);
+                ResponseModel? response2 = await _productService.GetAllProductAsync(1, int.MaxValue);
                 ResponseModel? response3 = await _categoryService.GetAllCategoryAsync(1, 99);
-                var total = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response2.Result.ToString()!));
+                ResponseModel? response4 = await _productService.SortProductAsync(sort, page, int.MaxValue);
+                var total = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response4.Result.ToString()!));
                 if (response != null && response.IsSuccess)
                 {
                     productViewModel.Product = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response.Result.ToString()!));
-                    productViewModel.CategoriesModel = JsonConvert.DeserializeObject<ICollection<CategoriesModel>>(Convert.ToString(response.Result.ToString()!));
+                    productViewModel.CategoriesModel = JsonConvert.DeserializeObject<ICollection<CategoriesModel>>(Convert.ToString(response3.Result.ToString()!));
                     var data = productViewModel.Product;
                     productViewModel.pageNumber = pageNumber;
-                    productViewModel.totalItem = data.Count;
+                    productViewModel.totalItem = total?.Count ?? 0; // Tổng số sản phẩm từ toàn bộ dữ liệu
                     productViewModel.pageSize = pageSize;
                     productViewModel.pageCount = (int)Math.Ceiling(total.Count / (double)pageSize);
                     TempData["success"] = "Sort Products successfully";
+                    ViewData["CurrentAction"] = "SortProducts";
+                    ViewData["Parameters"] = sort;
+                    ViewData["NamePara"] = "sort";
                 }
                 else
                 {
@@ -355,7 +389,7 @@ namespace Client.Controllers
                 // Gọi service CreateCommentAsync
                 var response = await _commentService.CreateCommentAsync(model, userid);
                 var modelCmt = JsonConvert.DeserializeObject<CommentDTOModel>(Convert.ToString(response.Result.ToString()!));
-                
+
                 if (response != null && response.IsSuccess)
                 {
                     TempData["success"] = "Comment created successfully";
@@ -363,7 +397,7 @@ namespace Client.Controllers
                     // Render PartialView to string
                     var html = await RenderViewAsync("_CommentPartial", modelCmt);
 
-                    return Json(new { success = true, html = html , message = TempData["success"] });
+                    return Json(new { success = true, html = html, message = TempData["success"] });
                 }
                 else
                 {
@@ -390,12 +424,12 @@ namespace Client.Controllers
                 {
                     UserName = userName
                 };
-                if(userName != null)
+                if (userName != null)
                 {
                     ResponseModel? response = await _commentService.IncreaseLike(commentID, userLikes);
                     if (response != null && response.IsSuccess)
                     {
-                        return Json(new { success = true, commentId = commentID, newLikeCount = response.Result , message = response.Message });
+                        return Json(new { success = true, commentId = commentID, newLikeCount = response.Result, message = response.Message });
                     }
                     else
                     {
@@ -406,7 +440,7 @@ namespace Client.Controllers
                 {
                     return Json(new { success = false, message = "Please login first" });
                 }
-               
+
             }
             catch (Exception ex)
             {
@@ -432,7 +466,7 @@ namespace Client.Controllers
                     ResponseModel? response = await _commentService.DecreaseLike(commentID, userDisLikes);
                     if (response != null && response.IsSuccess)
                     {
-                        return Json(new { success = true, commentId = commentID, newDislikeCount = response.Result , message = response.Message });
+                        return Json(new { success = true, commentId = commentID, newDislikeCount = response.Result, message = response.Message });
                     }
                     else
                     {
@@ -569,8 +603,8 @@ namespace Client.Controllers
                 return Json(new { success = false, message = $"Đã xảy ra lỗi: {ex.Message}" });
             }
         }
-            // Phương thức hỗ trợ để render PartialView thành chuỗi HTML
-            private async Task<string> RenderViewAsync(string viewName, object model)
+        // Phương thức hỗ trợ để render PartialView thành chuỗi HTML
+        private async Task<string> RenderViewAsync(string viewName, object model)
         {
             ViewData.Model = model;
             using (var writer = new StringWriter())
@@ -614,11 +648,11 @@ namespace Client.Controllers
                 int pageSize = 5;
                 if (ProductsModel != null)
                 {
-                    
+
 
                     productViewModel.Product = ProductsModel ?? new List<ProductModel>();
                     // Gán danh sách comments vào ProductViewModel
-                   
+
                     productViewModel.userName = claim.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value!;
                     var data = productViewModel.Product;
                     productViewModel.pageNumber = 1;
@@ -635,7 +669,51 @@ namespace Client.Controllers
             }
 
             // Trả về View với ProductViewModel
-            return View("Product",productViewModel);
+            return View("Product", productViewModel);
+        }
+
+        public async Task<IActionResult> SearchProduct(string searchString, int? page, int pageSize = 99)
+        {
+            int pageNumber = (page ?? 1);
+            ProductViewModel productViewModel = new();
+
+            try
+            {
+                // Gọi API để tìm kiếm sản phẩm theo từ khóa
+                ResponseModel? response = await _productService.SearchProductAsync(searchString, page, pageSize);
+                // Lấy tất cả sản phẩm để tính tổng số
+                ResponseModel? response2 = await _productService.GetAllProductAsync(1, int.MaxValue);
+                ResponseModel? response3 = await _categoryService.GetAllCategoryAsync(1, 99);
+                ResponseModel? response4 = await _productService.SearchProductAsync(searchString, page, int.MaxValue);
+                // Giải mã dữ liệu tổng số sản phẩm
+                var total = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response4.Result.ToString()!));
+
+                if (response != null && response.IsSuccess)
+                {
+                    productViewModel.Product = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response.Result.ToString()!));
+                    productViewModel.CategoriesModel = JsonConvert.DeserializeObject<ICollection<CategoriesModel>>(Convert.ToString(response3.Result.ToString()!));
+                    var data = productViewModel.Product;
+                    productViewModel.pageNumber = pageNumber;
+                    productViewModel.totalItem = total?.Count ?? 0; // Tổng số sản phẩm từ toàn bộ dữ liệu
+                    productViewModel.pageSize = pageSize;
+                    productViewModel.pageCount = (int)Math.Ceiling(total.Count / (double)pageSize);
+                    TempData["success"] = "Search Products successfully";
+                    ViewData["Parameters"] = searchString;
+                    ViewData["NamePara"] = "searchString";
+                    ViewData["CurrentAction"] = "SearchProduct";
+                }
+                else
+                {
+                    TempData["error"] = response?.Message;
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = ex.Message;
+            }
+
+            return View("~/Views/Product/Product.cshtml", productViewModel);
+            // Trả về view ProductsManager với danh sách sản phẩm đã tìm kiếm
         }
 
     }

@@ -255,35 +255,174 @@
                 <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(135deg, #00A97F, #800080); border-radius: 8px; opacity: 0.2; z-index: -1;"></div>
             </div>
             <div style="display: flex; align-items: center; justify-content: center;">
-                <form method="get" asp-controller="Admin" asp-action="CommentManager" class="d-inline">
-                    <select name="pageSize" class="form-select form-select-sm w-auto d-inline-block" onchange="this.form.submit()">
-                        <option>Select records per page</option>
-                        <option value="3">3 records per page</option>
-                        <option value="5">5 records per page</option>
-                        <option value="10">10 records per page</option>
-                    </select>
-                    <input type="hidden" name="page" value="1" />
-                </form>
+                @if (ViewData["Parameters"] != null)
+                {
+                    @if (ViewData["Parameters"] is Dictionary<string, object> routeParams)
+                    {
+                        <form asp-controller="Admin" asp-action="@ViewData["CurrentAction"]" class="d-inline">
+                            @foreach (var param in routeParams)
+                            {
+                                <input name="@param.Key" value="@param.Value" style="display:none" />
+                            }
+                            <select name="pageSize" class="form-select form-select-sm w-auto d-inline-block" onchange="this.form.submit()">
+                                <option>Select records per page</option>
+                                <option value="3">3 records per page</option>
+                                <option value="5">5 records per page</option>
+                                <option value="10">10 records per page</option>
+                            </select>
+                            <input type="hidden" name="page" value="1" />
+                        </form>
+
+                    }
+                    else
+                    {
+                        <form asp-controller="Admin" asp-action="@ViewData["CurrentAction"]" class="d-inline">
+                            <input name="@ViewData["NamePara"]" value="@ViewData["Parameters"]" style="display:none" />
+                            <select name="pageSize" class="form-select form-select-sm w-auto d-inline-block" onchange="this.form.submit()">
+                                <option>Select records per page</option>
+                                <option value="3">3 records per page</option>
+                                <option value="5">5 records per page</option>
+                                <option value="10">10 records per page</option>
+                            </select>
+                            <input type="hidden" name="page" value="1" />
+                        </form>
+                    }
+
+                }
+                else
+                {
+                    <form method="get" asp-controller="Admin" asp-action="@ViewData["CurrentAction"]" class="d-inline">
+                        <select name="pageSize" class="form-select form-select-sm w-auto d-inline-block" onchange="this.form.submit()">
+                            <option>Select records per page</option>
+                            <option value="3">3 records per page</option>
+                            <option value="5">5 records per page</option>
+                            <option value="10">10 records per page</option>
+                        </select>
+                        <input type="hidden" name="page" value="1" />
+                    </form>
+                }
 
                 <nav aria-label="Page navigation example" class="d-inline-block">
                     <ul class="pagination pagination-sm mb-0">
                         <li class="page-item @(Model.pageNumber == 1 ? "disabled" : "")">
-                            <a class="page-link" asp-controller="Admin" asp-action="CommentManager" asp-route-page="@(Model.pageNumber - 1)" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
-                                Previous
-                            </a>
+                            @if (ViewData["Parameters"] != null)
+                            {
+                                @* <a class="page-link" asp-controller="Admin" asp-route-@param.Key="@(param.Value)" asp-action="@ViewData["CurrentAction"]" asp-route-page="@(Model.pageNumber - 1)" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
+                            Previous
+                            </a> *@
+                                @if (ViewData["Parameters"] is Dictionary<string, object> routeParams)
+                                {
+                                    <form asp-controller="Admin" asp-action="@ViewData["CurrentAction"]" asp-route-page="@(Model.pageNumber - 1)" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
+                                        @* <option value="@ViewData["Parameters"]" style="display:none;" selected></option> *@
+                                        @* <input name="@ViewData["NamePara"]" value="@ViewData["Parameters"]" style="display:none" /> *@
+                                        @foreach (var param in routeParams)
+                                        {
+                                            <input name="@param.Key" value="@param.Value" style="display:none" />
+                                        }
+                                        <button type="submit" class="page-link">
+                                            Previous
+                                        </button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <form asp-controller="Admin" asp-action="@ViewData["CurrentAction"]" asp-route-page="@(Model.pageNumber - 1)" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
+                                        @* <option value="@ViewData["Parameters"]" style="display:none;" selected></option> *@
+                                        <input name="@ViewData["NamePara"]" value="@ViewData["Parameters"]" style="display:none" />
+
+                                        <button type="submit" class="page-link">
+                                            Previous
+                                        </button>
+                                    </form>
+                                }
+                            }
+                            else
+                            {
+                                <a class="page-link" asp-controller="Admin" asp-action="@ViewData["CurrentAction"]" asp-route-page="@(Model.pageNumber - 1)" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
+                                    Previous
+                                </a>
+                            }
                         </li>
                         @for (var pg = 1; pg <= Model.pageCount; pg++)
                         {
                             <li class="page-item @(pg == Model.pageNumber ? "active" : "")">
-                                <a class="page-link" asp-controller="Admin" asp-action="CommentManager" asp-route-page="@pg" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
-                                    @pg
-                                </a>
+
+                                @if (ViewData["Parameters"] != null)
+                                {
+                                    @* foreach (var param in routeParams2)
+                            {
+                            <a class="page-link" asp-controller="Admin" asp-route-@param.Key="@(param.Value)" asp-action="@ViewData["CurrentAction"]" asp-route-page="@pg" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
+                            @pg
+                            </a>
+                            } *@
+                                    @if (ViewData["Parameters"] is Dictionary<string, object> routeParams)
+                                    {
+                                        <form asp-controller="Admin" asp-action="@ViewData["CurrentAction"]" asp-route-page="@pg" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
+                                            @*  <option value="@ViewData["Parameters"]" style="display:none;" selected></option> *@
+                                            @* <input name="@ViewData["NamePara"]" value="@ViewData["Parameters"]" style="display:none" /> *@
+                                            @foreach (var param in routeParams)
+                                            {
+                                                <input name="@param.Key" value="@param.Value" style="display:none" />
+                                            }
+                                            <button type="submit" class="page-link">
+                                                @pg
+                                            </button>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <form asp-controller="Admin" asp-action="@ViewData["CurrentAction"]" asp-route-page="@pg" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
+                                            @*  <option value="@ViewData["Parameters"]" style="display:none;" selected></option> *@
+                                            <input name="@ViewData["NamePara"]" value="@ViewData["Parameters"]" style="display:none" />
+                                            <button type="submit" class="page-link">
+                                                @pg
+                                            </button>
+                                        </form>
+                                    }
+                                }
+                                else
+                                {
+                                    <a class="page-link" asp-controller="Admin" asp-action="@ViewData["CurrentAction"]" asp-route-page="@pg" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
+                                        @pg
+                                    </a>
+                                }
                             </li>
                         }
                         <li class="page-item @(Model.pageNumber == Model.pageCount ? "disabled" : "")">
-                            <a class="page-link" asp-controller="Admin" asp-action="CommentManager" asp-route-page="@(Model.pageNumber + 1)" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
-                                Next
-                            </a>
+
+                            @if (ViewData["Parameters"] != null)
+                            {
+                                @if (ViewData["Parameters"] is Dictionary<string, object> routeParams)
+                                {
+                                    <form asp-controller="Admin" asp-action="@ViewData["CurrentAction"]" asp-route-page="@(Model.pageNumber + 1)" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
+                                        @* <option value="@ViewData["Parameters"]" style="display:none;" selected></option> *@
+                                        @foreach (var param in routeParams)
+                                        {
+                                            <input name="@param.Key" value="@param.Value" style="display:none" />
+                                        }
+                                        <button type="submit" class="page-link">
+                                            Next
+                                        </button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <form asp-controller="Admin" asp-action="@ViewData["CurrentAction"]" asp-route-page="@(Model.pageNumber + 1)" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
+                                        @* <option value="@ViewData["Parameters"]" style="display:none;" selected></option> *@
+                                        <input name="@ViewData["NamePara"]" value="@ViewData["Parameters"]" style="display:none" />
+                                        <button type="submit" class="page-link">
+                                            Next
+                                        </button>
+                                    </form>
+                                }
+
+                            }
+                            else
+                            {
+                                <a class="page-link" asp-controller="Admin" asp-action="@ViewData["CurrentAction"]" asp-route-page="@(Model.pageNumber + 1)" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
+                                    Next
+                                </a>
+                            }
                         </li>
                     </ul>
                 </nav>

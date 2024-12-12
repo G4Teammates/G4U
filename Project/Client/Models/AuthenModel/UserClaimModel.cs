@@ -8,5 +8,7 @@
         public string DisplayName { get; set; }
         public string Avatar { get; set; }
         public string Role { get; set; }
+        public string LoginType { get; set; }
+        public string IsRememberMe { get; set; }
     }
 }

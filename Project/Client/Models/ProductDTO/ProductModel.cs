@@ -53,8 +53,9 @@ namespace Client.Models.ProductDTO
 		public string QrCode { get; set; }
 
         /*public string BarCode { get; set; }*/
+        public string? WinrarPassword { get; set; }
 
-		public decimal GetPrice()
+        public decimal GetPrice()
         {
             return Price - (Price * (decimal)Discount / 100);
         }

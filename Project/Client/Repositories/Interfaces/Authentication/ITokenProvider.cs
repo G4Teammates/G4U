@@ -2,9 +2,9 @@
 {
     public interface ITokenProvider
     {
-        void SetToken(string token);
-        string? GetToken();
-        void ClearToken();
+        void SetToken(string name, string token, int expiredDay, bool? isCookie = true);
+        string? GetToken(string name, bool? isCookie = true);
+        void ClearToken(string name);
         //string GetIdentityToken();
     }
 }

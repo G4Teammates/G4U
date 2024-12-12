@@ -20,7 +20,9 @@ namespace Client.Controllers
         private readonly ITokenProvider _tokenProvider = tokenProvider;
         private readonly IHelperService _helperService = helperService;
         public readonly IRepoProduct _productService = repoProduct;
-
+        private string JWT = "JWT";
+        private string IsLogin = "IsLogin";
+        private string RememberMe = "RememberMe";
 
         //public IActionResult Index()
         //{
@@ -66,19 +68,22 @@ namespace Client.Controllers
             try
             {
                 #region Check IsLogin Cookie and Token
-                var isLogin = HttpContext.Request.Cookies["IsLogin"];
+                // Lấy token và kiểm tra tính hợp lệ, nhưng luôn tiếp tục để lấy sản phẩm
+                bool isLogin = false;
+                bool rememberMe = Convert.ToBoolean(_tokenProvider.GetToken(RememberMe));
+                string token;
 
-                if (string.IsNullOrEmpty(isLogin))
+                if (rememberMe)
                 {
-                    ViewData["IsLogin"] = false;
+                    token = _tokenProvider.GetToken(JWT);
+                    isLogin = Convert.ToBoolean(_tokenProvider.GetToken(IsLogin));
                 }
                 else
                 {
-                    ViewData["IsLogin"] = isLogin;
+                    token = _tokenProvider.GetToken(JWT, false);
+                    isLogin = Convert.ToBoolean(_tokenProvider.GetToken(IsLogin,false));
                 }
 
-                // Lấy token và kiểm tra tính hợp lệ, nhưng luôn tiếp tục để lấy sản phẩm
-                string token = _tokenProvider.GetToken();
                 if (token == null)
                 {
                     ViewData["IsLogin"] = false;
@@ -129,42 +134,7 @@ namespace Client.Controllers
             return View(product);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> SearchProduct(string searchString, int? page, int pageSize = 99)
-        {
-            int pageNumber = (page ?? 1);
-            ProductViewModel productViewModel = new();
 
-            try
-            {
-                // Gọi API để tìm kiếm sản phẩm theo từ khóa
-                ResponseModel? response = await _productService.SearchProductAsync(searchString, page, pageSize);
-                ResponseModel? response2 = await _productService.GetAllProductAsync(1, 99);
-                var total = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response2.Result.ToString()!));
-
-                if (response != null && response.IsSuccess)
-                {
-                    productViewModel.Product = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response.Result.ToString()!));
-                    var data = productViewModel.Product;
-                    productViewModel.pageNumber = pageNumber;
-                    productViewModel.totalItem = data.Count;
-                    productViewModel.pageSize = pageSize;
-                    productViewModel.pageCount = (int)Math.Ceiling(total.Count / (double)pageSize);
-                    TempData["success"] = "Search Products successfully";
-                }
-                else
-                {
-                    TempData["error"] = response?.Message;
-                }
-            }
-            catch (Exception ex)
-            {
-                TempData["error"] = ex.Message;
-            }
-
-            return View("~/Views/Product/Product.cshtml", productViewModel);
-            // Trả về view ProductsManager với danh sách sản phẩm đã tìm kiếm
-        }
 
         public IActionResult Play()
         {

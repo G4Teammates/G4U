@@ -28,6 +28,12 @@ namespace Client.Models.UserDTO
             get => string.IsNullOrEmpty(_displayName) ? Username : _displayName;
             set => _displayName = value;
         }
+        /// <summary>
+        /// The Bank Name of the user.
+        /// <br/>
+        /// Tên ngân hàng của người dùng.
+        /// </summary>
+        public BankName BankName { get; set; }
 
 
         [StringLength(17, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 5)]

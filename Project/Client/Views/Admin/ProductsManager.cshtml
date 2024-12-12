@@ -102,28 +102,6 @@
     <span class="titleManager bg-success py-3 px-5 rounded-4 fw-bold text-white">Products Manager</span>
 </div>
 
-@* <div class="row pt-3 pb-4 d-flex align-items-center" style="margin-left:20%;">
-    <!-- Div chứa nút Filter -->
-    <div class="col-md-3 filter-form m-3 p-4 shadow-sm rounded d-flex align-items-center" >
-        <button class="btn btn-primary w-100" onclick="openSidebar()">Filter</button>
-    </div>
-
-    <!-- Form sắp xếp sản phẩm -->
-    <form class="col-md-9 form-group sort-form m-3 p-4 shadow-sm rounded d-flex align-items-center" style="max-width: 500px;" asp-action="SortProducts" asp-controller="Admin" method="post">
-        <select name="sort" class="form-select me-3" aria-label="Type">
-            <option value="ascPrice">Giá tăng dần</option>
-            <option value="descPrice">Giá giảm dần</option>
-            <option value="ascView">View tăng dần</option>
-            <option value="descView">View giảm dần</option>
-            <option value="ascLike">Like tăng dần</option>
-            <option value="descLike">Like giảm dần</option>
-            <option value="ascSold">Lượt mua tăng dần</option>
-            <option value="descSold">Lượt mua giảm dần</option>
-        </select>
-        <button type="submit" class="btn btn-primary">Sort</button>
-    </form>
-</div> *@
-
 <!-- Sidebar cho bộ lọc -->
 <div id="filterSidebar">
     <a href="javascript:void(0)" class="closebtn" onclick="closeSidebar()">&times;</a>
@@ -137,6 +115,7 @@
 
             <input type="number" class="form-range form-control price-input mt-2" name="maxRange" id="maxRange" placeholder="Max price">
             <small id="maxPriceError" class="text-danger d-none">Price cannot be less than 0.</small>
+            <small id="rangeError" class="text-danger d-none">Max price must be greater than Min price.</small>
         </div>
 
         <!-- Category Filter -->
@@ -145,6 +124,7 @@
             <select class="form-select" name="category">
                 @if (Model.CategoriesModel != null)
                 {
+                    <option value="">None</option>
                     foreach (var cate in Model.CategoriesModel)
                     {
                         <option value="@cate.Name">@cate.Name</option>
@@ -163,6 +143,7 @@
             <select class="form-select" name="platform">
                 @if (Model.Product != null)
                 {
+                    <option value="">None</option>
                     foreach (Client.Models.Enum.ProductEnum.PlatformType platform in Enum.GetValues(typeof(Client.Models.Enum.ProductEnum.PlatformType)))
                     {
                         <option value="@(platform)">@platform</option>
@@ -179,6 +160,7 @@
         <div class="filter-section mb-4">
             <h5 class="filter-title">Discount</h5>
             <select name="discount" class="form-select">
+                <option value="">None</option>
                 <option value="True">True</option>
                 <option value="False">False</option>
             </select>
@@ -188,6 +170,7 @@
         <div class="filter-section mb-4">
             <h5 class="filter-title">Sort by Sold</h5>
             <select name="sold" class="form-select" aria-label="Type">
+                <option value="">None</option>
                 <option value="0">>0</option>
                 <option value="100">>100</option>
                 <option value="200">>200</option>
@@ -227,6 +210,7 @@
                 <option value="descLike">Like Descending</option>
                 <option value="ascSold">Purchase Count Ascending</option>
                 <option value="descSold">Purchase Count Descending</option>
+                <option value="free">Free</option>
             </select>
             <button type="submit" class="btn btn-primary">Sort</button>
         </form>
@@ -365,50 +349,6 @@
         </div>
     </div>
 
-
-    <!-- Phân trang -->
-    @* <div class="d-flex justify-content-between mt-3">
-    <div>Total: @(Model.pageCount)</div>
-        <div>
-            <select class="form-select form-select-sm w-auto d-inline-block">
-                <option>20 records per page</option>
-                <option>50 records per page</option>
-                <option>100 records per page</option>
-            </select>
-            <nav aria-label="Page navigation example" class="d-inline-block">
-                <ul class="pagination pagination-sm mb-0">
-                    <li class="page-item disabled">
-                        <a class="page-link" href="#">1 to 20</a>
-                    </li>
-                    <li class="page-item"><a class="page-link" href="#">1</a></li>
-                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                    <li class="page-item"><a class="page-link" href="#">></a></li>
-                </ul>
-            </nav>
-        </div>
-    </div> *@
-    @* <div>
-        Trang @(Model.pageNumber) / @(Model.pageCount)
-    </div>
-    <div class="d-flex justify-content-center">
-        <ul class="pagination">
-            <li class="page-item @(Model.pageNumber == 1 ? "disabled": "")">
-                <a class="page-link" asp-controller="Admin" asp-action="ProductsManager" asp-route-page="@(Model.pageNumber - 1)"> Previous </a>
-            </li>
-            @for (var pg = 1; pg <= Model.pageCount; pg++)
-            {
-                <li class="page-item @(pg == Model.pageNumber ? "active" :"")">
-                    <a class="page-link" asp-controller="Admin" asp-action="ProductsManager" asp-route-page="@pg"> @pg </a>
-                </li>
-            }
-            <li class="page-item @(Model.pageNumber == Model.pageCount ? "disabled": "")">
-                <a class="page-link" asp-controller="Admin" asp-action="ProductsManager" asp-route-page="@(Model.pageNumber + 1)"> Next </a>
-            </li>
-        </ul>
-
-    </div> *@
-
     <div class="d-flex justify-content-between" style="margin-top:1.5vw;">
         @* <div>Total: @(Model.totalItem) items</div> *@
         <div style=";font-size: 1em; font-weight: bold; color: #00A97F; display: flex; align-items: center; justify-content: center; padding: 15px 30px; background-color: transparent; border: 2px solid #00A97F; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 169, 127, 0.4), 0 0 15px rgba(0, 169, 127, 0.3); position: relative; text-align: center; transition: all 0.3s;">
@@ -417,44 +357,184 @@
             <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(135deg, #00A97F, #800080); border-radius: 8px; opacity: 0.2; z-index: -1;"></div>
         </div>
         <div style="display: flex; align-items: center; justify-content: center;">
-            <form method="get" asp-controller="Admin" asp-action="ProductsManager" class="d-inline">
-                <select name="pageSize" class="form-select form-select-sm w-auto d-inline-block" onchange="this.form.submit()">
-                    <option>Select records per page</option>
-                    <option value="3">3 records per page</option>
-                    <option value="5">5 records per page</option>
-                    <option value="10">10 records per page</option>
-                </select>
-                <input type="hidden" name="page" value="1" />
-            </form>
+             @if (ViewData["Parameters"] != null)
+            {
+                @if (ViewData["Parameters"] is Dictionary<string, object> routeParams)
+                {
+                    <form method="get" asp-controller="Admin" asp-action="@ViewData["CurrentAction"]" class="d-inline">
+                        @foreach (var param in routeParams)
+                        {
+                            <input name="@param.Key" value="@param.Value" style="display:none" />
+                        }
+                        <select name="pageSize" class="form-select form-select-sm w-auto d-inline-block" onchange="this.form.submit()">
+                            <option>Select records per page</option>
+                            <option value="3">3 records per page</option>
+                            <option value="5">5 records per page</option>
+                            <option value="10">10 records per page</option>
+                        </select>
+                        <input type="hidden" name="page" value="1" />
+                    </form>
+
+                }
+                else
+                {
+                    <form method="get" asp-controller="Admin" asp-action="@ViewData["CurrentAction"]" class="d-inline">
+                        <input name="@ViewData["NamePara"]" value="@ViewData["Parameters"]" style="display:none" />
+                        <select name="pageSize" class="form-select form-select-sm w-auto d-inline-block" onchange="this.form.submit()">
+                            <option>Select records per page</option>
+                            <option value="3">3 records per page</option>
+                            <option value="5">5 records per page</option>
+                            <option value="10">10 records per page</option>
+                        </select>
+                        <input type="hidden" name="page" value="1" />
+                    </form>
+                }
+
+            }
+            else
+            {
+                <form method="get" asp-controller="Admin" asp-action="@ViewData["CurrentAction"]" class="d-inline">
+                    <select name="pageSize" class="form-select form-select-sm w-auto d-inline-block" onchange="this.form.submit()">
+                        <option>Select records per page</option>
+                        <option value="3">3 records per page</option>
+                        <option value="5">5 records per page</option>
+                        <option value="10">10 records per page</option>
+                    </select>
+                    <input type="hidden" name="page" value="1" />
+                </form>
+            }
 
             <nav aria-label="Page navigation example" class="d-inline-block">
                 <ul class="pagination pagination-sm mb-0">
                     <li class="page-item @(Model.pageNumber == 1 ? "disabled" : "")">
-                        <a class="page-link" asp-controller="Admin" asp-action="ProductsManager" asp-route-page="@(Model.pageNumber - 1)" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
-                            Previous
-                        </a>
+                        @if (ViewData["Parameters"] != null)
+                        {
+                                @* <a class="page-link" asp-controller="Admin" asp-route-@param.Key="@(param.Value)" asp-action="@ViewData["CurrentAction"]" asp-route-page="@(Model.pageNumber - 1)" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
+                                    Previous
+                                </a> *@
+                            @if (ViewData["Parameters"] is Dictionary<string, object> routeParams)
+                            {
+                                <form asp-controller="Admin" asp-action="@ViewData["CurrentAction"]" asp-route-page="@(Model.pageNumber - 1)" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
+                                    @* <option value="@ViewData["Parameters"]" style="display:none;" selected></option> *@
+                                    @* <input name="@ViewData["NamePara"]" value="@ViewData["Parameters"]" style="display:none" /> *@
+                                    @foreach (var param in routeParams)
+                                    {
+                                        <input name="@param.Key" value="@param.Value" style="display:none" />
+                                    }
+                                    <input type="hidden" name="pageSize" value="@(ViewContext.HttpContext.Request.Query["pageSize"])" />
+                                    <button type="submit" class="page-link">
+                                        Previous
+                                    </button>
+                                </form>
+                            }
+                            else
+                            {
+                                <form asp-controller="Admin" asp-action="@ViewData["CurrentAction"]" asp-route-page="@(Model.pageNumber - 1)" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
+                                    @* <option value="@ViewData["Parameters"]" style="display:none;" selected></option> *@
+                                    <input name="@ViewData["NamePara"]" value="@ViewData["Parameters"]" style="display:none" />
+                                    <input type="hidden" name="pageSize" value="@(ViewContext.HttpContext.Request.Query["pageSize"])" />
+                                    <button type="submit" class="page-link">
+                                        Previous
+                                    </button>
+                                </form>
+                            }
+                        }
+                        else
+                        {
+                            <a class="page-link" asp-controller="Admin" asp-action="@ViewData["CurrentAction"]" asp-route-page="@(Model.pageNumber - 1)" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
+                                Previous
+                            </a>
+                        }
                     </li>
                     @for (var pg = 1; pg <= Model.pageCount; pg++)
                     {
                         <li class="page-item @(pg == Model.pageNumber ? "active" : "")">
-                            <a class="page-link" asp-controller="Admin" asp-action="ProductsManager" asp-route-page="@pg" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
-                                @pg
-                            </a>
+                            
+                            @if (ViewData["Parameters"] != null)
+                            {
+                                @* foreach (var param in routeParams2)
+                                {
+                                    <a class="page-link" asp-controller="Admin" asp-route-@param.Key="@(param.Value)" asp-action="@ViewData["CurrentAction"]" asp-route-page="@pg" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
+                                        @pg
+                                    </a>
+                                } *@
+                                @if (ViewData["Parameters"] is Dictionary<string, object> routeParams)
+                                {
+                                    <form asp-controller="Admin" asp-action="@ViewData["CurrentAction"]" asp-route-page="@pg" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
+                                        @*  <option value="@ViewData["Parameters"]" style="display:none;" selected></option> *@
+                                        @* <input name="@ViewData["NamePara"]" value="@ViewData["Parameters"]" style="display:none" /> *@
+                                        @foreach (var param in routeParams)
+                                        {
+                                            <input name="@param.Key" value="@param.Value" style="display:none" />
+                                        }
+                                        <input type="hidden" name="pageSize" value="@(ViewContext.HttpContext.Request.Query["pageSize"])" />
+                                        <button type="submit" class="page-link">
+                                            @pg
+                                        </button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <form asp-controller="Admin" asp-action="@ViewData["CurrentAction"]" asp-route-page="@pg" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
+                                        @*  <option value="@ViewData["Parameters"]" style="display:none;" selected></option> *@
+                                        <input name="@ViewData["NamePara"]" value="@ViewData["Parameters"]" style="display:none" />
+                                        <input type="hidden" name="pageSize" value="@(ViewContext.HttpContext.Request.Query["pageSize"])" />
+                                        <button type="submit" class="page-link">
+                                            @pg
+                                        </button>
+                                    </form>
+                                }
+                            }
+                            else
+                            {
+                                <a class="page-link" asp-controller="Admin" asp-action="@ViewData["CurrentAction"]" asp-route-page="@pg" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
+                                    @pg
+                                </a>
+                            }
                         </li>
                     }
                     <li class="page-item @(Model.pageNumber == Model.pageCount ? "disabled" : "")">
-                        <a class="page-link" asp-controller="Admin" asp-action="ProductsManager" asp-route-page="@(Model.pageNumber + 1)" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
-                            Next
-                        </a>
+                       
+                        @if (ViewData["Parameters"] != null)
+                        {
+                            @if (ViewData["Parameters"] is Dictionary<string, object> routeParams)
+                            {
+                                <form asp-controller="Admin" asp-action="@ViewData["CurrentAction"]" asp-route-page="@(Model.pageNumber + 1)" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
+                                    @* <option value="@ViewData["Parameters"]" style="display:none;" selected></option> *@
+                                    @foreach (var param in routeParams)
+                                    {
+                                        <input name="@param.Key" value="@param.Value" style="display:none" />
+                                    }
+                                    <input type="hidden" name="pageSize" value="@(ViewContext.HttpContext.Request.Query["pageSize"])" />
+                                    <button type="submit" class="page-link">
+                                        Next
+                                    </button>
+                                </form>
+                            }
+                            else
+                            {
+                                <form asp-controller="Admin" asp-action="@ViewData["CurrentAction"]" asp-route-page="@(Model.pageNumber + 1)" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
+                                    @* <option value="@ViewData["Parameters"]" style="display:none;" selected></option> *@
+                                    <input name="@ViewData["NamePara"]" value="@ViewData["Parameters"]" style="display:none" />
+                                    <input type="hidden" name="pageSize" value="@(ViewContext.HttpContext.Request.Query["pageSize"])" />
+                                    <button type="submit" class="page-link">
+                                        Next
+                                    </button>
+                                </form>
+                            }
+                            
+                        }
+                        else
+                        {
+                            <a class="page-link" asp-controller="Admin" asp-action="@ViewData["CurrentAction"]" asp-route-page="@(Model.pageNumber + 1)" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
+                                Next
+                            </a>
+                        }
                     </li>
                 </ul>
             </nav>
         </div>
     </div>
-
-
-
-
 </div>
 
 
@@ -521,7 +601,29 @@
 
 
 
+<script>
+    // Lấy các phần tử HTML
+    const minRangeInput = document.getElementById('minRange');
+    const maxRangeInput = document.getElementById('maxRange');
+    const rangeError = document.getElementById('rangeError');
 
+    // Hàm kiểm tra giá trị
+    function validateRange() {
+        const minRange = parseFloat(minRangeInput.value) || 0;
+        const maxRange = parseFloat(maxRangeInput.value) || 0;
+
+        // Kiểm tra điều kiện maxRange <= minRange
+        if (maxRange <= minRange && maxRangeInput.value && minRangeInput.value) {
+            rangeError.classList.remove('d-none'); // Hiển thị lỗi
+        } else {
+            rangeError.classList.add('d-none'); // Ẩn lỗi
+        }
+    }
+
+    // Thêm sự kiện khi nhập giá trị
+    minRangeInput.addEventListener('input', validateRange);
+    maxRangeInput.addEventListener('input', validateRange);
+</script>
 
 <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
 
