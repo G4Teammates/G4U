@@ -83,3 +83,43 @@
         box-shadow: 0 0 25px #00ffbf;
     }
 }
+
+
+.upload-item {
+    position: relative; /* Giữ vị trí tương đối để nút Delete được định vị */
+    padding: 10px;
+    border: 1px solid #00A97F;
+    border-radius: 8px;
+    transition: all 0.3s ease; /* Hiệu ứng mượt mà */
+    background-color: white;
+}
+
+    .upload-item:hover {
+        /*background-color: #f0f8ff;*/ /* Đổi màu nền khi hover */
+        transform: scale(1.02); /* Hiệu ứng phóng to nhẹ */
+        border-color: #008cba; /* Đổi màu viền khi hover */
+    }
+
+    /* Ẩn nút Delete mặc định */
+    .upload-item .delete-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        display: none; /* Ẩn nút */
+        background-color: transparent; /* Nền trong suốt */
+        border: none;
+        color: #ff4d4f; /* Màu đỏ */
+        font-size: 16px;
+        cursor: pointer;
+        transition: color 0.3s ease;
+    }
+
+    /* Hiển thị nút Delete khi hover vào upload-item */
+    .upload-item:hover .delete-btn {
+        display: block;
+    }
+
+    /* Hiệu ứng khi hover vào nút Delete */
+    .upload-item .delete-btn:hover {
+        color: #d32f2f; /* Màu đậm hơn khi hover vào nút */
+    }
