@@ -336,14 +336,14 @@
                                 }
                                 else if (item.ProviderName.Contains("Cloudinary"))
                                 {
-                                    <div class="border p-2 mb-2" id="item-@index">
-                                        <div class="text-end">
+                                    <div class="imageUrl p-2 mb-2" id="item-@index">
+@*                                         <div class="text-end">
                                             <button onclick="removeItem(@index)" title="Delete" type="button">
                                                 <i class="fa-solid fa-delete-left text-danger"></i>
                                             </button>
-                                        </div>
-                                        <div>
-                                            <img src="@item.Url" class="border mb-3" style="min-width:200px; max-height:200px; min-height:150px; max-width:300px" />
+                                        </div> *@
+                                        <div class="text-center">
+                                            <img src="@item.Url" class="" style="min-width:200px; max-height:200px; min-height:150px; max-width:300px" />
                                             @* <input type="file" multiple class="form-control mb-2" asp-for="@item" /> *@
                                         </div>
                                         <span class="text-danger" asp-validation-for="@item.Url"></span>

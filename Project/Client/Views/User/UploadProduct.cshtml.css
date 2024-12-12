@@ -123,3 +123,19 @@
     .upload-item .delete-btn:hover {
         color: #d32f2f; /* Màu đậm hơn khi hover vào nút */
     }
+
+
+.imageUrl {
+    position: relative;
+    padding: 10px;
+    border: 1px solid #00A97F;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    background-color: white;
+}
+
+    .imageUrl:hover {
+        /*background-color: #f0f8ff;*/ /* Đổi màu nền khi hover */
+        transform: scale(1.02); /* Hiệu ứng phóng to nhẹ */
+        /*border-color: #008cba;*/ /* Đổi màu viền khi hover */
+    }
