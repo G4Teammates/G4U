@@ -1,6 +1,6 @@
 ﻿@using System.Security.Claims
 @* @model Client.Models.AuthenModel.ChangePasswordModel *@
-@model Client.Models.UserDTO.UpdateUser
+@model Client.Models.OrderModel.OrderViewModel
 @using static Client.Models.Enum.UserEnum.User
 
 
@@ -11,7 +11,98 @@
     var username = @User.Claims.FirstOrDefault(a => a.Type == ClaimTypes.Name)?.Value;
 }
 
+<style>
+    /* Căn giữa nội dung của các ô trong bảng */
+    .table td, .table th {
+        text-align: center; /* Căn giữa cho văn bản */
+        vertical-align: middle; /* Căn giữa theo chiều dọc */
+    }
 
+        /* Căn giữa hình ảnh trong các ô */
+        .table td img {
+            display: block; /* Đảm bảo hình ảnh chiếm toàn bộ không gian */
+            text-align: center;
+            justify-content: center;
+        }
+
+        /* Căn giữa nội dung của các phần tử ul, li trong bảng */
+        .table td ul {
+            list-style-type: none; /* Loại bỏ dấu chấm đầu dòng */
+            padding: 0;
+            text-align: center; /* Căn giữa văn bản trong danh sách */
+        }
+
+        .table td li {
+            text-align: center; /* Căn giữa văn bản trong mỗi mục danh sách */
+        }
+
+        /* Căn giữa cho các icon trong các liên kết */
+        .table td a i {
+            display: inline-block; /* Đảm bảo icon được căn giữa */
+            text-align: center;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+    /* Cải tiến border cho thead và tbody */
+    .table thead {
+        background-color: #f8f9fa; /* Màu nền sáng cho thead */
+        border-radius: 10px 10px 0 0; /* Làm tròn góc trên của thead */
+        box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); /* Thêm bóng nhẹ cho thead */
+    }
+
+    .table tbody {
+        border-radius: 0 0 10px 10px; /* Làm tròn góc dưới của tbody */
+        box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.1); /* Thêm bóng nhẹ cho tbody */
+    }
+
+        /* Chỉnh sửa khi hover vào dòng */
+        .table tbody tr:hover {
+            background-color: #00A97F; /* Nền màu #00A97F khi hover vào dòng */
+            color: white !important; /* Chữ trắng khi hover vào dòng */
+            cursor: pointer; /* Thêm hiệu ứng con trỏ khi hover */
+            border-top: 2px solid #00A97F; /* Viền trên của tr khi hover */
+            border-bottom: 2px solid #00A97F; /* Viền dưới của tr khi hover */
+        }
+
+        /* Giữ nguyên màu nền và chữ trong các ô mặc định */
+        .table tbody tr td {
+            background-color: transparent; /* Nền của các ô là trong suốt */
+            color: inherit; /* Màu chữ kế thừa từ dòng */
+        }
+
+    /* Hiệu ứng chuyển động khi hover vào hình ảnh */
+    .table td img {
+        border-radius: 8px; /* Làm tròn góc hình ảnh */
+        box-shadow: 0 0 10px rgba(0, 169, 127, 0.7); /* Bóng cho hình ảnh */
+        transition: all 0.3s ease; /* Chuyển tiếp hiệu ứng */
+    }
+
+        .table td img:hover {
+            transform: scale(1.05); /* Tăng kích thước hình ảnh khi hover */
+        }
+
+    /* Chỉnh sửa liên kết trong bảng */
+    .table td a {
+        color: inherit; /* Màu liên kết kế thừa từ dòng */
+        text-decoration: none; /* Loại bỏ gạch dưới */
+        transition: color 0.3s ease;
+    }
+
+        .table td a:hover {
+            color: #00A97F; /* Màu chữ của liên kết khi hover */
+        }
+
+        /* Hiệu ứng hover cho các icon trong bảng */
+        .table td a i {
+            transition: transform 0.5s ease; /* Thêm hiệu ứng chuyển động cho icon */
+        }
+
+        /* Khi hover vào icon */
+        .table td a:hover i {
+            transform: scale(1.5); /* Tăng kích thước icon lên 20% khi hover */
+        }
+</style>
 <style>
     .bt {
         background-color: #f8f9fa;
@@ -84,82 +175,117 @@
         </div>
 
         <div class="col-md-9 p-4">
-            <div class="px-5" style="min-height:1000px;">
-                <table class="table">
-                    <thead>
+            <div class="px-5">
+                <table class="table table-bordered table-hover align-middle">
+                    <thead class="table-light">
                         <tr>
-                            <th scope="col">Order#</th>
-                            <th scope="col">Tên Game</th>
-                            <th scope="col">Hình Ảnh</th>
-                            <th scope="col">Ngày Tải</th>
-                            <th scope="col">Giá</th>
+                            <th scope="col">Order Id</th>
+                            <th scope="col">Price</th>
+                            <th scope="col">Payment Method</th>
+                            <th scope="col">CreateAt</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <th scope="row">1</th>
-                            <td>Jua Mikami</td>
-                            <td><img src="~/image/history-game-1.jpg" style="height:70px;width:70px;" /></td>
+                        @foreach (var i in Model.Orders) {
 
-                            <td>01/09/2024</td>
-                            <td>Free</td>
+
+                            <tr>
+                                <td scope="row">@i.Id</td>
+
+                                @if (i.TotalPrice==0)
+                                {
+                                    <td>Free</td>
+                                }
+                                else
+                                {
+                                    <td>@i.TotalPrice</td>
+                                }
+
+                                <td>@i.PaymentMethod.ToString()</td>
+                                <td>@i.CreatedAt</td>
+                                 <td>
+                                <a href="javascript:void(0);"
+                                   data-url="@Url.Action("OrderDetail", "Admin", new { id = i.Id })"
+                                   onclick="showDetailModal(this)"
+                                   title="Order Detail">
+                                    <i class="fa-solid fa-pen-to-square" style="color:#0b3d0d"></i>
+                                </a>
+
+
+                            </td>
                         </tr>
-                        <tr>
-                            <th scope="row">2</th>
-                            <td>Jua Mikami</td>
-                            <td><img src="~/image/history-game-1.jpg" style="height:70px;width:70px;" /></td>
-                            <td>02/09/2024</td>
-                            <td>$7.5</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">3</th>
-                            <td>Jua Mikami</td>
-                            <td><img src="~/image/history-game-1.jpg" style="height:70px;width:70px;" /></td>
-                            <td>03/09/2024</td>
-                            <td>Free</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">4</th>
-                            <td>Jua Mikami</td>
-                            <td><img src="~/image/history-game-1.jpg" style="height:70px;width:70px;" /></td>
-                            <td>04/09/2024</td>
-                            <td>$9.99</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">5</th>
-                            <td>Jua Mikami</td>
-                            <td><img src="~/image/history-game-1.jpg" style="height:70px;width:70px;" /></td>
-                            <td>05/09/2024</td>
-                            <td>Free</td>
-                        </tr>
+                        }
                     </tbody>
                 </table>
+
+
+                <div class="d-flex justify-content-between align-items-center mt-3">
+        <!-- Total Items -->
+        <div>Total: @Model.Orders.Count items</div>
+
+        <!-- Records Per Page -->
+        <div class="d-flex align-items-center">
+            <form method="get" asp-controller="Order" asp-action="@ViewData["HistoryAction"]" class="d-inline">
+                    <select name="pageSize" class="form-select form-select-sm w-auto d-inline-block" onchange="this.form.submit()">
+                <option>Select records per page</option>
+                <option value="3">3 records per page</option>
+                <option value="5">5 records per page</option>
+                <option value="10">10 records per page</option>
+                <option value="20">20 records per page</option>
+            </select>
+                <input type="hidden" name="page" value="1" />
+            </form>
+
+
+            <!-- Pagination -->
+            <nav aria-label="Page navigation example">
+                <ul class="pagination pagination-sm mb-0">
+                    <!-- Previous Page -->
+                    <li class="page-item @(Model.pageNumber == 1 ? "disabled" : "")">
+                        <a class="page-link"
+                           asp-controller="Order"
+                           asp-action="@ViewData["HistoryAction"]"
+                           asp-route-page="@(Model.pageNumber - 1)"
+                           asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
+                            Previous
+                        </a>
+                    </li>
+
+                    <!-- Page Numbers -->
+                    @for (var pg = 1; pg <= Model.pageCount; pg++)
+                    {
+                        <li class="page-item @(pg == Model.pageNumber ? "active" : "")">
+                            <a class="page-link"
+                               asp-controller="Order"
+                               asp-action="@ViewData["HistoryAction"]"
+                               asp-route-page="@pg"
+                               asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
+                                @pg
+                            </a>
+                        </li>
+                    }
+
+                    <!-- Next Page -->
+                    <li class="page-item @(Model.pageNumber == Model.pageCount ? "disabled" : "")">
+                        <a class="page-link"
+                           asp-controller="Order"
+                           asp-action="@ViewData["HistoryAction"]"
+                           asp-route-page="@(Model.pageNumber + 1)"
+                           asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
+                            Next
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+
             </div>
         </div>
     </div>
 </div>
-
-
-
-    <script>
-        // Mở hộp thoại chọn file khi nhấp vào nút "Change Avatar"
-        document.getElementById('changeAvatarBtn').addEventListener('click', function () {
-            document.getElementById('avatarInput').click();
-        });
-
-        // Xử lý sự kiện khi file ảnh được chọn
-        document.getElementById('avatarInput').addEventListener('change', function (event) {
-            const input = event.target;
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    // Hiển thị ảnh vừa chọn lên thẻ img
-                    document.getElementById('avatarPreview').src = e.target.result;
-                };
-                reader.readAsDataURL(input.files[0]);
-            }
-        });
-    </script>
+<div id="modalContainer"></div>
 
 
     @section Scripts {
@@ -168,7 +294,20 @@
         }
     }
 
+<script>
+    function showDetailModal(element) {
+        var url = $(element).data('url');
 
-
-
-
+        $.ajax({
+            url: url,
+            type: 'GET',
+            success: function (response) {
+                $('#modalContainer').html(response); // Thêm nội dung partial vào modalContainer
+                $('#modalOrderDetail').modal('show'); // Hiển thị modal
+            },
+            error: function () {
+                alert('Có lỗi xảy ra khi tải nội dung modal.');
+            }
+        });
+    }
+</script>

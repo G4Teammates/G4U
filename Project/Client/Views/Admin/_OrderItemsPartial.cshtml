@@ -4,10 +4,19 @@
 @{
     ViewData["_OrderItemsPartial"] = "This is _OrderItemsPartial Page";
 }
-@{ Layout = null; }
+@{
+    Layout = null;
+}
 @using Client.Models.OrderModel
 @model OrderViewModel
-
+<style>
+.imgHistory {
+            width: 150px;
+            height: 150px;
+        object-fit: cover;
+        border-radius: 8px;
+        }
+</style>
 
 
 <div class="modal fade" id="modalOrderDetail" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -29,56 +38,49 @@
                 }
 
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <div class="row" >
+                <div class="row">
                     <form method="get" class="col" readonly>
                         @if (Model.Items != null)
                         {
                             @foreach (var item in Model.Items)
                             {
-                                <div style="border: 2px solid #00A97F;padding: 5px 10px; border-radius:5px;">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="mb-2">
-                                                <label class="form-label fw-bold" style="color:#00A97F">Product Id</label>
-                                                <input type="text" readonly asp-for="@item.ProductId" class="form-control">
-                                                <span class="text-danger" asp-validation-for="@item.ProductId"></span>
-                                            </div>
+                                <div class="row" style="border: 2px solid #00A97F; padding: 10px; border-radius: 5px;">
+                                    <!-- Cột 1: Hình ảnh -->
+                                    <div class="col-4 d-flex justify-content-center align-items-center">
+                                            <img src="@item.ImageUrl" alt="Profile" class="imgHistory">
+                                    </div>
+
+                                    <!-- Cột 2: Dữ liệu bên trái -->
+                                    <div class="col-4">
+                                        <div class="mb-2">
+                                            <label class="form-label fw-bold" style="color:#00A97F">Product Id</label>
+                                            <input type="text" readonly asp-for="@item.ProductId" class="form-control">
+                                            <span class="text-danger" asp-validation-for="@item.ProductId"></span>
                                         </div>
-                                        <div class="col-md-6">
-                                            <div class="mb-2">
-                                                <label class="form-label fw-bold" style="color:#00A97F">Publisher Name</label>
-                                                <input type="text" readonly asp-for="@item.PublisherName" class="form-control">
-                                                <span class="text-danger" asp-validation-for="@item.PublisherName"></span>
-                                            </div>
+                                        <div class="mb-2">
+                                            <label class="form-label fw-bold" style="color:#00A97F">Publisher Name</label>
+                                            <input type="text" readonly asp-for="@item.PublisherName" class="form-control">
+                                            <span class="text-danger" asp-validation-for="@item.PublisherName"></span>
                                         </div>
                                     </div>
-                                    <div class="row mt-2">
-                                        <div class="col-md-4">
-                                            <div class="mb-2">
-                                                <label class="form-label fw-bold" style="color:#00A97F">Product name</label>
-                                                <input type="text" readonly asp-for="@item.ProductName" class="form-control">
-                                                <span class="text-danger" asp-validation-for="@item.ProductName"></span>
-                                            </div>
+
+                                    <!-- Cột 3: Dữ liệu bên phải -->
+                                    <div class="col-4">
+                                        <div class="mb-2">
+                                            <label class="form-label fw-bold" style="color:#00A97F">Product Name</label>
+                                            <input type="text" readonly asp-for="@item.ProductName" class="form-control">
+                                            <span class="text-danger" asp-validation-for="@item.ProductName"></span>
                                         </div>
-                                        <div class="col-md-4">
-                                            <div class="mb-2">
-                                                <label class="form-label fw-bold" style="color:#00A97F">Total price</label>
-                                                <input type="text" readonly asp-for="@item.TotalPrice" class="form-control">
-                                                <span class="text-danger" asp-validation-for="@item.TotalPrice"></span>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="mb-2">
-                                                <label class="form-label fw-bold" style="color:#00A97F">Publisher Quantity</label>
-                                                <input type="number" readonly asp-for="@item.Quantity" class="form-control">
-                                                <span class="text-danger" asp-validation-for="@item.Quantity"></span>
-                                            </div>
+                                        <div class="mb-2">
+                                            <label class="form-label fw-bold" style="color:#00A97F">Total Price</label>
+                                            <input type="text" readonly asp-for="@item.TotalPrice" class="form-control">
+                                            <span class="text-danger" asp-validation-for="@item.TotalPrice"></span>
                                         </div>
                                     </div>
                                 </div>
-                                
                                 <hr>
                                 <br />
+
                             }
 
                         }
