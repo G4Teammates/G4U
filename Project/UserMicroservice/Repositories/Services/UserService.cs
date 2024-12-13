@@ -131,7 +131,7 @@ namespace UserMicroservice.Repositories.Services
 
                 // Step 7: Notify statistics update
                 var totalRequest = await TotalRequest();
-                _message.SendingMessage(totalRequest.Result, "Stastistical", "totalUser_for_stastistical", "totalUser_for_stastistical", ExchangeType.Direct, true, false, false, false);
+                _message.SendingMessage2(totalRequest.Result, "Stastistical", "totalUser_for_stastistical", "totalUser_for_stastistical", ExchangeType.Direct, true, false, false, false);
 
                 response.IsSuccess = true;
                 response.Message = "User created successfully.";
@@ -176,7 +176,7 @@ namespace UserMicroservice.Repositories.Services
                 await _context.SaveChangesAsync();
 
                 var totalRequest = await TotalRequest();
-                _message.SendingMessage(totalRequest.Result, "Stastistical", "totalUser_for_stastistical", "totalUser_for_stastistical", ExchangeType.Direct, true, false, false, false);
+                _message.SendingMessage2(totalRequest.Result, "Stastistical", "totalUser_for_stastistical", "totalUser_for_stastistical", ExchangeType.Direct, true, false, false, false);
 
                 response.IsSuccess = true;
                 response.Message = "User deleted successfully.";
@@ -202,7 +202,7 @@ namespace UserMicroservice.Repositories.Services
                     response.Result = _mapper.Map<ICollection<UserModel>>(users).ToPagedList(pageNumber, pageSize);
 
                     var totalRequest = await TotalRequest();
-                    _message.SendingMessage(totalRequest.Result, "Stastistical", "totalUser_for_stastistical", "totalUser_for_stastistical", ExchangeType.Direct, true, false, false, false);
+                    _message.SendingMessage2(totalRequest.Result, "Stastistical", "totalUser_for_stastistical", "totalUser_for_stastistical", ExchangeType.Direct, true, false, false, false);
                 }
                 else
                 {
