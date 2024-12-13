@@ -3,19 +3,6 @@
 }
 @using Client.Models.AuthenModel
 @model RegisterModel
-@if (TempData["success"] != null)
-{
-    <div class="alert alert-success">
-        @TempData["success"]
-    </div>
-}
-
-@if (TempData["error"] != null)
-{
-    <div class="alert alert-danger">
-        @TempData["error"]
-    </div>
-}
 <div class="login-container" style="min-height:100vh; max-height:auto">
     <div class="login-box">
         <div class="login-logo">
