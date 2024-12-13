@@ -321,7 +321,58 @@ namespace OrderMicroservice.Repositories.Services
                 );
             }
         }
+        public void SendingMessage2<T>(T message, string exchangeName, string queueName, string routingKey, string exchangeType, bool exchangeDurable, bool queueDurable, bool exclusive, bool autoDelete)
+        {
+            ConnectionFactory factory = new()
+            {
+                UserName = _config["31"],
+                Password = _config["32"],
+                VirtualHost = _config["31"],
+                Port = 5672,
+                HostName = _config["33"]
+            };
 
+            using var connection = factory.CreateConnection();
+            using (var channel = connection.CreateModel())
+            {
+                // Khai báo cổng Exchange
+                channel.ExchangeDeclare(
+                    exchange: exchangeName,
+                    type: exchangeType,
+                    durable: exchangeDurable
+                );
+
+                // Khai báo hàng chờ
+                var queue = channel.QueueDeclare(
+                    queue: queueName,
+                    durable: queueDurable,
+                    exclusive: exclusive,
+                    autoDelete: autoDelete,
+                    arguments: ImmutableDictionary<string, object>.Empty
+                );
+
+                Console.WriteLine($"Sending message to queue '{queueName}' on exchange '{exchangeName}': {message}");
+
+                // Liên kết hàng đợi với cổng bằng routing key
+                channel.QueueBind(
+                    queue: queueName,
+                    exchange: exchangeName,
+                    routingKey: routingKey
+                );
+
+                var jsonString = System.Text.Json.JsonSerializer.Serialize(message);
+                var body = Encoding.UTF8.GetBytes(jsonString);
+
+                // Gửi message
+                channel.BasicPublish(
+                    exchange: exchangeName,
+                    routingKey: routingKey,
+                    mandatory: true,
+                    basicProperties: null,
+                    body: body
+                );
+            }
+        }
 
         //method
         private async Task<bool> IsPurchaseAsync(IOrderService repo, CheckPurchaseReceive order)
@@ -380,69 +431,6 @@ namespace OrderMicroservice.Repositories.Services
 
 
         #region Send and receive Message Export
-
-
-
-
-
-        //send group by order message to user
-        public void SendingMessageExport<T>(T message)
-        {
-            // tên cổng
-            const string ExchangeName = "Export";
-            // tên queue
-            const string QueueName = "findUser_for_export";
-
-            ConnectionFactory factory = new()
-            {
-                UserName = "guest",
-                Password = "guest",
-                VirtualHost = "/",
-                Port = 5672,
-                HostName = "localhost"
-            };
-            using var conn = factory.CreateConnection();
-            using (var channel = conn.CreateModel())
-            {
-                channel.ExchangeDeclare(
-                                      exchange: ExchangeName,
-                                      type: ExchangeType.Direct, // Lựa chọn loại cổng (ExchangeType)
-                                      durable: true              // Khi khởi động lại có bị mất dữ liệu hay không( true là không ) 
-                                    );
-
-                // Khai báo hàng chờ
-                var queue = channel.QueueDeclare(
-                                        queue: QueueName, // tên hàng chờ
-                                        durable: false, // khi khởi động lại có mất không
-                                                        // hàng đợi của bạn sẽ trở thành riêng tư và chỉ ứng dụng của
-                                                        // bạn mới có thể sử dụng. Điều này rất hữu ích khi bạn cần giới
-                                                        // hạn hàng đợi chỉ cho một người tiêu dùng.
-                                        exclusive: false,
-                                        autoDelete: false, // có tự động xóa không
-                                        arguments: ImmutableDictionary<string, object>.Empty);
-
-
-
-                // Liên kết hàng đợi với tên cổng bằng rounting key
-                channel.QueueBind(
-                    queue: QueueName,
-                    exchange: ExchangeName,
-                    routingKey: QueueName); // Routing Key phải khớp với tên hàng chờ
-
-                var jsonString = JsonSerializer.Serialize(message);
-
-                var Body = Encoding.UTF8.GetBytes(jsonString);
-
-                channel.BasicPublish(
-                    exchange: ExchangeName,
-                    routingKey: QueueName,
-                    mandatory: true,
-                    basicProperties: null,
-                    body: Body);
-            };
-        }
-
-
         //receive data export from user
         public void ReceiveMessageExport()
         {
@@ -455,11 +443,11 @@ namespace OrderMicroservice.Repositories.Services
 
                 var connectionFactory = new ConnectionFactory
                 {
-                    UserName = "guest",
-                    Password = "guest",
-                    VirtualHost = "/",
+                    UserName = _config["31"],
+                    Password = _config["32"],
+                    VirtualHost = _config["31"],
                     Port = 5672,
-                    HostName = "localhost"
+                    HostName = _config["33"]
                 };
                 using var connection = connectionFactory.CreateConnection();
                 using var channel = connection.CreateModel();
