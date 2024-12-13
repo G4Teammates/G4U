@@ -1,12 +1,12 @@
 ﻿using Client.Models.Enum.ProductEnum;
 using Client.Models.ProductDTO;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using System.ComponentModel.DataAnnotations;
 
 namespace Client.Models.ProductDTO
 {
     public class UpdateProductModel
     {
-
         public string Id { get; set; }
 
         [Required(ErrorMessage = "Name is required")]
@@ -25,7 +25,9 @@ namespace Client.Models.ProductDTO
         public ProductStatus Status { get; set; }
         public DateTime CreatedAt { get; set; }
         public List<IFormFile>? ImageFiles { get; set; } = new List<IFormFile>(); // Để xử lý file upload
-        public IFormFile? gameFile { get; set; } // Giả sử bạn có model này cho game file 
+        public IFormFile? gameFile { get; set; } // Giả sử bạn có model này cho game file
         public string UserName { get; set; }
+
+        public string? WinrarPassword { get; set; }
     }
 }

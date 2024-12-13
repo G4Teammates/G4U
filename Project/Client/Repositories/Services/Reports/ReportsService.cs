@@ -2,6 +2,7 @@
 using Client.Repositories.Interfaces;
 using Client.Repositories.Interfaces.Reports;
 using Client.Utility;
+using System.Drawing.Printing;
 
 namespace Client.Repositories.Services.Reports
 {
@@ -32,6 +33,24 @@ namespace Client.Repositories.Services.Reports
             {
                 ApiType = StaticTypeApi.ApiType.GET,
                 Url = StaticTypeApi.APIGateWay + "/Reports?page=" + pageNumber.ToString() + "&pageSize=" + pageSize.ToString()
+            });
+        }
+
+        public async Task<ResponseModel?> GetById(string id)
+        {
+            return await _baseService.SendAsync(new RequestModel()
+            {
+                ApiType = StaticTypeApi.ApiType.GET,
+                Url = StaticTypeApi.APIGateWay + "/Reports/" + id
+            });
+        }
+
+        public async Task<ResponseModel?> UpdateReport(string reportId, int status)
+        {
+            return await _baseService.SendAsync(new RequestModel()
+            {
+                ApiType = StaticTypeApi.ApiType.PUT,
+                Url = StaticTypeApi.APIGateWay + "/Reports?reportId=" + reportId.ToString() + "&status=" + status.ToString()
             });
         }
     }

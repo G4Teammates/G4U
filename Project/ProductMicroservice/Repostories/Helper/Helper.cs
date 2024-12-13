@@ -338,6 +338,44 @@ namespace ProductMicroservice.Repostories.Helper
             return productEntity;
         }
 
+        public async Task<Products> UpdateProductClone(UpdateProductModel Product)
+        {
+            var upProduct = _db.Products.Find(Product.Id);
+            if (upProduct != null)
+            {
+                upProduct.Name = Product.Name;
+                upProduct.Description = Product.Description;
+                upProduct.Price = Product.Price;
+                upProduct.Sold = Product.Sold;
+                upProduct.Interactions.NumberOfViews = Product.Interactions.NumberOfViews;
+                upProduct.Interactions.NumberOfLikes = Product.Interactions.NumberOfLikes;
+                upProduct.Interactions.NumberOfDisLikes = Product.Interactions.NumberOfDisLikes;
+                upProduct.Interactions.UserDisLikes = _mapper.Map<ICollection<UserDisLikes>>(Product.Interactions.UserDisLikes);
+
+                upProduct.Interactions.UserLikes = _mapper.Map<ICollection<UserLikes>>(Product.Interactions.UserLikes);
+                upProduct.Discount = Product.Discount;
+                // Chuyển đổi danh sách categories
+                upProduct.Categories = Product.Categories
+                    .Select(category => new Categories // Giả sử Categories là kiểu dữ liệu mà bạn cần
+                    {
+                        // Ánh xạ các thuộc tính cần thiết từ category
+                        CategoryName = category.CategoryName // Điều chỉnh tùy thuộc vào các thuộc tính của bạn
+                    }).ToList();
+                upProduct.Platform = Product.Platform;
+                upProduct.Status = Product.Status;
+                upProduct.CreatedAt = Product.CreatedAt;
+                upProduct.UpdatedAt = DateTime.UtcNow;
+                upProduct.UserName = Product.UserName;
+                upProduct.Links = _mapper.Map<ICollection<Link>>(Product.Links);
+                upProduct.WinrarPassword = Product.WinrarPassword;
+            };
+
+            var productEntity = _mapper.Map<Products>(upProduct);
+            _db.Update(productEntity);
+            await _db.SaveChangesAsync();
+            return productEntity;
+        }
+
         private readonly List<string> _bannedWords = new List<string>
         {
             // Tiếng Việt - Nội dung không phù hợp và các biến thể lách luật

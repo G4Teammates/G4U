@@ -750,19 +750,25 @@ namespace Client.Controllers
                 var numOfView = product.Interactions.NumberOfViews;
                 var numOfLike = product.Interactions.NumberOfLikes;
                 var numOfDisLike = product.Interactions.NumberOfDisLikes;
-                // Tạo đối tượng ScanFileRequest
-                var request = new ScanFileRequest
+
+
+                    // Tạo đối tượng ScanFileRequest
+                    var request = new ScanFileRequest
+                    {
+                        gameFile = updateProductModel.gameFile
+                    };
+                if (updateProductModel.gameFile == null)
                 {
-                    gameFile = updateProductModel.gameFile
-                };
+                    updateProductModel.WinrarPassword = product.WinrarPassword;
+                }
 
                 // Gọi service UpdateProduct từ phía Client
-                var response = await _productService.UpdateProductAsync(
+                var response = await _productService.UpdateProductCloneAsync(
                     updateProductModel.Id, updateProductModel.Name, updateProductModel.Description, updateProductModel.Price, updateProductModel.Sold,
                    numOfView, numOfLike, numOfDisLike, updateProductModel.Discount,
                     updateProductModel.Links, updateProductModel.Categories, (int)updateProductModel.Platform,
                     (int)updateProductModel.Status, updateProductModel.CreatedAt, updateProductModel.ImageFiles,
-                    request, updateProductModel.UserName, updateProductModel.Interactions.UserLikes, updateProductModel.Interactions.UserDisLikes);
+                    request, updateProductModel.UserName, updateProductModel.Interactions.UserLikes, updateProductModel.Interactions.UserDisLikes, updateProductModel.WinrarPassword);
 
                 if (response.IsSuccess)
                 {
@@ -803,6 +809,7 @@ namespace Client.Controllers
                 updateProductModel.Categories = model.Categories.Select(x => x.CategoryName).ToList();
                 updateProductModel.Platform = model.Platform;
                 updateProductModel.Status = model.Status;
+                updateProductModel.WinrarPassword = model.WinrarPassword;
                 //updateProductModel.Links = model.Links;
 
                 List<LinkModel> listLinks = new List<LinkModel>();
@@ -875,7 +882,8 @@ namespace Client.Controllers
             {
                 if (TempData["updateProductModel"] != null)
                 {
-                    updateProductModel = JsonConvert.DeserializeObject<UpdateProductModel>(TempData["UpdateProductModel"].ToString());
+                    var tempdata = TempData["updateProductModel"];
+                    updateProductModel = JsonConvert.DeserializeObject<UpdateProductModel>(tempdata.ToString());
                 }
 
                 // Lay du lieu category
@@ -911,7 +919,8 @@ namespace Client.Controllers
             catch (Exception ex)
             {
                 TempData["error"] = $"An error occurred: {ex.Message}";
-                return View();
+                TempData["updateProductModel"] = null;
+                return RedirectToAction(nameof(UserDashboard));
             }
         }
 
@@ -941,7 +950,7 @@ namespace Client.Controllers
                 };
 
                 // Gọi API CreateProductAsync
-                var response = await _productService.CreateProductAsync(
+                var response = await _productService.CreateProductCloneAsync(
                     updateProductModel.Name,
                     updateProductModel.Description,
                     updateProductModel.Price,
@@ -951,7 +960,8 @@ namespace Client.Controllers
                     (int)updateProductModel.Status,
                     updateProductModel.ImageFiles,
                     request,
-                    updateProductModel.UserName);
+                    updateProductModel.UserName,
+                    updateProductModel.WinrarPassword);
 
                 if (response != null && response.IsSuccess)
                 {
@@ -960,15 +970,22 @@ namespace Client.Controllers
                 }
                 else
                 {
-                    TempData["error"] = response?.Message ?? "An unknown error occurred.";
-                    TempData["updateProductModel"] = JsonConvert.SerializeObject(updateProductModel);
-                    return RedirectToAction(nameof(UploadProduct));
+                    //updateProductModel.Id = null;
+                    //TempData["error"] = response?.Message ?? "An unknown error occurred.";
+                    //TempData["updateProductModel"] = JsonConvert.SerializeObject(updateProductModel);
+                    //return RedirectToAction(nameof(UploadProduct));
+
+                    throw new Exception(response?.Message ?? "An unknown error occurred.");
                 }
             }
             catch (Exception ex)
             {
+                updateProductModel.Id = null;
+                updateProductModel.gameFile = null;
+                updateProductModel.ImageFiles = null;
                 TempData["error"] = $"An error occurred: {ex.Message}";
-                return RedirectToAction(nameof(UserDashboard));
+                TempData["updateProductModel"] = JsonConvert.SerializeObject(updateProductModel);
+                return RedirectToAction(nameof(UploadProduct));
             }
         }
 

@@ -18,7 +18,7 @@ namespace OrderMicroService.Controllers
     {
         IOrderService _orderService = orderService;
 
-        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin, User")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin, User")]
         [HttpGet]
         public async Task<ActionResult> GetOrders(int? page, int pageSize)
         {
@@ -36,7 +36,7 @@ namespace OrderMicroService.Controllers
                 return StatusCode(500, new { message = "An unexpected error occurred. Detail" + ex.Message });
             }
         }
-        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin, User")]
         [HttpGet("search/{id}")]
         public async Task<ActionResult> GetOrderById(string id, int? page, int pageSize)
         {
@@ -157,6 +157,21 @@ namespace OrderMicroService.Controllers
                 return StatusCode(500, new { message = "An unexpected error occurred. Detail" + ex.Message });
             }
         }
-
+        [HttpPost("GroupByProfitOrder")]
+        public async Task<ActionResult> GroupByProfitOrder(DateTime datetime)
+        {
+            try
+            {
+                ResponseModel response = await _orderService.GroupByProfitOrder(datetime);
+                if (response.IsSuccess)
+                    return Ok(response);
+                return BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                // Trả về lỗi 500 cho các lỗi chưa dự đoán
+                return StatusCode(500, new { message = "An unexpected error occurred. Detail" + ex.Message });
+            }
+        }
     }
 }

@@ -627,36 +627,102 @@ namespace UserMicroservice.Repositories.Services
             return response;
         }
 
+        public async Task<ResponseModel> GetUserByListUsername(ExportResult models)
+        {
+            var response = new ResponseModel();
+            try
+            {
+                models.ExportProfits = models.ExportProfits.OrderByDescending(i => i.PublisherName).ToList();
+                var profitDictionary = models.ExportProfits.ToDictionary(m => m.PublisherName, m => m.TotalProfit);
 
-        //public async Task<ICollection<UserModel>> FindUsers(SearchCriteria criteria)
+                // Gọi hàm cập nhật TotalProfit
+                //response = await UpdateUserTotalProfitAsync(profitDictionary, models.CreateAt);
+
+                // Lấy danh sách username không tìm thấy
+                var usernames = models.ExportProfits.Select(m => m.PublisherName).ToList();
+                var users = await _context.Users
+                    .Where(u => usernames.Contains(u.Username))
+                    .OrderByDescending(i=>i.Username)
+                    .ToListAsync();
+
+                var foundUsernames = users.Select(u => u.Username).ToHashSet(); // Tăng tốc so sánh
+                var notFoundUsernames = usernames.Where(u => !foundUsernames.Contains(u)).ToList();
+
+                var responseUserExport = new FindUsernameModel()
+                {
+                    Users = _mapper.Map<ICollection<UserModel>>(users),                     // Danh sách user đã tìm thấy
+                    UsersExport = _mapper.Map<ICollection<ExportProfitModel>>(users), // Danh sách thông tin cần thiết cần export của user
+                    MissingUsers = notFoundUsernames,                                       // Danh sách username không tìm thấy
+                    CreateAt = models.CreateAt
+                };
+
+                for(int i = 0; i<responseUserExport.UsersExport.Count; i++)
+                {
+                    responseUserExport.UsersExport.ElementAt(i).ProfitOfMonth = models.ExportProfits.ElementAt(i).TotalProfit;
+                    responseUserExport.UsersExport.ElementAt(i).OriginalPriceOfMonth = models.ExportProfits.ElementAt(i).TotalPrice;
+                    responseUserExport.UsersExport.ElementAt(i).PublisherName = models.ExportProfits.ElementAt(i).PublisherName;
+
+                }
+
+                //responseUserExport.UsersExport = _mapper.Map<ICollection<ExportProfitModel>>(models.ExportProfits);
+                // Kết quả trả về
+                response.IsSuccess = true;
+                response.Message = notFoundUsernames.Count > 0
+                    ? $"Some usernames were not found: {string.Join(", ", notFoundUsernames)}"
+                    : "All users found successfully.";
+                response.Result = responseUserExport;
+
+            }
+            catch (Exception ex)
+            {
+                // Xử lý lỗi với thông báo thân thiện
+                response.IsSuccess = false;
+                response.Message = $"An error occurred while processing: {ex.Message}";
+            }
+
+            return response;
+        }
+
+
+        //private async Task<ResponseModel> UpdateUserTotalProfitAsync(Dictionary<string, decimal> profitDictionary, DateTime createAt)
         //{
-        //    var query = _context.Users.AsQueryable();
-
-        //    if (!string.IsNullOrEmpty(criteria.DisplayName))
+        //    ResponseModel response = new();
+        //    try
         //    {
-        //        query = query.Where(u => u.DisplayName!.Contains(criteria.DisplayName));
+
+        //        // Lấy danh sách username từ profitDictionary
+        //        var usernames = profitDictionary.Keys.ToList();
+
+        //        // Lấy danh sách user từ database
+        //        var users = await _context.Users
+        //            .Where(u => usernames.Contains(u.Username))
+        //            .ToListAsync();
+
+        //        // Cập nhật TotalProfit cho từng user
+        //        foreach (var user in users)
+        //        {
+        //            if (profitDictionary.TryGetValue(user.Username, out var profit))
+        //            {
+        //                user.TotalProfit += profit; // Cộng thêm profit
+        //            }
+        //        }
+
+        //        // Lưu thay đổi vào database
+        //        _context.Users.UpdateRange(users);
+        //        await _context.SaveChangesAsync();
+
+        //        response.Result = users;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        // Xử lý lỗi với thông báo thân thiện
+        //        response.IsSuccess = false;
+        //        response.Message = $"An error occurred while processing: {ex.Message}";
         //    }
 
-        //    if (!string.IsNullOrEmpty(criteria.Email))
-        //    {
-        //        query = query.Where(u => u.Email == criteria.Email);
-        //    }
-
-        //    if (!string.IsNullOrEmpty(criteria.PhoneNumber))
-        //    {
-        //        query = query.Where(u => u.PhoneNumber == criteria.PhoneNumber);
-        //    }
-
-        //    if (!string.IsNullOrEmpty(criteria.Username))
-        //    {
-        //        query = query.Where(u => u.Username == criteria.Username);
-        //    }
-
-        //    query = query.Where(u => u.Status == criteria.Status);
-
-        //    var users = await query.ToListAsync();
-        //    return _mapper.Map<ICollection<UserModel>>(users);
+        //    return response;
         //}
+
     }
 
 }

@@ -112,6 +112,80 @@ namespace Client.Repositories.Services.Product
             return response;
         }
 
+        public async Task<ResponseModel> CreateProductCloneAsync(
+            string name,
+            string description,
+            decimal price,
+            float discount,
+            List<string> categories,
+            int platform,
+            int status,
+            List<IFormFile> imageFiles,
+            ScanFileRequest request,
+            string username,
+            string? winrarPassword)
+        {
+            // Tạo MultipartFormDataContent để gửi dữ liệu
+            var formData = new MultipartFormDataContent();
+
+            formData.Add(new StringContent(name), "name");
+            formData.Add(new StringContent(description), "description");
+            formData.Add(new StringContent(price.ToString()), "price");
+            formData.Add(new StringContent(discount.ToString()), "discount");
+            formData.Add(new StringContent(platform.ToString()), "platform");
+            formData.Add(new StringContent(status.ToString()), "status");
+            formData.Add(new StringContent(username), "username");
+
+            // Thêm từng danh mục vào formData như các phần tử riêng lẻ
+            if (categories != null && categories.Count > 0)
+            {
+                for (int i = 0; i < categories.Count; i++)
+                {
+                    formData.Add(new StringContent(categories[i]), $"categories[{i}]");
+                }
+            }
+
+            // Thêm các tệp hình ảnh vào formData
+            foreach (var file in imageFiles)
+            {
+                var fileContent = new StreamContent(file.OpenReadStream());
+                fileContent.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data")
+                {
+                    Name = "imageFiles",
+                    FileName = file.FileName
+                };
+                formData.Add(fileContent);
+            }
+
+            // Thêm tệp game vào formData
+            if (request?.gameFile != null)
+            {
+                var gameFileContent = new StreamContent(request.gameFile.OpenReadStream());
+                gameFileContent.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data")
+                {
+                    Name = "gameFile",
+                    FileName = request.gameFile.FileName
+                };
+                formData.Add(gameFileContent);
+
+                if (winrarPassword == null)
+                {
+                    winrarPassword = "";
+                }
+                formData.Add(new StringContent(winrarPassword), "winrarPassword");
+            }
+
+            // Gửi yêu cầu POST thông qua base service
+            var response = await _baseService.SendAsync(new RequestModel()
+            {
+                ApiType = StaticTypeApi.ApiType.POST,
+                Data = formData,
+                Url = StaticTypeApi.APIGateWay + "/Product/ProductClone"
+            });
+
+            return response;
+        }
+
         public async Task<ResponseModel?> GetAllProductAsync(int? pageNumber, int pageSize)
         {
             return await _baseService.SendAsync(new RequestModel()
@@ -228,6 +302,119 @@ namespace Client.Repositories.Services.Product
             {
                 ApiType = StaticTypeApi.ApiType.PUT,
                 Url = StaticTypeApi.APIGateWay + "/Product",
+                Data = formData
+            });
+
+            return response;
+        }
+
+        public async Task<ResponseModel> UpdateProductCloneAsync(string id,
+                                            string name,
+                                            string description,
+                                            decimal price,
+                                            int sold,
+                                            int numOfView,
+                                            int numOfLike,
+                                            int numOfDisLike,
+                                            float discount,
+                                            List<LinkModel> links,
+                                            List<string> categories,
+                                            int platform,
+                                            int status,
+                                            DateTime createdAt,
+                                            List<IFormFile>? imageFiles,
+                                            ScanFileRequest? request,
+                                            string username,
+                                            List<string> userLikes,
+                                            List<string> userDisLike,
+                                            string? winrarPassword)
+        {
+            var formData = new MultipartFormDataContent();
+
+            // Thêm các tham số vào formData
+            formData.Add(new StringContent(id), "id");
+            formData.Add(new StringContent(name), "name");
+            formData.Add(new StringContent(description), "description");
+            formData.Add(new StringContent(price.ToString()), "price");
+            formData.Add(new StringContent(sold.ToString()), "sold");
+            formData.Add(new StringContent(numOfView.ToString()), "numOfView");
+            formData.Add(new StringContent(numOfLike.ToString()), "numOfLike");
+            formData.Add(new StringContent(numOfDisLike.ToString()), "numOfDisLike");
+            formData.Add(new StringContent(discount.ToString()), "discount");
+            formData.Add(new StringContent(platform.ToString()), "platform");
+            formData.Add(new StringContent(status.ToString()), "status");
+            formData.Add(new StringContent(createdAt.ToString("o")), "createdAt");
+            formData.Add(new StringContent(username), "username");
+
+            // Thêm từng danh mục vào formData như các phần tử riêng lẻ
+            if (categories != null && categories.Count > 0)
+            {
+                for (int i = 0; i < categories.Count; i++)
+                {
+                    formData.Add(new StringContent(categories[i]), $"categories[{i}]");
+                }
+            }
+
+            if (userLikes != null && userLikes.Count > 0)
+            {
+                for (int i = 0; i < userLikes.Count; i++)
+                {
+                    formData.Add(new StringContent(userLikes[i]), $"userLikes[{i}]");
+                }
+            }
+            if (userDisLike != null && userDisLike.Count > 0)
+            {
+                for (int i = 0; i < userDisLike.Count; i++)
+                {
+                    formData.Add(new StringContent(userDisLike[i]), $"userDisLike[{i}]");
+                }
+            }
+
+            // Thêm các liên kết vào formData
+            if (links != null && links.Count > 0)
+            {
+                for (int i = 0; i < links.Count; i++)
+                {
+                    var linkJson = JsonConvert.SerializeObject(links[i]);
+                    formData.Add(new StringContent(linkJson), $"links[{i}]"); // Gửi từng đối tượng LinkModel dưới dạng JSON
+                }
+            }
+
+            // Thêm tệp hình ảnh vào formData
+            if (imageFiles != null && imageFiles.Count > 0)
+            {
+                foreach (var file in imageFiles)
+                {
+                    var fileContent = new StreamContent(file.OpenReadStream());
+                    fileContent.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
+                    formData.Add(fileContent, "imageFiles", file.FileName);
+                }
+            }
+
+            // Thêm tệp game vào formData
+            if (request?.gameFile != null)
+            {
+                var gameFileContent = new StreamContent(request.gameFile.OpenReadStream());
+                gameFileContent.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data")
+                {
+                    Name = "gameFile",
+                    FileName = request.gameFile.FileName
+                };
+                formData.Add(gameFileContent);
+            }
+
+            if (winrarPassword == null)
+            {
+                winrarPassword = "";
+            }
+
+            formData.Add(new StringContent(winrarPassword), "winrarPassword");
+
+            // Gửi yêu cầu PUT thông qua base service
+            var response = await _baseService.SendAsync(new RequestModel()
+            {
+                ApiType = StaticTypeApi.ApiType.PUT,
+                Url = StaticTypeApi.APIGateWay + "/Product/ProductClone",
                 Data = formData
             });
 

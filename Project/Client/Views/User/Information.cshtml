@@ -1,7 +1,6 @@
 ﻿@using static Client.Models.Enum.UserEnum.User
 @model Client.Models.UserDTO.UpdateUser
 
-
 <div class="main">
     <div class="row justify-content-center">
         <div class="col-md-3 p-3">
@@ -42,9 +41,9 @@
 
                 }
                 <div class="custom-nav-item">
-                    <a asp-controller="User" asp-action="UserDashboard">
+                    <a asp-controller="Order" asp-action="History">
                         <button type="button">
-                            <i class="fas fa-heart"></i> User Dashboard
+                            <i class="fas fa-heart"></i> History Order
                         </button>
                     </a>
                 </div>

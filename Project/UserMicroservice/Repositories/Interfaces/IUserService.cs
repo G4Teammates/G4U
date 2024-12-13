@@ -16,6 +16,7 @@ namespace UserMicroservice.Repositories.Interfaces
         Task<ResponseModel> DeleteUser(string id);
         Task<ResponseModel>? FindUsers(string? query, int page, int pageSize);
         Task<ResponseModel> ChangeStatus(string id, UserStatus status);
+        Task<ResponseModel> GetUserByListUsername(ExportResult username);
 
         Task<ResponseModel> TotalRequest();
 

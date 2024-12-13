@@ -78,6 +78,20 @@
       "UpstreamHttpMethod": [ "Put" ]
     },
 
+    //updateClone
+    {
+      "DownstreamPathTemplate": "/api/Product/ProductClone",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7159
+        }
+      ],
+      "UpstreamPathTemplate": "/Product/ProductClone",
+      "UpstreamHttpMethod": [ "Put" ]
+    },
+
     //delete
     {
       "DownstreamPathTemplate": "/api/Product/{id}",
@@ -964,8 +978,19 @@
       "UpstreamHttpMethod": [ "Post" ]
     },
 
-
-
+    //------------Export
+    {
+      "DownstreamPathTemplate": "/api/Export",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7297
+        }
+      ],
+      "UpstreamPathTemplate": "/Export",
+      "UpstreamHttpMethod": [ "Post" ]
+    },
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //                                                                                                                    //
     //                                                Statistical                                                         //
@@ -1006,6 +1031,19 @@
     //                                                                                                                    //
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    //get by id
+    {
+      "DownstreamPathTemplate": "/api/Reports/{id}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7039
+        }
+      ],
+      "UpstreamPathTemplate": "/Reports/{id}",
+      "UpstreamHttpMethod": [ "Get" ]
+    },
     {
       "DownstreamPathTemplate": "/api/Reports",
       "DownstreamScheme": "https",
@@ -1017,6 +1055,18 @@
       ],
       "UpstreamPathTemplate": "/Reports",
       "UpstreamHttpMethod": [ "Get" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/Reports",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7039
+        }
+      ],
+      "UpstreamPathTemplate": "/Reports",
+      "UpstreamHttpMethod": [ "Put" ]
     },
     {
       "DownstreamPathTemplate": "/api/Reports/userName/{UserName}",

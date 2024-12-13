@@ -1,11 +1,15 @@
 ﻿using AutoMapper;
+using Azure;
 using Client.Models;
 using Client.Models.Enum.OrderEnum;
 using Client.Models.OrderModel;
+using Client.Models.ProductDTO;
+using Client.Models.UserDTO;
 using Client.Repositories.Interfaces;
 using Client.Repositories.Interfaces.Authentication;
 using Client.Repositories.Interfaces.Order;
 using CloudinaryDotNet;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
 using Newtonsoft.Json;
@@ -21,7 +25,7 @@ namespace Client.Controllers
         private readonly IOrderService _orderService = orderService;
         private readonly IPaymentService _paymentService = paymentService;
         private readonly IHelperService _helperService = helperService;
-        private readonly ITokenProvider _tokenProvider = tokenProvider; 
+        private readonly ITokenProvider _tokenProvider = tokenProvider;
         private string JWT = "JWT";
         private string IsLogin = "IsLogin";
         private string RememberMe = "RememberMe";
@@ -33,10 +37,60 @@ namespace Client.Controllers
             return View();
         }
 
-        public IActionResult History()
+        public async Task<IActionResult> History(int? page, int pageSize = 10)
         {
-            return View();
+            try
+            {
+                // Lấy Id từ token
+                IEnumerable<Claim> claim = HttpContext.User.Claims;
+                string id = claim.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value!;
+
+                // Khởi tạo ViewData
+                ViewData["HistoryAction"] = nameof(History);
+                int pageNumber = (page ?? 1); // Trang hiện tại
+                OrderViewModel orders = new();
+
+                // Gọi API để lấy tất cả dữ liệu
+                ResponseModel? response = await _orderService.GetOrderById(id, 1, 999);
+                if (response != null && response.IsSuccess)
+                {
+                    // Chuyển đổi dữ liệu từ API
+                    var allOrders = JsonConvert.DeserializeObject<ICollection<OrderModel>>(Convert.ToString(response.Result!.ToString()!));
+
+                    // Lọc các đơn hàng đã thanh toán
+                    var filteredOrders = allOrders!.Where(order => order.OrderStatus == OrderStatus.Paid).ToList();
+
+                    // Áp dụng phân trang với Skip và Take
+                    var pagedOrders = filteredOrders
+                        .Skip((pageNumber - 1) * pageSize)
+                        .Take(pageSize)
+                        .ToList();
+
+                    // Thiết lập thông tin phân trang
+                    orders.Orders = pagedOrders;
+                    orders.pageNumber = pageNumber;
+                    orders.pageSize = pageSize;
+                    orders.totalItem = filteredOrders.Count;
+                    orders.pageCount = (int)Math.Ceiling(filteredOrders.Count / (double)pageSize);
+
+                    TempData["success"] = "Load order history is success";
+                }
+                else
+                {
+                    TempData["error"] = response?.Message ?? "An unexpected error occurred while fetching the orders.";
+                }
+
+                return View(orders);
+            }
+            catch (Exception ex)
+            {
+                // Ghi log nếu cần
+                TempData["error"] = $"An error occurred: {ex.Message}";
+                return View(new OrderViewModel()); // Trả về View rỗng hoặc một đối tượng ViewModel mặc định
+            }
         }
+
+
 
         public async Task<IActionResult> Checkout(string orderJson, PaymentMethod paymentMethod)
         {
@@ -52,7 +106,7 @@ namespace Client.Controllers
             else
             {
                 token = _tokenProvider.GetToken(JWT, false);
-                isLogin = Convert.ToBoolean(_tokenProvider.GetToken(IsLogin,false));
+                isLogin = Convert.ToBoolean(_tokenProvider.GetToken(IsLogin, false));
             }
 
             if (token == null || !isLogin)
@@ -167,6 +221,7 @@ namespace Client.Controllers
                     {
                         orderId = newOrder.Id,
                         amount = 0,
+                        resultCode = 0,
                         orderType = "Free",
                         responseTime = ((DateTimeOffset)newOrder.UpdatedAt).ToUnixTimeMilliseconds()
                     });
@@ -187,6 +242,10 @@ namespace Client.Controllers
         [HttpGet]
         public IActionResult PaymentSuccess(string? partnerCode, string? orderId, string? requestId, decimal amount, string? orderInfo, string? orderType, string? transId, int? resultCode, string message, string payType, long responseTime, string extraData, string signature)
         {
+            if (resultCode != 0)
+            {
+                return RedirectToAction(nameof(PaymentFailure));
+            }
             var model = new PaymentSuccessModel
             {
                 OrderId = orderId,
@@ -210,12 +269,12 @@ namespace Client.Controllers
         public async Task<IActionResult> PaymentSuccessPayOs(
      string? code,
         string? id,
-         bool? cancel, 
+         bool? cancel,
        string? status,
          long? orderCode)
         {
             string orderId = TempData["orderId"].ToString();
-            if(orderCode == null)
+            if (orderCode == null)
             {
                 return RedirectToAction(nameof(PaymentFailure));
             }

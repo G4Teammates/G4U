@@ -30,14 +30,18 @@ using System.Security.Claims;
 using Client.Models.Enum.OrderEnum;
 using Azure;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Client.Repositories.Interfaces.Reports;
+using Client.Repositories.Services.Reports;
+using Client.Models.ReportDTO;
+using System;
+
 
 
 
 namespace Client.Controllers
 {
-
-    public class AdminController(IUserService userService, IHelperService helperService, IRepoProduct repoProduct, ITokenProvider tokenProvider, ICategoriesService categoryService, IOrderService orderService, ICommentService commentService, IRepoStastistical repoStatistical) : Controller
-    {
+    public class AdminController(IUserService userService, IHelperService helperService, IRepoProduct repoProduct, ITokenProvider tokenProvider, ICategoriesService categoryService, IOrderService orderService, ICommentService commentService, IRepoStastistical repoStatistical, IReportsService reportsService, IExportService exportService) : Controller
+    { 
         #region declaration and initialization
         public readonly IUserService _userService = userService;
         public readonly IHelperService _helperService = helperService;
@@ -45,7 +49,8 @@ namespace Client.Controllers
         public readonly IRepoProduct _productService = repoProduct;
         public readonly ICategoriesService _categoryService = categoryService;
         public readonly ICommentService _commentService = commentService;
-
+        public readonly IReportsService _reportService = reportsService;
+        public readonly IExportService _exportService = exportService;
         private readonly IOrderService _orderService = orderService;
         private readonly IRepoStastistical _statisticalService = repoStatistical;
         private string JWT = "JWT";
@@ -79,7 +84,7 @@ namespace Client.Controllers
                 else
                 {
                     token = _tokenProvider.GetToken(JWT, false);
-                    isLogin = Convert.ToBoolean(_tokenProvider.GetToken(IsLogin,false));
+                    isLogin = Convert.ToBoolean(_tokenProvider.GetToken(IsLogin, false));
                 }
 
                 if (!isLogin)
@@ -167,6 +172,24 @@ namespace Client.Controllers
             return NotFound();
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Export(DateTime datetime)
+        {
+            ResponseModel response = new();
+            string url = HttpContext.Request.Path.Value;
+            if (response.IsSuccess)
+            {
+                response = await _exportService.Export(datetime);
+                url = response.Result.ToString();
+                TempData["success"] = "Export success";
+            }
+            else
+            {
+                TempData["error"] = "Can't export at time. Please try again later";
+            }
+            return Redirect(url);
+        }
+
         #endregion
 
         #region User
@@ -174,6 +197,8 @@ namespace Client.Controllers
         [HttpGet]
         public async Task<IActionResult> UsersManager(int? page, int pageSize = 5)
         {
+            ViewData["FilterUserAction"] = nameof(UsersManager);
+
             int pageNumber = (page ?? 1);
             UserViewModel userViewModel = new()
             {
@@ -208,37 +233,6 @@ namespace Client.Controllers
 
             return View(userViewModel);
         }
-        //[HttpPost]
-        //public async Task<IActionResult> UsersManager(ICollection<UsersDTO> users, int? page, int pageSize = 5)
-        //{
-        //    int pageNumber = (page ?? 1);
-        //    UserViewModel userViewModel = new()
-        //    {
-        //        CreateUser = new CreateUser(),
-        //        Users = users
-        //    };
-        //    try
-        //    {
-        //        ResponseModel? response2 = await _userService.GetAllUserAsync(1, 99);
-        //        var total = JsonConvert.DeserializeObject<ICollection<UsersDTO>>(Convert.ToString(response2.Result.ToString()!));
-
-        //        var data = userViewModel.Users;
-        //        userViewModel.pageNumber = pageNumber;
-        //        userViewModel.totalItem = data.Count;
-        //        userViewModel.pageSize = pageSize;
-        //        userViewModel.pageCount = (int)Math.Ceiling(total.Count / (double)pageSize);
-        //        TempData["success"] = "Load user is success";
-
-
-
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        TempData["error"] = ex.Message;
-        //    }
-
-        //    return View(userViewModel);
-        //}
 
 
         [HttpPost]
@@ -410,42 +404,6 @@ namespace Client.Controllers
         }
 
 
-        //public async Task<IActionResult> SearchUsers(string query, int? page, int pageSize = 5)
-        //{
-        //    int pageNumber = page ?? 1;
-        //    UserViewModel userViewModel = new() { CreateUser = new CreateUser() };
-
-        //    try
-        //    {
-        //        var response = await _userService.FindUsers(query, 1, 999);
-
-        //        if (response.IsSuccess && response.Result != null)
-        //        {
-        //            var allUsers = JsonConvert.DeserializeObject<ICollection<UsersDTO>>(response.Result.ToString());
-
-        //            // Phân trang
-        //            (userViewModel.pageCount, userViewModel.Users) = Paginate(allUsers, pageNumber, pageSize);
-
-        //            userViewModel.pageNumber = pageNumber;
-        //            userViewModel.pageSize = pageSize;
-        //            userViewModel.totalItem = allUsers.Count;
-
-        //            TempData["success"] = $"Found {allUsers.Count} user(s) matching '{query}'";
-        //            return View(nameof(UsersManager), userViewModel);
-        //        }
-        //        else
-        //        {
-        //            TempData["error"] = response.Message ?? "User not found";
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        TempData["error"] = ex.Message;
-        //    }
-
-        //    return View(nameof(UsersManager), userViewModel);
-        //}
-
         // Prepare to search users
         public async Task<IActionResult> PrepareSearchUsers(string query, int? page, int pageSize = 5)
         {
@@ -459,14 +417,18 @@ namespace Client.Controllers
             ViewData["FilterUserAction"] = nameof(SearchUsers);
 
             int pageNumber = page ?? 1;
-            UserViewModel userViewModel = new() 
-            { 
+            UserViewModel userViewModel = new()
+            {
                 CreateUser = new CreateUser(),
                 Users = new List<UsersDTO>()
             };
 
             try
             {
+                if(query==null || query == "")
+                {
+                    return RedirectToAction(nameof(UsersManager));
+                }
                 var response = await _userService.FindUsers(query, 1, 999);
 
                 if (response.IsSuccess && response.Result != null)
@@ -690,7 +652,7 @@ namespace Client.Controllers
                 }
                 else
                 {
-                    TempData["error"] = "Product updated fail by error: "+ response.Message;
+                    TempData["error"] = "Product updated fail by error: " + response.Message;
                     return RedirectToAction(nameof(ProductsManager));
                     /*return BadRequest(response.Message); // Trả về lỗi từ service*/
                 }
@@ -971,7 +933,7 @@ namespace Client.Controllers
         #region Order 
         public async Task<IActionResult> OrdersManager(int? page, int pageSize = 5)
         {
-
+            ViewData["FilterOrderAction"] = nameof(OrdersManager);
             OrderViewModel orders = new();
             int pageNumber = (page ?? 1);
             try
@@ -1089,9 +1051,76 @@ namespace Client.Controllers
             return RedirectToAction(nameof(OrdersManager));
         }
 
-        // Phương thức SearchOrder
-        public async Task<IActionResult> SearchOrder(string id, int? page, int pageSize = 5)
+        //public async Task<IActionResult> PrepareSearchOrders(string query, int? page, int pageSize = 5)
+        //{
+        //    ViewData["FilterOrderAction"] = nameof(SearchOrder);
+        //    return await SearchOrder(query, page, pageSize);
+        //}
+
+        //// Phương thức SearchOrder
+        //public async Task<IActionResult> SearchOrder(string id, int? page, int pageSize = 5)
+        //{
+        //    ViewData["FilterOrderAction"] = nameof(SearchUsers);
+
+        //    int pageNumber = page ?? 1;
+
+        //    OrderViewModel orderViewModel = new()
+        //    {
+        //        Orders = new List<OrderModel>(),
+        //        pageNumber = pageNumber,
+        //        pageSize = pageSize
+        //    };
+
+        //    try
+        //    {
+        //        // Tìm đơn hàng theo Id hoặc Transaction Id
+        //        var response = await SearchOrderByIdOrTransaction(id);
+
+        //        if (response.IsSuccess && response.Result != null)
+        //        {
+        //            var ordersList = JsonConvert.DeserializeObject<ICollection<OrderModel>>(response.Result.ToString());
+        //            (orderViewModel.pageCount, orderViewModel.Orders) = Paginate(ordersList, pageNumber, pageSize);
+
+        //            TempData["success"] = response.Message ?? "Orders fetched successfully.";
+        //        }
+        //        else
+        //        {
+        //            TempData["error"] = response.Message ?? "No orders found."; 
+        //            page = 1;
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        TempData["error"] = $"An unexpected error occurred: {ex.Message}";
+        //    }
+
+        //    return View(nameof(OrdersManager), orderViewModel);
+        //}
+
+
+
+
+
+
+
+
+
+
+
+        public async Task<IActionResult> PrepareSearchOrders(string query, int? page, int pageSize = 5)
         {
+            ViewData["FilterOrderAction"] = nameof(SearchOrders);
+            if (query == "" || query == null)
+            {
+                ViewData["FilterOrderAction"] = nameof(OrdersManager);
+                return RedirectToAction(nameof(OrdersManager));
+            }
+            return await SearchOrders(query, page, pageSize);
+        }
+
+        public async Task<IActionResult> SearchOrders(string query, int? page, int pageSize = 5)
+        {
+            ViewData["FilterOrderAction"] = nameof(SearchOrders);
             int pageNumber = page ?? 1;
 
             OrderViewModel orderViewModel = new()
@@ -1103,20 +1132,23 @@ namespace Client.Controllers
 
             try
             {
-                // Tìm đơn hàng theo Id hoặc Transaction Id
-                var response = await SearchOrderByIdOrTransaction(id);
+                // Gọi service tìm kiếm
+                var response = await SearchOrderByIdOrTransaction(query);
 
                 if (response.IsSuccess && response.Result != null)
                 {
-                    var ordersList = JsonConvert.DeserializeObject<ICollection<OrderModel>>(response.Result.ToString());
-                    (orderViewModel.pageCount, orderViewModel.Orders) = Paginate(ordersList, pageNumber, pageSize);
+                    var orders = JsonConvert.DeserializeObject<ICollection<OrderModel>>(response.Result.ToString());
+                    (orderViewModel.pageCount, orderViewModel.Orders) = Paginate(orders, pageNumber, pageSize);
+
+                    orderViewModel.pageNumber = pageNumber;
+                    orderViewModel.pageSize = pageSize;
+                    orderViewModel.totalItem = orders.Count;
 
                     TempData["success"] = response.Message ?? "Orders fetched successfully.";
                 }
                 else
                 {
-                    TempData["error"] = response.Message ?? "No orders found."; 
-                    page = 1;
+                    TempData["error"] = response.Message ?? $"No orders found for query '{query}'.";
                 }
             }
             catch (Exception ex)
@@ -1126,6 +1158,19 @@ namespace Client.Controllers
 
             return View(nameof(OrdersManager), orderViewModel);
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         // Tìm kiếm đơn hàng theo Id hoặc Transaction Id
         private async Task<ResponseModel> SearchOrderByIdOrTransaction(string id)
@@ -1139,12 +1184,12 @@ namespace Client.Controllers
         }
 
         // Phương thức FilterOrders (chung cho tất cả bộ lọc)
-        public async Task<IActionResult> FilterOrders<T>(
-            Func<OrderModel, bool> predicate,
-            string successMessage,
-            string errorMessage,
-            int? page,
-            int pageSize)
+        private async Task<IActionResult> FilterOrders(
+       Func<OrderModel, bool> predicate,
+       string successMessage,
+       string errorMessage,
+       int? page,
+       int pageSize)
         {
             int pageNumber = page ?? 1;
 
@@ -1157,22 +1202,24 @@ namespace Client.Controllers
 
             try
             {
-                var response = await _orderService.GetAll(1, 999);
+                var response = await _orderService.GetAll(1, 9999);
 
                 if (response.IsSuccess && response.Result != null)
                 {
-                    var filteredOrders = JsonConvert.DeserializeObject<ICollection<OrderModel>>(response.Result.ToString())
+                    var filteredOrders = JsonConvert
+                        .DeserializeObject<ICollection<OrderModel>>(response.Result.ToString())
                         .Where(predicate)
                         .ToList();
 
                     (orderViewModel.pageCount, orderViewModel.Orders) = Paginate(filteredOrders, pageNumber, pageSize);
+
+                    orderViewModel.totalItem = filteredOrders.Count;
 
                     TempData["success"] = successMessage;
                 }
                 else
                 {
                     TempData["error"] = errorMessage;
-                    page = 1;
                 }
             }
             catch (Exception ex)
@@ -1187,9 +1234,9 @@ namespace Client.Controllers
         public async Task<IActionResult> FilterByOrderStatus(OrderStatus status, int? page, int pageSize = 5)
         {
             ViewData["FilterOrderAction"] = nameof(FilterByOrderStatus);
-            return await FilterOrders<OrderModel>(
+            return await FilterOrders(
                 o => o.OrderStatus == status,
-                $"Filter by order status '{status}' was successful.",
+                $"Filtered orders by status '{status}' successfully.",
                 $"No orders found with status '{status}'.",
                 page,
                 pageSize);
@@ -1198,7 +1245,7 @@ namespace Client.Controllers
         public async Task<IActionResult> FilterByPaymentStatus(PaymentStatus status, int? page, int pageSize = 5)
         {
             ViewData["FilterOrderAction"] = nameof(FilterByPaymentStatus);
-            return await FilterOrders<OrderModel>(
+            return await FilterOrders(
                 o => o.PaymentStatus == status,
                 $"Filter by payment status '{status}' was successful.",
                 $"No orders found with payment status '{status}'.",
@@ -1209,7 +1256,7 @@ namespace Client.Controllers
         public async Task<IActionResult> FilterByPaymentMethod(PaymentMethod status, int? page, int pageSize = 5)
         {
             ViewData["FilterOrderAction"] = nameof(FilterByPaymentMethod);
-            return await FilterOrders<OrderModel>(
+            return await FilterOrders(
                 o => o.PaymentMethod == status,
                 $"Filter by payment method '{status}' was successful.",
                 $"No orders found with payment method '{status}'.",
@@ -1694,13 +1741,125 @@ namespace Client.Controllers
 
 
         #region Report
-        public async Task<IActionResult> ReportManager()
+        public async Task<IActionResult> ReportManager(int? page, int pageSize = 20)
         {
-            return View();
+            int pageNumber = (page ?? 1);
+            ReportViewModel report = new();
+            try
+            {
+                // Lấy dữ liệu trang hiện tại
+                ResponseModel? response = await _reportService.GetAll(pageNumber, pageSize);
+
+                // Lấy toàn bộ dữ liệu để tính tổng số comment
+                ResponseModel? responseTotal = await _reportService.GetAll(1, int.MaxValue);
+                var allComments = JsonConvert.DeserializeObject<ICollection<ReportsModel>>(Convert.ToString(responseTotal.Result.ToString()!));
+
+                if (response != null && response.IsSuccess)
+                {
+                    report.Report = JsonConvert.DeserializeObject<ICollection<ReportsModel>>(Convert.ToString(response.Result.ToString()!));
+                    var data = report.Report;
+
+                    report.pageNumber = pageNumber;
+                    report.totalItem = allComments?.Count ?? 0;
+                    report.pageSize = pageSize;
+                    report.pageCount = (int)Math.Ceiling(report.totalItem / (double)pageSize);
+                }
+                else
+                {
+                    TempData["error"] = response?.Message;
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = ex.Message;
+            }
+
+            return View(report);
         }
-        public async Task<IActionResult> UpdateReport()
+
+        [HttpPost]
+        public async Task<IActionResult> CreateReport(CreateReportsModels model)
         {
-            return View();
+            IEnumerable<Claim> claim = HttpContext.User.Claims;
+            string un = claim.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value!;
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors)
+                                              .Select(e => e.ErrorMessage);
+                return BadRequest(new { Errors = errors });
+            }
+
+            try
+            {
+                // Gọi service CreateCommentAsync
+                var response = await _reportService.CreateReport(model,un);
+
+                if (response != null && response.IsSuccess)
+                {
+                    TempData["success"] = "Report created successfully";
+                    return View("~/Views/G4T/ContactUs.cshtml");
+                }
+                else
+                {
+                    TempData["error"] = response?.Message ?? "An unknown error occurred.";
+                    return View("~/Views/G4T/ContactUs.cshtml");
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = $"An error occurred: {ex.Message}";
+                return View("~/Views/G4T/ContactUs.cshtml");
+            }
+
+        }
+        public async Task<IActionResult> UpdateReport(string id)
+        {
+            ResponseModel? response = await _reportService.GetById(id);
+
+            if (response != null && response.IsSuccess)
+            {
+                ReportsModel? model = JsonConvert.DeserializeObject<ReportsModel>(Convert.ToString(response.Result));
+                TempData["success"] = "Get Report for update successfully";
+                return View(model);
+            }
+            else
+            {
+                TempData["error"] = response?.Message;
+            }
+            return NotFound();
+        }
+        [HttpPost]
+        public async Task<IActionResult> UpdateReportConfirm(string reportId, int status)
+        {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors)
+                                              .Select(e => e.ErrorMessage);
+                return BadRequest(new { Errors = errors });
+            }
+
+            try
+
+            {
+                var response = await _reportService.UpdateReport(reportId, status);
+
+                if (response != null && response.IsSuccess)
+                {
+                    TempData["success"] = "Report updated successfully";
+                    return RedirectToAction(nameof(ReportManager));
+                }
+                else
+                {
+                    TempData["error"] = response?.Message ?? "An unknown error occurred.";
+                    return BadRequest(response.Message); // Trả về view với dữ liệu đã nhập
+
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = $"An error occurred: {ex.Message}";
+                return StatusCode(500); // Trả về view với dữ liệu đã nhập và lỗi
+            }
         }
         #endregion
     }

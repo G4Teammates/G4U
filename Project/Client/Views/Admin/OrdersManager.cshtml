@@ -105,8 +105,8 @@
 <div class="container mt-4">
     <!-- Thanh tìm kiếm và nút Thêm -->
     <div class="d-flex justify-content-between mb-3">
-        <form asp-action="SearchOrder" method="get" class="col-md-4">
-            <input name="id" class="form-control" type="text" title="Search by Order id, Payment transaction id, Customer Id, Product Id and Product name" placeholder="Search by..." />
+        <form asp-action="PrepareSearchOrders" method="get" class="col-md-4">
+            <input class="form-control" name="query" type="text" title="Search by Order id, Payment transaction id, Customer Id, Product Id and Product name" placeholder="Search by..." />
         </form>
         @*  <div>
         <button class="btn btn-success" data-toggle="modal" data-target="#modalOrder">+ Add</button>
@@ -291,10 +291,10 @@
 
 
                             </td>
-
+@* 
                             <td>
                                 <a asp-action="UpdateOrderStatus" asp-route-Id="@order.Id" class="text-danger mx-2"><span><i class="fa-regular fa-pen-to-square"></i></span></a>
-                            </td>
+                            </td> *@
                             @* <td>-</td> *@
                         </tr>
                     }
@@ -310,72 +310,76 @@
     </table>
 
     <!-- Phân trang -->
-    
-<div class="d-flex justify-content-between align-items-center mt-3">
-    <!-- Total Items -->
-    <div>Total: @Model.Orders.Count items</div>
 
-    <!-- Records Per Page -->
-    <div class="d-flex align-items-center">
-        <form method="get" asp-controller="Admin" asp-action="@ViewData["FilterOrderAction"]" class="d-inline">
-            <select name="pageSize" class="form-select form-select-sm w-auto me-2" onchange="this.form.submit()">
+    <div class="d-flex justify-content-between align-items-center mt-3">
+        <!-- Total Items -->
+        <div>Total: @Model.Orders.Count items</div>
+
+        <!-- Records Per Page -->
+        <div class="d-flex align-items-center">
+            <form method="get" asp-controller="Admin" asp-action="@ViewData["FilterOrderAction"]" class="d-inline">
+                    <select name="pageSize" class="form-select form-select-sm w-auto d-inline-block" onchange="this.form.submit()">
                 <option>Select records per page</option>
-                @foreach (var size in new[] { 3, 5, 10 })
-                {
-                    <option value="@size">
-                        @size records per page
-                    </option>
-                }
+                <option value="5">5 records per page</option>
+                <option value="10">10 records per page</option>
+                <option value="20">20 records per page</option>
+                    <option value="50">50 records per page</option>
+                <option value="100">100 records per page</option>
             </select>
-            <input type="hidden" name="page" value="1" />
-            <input type="hidden" name="status" value="@(ViewContext.HttpContext.Request.Query["status"])" />
-        </form>
+                <input type="hidden" name="page" value="1" />
+                <input type="hidden" name="query" value="@(ViewContext.HttpContext.Request.Query["query"])" />                
+                <input type="hidden" name="status" value="@(ViewContext.HttpContext.Request.Query["status"])" />
+            </form>
 
-        <!-- Pagination -->
-        <nav aria-label="Page navigation example">
-            <ul class="pagination pagination-sm mb-0">
-                <!-- Previous Page -->
-                <li class="page-item @(Model.pageNumber == 1 ? "disabled" : "")">
-                    <a class="page-link"
-                       asp-controller="Admin"
-                       asp-action="@ViewData["FilterOrderAction"]"
-                       asp-route-status="@(ViewContext.HttpContext.Request.Query["status"])"
-                       asp-route-page="@(Model.pageNumber - 1)"
-                       asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
-                        Previous
-                    </a>
-                </li>
 
-                <!-- Page Numbers -->
-                @for (var pg = 1; pg <= Model.pageCount; pg++)
-                {
-                    <li class="page-item @(pg == Model.pageNumber ? "active" : "")">
+            <!-- Pagination -->
+            <nav aria-label="Page navigation example">
+                <ul class="pagination pagination-sm mb-0">
+                    <!-- Previous Page -->
+                    <li class="page-item @(Model.pageNumber == 1 ? "disabled" : "")">
                         <a class="page-link"
                            asp-controller="Admin"
                            asp-action="@ViewData["FilterOrderAction"]"
-                           asp-route-status="@(ViewContext.HttpContext.Request.Query["status"])"
-                           asp-route-page="@pg"
-                           asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
-                            @pg
+                           asp-route-page="@(Model.pageNumber - 1)"
+                           asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])"
+                           asp-route-query="@(ViewContext.HttpContext.Request.Query["query"])"
+                            asp-route-status="@(ViewContext.HttpContext.Request.Query["status"])">
+                            Previous
                         </a>
                     </li>
-                }
 
-                <!-- Next Page -->
-                <li class="page-item @(Model.pageNumber == Model.pageCount ? "disabled" : "")">
-                    <a class="page-link"
-                       asp-controller="Admin"
-                       asp-action="@ViewData["FilterOrderAction"]"
-                       asp-route-status="@(ViewContext.HttpContext.Request.Query["status"])"
-                       asp-route-page="@(Model.pageNumber + 1)"
-                       asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
-                        Next
-                    </a>
-                </li>
-            </ul>
-        </nav>
+                    <!-- Page Numbers -->
+                    @for (var pg = 1; pg <= Model.pageCount; pg++)
+                    {
+                        <li class="page-item @(pg == Model.pageNumber ? "active" : "")">
+                            <a class="page-link"
+                               asp-controller="Admin"
+                               asp-action="@ViewData["FilterOrderAction"]"
+                               asp-route-page="@pg"
+                               asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])"
+                               asp-route-query="@(ViewContext.HttpContext.Request.Query["query"])"
+                                asp-route-status="@(ViewContext.HttpContext.Request.Query["status"])">
+                                @pg
+                            </a>
+                        </li>
+                    }
+
+                    <!-- Next Page -->
+                    <li class="page-item @(Model.pageNumber == Model.pageCount ? "disabled" : "")">
+                        <a class="page-link"
+                           asp-controller="Admin"
+                           asp-action="@ViewData["FilterOrderAction"]"
+                           asp-route-page="@(Model.pageNumber + 1)"
+                           asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])"
+                           asp-route-query="@(ViewContext.HttpContext.Request.Query["query"])"
+                            asp-route-status="@(ViewContext.HttpContext.Request.Query["status"])">
+                            Next
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
     </div>
-</div>
 
 </div>
 

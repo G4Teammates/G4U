@@ -22,7 +22,7 @@ namespace OrderMicroservice.Repositories.Services
         private static readonly HttpClient client = new();
         private static readonly string Gateway = "https://localhost:7296";
         private static readonly string MoMoGateway = "https://test-payment.momo.vn/v2/gateway/api/create";
-        private static readonly string IpnMomo = "https://eb97-2402-800-6346-23b3-70ad-453c-67b9-85a3.ngrok-free.app" + "/api/payment/ipn/momo";
+        private static readonly string IpnMomo = "https://5c16-2402-800-6346-23b3-38c1-d46d-fbda-2c63.ngrok-free.app" + "/api/payment/ipn/momo";
         private IMessage _message = message;
         public async Task<ResponseModel> MoMoPayment(MoMoRequestFromClient requestClient)
         {
@@ -117,9 +117,24 @@ namespace OrderMicroservice.Repositories.Services
                 string accessKey = MoMoOptionModel.AccessKey!;
                 string secretKey = MoMoOptionModel.SecretKey!;
 
-                ResponseModel orderResult = await _orderService.GetOrderById(request.OrderId, 1,1);
-                ICollection<OrderModel> orders = (ICollection<OrderModel>)orderResult.Result;
-                OrderModel order = orders.FirstOrDefault();
+                // 1. Lấy thông tin order
+                ResponseModel responseFindOrder = await _orderService.GetOrderById(request.OrderId, 1, 1);
+                var pagedOrders = responseFindOrder.Result as X.PagedList.IPagedList<OrderModel>;
+                if (pagedOrders == null)
+                {
+                    return new ResponseModel
+                    {
+                        IsSuccess = false,
+                        Message = "Failed to cast Result to IPagedList<OrderModel>."
+                    };
+                }
+
+                // Nếu cần chuyển đổi sang ICollection<OrderModel>
+                ICollection<OrderModel> orders = pagedOrders.ToList();
+
+                var order = orders.FirstOrDefault();
+
+
 
                 if (request.Amount == order.TotalPrice && request.PartnerCode == "MOMO" && request.OrderId == order.Id)
                 {
