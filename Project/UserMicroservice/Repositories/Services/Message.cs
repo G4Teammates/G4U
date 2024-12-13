@@ -280,7 +280,7 @@ namespace UserMicroservice.Repositories.Services
                             else
                             {
                                 FindUsernameModel userDataExport = (FindUsernameModel)response.Result;
-                                SendingMessage2<FindUsernameModel>(userDataExport, "Export", "prepareData_for_export", "prepareData_for_export", ExchangeType.Direct, true, false, false, false);
+                                SendingMessage<FindUsernameModel>(userDataExport, "Export", "prepareData_for_export", "prepareData_for_export", ExchangeType.Direct, true, false, false, false);
                                 var jsonString = System.Text.Json.JsonSerializer.Serialize(response);
                                 Console.WriteLine($"User service received message from Order service.Have {userDataExport.UsersExport.Count} user(s) can export.Have {userDataExport.MissingUsers.Count} user(s) missing"); // Log raw message
                             }
