@@ -10,9 +10,11 @@ namespace ReportMicroservice.Repostories
     public class Message : IMessage
     {
         private readonly IServiceScopeFactory _scopeFactory;
-         public Message(IServiceScopeFactory scopeFactory)
+        private readonly IConfiguration _config;
+        public Message(IServiceScopeFactory scopeFactory, IConfiguration config)
         {
             _scopeFactory = scopeFactory;
+            _config = config;
         }
         public void ReceiveMessageFromUser()
         {
@@ -24,11 +26,11 @@ namespace ReportMicroservice.Repostories
                 const string QueueName = "updateUserName_queue_rp";
                 var connectionFactory = new ConnectionFactory
                 {
-                    UserName = "guest",
-                    Password = "guest",
-                    VirtualHost = "/",
+                    UserName = _config["31"],
+                    Password = _config["32"],
+                    VirtualHost = _config["31"],
                     Port = 5672,
-                    HostName = "localhost"
+                    HostName = _config["33"]
                 };
                 using var connection = connectionFactory.CreateConnection();
                 using var channel = connection.CreateModel();

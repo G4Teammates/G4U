@@ -10,6 +10,7 @@ using OrderMicroservice.Models.OrderModel;
 using OrderMicroservice.Models.PaymentModel;
 using OrderMicroservice.Models.UserModel;
 using OrderMicroservice.Repositories.Interfaces;
+using RabbitMQ.Client;
 using System.ComponentModel.Design;
 using X.PagedList.Extensions;
 
@@ -34,8 +35,7 @@ namespace OrderMicroservice.Repositories.Services
 
 
                 var totalRequest = await TotalRequest();
-                _message.SendingMessageStatistiscal(totalRequest.Result);
-
+                _message.SendingMessage(totalRequest.Result, "Stastistical", "totalOrder_for_stastistical", "totalOrder_for_stastistical", ExchangeType.Direct, true, false, false, false);
                 response.Result = orderModel;
                 response.Message = $"Create order success";
             }
@@ -302,7 +302,7 @@ namespace OrderMicroservice.Repositories.Services
 
                 // Gửi thông điệp thống kê
                 var totalRequest = await TotalRequest();
-                _message.SendingMessageStatistiscal(totalRequest.Result);
+                _message.SendingMessage(totalRequest.Result, "Stastistical", "totalOrder_for_stastistical", "totalOrder_for_stastistical", ExchangeType.Direct, true, false, false, false);
 
 
                 // Trả về thông báo cập nhật

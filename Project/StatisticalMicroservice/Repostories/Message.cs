@@ -6,6 +6,8 @@ using System.Text.Json;
 using StatisticalMicroservice.Models.DTO;
 using StatisticalMicroservice.Model.Message;
 using StatisticalMicroservice.DBContexts.Entities;
+using Azure;
+using static Google.Apis.Requests.BatchRequest;
 
 namespace StatisticalMicroservice.Repostories
 {
@@ -15,9 +17,11 @@ namespace StatisticalMicroservice.Repostories
         public event Action<OrderGroupByUserData> OnOrderResponseReceived;
         public event Action<ProductGroupByUserData> OnProductResponseReceived;
         public event Action<TotalGroupByUserResponse> OnFinalResponseReceived;
-        public Message(IServiceScopeFactory scopeFactory)
+        private readonly IConfiguration _config;
+        public Message(IServiceScopeFactory scopeFactory, IConfiguration config)
         {
             _scopeFactory = scopeFactory;
+            _config = config;
         }
         public void ReceiveMessageProduct()
         {
@@ -31,11 +35,11 @@ namespace StatisticalMicroservice.Repostories
 
                 var connectionFactory = new ConnectionFactory
                 {
-                    UserName = "guest",
-                    Password = "guest",
-                    VirtualHost = "/",
+                    UserName = _config["25"],
+                    Password = _config["26"],
+                    VirtualHost = _config["25"],
                     Port = 5672,
-                    HostName = "localhost"
+                    HostName = _config["27"]
                 };
                 using var connection = connectionFactory.CreateConnection();
                 using var channel = connection.CreateModel();
@@ -108,11 +112,11 @@ namespace StatisticalMicroservice.Repostories
 
                 var connectionFactory = new ConnectionFactory
                 {
-                    UserName = "guest",
-                    Password = "guest",
-                    VirtualHost = "/",
+                    UserName = _config["25"],
+                    Password = _config["26"],
+                    VirtualHost = _config["25"],
                     Port = 5672,
-                    HostName = "localhost"
+                    HostName = _config["27"]
                 };
                 using var connection = connectionFactory.CreateConnection();
                 using var channel = connection.CreateModel();
@@ -185,11 +189,11 @@ namespace StatisticalMicroservice.Repostories
 
                 var connectionFactory = new ConnectionFactory
                 {
-                    UserName = "guest",
-                    Password = "guest",
-                    VirtualHost = "/",
+                    UserName = _config["25"],
+                    Password = _config["26"],
+                    VirtualHost = _config["25"],
                     Port = 5672,
-                    HostName = "localhost"
+                    HostName = _config["27"]
                 };
                 using var connection = connectionFactory.CreateConnection();
                 using var channel = connection.CreateModel();
@@ -252,8 +256,8 @@ namespace StatisticalMicroservice.Repostories
 
         public void SendingMessageStastisticalGroupByUser<T>(T message)
         {
-            SendingMessageStastisticalGroupByUserToProduct(message);
-            SendingMessageStastisticalGroupByUserToOrder(message);
+            SendingMessage(message, "StastisticalGroupByUser", "Stastistical_groupby_user_product", "Stastistical_groupby_user_product", ExchangeType.Direct, true, false, false, false);
+            SendingMessage(message, "StastisticalGroupByUser", "Stastistical_groupby_user_order", "Stastistical_groupby_user_order", ExchangeType.Direct, true, false, false, false);
         }
         public void ReceiveMessageStastisticalGroupByUserToProduct()
         {
@@ -266,11 +270,11 @@ namespace StatisticalMicroservice.Repostories
                 const string QueueName = "Stastistical_groupby_user_product_data";
                 var connectionFactory = new ConnectionFactory
                 {
-                    UserName = "guest",
-                    Password = "guest",
-                    VirtualHost = "/",
+                    UserName = _config["25"],
+                    Password = _config["26"],
+                    VirtualHost = _config["25"],
                     Port = 5672,
-                    HostName = "localhost"
+                    HostName = _config["27"]
                 };
 
                 using var connection = connectionFactory.CreateConnection();
@@ -336,11 +340,11 @@ namespace StatisticalMicroservice.Repostories
                 const string QueueName = "Stastistical_groupby_user_order_data";
                 var connectionFactory = new ConnectionFactory
                 {
-                    UserName = "guest",
-                    Password = "guest",
-                    VirtualHost = "/",
+                    UserName = _config["25"],
+                    Password = _config["26"],
+                    VirtualHost = _config["25"],
                     Port = 5672,
-                    HostName = "localhost"
+                    HostName = _config["27"]
                 };
 
                 using var connection = connectionFactory.CreateConnection();
@@ -465,113 +469,58 @@ namespace StatisticalMicroservice.Repostories
             }
             return response;
         }
-        private void SendingMessageStastisticalGroupByUserToProduct<T>(T message)
+        //sending message
+        private void SendingMessage<T>(T message, string exchangeName, string queueName, string routingKey, string exchangeType, bool exchangeDurable, bool queueDurable, bool exclusive, bool autoDelete)
         {
-            const string ExchangeName = "StastisticalGroupByUser";
-            // tên queue
-            const string QueueName = "Stastistical_groupby_user_product";
-
             ConnectionFactory factory = new()
             {
-                UserName = "guest",
-                Password = "guest",
-                VirtualHost = "/",
+                UserName = _config["25"],
+                Password = _config["26"],
+                VirtualHost = _config["25"],
                 Port = 5672,
-                HostName = "localhost"
+                HostName = _config["27"]
             };
-            using var conn = factory.CreateConnection();
-            using (var channel = conn.CreateModel())
+
+            using var connection = factory.CreateConnection();
+            using (var channel = connection.CreateModel())
             {
+                // Khai báo cổng Exchange
                 channel.ExchangeDeclare(
-                                      exchange: ExchangeName,
-                                      type: ExchangeType.Direct, // Lựa chọn loại cổng (ExchangeType)
-                                      durable: true              // Khi khởi động lại có bị mất dữ liệu hay không( true là không ) 
-                                    );
+                    exchange: exchangeName,
+                    type: exchangeType,
+                    durable: exchangeDurable
+                );
 
                 // Khai báo hàng chờ
                 var queue = channel.QueueDeclare(
-                                        queue: QueueName, // tên hàng chờ
-                                        durable: false, // khi khởi động lại có mất không
-                                                        // hàng đợi của bạn sẽ trở thành riêng tư và chỉ ứng dụng của
-                                                        // bạn mới có thể sử dụng. Điều này rất hữu ích khi bạn cần giới
-                                                        // hạn hàng đợi chỉ cho một người tiêu dùng.
-                                        exclusive: false,
-                                        autoDelete: false, // có tự động xóa không
-                                        arguments: ImmutableDictionary<string, object>.Empty);
+                    queue: queueName,
+                    durable: queueDurable,
+                    exclusive: exclusive,
+                    autoDelete: autoDelete,
+                    arguments: ImmutableDictionary<string, object>.Empty
+                );
 
+                Console.WriteLine($"Sending message to queue '{queueName}' on exchange '{exchangeName}': {message}");
 
-
-                // Liên kết hàng đợi với tên cổng bằng rounting key
+                // Liên kết hàng đợi với cổng bằng routing key
                 channel.QueueBind(
-                    queue: QueueName,
-                    exchange: ExchangeName,
-                    routingKey: QueueName); // Routing Key phải khớp với tên hàng chờ
+                    queue: queueName,
+                    exchange: exchangeName,
+                    routingKey: routingKey
+                );
 
                 var jsonString = JsonSerializer.Serialize(message);
+                var body = Encoding.UTF8.GetBytes(jsonString);
 
-                var Body = Encoding.UTF8.GetBytes(jsonString);
-
+                // Gửi message
                 channel.BasicPublish(
-                    exchange: ExchangeName,
-                    routingKey: QueueName,
+                    exchange: exchangeName,
+                    routingKey: routingKey,
                     mandatory: true,
                     basicProperties: null,
-                    body: Body);
-            };
-        }
-        private void SendingMessageStastisticalGroupByUserToOrder<T>(T message)
-        {
-            const string ExchangeName = "StastisticalGroupByUser";
-            // tên queue
-            const string QueueName = "Stastistical_groupby_user_order";
-
-            ConnectionFactory factory = new()
-            {
-                UserName = "guest",
-                Password = "guest",
-                VirtualHost = "/",
-                Port = 5672,
-                HostName = "localhost"
-            };
-            using var conn = factory.CreateConnection();
-            using (var channel = conn.CreateModel())
-            {
-                channel.ExchangeDeclare(
-                                      exchange: ExchangeName,
-                                      type: ExchangeType.Direct, // Lựa chọn loại cổng (ExchangeType)
-                                      durable: true              // Khi khởi động lại có bị mất dữ liệu hay không( true là không ) 
-                                    );
-
-                // Khai báo hàng chờ
-                var queue = channel.QueueDeclare(
-                                        queue: QueueName, // tên hàng chờ
-                                        durable: false, // khi khởi động lại có mất không
-                                                        // hàng đợi của bạn sẽ trở thành riêng tư và chỉ ứng dụng của
-                                                        // bạn mới có thể sử dụng. Điều này rất hữu ích khi bạn cần giới
-                                                        // hạn hàng đợi chỉ cho một người tiêu dùng.
-                                        exclusive: false,
-                                        autoDelete: false, // có tự động xóa không
-                                        arguments: ImmutableDictionary<string, object>.Empty);
-
-
-
-                // Liên kết hàng đợi với tên cổng bằng rounting key
-                channel.QueueBind(
-                    queue: QueueName,
-                    exchange: ExchangeName,
-                    routingKey: QueueName); // Routing Key phải khớp với tên hàng chờ
-
-                var jsonString = JsonSerializer.Serialize(message);
-
-                var Body = Encoding.UTF8.GetBytes(jsonString);
-
-                channel.BasicPublish(
-                    exchange: ExchangeName,
-                    routingKey: QueueName,
-                    mandatory: true,
-                    basicProperties: null,
-                    body: Body);
-            };
+                    body: body
+                );
+            }
         }
 
         #endregion
