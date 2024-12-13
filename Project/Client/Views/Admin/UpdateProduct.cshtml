@@ -305,16 +305,7 @@
                 </div>
             </div>
             
-            <!-- Modal Xác nhận Xóa -->
-            <div id="deleteModal" class="modal">
-                <div class="modal-content">
-                    <p>Are you sure you want to upload a new game file? This action will delete the current game file</p>
-                    <form class="modal-buttons">
-                        <button type="button" onclick="confirmUploadGame()" class="btn-confirm">Upload Game</button>
-                        <a style="text-decoration:none" onclick="closeModal()" class="btn-cancel">No</a>
-                    </form>
-                </div>
-            </div>
+
 
             
 
@@ -330,6 +321,17 @@
     </div>
     
 </form>
+
+<!-- Modal Xác nhận Xóa -->
+<div id="deleteModal" class="modal">
+    <div class="modal-content">
+        <p>Are you sure you want to upload a new game file? This action will delete the current game file</p>
+        <form class="modal-buttons">
+            <button type="button" onclick="confirmUploadGame()" class="btn-confirm">Upload Game</button>
+            <a style="text-decoration:none" onclick="closeModal()" class="btn-cancel">No</a>
+        </form>
+    </div>
+</div>
 <script>
     function confirmDelete() {
         const modal = document.getElementById(`deleteModal`);

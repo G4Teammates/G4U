@@ -15,11 +15,24 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
+
 builder.Services.AddSwaggerGen(); 
 builder.Services.AddHostedService<TempFileCleaner>();
 builder.Services.AddHttpContextAccessor();
-builder.Configuration.AddAzureKeyVault(new Uri("https://duantotnghiep.vault.azure.net/"),
-    new DefaultAzureCredential());
+
+// S? d?ng Managed Identity ?? c?u hình Azure Key Vault
+/*builder.Configuration.AddAzureKeyVault(
+    new Uri("https://duantotnghiep.vault.azure.net/"),
+        new ManagedIdentityCredential()
+
+);*/
+// S? d?ng Managed Identity ?? c?u hình Azure Key Vault c?c b?
+builder.Configuration.AddAzureKeyVault(
+    new Uri("https://duantotnghiep.vault.azure.net/"),
+        new VisualStudioCredential()
+
+);
+
 builder.Services.AddStartupService(builder.Configuration);
 builder.Services.AddSwaggerGen(opt =>
 {
