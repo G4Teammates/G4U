@@ -33,6 +33,7 @@ using Microsoft.Extensions.Caching.Memory;
 using SharpCompress.Archives;
 using SharpCompress.Common;
 using System.Diagnostics;
+using RabbitMQ.Client;
 
 namespace ProductMicroservice.Repostories
 {
@@ -139,8 +140,7 @@ namespace ProductMicroservice.Repostories
 
                 while (retryCount < maxRetryAttempts && !isCompleted)
                 {
-                    _message.SendingMessageCheckExistCategory(Product.Categories); // Gửi message
-
+                    _message.SendingMessage(Product.Categories, "CheckExist", "CheckExistCategory_For_RreateProduct", "CheckExistCategory_For_RreateProduct", ExchangeType.Direct, true, false, false, false);
                     var tcs = new TaskCompletionSource<bool>(); // Tạo TaskCompletionSource
 
                     // Đăng ký sự kiện để gán giá trị
@@ -199,7 +199,7 @@ namespace ProductMicroservice.Repostories
 
                 while (retryCount2 < maxRetryAttempts2 && !isCompleted2)
                 {
-                    _message.SendingMessageCheckExistUserName(Product.UserName); // Gửi message
+                    _message.SendingMessage(Product.UserName, "CheckExist", "CheckExistUserName_For_RreateProduct", "CheckExistUserName_For_RreateProduct", ExchangeType.Direct, true, false, false, false);
 
                     var tcs2 = new TaskCompletionSource<bool>(); // Tạo TaskCompletionSource
 
@@ -375,7 +375,7 @@ namespace ProductMicroservice.Repostories
                         response.Result = _mapper.Map<Products>(proHaveFile);// Thực hiện cập nhật sản phẩm
 
                         var totalRequest = await TotalRequest();
-                        _message.SendingMessageStatistiscal(totalRequest.Result);
+                        _message.SendingMessage(totalRequest.Result, "Stastistical", "totalSold_totalProduct_for_stastistical", "totalSold_totalProduct_for_stastistical", ExchangeType.Direct, true, false, false, false);
                     }
                     else
                     {
@@ -405,7 +405,7 @@ namespace ProductMicroservice.Repostories
                 {
                     response.Result = _mapper.Map<ICollection<Products>>(Pros).ToPagedList(page, pageSize);
                     var totalRequest = await TotalRequest();
-                    _message.SendingMessageStatistiscal(totalRequest.Result);
+                    _message.SendingMessage(totalRequest.Result, "Stastistical", "totalSold_totalProduct_for_stastistical", "totalSold_totalProduct_for_stastistical", ExchangeType.Direct, true, false, false, false);
                 }
                 else
                 {
@@ -473,7 +473,7 @@ namespace ProductMicroservice.Repostories
                     response.Result = _mapper.Map<Products>(product);
 
                     var totalRequest = await TotalRequest();
-                    _message.SendingMessageStatistiscal(totalRequest.Result);
+                    _message.SendingMessage(totalRequest.Result, "Stastistical", "totalSold_totalProduct_for_stastistical", "totalSold_totalProduct_for_stastistical", ExchangeType.Direct, true, false, false, false);
                 }
                 else
                 {
@@ -501,7 +501,7 @@ namespace ProductMicroservice.Repostories
                     await _db.SaveChangesAsync();
 
                     var totalRequest = await TotalRequest();
-                    _message.SendingMessageStatistiscal(totalRequest.Result);
+                    _message.SendingMessage(totalRequest.Result, "Stastistical", "totalSold_totalProduct_for_stastistical", "totalSold_totalProduct_for_stastistical", ExchangeType.Direct, true, false, false, false);
                     response.Message = "Delete successfully";
                 }
                 else
@@ -759,7 +759,7 @@ namespace ProductMicroservice.Repostories
 
                 while (retryCount < maxRetryAttempts && !isCompleted)
                 {
-                    _message.SendingMessageCheckExistCategory(Product.Categories); // Gửi message
+                    _message.SendingMessage(Product.Categories, "CheckExist", "CheckExistCategory_For_RreateProduct", "CheckExistCategory_For_RreateProduct", ExchangeType.Direct, true, false, false, false);
 
                     var tcs = new TaskCompletionSource<bool>(); // Tạo TaskCompletionSource
 
@@ -819,7 +819,7 @@ namespace ProductMicroservice.Repostories
 
                 while (retryCount2 < maxRetryAttempts2 && !isCompleted2)
                 {
-                    _message.SendingMessageCheckExistUserName(username); // Gửi message
+                    _message.SendingMessage(username, "CheckExist", "CheckExistUserName_For_RreateProduct", "CheckExistUserName_For_RreateProduct", ExchangeType.Direct, true, false, false, false);
 
                     var tcs2 = new TaskCompletionSource<bool>(); // Tạo TaskCompletionSource
 
@@ -967,7 +967,7 @@ namespace ProductMicroservice.Repostories
                         response.Result = _mapper.Map<Products>(productEntity);// Thực hiện cập nhật sản phẩm
 
                         var totalRequest = await TotalRequest();
-                        _message.SendingMessageStatistiscal(totalRequest.Result);
+                        _message.SendingMessage(totalRequest.Result, "Stastistical", "totalSold_totalProduct_for_stastistical", "totalSold_totalProduct_for_stastistical", ExchangeType.Direct, true, false, false, false);
                     }
                     else
                     {
@@ -1341,7 +1341,7 @@ namespace ProductMicroservice.Repostories
 
                 while (retryCount < maxRetryAttempts && !isCompleted)
                 {
-                    _message.SendingMessageCheckExistCategory(Product.Categories); // Gửi message
+                    _message.SendingMessage(Product.Categories, "CheckExist", "CheckExistCategory_For_RreateProduct", "CheckExistCategory_For_RreateProduct", ExchangeType.Direct, true, false, false, false);
 
                     var tcs = new TaskCompletionSource<bool>(); // Tạo TaskCompletionSource
 
@@ -1401,7 +1401,7 @@ namespace ProductMicroservice.Repostories
 
                 while (retryCount2 < maxRetryAttempts2 && !isCompleted2)
                 {
-                    _message.SendingMessageCheckExistUserName(username); // Gửi message
+                    _message.SendingMessage(username, "CheckExist", "CheckExistUserName_For_RreateProduct", "CheckExistUserName_For_RreateProduct", ExchangeType.Direct, true, false, false, false);
 
                     var tcs2 = new TaskCompletionSource<bool>(); // Tạo TaskCompletionSource
 
@@ -1556,7 +1556,7 @@ namespace ProductMicroservice.Repostories
                         response.Result = _mapper.Map<Products>(productEntity);// Thực hiện cập nhật sản phẩm
 
                         var totalRequest = await TotalRequest();
-                        _message.SendingMessageStatistiscal(totalRequest.Result);
+                        _message.SendingMessage(totalRequest.Result, "Stastistical", "totalSold_totalProduct_for_stastistical", "totalSold_totalProduct_for_stastistical", ExchangeType.Direct, true, false, false, false);
                     }
                     else
                     {

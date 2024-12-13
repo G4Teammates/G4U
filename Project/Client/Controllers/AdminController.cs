@@ -939,6 +939,15 @@ namespace Client.Controllers
                         { "category", category }
                     };
                     ViewData["Parameters"] = filterParams;
+                    // Tạo mã QR cho từng sản phẩm
+                    foreach (var item in productViewModel.Product)
+                    {
+                        string qrCodeUrl = Url.Action("UpdateProduct", "Admin", new { id = item.Id }, Request.Scheme);
+                        item.QrCode = _productService.GenerateQRCode(qrCodeUrl); // Tạo mã QR và lưu vào thuộc tính
+
+                        /*string barCodeUrl = Url.Action("UpdateProduct", "Admin", new { id = item.Id }, Request.Scheme);
+                        item.BarCode = _productService.GenerateBarCode(11111111111); // Tạo mã QR và lưu vào thuộc tính*/
+                    }
                 }
                 else
                 {
@@ -950,15 +959,7 @@ namespace Client.Controllers
             {
                 TempData["error"] = ex.Message;
             }
-            // Tạo mã QR cho từng sản phẩm
-            foreach (var item in productViewModel.Product)
-            {
-                string qrCodeUrl = Url.Action("UpdateProduct", "Admin", new { id = item.Id }, Request.Scheme);
-                item.QrCode = _productService.GenerateQRCode(qrCodeUrl); // Tạo mã QR và lưu vào thuộc tính
 
-                /*string barCodeUrl = Url.Action("UpdateProduct", "Admin", new { id = item.Id }, Request.Scheme);
-                item.BarCode = _productService.GenerateBarCode(11111111111); // Tạo mã QR và lưu vào thuộc tính*/
-            }
 
             return View("ProductsManager", productViewModel); // Trả về view ProductsManager với danh sách sản phẩm đã lọc
         }

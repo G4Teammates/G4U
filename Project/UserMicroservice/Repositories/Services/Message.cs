@@ -11,65 +11,11 @@ namespace UserMicroservice.Repositories.Services
     public class Message : IMessage
     {
         private readonly IServiceScopeFactory _scopeFactory;
-
-        public Message(IServiceScopeFactory scopeFactory)
+        private readonly IConfiguration _config;
+        public Message(IServiceScopeFactory scopeFactory, IConfiguration config)
         {
             _scopeFactory = scopeFactory;
-        }
-        public void SendingMessageStatistiscal<T>(T message)
-        {
-            // tên cổng
-            const string ExchangeName = "Stastistical";
-            // tên queue
-            const string QueueName = "totalUser_for_stastistical";
-
-            ConnectionFactory factory = new()
-            {
-                UserName = "guest",
-                Password = "guest",
-                VirtualHost = "/",
-                Port = 5672,
-                HostName = "localhost"
-            };
-            using var conn = factory.CreateConnection();
-            using (var channel = conn.CreateModel())
-            {
-                channel.ExchangeDeclare(
-                                      exchange: ExchangeName,
-                                      type: ExchangeType.Direct, // Lựa chọn loại cổng (ExchangeType)
-                                      durable: true              // Khi khởi động lại có bị mất dữ liệu hay không( true là không ) 
-                                    );
-
-                // Khai báo hàng chờ
-                var queue = channel.QueueDeclare(
-                                        queue: QueueName, // tên hàng chờ
-                                        durable: false, // khi khởi động lại có mất không
-                                                        // hàng đợi của bạn sẽ trở thành riêng tư và chỉ ứng dụng của
-                                                        // bạn mới có thể sử dụng. Điều này rất hữu ích khi bạn cần giới
-                                                        // hạn hàng đợi chỉ cho một người tiêu dùng.
-                                        exclusive: false,
-                                        autoDelete: false, // có tự động xóa không
-                                        arguments: ImmutableDictionary<string, object>.Empty);
-
-
-
-                // Liên kết hàng đợi với tên cổng bằng rounting key
-                channel.QueueBind(
-                    queue: QueueName,
-                    exchange: ExchangeName,
-                    routingKey: QueueName); // Routing Key phải khớp với tên hàng chờ
-
-                var jsonString = JsonSerializer.Serialize(message);
-
-                var Body = Encoding.UTF8.GetBytes(jsonString);
-
-                channel.BasicPublish(
-                    exchange: ExchangeName,
-                    routingKey: QueueName,
-                    mandatory: true,
-                    basicProperties: null,
-                    body: Body);
-            };
+            _config = config;
         }
 
         //check-exist-user
@@ -84,11 +30,11 @@ namespace UserMicroservice.Repositories.Services
 
                 var connectionFactory = new ConnectionFactory
                 {
-                    UserName = "guest",
-                    Password = "guest",
-                    VirtualHost = "/",
+                    UserName = _config["25"],
+                    Password = _config["26"],
+                    VirtualHost = _config["25"],
                     Port = 5672,
-                    HostName = "localhost"
+                    HostName = _config["27"]
                 };
                 using var connection = connectionFactory.CreateConnection();
                 using var channel = connection.CreateModel();
@@ -131,7 +77,7 @@ namespace UserMicroservice.Repositories.Services
                                 IsExist = isExist
                             };
 
-                            SendingMessageCheckExist(response);
+                            SendingMessage2(response, "CheckExist", "CheckExistUserName_For_RreateProduct_Confirm", "CheckExistUserName_For_RreateProduct_Confirm", ExchangeType.Direct, true, false, false, false);
                             var jsonString = JsonSerializer.Serialize(response);
                             Console.WriteLine("User sending message: " + jsonString); // Log raw message
 
@@ -156,277 +102,112 @@ namespace UserMicroservice.Repositories.Services
             }
 
         }
-        public void SendingMessageCheckExist<T>(T message)
-        {
-            const string ExchangeName = "CheckExist";
-            // tên queue
-            const string QueueName = "CheckExistUserName_For_RreateProduct_Confirm";
 
+
+        //sending message
+        public void SendingMessage<T>(T message, string exchangeName, string queueName, string routingKey, string exchangeType, bool exchangeDurable, bool queueDurable, bool exclusive, bool autoDelete)
+        {
             ConnectionFactory factory = new()
             {
-                UserName = "guest",
-                Password = "guest",
-                VirtualHost = "/",
+                UserName = _config["31"],
+                Password = _config["32"],
+                VirtualHost = _config["31"],
                 Port = 5672,
-                HostName = "localhost"
+                HostName = _config["33"]
             };
-            using var conn = factory.CreateConnection();
-            using (var channel = conn.CreateModel())
+
+            using var connection = factory.CreateConnection();
+            using (var channel = connection.CreateModel())
             {
-                /*channel.ExchangeDeclare(
-                                      exchange: ExchangeName,
-                                      type: ExchangeType.Direct, // Lựa chọn loại cổng (ExchangeType)
-                                      durable: true              // Khi khởi động lại có bị mất dữ liệu hay không( true là không ) 
-                                    );*/
-
-                // Khai báo hàng chờ
-                var queue = channel.QueueDeclare(
-                                        queue: QueueName, // tên hàng chờ
-                                        durable: false, // khi khởi động lại có mất không
-                                                        // hàng đợi của bạn sẽ trở thành riêng tư và chỉ ứng dụng của
-                                                        // bạn mới có thể sử dụng. Điều này rất hữu ích khi bạn cần giới
-                                                        // hạn hàng đợi chỉ cho một người tiêu dùng.
-                                        exclusive: false,
-                                        autoDelete: false, // có tự động xóa không
-                                        arguments: ImmutableDictionary<string, object>.Empty);
-
-
-
-                // Liên kết hàng đợi với tên cổng bằng rounting key
-                channel.QueueBind(
-                    queue: QueueName,
-                    exchange: ExchangeName,
-                    routingKey: QueueName); // Routing Key phải khớp với tên hàng chờ
-
-                var jsonString = JsonSerializer.Serialize(message);
-
-                var Body = Encoding.UTF8.GetBytes(jsonString);
-
-                channel.BasicPublish(
-                    exchange: ExchangeName,
-                    routingKey: QueueName,
-                    mandatory: true,
-                    basicProperties: null,
-                    body: Body);
-            };
-        }
-
-        //update-username
-        public void SendingMessageUpdateUserNameCMT<T>(T message)
-        {
-            const string ExchangeName = "UpdateUserName";
-            // tên queue
-            const string QueueName = "updateUserName_queue_cmt";
-
-            ConnectionFactory factory = new()
-            {
-                UserName = "guest",
-                Password = "guest",
-                VirtualHost = "/",
-                Port = 5672,
-                HostName = "localhost"
-            };
-            using var conn = factory.CreateConnection();
-            using (var channel = conn.CreateModel())
-            {
+                // Khai báo cổng Exchange
                 channel.ExchangeDeclare(
-                                      exchange: ExchangeName,
-                                      type: ExchangeType.Direct, // Lựa chọn loại cổng (ExchangeType)
-                                      durable: true              // Khi khởi động lại có bị mất dữ liệu hay không( true là không ) 
-                                    );
+                    exchange: exchangeName,
+                    type: exchangeType,
+                    durable: exchangeDurable
+                );
 
                 // Khai báo hàng chờ
                 var queue = channel.QueueDeclare(
-                                        queue: QueueName, // tên hàng chờ
-                                        durable: false, // khi khởi động lại có mất không
-                                                        // hàng đợi của bạn sẽ trở thành riêng tư và chỉ ứng dụng của
-                                                        // bạn mới có thể sử dụng. Điều này rất hữu ích khi bạn cần giới
-                                                        // hạn hàng đợi chỉ cho một người tiêu dùng.
-                                        exclusive: false,
-                                        autoDelete: false, // có tự động xóa không
-                                        arguments: ImmutableDictionary<string, object>.Empty);
+                    queue: queueName,
+                    durable: queueDurable,
+                    exclusive: exclusive,
+                    autoDelete: autoDelete,
+                    arguments: ImmutableDictionary<string, object>.Empty
+                );
 
+                Console.WriteLine($"Sending message to queue '{queueName}' on exchange '{exchangeName}': {message}");
 
-
-                // Liên kết hàng đợi với tên cổng bằng rounting key
+                // Liên kết hàng đợi với cổng bằng routing key
                 channel.QueueBind(
-                    queue: QueueName,
-                    exchange: ExchangeName,
-                    routingKey: QueueName); // Routing Key phải khớp với tên hàng chờ
+                    queue: queueName,
+                    exchange: exchangeName,
+                    routingKey: routingKey
+                );
 
                 var jsonString = JsonSerializer.Serialize(message);
+                var body = Encoding.UTF8.GetBytes(jsonString);
 
-                var Body = Encoding.UTF8.GetBytes(jsonString);
-
+                // Gửi message
                 channel.BasicPublish(
-                    exchange: ExchangeName,
-                    routingKey: QueueName,
+                    exchange: exchangeName,
+                    routingKey: routingKey,
                     mandatory: true,
                     basicProperties: null,
-                    body: Body);
-            };
+                    body: body
+                );
+            }
         }
-        public void SendingMessageUpdateUserNameRP<T>(T message)
+        private void SendingMessage2<T>(T message, string exchangeName, string queueName, string routingKey, string exchangeType, bool exchangeDurable, bool queueDurable, bool exclusive, bool autoDelete)
         {
-            const string ExchangeName = "UpdateUserName";
-            // tên queue
-            const string QueueName = "updateUserName_queue_rp";
-
             ConnectionFactory factory = new()
             {
-                UserName = "guest",
-                Password = "guest",
-                VirtualHost = "/",
+                UserName = _config["25"],
+                Password = _config["26"],
+                VirtualHost = _config["25"],
                 Port = 5672,
-                HostName = "localhost"
+                HostName = _config["27"]
             };
-            using var conn = factory.CreateConnection();
-            using (var channel = conn.CreateModel())
+
+            using var connection = factory.CreateConnection();
+            using (var channel = connection.CreateModel())
             {
+                // Khai báo cổng Exchange
                 channel.ExchangeDeclare(
-                                      exchange: ExchangeName,
-                                      type: ExchangeType.Direct, // Lựa chọn loại cổng (ExchangeType)
-                                      durable: true              // Khi khởi động lại có bị mất dữ liệu hay không( true là không ) 
-                                    );
+                    exchange: exchangeName,
+                    type: exchangeType,
+                    durable: exchangeDurable
+                );
 
                 // Khai báo hàng chờ
                 var queue = channel.QueueDeclare(
-                                        queue: QueueName, // tên hàng chờ
-                                        durable: false, // khi khởi động lại có mất không
-                                                        // hàng đợi của bạn sẽ trở thành riêng tư và chỉ ứng dụng của
-                                                        // bạn mới có thể sử dụng. Điều này rất hữu ích khi bạn cần giới
-                                                        // hạn hàng đợi chỉ cho một người tiêu dùng.
-                                        exclusive: false,
-                                        autoDelete: false, // có tự động xóa không
-                                        arguments: ImmutableDictionary<string, object>.Empty);
+                    queue: queueName,
+                    durable: queueDurable,
+                    exclusive: exclusive,
+                    autoDelete: autoDelete,
+                    arguments: ImmutableDictionary<string, object>.Empty
+                );
 
+                Console.WriteLine($"Sending message to queue '{queueName}' on exchange '{exchangeName}': {message}");
 
-
-                // Liên kết hàng đợi với tên cổng bằng rounting key
+                // Liên kết hàng đợi với cổng bằng routing key
                 channel.QueueBind(
-                    queue: QueueName,
-                    exchange: ExchangeName,
-                    routingKey: QueueName); // Routing Key phải khớp với tên hàng chờ
+                    queue: queueName,
+                    exchange: exchangeName,
+                    routingKey: routingKey
+                );
 
                 var jsonString = JsonSerializer.Serialize(message);
+                var body = Encoding.UTF8.GetBytes(jsonString);
 
-                var Body = Encoding.UTF8.GetBytes(jsonString);
-
+                // Gửi message
                 channel.BasicPublish(
-                    exchange: ExchangeName,
-                    routingKey: QueueName,
+                    exchange: exchangeName,
+                    routingKey: routingKey,
                     mandatory: true,
                     basicProperties: null,
-                    body: Body);
-            };
-        }
-        public void SendingMessageUpdateUserNameOD<T>(T message)
-        {
-            const string ExchangeName = "UpdateUserName";
-            // tên queue
-            const string QueueName = "updateUserName_queue_od";
-
-            ConnectionFactory factory = new()
-            {
-                UserName = "guest",
-                Password = "guest",
-                VirtualHost = "/",
-                Port = 5672,
-                HostName = "localhost"
-            };
-            using var conn = factory.CreateConnection();
-            using (var channel = conn.CreateModel())
-            {
-                channel.ExchangeDeclare(
-                                      exchange: ExchangeName,
-                                      type: ExchangeType.Direct, // Lựa chọn loại cổng (ExchangeType)
-                                      durable: true              // Khi khởi động lại có bị mất dữ liệu hay không( true là không ) 
-                                    );
-
-                // Khai báo hàng chờ
-                var queue = channel.QueueDeclare(
-                                        queue: QueueName, // tên hàng chờ
-                                        durable: false, // khi khởi động lại có mất không
-                                                        // hàng đợi của bạn sẽ trở thành riêng tư và chỉ ứng dụng của
-                                                        // bạn mới có thể sử dụng. Điều này rất hữu ích khi bạn cần giới
-                                                        // hạn hàng đợi chỉ cho một người tiêu dùng.
-                                        exclusive: false,
-                                        autoDelete: false, // có tự động xóa không
-                                        arguments: ImmutableDictionary<string, object>.Empty);
-
-
-
-                // Liên kết hàng đợi với tên cổng bằng rounting key
-                channel.QueueBind(
-                    queue: QueueName,
-                    exchange: ExchangeName,
-                    routingKey: QueueName); // Routing Key phải khớp với tên hàng chờ
-
-                var jsonString = JsonSerializer.Serialize(message);
-
-                var Body = Encoding.UTF8.GetBytes(jsonString);
-
-                channel.BasicPublish(
-                    exchange: ExchangeName,
-                    routingKey: QueueName,
-                    mandatory: true,
-                    basicProperties: null,
-                    body: Body);
-            };
-        }
-        public void SendingMessageUpdateUserNamePRO<T>(T message)
-        {
-            const string ExchangeName = "UpdateUserName";
-            // tên queue
-            const string QueueName = "updateUserName_queue_pro";
-
-            ConnectionFactory factory = new()
-            {
-                UserName = "guest",
-                Password = "guest",
-                VirtualHost = "/",
-                Port = 5672,
-                HostName = "localhost"
-            };
-            using var conn = factory.CreateConnection();
-            using (var channel = conn.CreateModel())
-            {
-                channel.ExchangeDeclare(
-                                      exchange: ExchangeName,
-                                      type: ExchangeType.Direct, // Lựa chọn loại cổng (ExchangeType)
-                                      durable: true              // Khi khởi động lại có bị mất dữ liệu hay không( true là không ) 
-                                    );
-
-                // Khai báo hàng chờ
-                var queue = channel.QueueDeclare(
-                                        queue: QueueName, // tên hàng chờ
-                                        durable: false, // khi khởi động lại có mất không
-                                                        // hàng đợi của bạn sẽ trở thành riêng tư và chỉ ứng dụng của
-                                                        // bạn mới có thể sử dụng. Điều này rất hữu ích khi bạn cần giới
-                                                        // hạn hàng đợi chỉ cho một người tiêu dùng.
-                                        exclusive: false,
-                                        autoDelete: false, // có tự động xóa không
-                                        arguments: ImmutableDictionary<string, object>.Empty);
-
-
-
-                // Liên kết hàng đợi với tên cổng bằng rounting key
-                channel.QueueBind(
-                    queue: QueueName,
-                    exchange: ExchangeName,
-                    routingKey: QueueName); // Routing Key phải khớp với tên hàng chờ
-
-                var jsonString = JsonSerializer.Serialize(message);
-
-                var Body = Encoding.UTF8.GetBytes(jsonString);
-
-                channel.BasicPublish(
-                    exchange: ExchangeName,
-                    routingKey: QueueName,
-                    mandatory: true,
-                    basicProperties: null,
-                    body: Body);
-            };
+                    body: body
+                );
+            }
         }
 
         //method

@@ -11,6 +11,7 @@ using OrderMicroservice.Models.PaymentModel.MoMo;
 using OrderMicroservice.DBContexts.Enum;
 using OrderMicroservice.Models.Message;
 using OrderMicroservice.Models.PaymentModel.PayOsModel;
+using RabbitMQ.Client;
 
 namespace OrderMicroservice.Repositories.Services
 {
@@ -262,7 +263,7 @@ namespace OrderMicroservice.Repositories.Services
         {
             try
             {
-                _message.SendingMessageProduct(request);
+                _message.SendingMessage(request, "Product", "order_for_sold_product", "order_for_sold_product", ExchangeType.Direct, true, false, false, false);
                 return new ResponseModel
                 {
                     IsSuccess = true,

@@ -2,14 +2,17 @@
 {
     public interface IMessage
     {
-        public void SendingMessageStatistiscal<T>(T message);
+        /*public void SendingMessageStatistiscal<T>(T message);*/
 
         public void ReceiveMessageCheckPurchased();
-        public void SendingMessageCheckPurchase<T>(T message);
+        /*public void SendingMessageCheckPurchase<T>(T message);*/
         //StastisticalGroupByUserToProduct
-        public void SendingMessageStastisticalGroupByUserToOrder<T>(T message);
+        /*public void SendingMessageStastisticalGroupByUserToOrder<T>(T message);*/
         public void ReceiveMessageStastisticalGroupByUserToOrder();
-        public void SendingMessageProduct<T>(T message);
+        /*public void SendingMessageProduct<T>(T message);*/
         public void ReceiveMessageFromUser();
+
+        //sending message
+        public void SendingMessage<T>(T message, string exchangeName, string queueName, string routingKey, string exchangeType, bool exchangeDurable, bool queueDurable, bool exclusive, bool autoDelete);
     }
 }

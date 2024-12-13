@@ -523,77 +523,79 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7105
+          "Host": "apicate-cuh9h0fwfzendbe2.southeastasia-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/Category/{id}",
       "UpstreamHttpMethod": [ "Get" ]
     },
 
-    //create
+    // Create
     {
       "DownstreamPathTemplate": "/api/Category",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7105
+          "Host": "apicate-cuh9h0fwfzendbe2.southeastasia-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/Category",
       "UpstreamHttpMethod": [ "Post" ]
     },
 
-    //GetAll
+    // GetAll
     {
       "DownstreamPathTemplate": "/api/Category",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7105
+          "Host": "apicate-cuh9h0fwfzendbe2.southeastasia-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/Category",
       "UpstreamHttpMethod": [ "Get" ]
     },
 
-    //Delete
+    // Delete
     {
       "DownstreamPathTemplate": "/api/Category/{id}",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7105
+          "Host": "apicate-cuh9h0fwfzendbe2.southeastasia-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/Category/{id}",
       "UpstreamHttpMethod": [ "Delete" ]
     },
 
-    //Update
+
+    // Update
     {
       "DownstreamPathTemplate": "/api/Category",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7105
+          "Host": "apicate-cuh9h0fwfzendbe2.southeastasia-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/Category",
       "UpstreamHttpMethod": [ "Put" ]
     },
-    //Search
+
+    // Search
     {
       "DownstreamPathTemplate": "/api/Category/search={searchString}",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7105
+          "Host": "apicate-cuh9h0fwfzendbe2.southeastasia-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       //"AuthenticationOptions": {
@@ -603,7 +605,6 @@
       "UpstreamPathTemplate": "/Category/search={searchString}",
       "UpstreamHttpMethod": [ "Get" ]
     },
-
 
 
 

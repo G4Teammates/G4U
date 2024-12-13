@@ -8,8 +8,19 @@ var builder = WebApplication.CreateBuilder(args);
 //Get connect string
 //builder.Configuration.AddAzureKeyVault(new Uri("https://duantotnghiep.vault.azure.net/"),
 //    new DefaultAzureCredential());
-builder.Configuration.AddAzureKeyVault(new Uri("https://duantotnghiep.vault.azure.net/"),
-    new DefaultAzureCredential());
+
+// Sử dụng Managed Identity để cấu hình Azure Key Vault
+/*builder.Configuration.AddAzureKeyVault(
+    new Uri("https://duantotnghiep.vault.azure.net/"),
+        new ManagedIdentityCredential()
+
+);*/
+// Sử dụng Managed Identity để cấu hình Azure Key Vault cục bộ
+builder.Configuration.AddAzureKeyVault(
+    new Uri("https://duantotnghiep.vault.azure.net/"),
+        new VisualStudioCredential()
+
+);
 builder.Services.AddStartupService(builder.Configuration);
 
 builder.Services.AddControllers()

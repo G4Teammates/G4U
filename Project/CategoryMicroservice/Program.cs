@@ -1,4 +1,4 @@
-using Azure.Identity;
+﻿using Azure.Identity;
 using CategoryMicroservice.Configure;
 using CategoryMicroservice.DBContexts;
 using CategoryMicroservice.Models.DTO;
@@ -11,14 +11,24 @@ using Microsoft.OpenApi.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Configuration.AddAzureKeyVault(new Uri("https://duantotnghiep.vault.azure.net/"),
-    new DefaultAzureCredential());
+// Sử dụng Managed Identity để cấu hình Azure Key Vault
+/*builder.Configuration.AddAzureKeyVault(
+    new Uri("https://duantotnghiep.vault.azure.net/"),
+        new ManagedIdentityCredential()
+
+);*/
+// Sử dụng Managed Identity để cấu hình Azure Key Vault cục bộ
+builder.Configuration.AddAzureKeyVault(
+    new Uri("https://duantotnghiep.vault.azure.net/"),
+        new VisualStudioCredential()
+
+);
+// Cấu hình các dịch vụ khác của bạn
 builder.Services.AddStartupService(builder.Configuration);
 
 builder.Services.AddSwaggerGen(opt =>
@@ -40,25 +50,21 @@ builder.Services.AddSwaggerGen(opt =>
             {
                 Reference = new OpenApiReference
                 {
-                    Type=ReferenceType.SecurityScheme,
-                    Id="Bearer"
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
                 }
             },
-            new string[]{}
+            new string[] { }
         }
     });
 });
 
-
-
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
+// Nếu muốn cho Swagger hiển thị ở môi trường production
+
+    app.UseSwagger();  // Bật Swagger cho production nếu cần
     app.UseSwaggerUI();
-}
 
 app.UseHttpsRedirection();
 app.UseAuthentication();
