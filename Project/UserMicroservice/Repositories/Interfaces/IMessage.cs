@@ -2,9 +2,6 @@
 {
     public interface IMessage
     {
-
-
-        public void SendingMessagePrepareDataExcel<T>(T message);
         public void ReceiveMessageExport();
 
         //checl-exist-user
