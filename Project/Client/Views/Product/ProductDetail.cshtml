@@ -1,9 +1,12 @@
 ﻿@using Client.Models.ProductDTO
+@using System.Security.Claims
 @model ProductViewModel
 
 @{
     var HasOwned = ViewBag.HasOwned;
     List<LinkModel> LinkDownload = ViewBag.UrlsDownLoad as List<LinkModel>;
+
+    var username = User.FindFirst(ClaimTypes.Name)?.Value;
 }
 
 <style>
@@ -330,7 +333,7 @@
 
                 <br />
 
-                <p>by @product.Platform</p>
+                <p>by @product.UserName</p>
 
                 @if (LinkDownload != null)
                 {
@@ -345,6 +348,17 @@
                             <a data-bs-toggle="modal" data-bs-target="#downloadModal" class="btn btn-success align-content-center w-25 fw-bold">Play</a>
                         </div>
                     }
+                }
+                else if (product.UserName == username)
+                {
+                    <div class="product-price-container">
+                        <div class="discount-section">
+                            <div class="price-section">
+                                <span class="discounted-price">Owned</span>
+                            </div>
+                        </div>
+                        <a data-bs-toggle="modal" data-bs-target="#downloadModal" class="btn btn-success align-content-center w-25 fw-bold">Play</a>
+                    </div>
                 }
                 else
                 {

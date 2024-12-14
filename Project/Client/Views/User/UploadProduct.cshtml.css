@@ -1,5 +1,5 @@
 ﻿/* Kiểu cho Modal */
-.modal {
+/*.modal {
     display: none;
     position: fixed;
     z-index: 10;
@@ -58,10 +58,10 @@
 
     .btn-cancel:hover {
         background-color: #e63939;
-    }
+    }*/
 
 /* Hiệu ứng modal xuất hiện */
-@keyframes fadeInScale {
+/*@keyframes fadeInScale {
     0% {
         transform: scale(0.5);
         opacity: 0;
@@ -71,10 +71,10 @@
         transform: scale(1);
         opacity: 1;
     }
-}
+}*/
 
 /* Hiệu ứng thay đổi màu modal */
-@keyframes colorPulse {
+/*@keyframes colorPulse {
     from {
         box-shadow: 0 0 15px #00A97F;
     }
@@ -82,4 +82,122 @@
     to {
         box-shadow: 0 0 25px #00ffbf;
     }
+}*/
+
+/* Modal nền trắng với viền xanh */
+.custom-modal-content {
+    background-color: #ffffff; /* Nền trắng */
+    border: 2px solid #00A97F; /* Viền xanh */
+    border-radius: 8px; /* Bo góc */
 }
+
+/* Nút Cancel */
+.custom-cancel-btn {
+    background-color: #f0f8f0; /* Xanh nhạt */
+    color: #00A97F; /* Xanh đậm */
+    border: 2px solid #00A97F; /* Viền xanh */
+}
+
+    .custom-cancel-btn:hover {
+        background-color: #e5f3e5; /* Xanh sáng hơn khi hover */
+    }
+
+/* Nút Delete */
+.custom-delete-btn {
+    background-color: #ffdddd; /* Đỏ nhạt */
+    color: #a94442; /* Đỏ đậm */
+    border: 2px solid #a94442; /* Viền đỏ */
+}
+
+    .custom-delete-btn:hover {
+        background-color: #ffcccc; /* Đỏ sáng hơn khi hover */
+    }
+
+/* Tiêu đề và nội dung */
+.modal-title {
+    font-weight: bold;
+}
+
+.modal-body p {
+    font-size: 16px;
+}
+
+
+.upload-item {
+    position: relative; /* Giữ vị trí tương đối để nút Delete được định vị */
+    padding: 10px;
+    border: 1px solid #00A97F;
+    border-radius: 8px;
+    transition: all 0.3s ease; /* Hiệu ứng mượt mà */
+    background-color: white;
+}
+
+    .upload-item:hover {
+        /*background-color: #f0f8ff;*/ /* Đổi màu nền khi hover */
+        transform: scale(1.02); /* Hiệu ứng phóng to nhẹ */
+        border-color: #008cba; /* Đổi màu viền khi hover */
+    }
+
+    /* Ẩn nút Delete mặc định */
+    .upload-item .delete-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        display: none; /* Ẩn nút */
+        background-color: transparent; /* Nền trong suốt */
+        border: none;
+        color: #ff4d4f; /* Màu đỏ */
+        font-size: 16px;
+        cursor: pointer;
+        transition: color 0.3s ease;
+    }
+
+    /* Hiển thị nút Delete khi hover vào upload-item */
+    .upload-item:hover .delete-btn {
+        display: block;
+    }
+
+    /* Hiệu ứng khi hover vào nút Delete */
+    .upload-item .delete-btn:hover {
+        color: #d32f2f; /* Màu đậm hơn khi hover vào nút */
+    }
+
+
+.imageUrl {
+    position: relative;
+    padding: 10px;
+    border: 1px solid #00A97F;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    background-color: white;
+}
+
+    .imageUrl:hover {
+        /*background-color: #f0f8ff;*/ /* Đổi màu nền khi hover */
+        transform: scale(1.02); /* Hiệu ứng phóng to nhẹ */
+        border-color: #008cba; /* Đổi màu viền khi hover */
+    }
+
+/* Ẩn nút Delete mặc định */
+    .imageUrl .delete-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        display: none; /* Ẩn nút */
+        background-color: transparent; /* Nền trong suốt */
+        border: none;
+        color: #ff4d4f; /* Màu đỏ */
+        font-size: 16px;
+        cursor: pointer;
+        transition: color 0.3s ease;
+    }
+
+/* Hiển thị nút Delete khi hover vào upload-item */
+    .imageUrl:hover .delete-btn {
+        display: block;
+    }
+
+/* Hiệu ứng khi hover vào nút Delete */
+    .imageUrl .delete-btn:hover {
+        color: #d32f2f; /* Màu đậm hơn khi hover vào nút */
+    }

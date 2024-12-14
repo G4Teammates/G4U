@@ -3,12 +3,14 @@ using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver.Linq;
 using OrderMicroservice.DBContexts;
 using OrderMicroservice.DBContexts.Entities;
+using OrderMicroservice.DBContexts.Enum;
 using OrderMicroservice.Models;
 using OrderMicroservice.Models.Message;
 using OrderMicroservice.Models.OrderModel;
 using OrderMicroservice.Models.PaymentModel;
 using OrderMicroservice.Models.UserModel;
 using OrderMicroservice.Repositories.Interfaces;
+using RabbitMQ.Client;
 using System.ComponentModel.Design;
 using X.PagedList.Extensions;
 
@@ -33,8 +35,7 @@ namespace OrderMicroservice.Repositories.Services
 
 
                 var totalRequest = await TotalRequest();
-                _message.SendingMessageStatistiscal(totalRequest.Result);
-
+                _message.SendingMessage(totalRequest.Result, "Stastistical", "totalOrder_for_stastistical", "totalOrder_for_stastistical", ExchangeType.Direct, true, false, false, false);
                 response.Result = orderModel;
                 response.Message = $"Create order success";
             }
@@ -301,7 +302,7 @@ namespace OrderMicroservice.Repositories.Services
 
                 // Gửi thông điệp thống kê
                 var totalRequest = await TotalRequest();
-                _message.SendingMessageStatistiscal(totalRequest.Result);
+                _message.SendingMessage(totalRequest.Result, "Stastistical", "totalOrder_for_stastistical", "totalOrder_for_stastistical", ExchangeType.Direct, true, false, false, false);
 
 
                 // Trả về thông báo cập nhật
@@ -332,7 +333,7 @@ namespace OrderMicroservice.Repositories.Services
         {
             try
             {
-                _message.SendingMessageProduct(request);
+                _message.SendingMessage(request, "Product", "order_for_sold_product", "order_for_sold_product", ExchangeType.Direct, true, false, false, false);
                 return new ResponseModel
                 {
                     IsSuccess = true,
@@ -435,8 +436,11 @@ namespace OrderMicroservice.Repositories.Services
             {
                 // Tìm tất cả đơn hàng của khách hàng dựa trên CustomerId
                 var orders = await _context.Orders
-                    .Where(i => i.CustomerId == id)
+                    .Where(i =>
+                        i.CustomerId == id &&
+                        i.OrderStatus == OrderStatus.Paid)
                     .ToListAsync();
+
 
                 // Kiểm tra nếu không tìm thấy đơn hàng nào
                 if (orders == null || !orders.Any())

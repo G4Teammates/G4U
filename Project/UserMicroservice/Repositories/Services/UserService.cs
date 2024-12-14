@@ -18,6 +18,7 @@ using X.PagedList.Extensions;
 using UserMicroservice.Models.Message;
 using ZstdSharp.Unsafe;
 using UserMicroservice.Models.AuthModel;
+using RabbitMQ.Client;
 
 namespace UserMicroservice.Repositories.Services
 {
@@ -130,7 +131,7 @@ namespace UserMicroservice.Repositories.Services
 
                 // Step 7: Notify statistics update
                 var totalRequest = await TotalRequest();
-                _message.SendingMessageStatistiscal(totalRequest.Result);
+                _message.SendingMessage2(totalRequest.Result, "Stastistical", "totalUser_for_stastistical", "totalUser_for_stastistical", ExchangeType.Direct, true, false, false, false);
 
                 response.IsSuccess = true;
                 response.Message = "User created successfully.";
@@ -175,7 +176,7 @@ namespace UserMicroservice.Repositories.Services
                 await _context.SaveChangesAsync();
 
                 var totalRequest = await TotalRequest();
-                _message.SendingMessageStatistiscal(totalRequest.Result);
+                _message.SendingMessage2(totalRequest.Result, "Stastistical", "totalUser_for_stastistical", "totalUser_for_stastistical", ExchangeType.Direct, true, false, false, false);
 
                 response.IsSuccess = true;
                 response.Message = "User deleted successfully.";
@@ -201,7 +202,7 @@ namespace UserMicroservice.Repositories.Services
                     response.Result = _mapper.Map<ICollection<UserModel>>(users).ToPagedList(pageNumber, pageSize);
 
                     var totalRequest = await TotalRequest();
-                    _message.SendingMessageStatistiscal(totalRequest.Result);
+                    _message.SendingMessage2(totalRequest.Result, "Stastistical", "totalUser_for_stastistical", "totalUser_for_stastistical", ExchangeType.Direct, true, false, false, false);
                 }
                 else
                 {
@@ -326,10 +327,14 @@ namespace UserMicroservice.Repositories.Services
                     // Lưu các thay đổi vào cơ sở dữ liệu
                     _context.Users.Update(user);
                     await _context.SaveChangesAsync();
-                    _message.SendingMessageUpdateUserNameCMT(data);
-                    _message.SendingMessageUpdateUserNameOD(data);
-                    _message.SendingMessageUpdateUserNamePRO(data);
-                    _message.SendingMessageUpdateUserNameRP(data);
+
+                    _message.SendingMessage(data, "UpdateUserName", "updateUserName_queue_cmt", "updateUserName_queue_cmt", ExchangeType.Direct, true, false, false, false);
+
+                    _message.SendingMessage(data, "UpdateUserName", "updateUserName_queue_od", "updateUserName_queue_od", ExchangeType.Direct, true, false, false, false);
+
+                    _message.SendingMessage(data, "UpdateUserName", "updateUserName_queue_pro", "updateUserName_queue_pro", ExchangeType.Direct, true, false, false, false);
+
+                    _message.SendingMessage(data, "UpdateUserName", "updateUserName_queue_rp", "updateUserName_queue_rp", ExchangeType.Direct, true, false, false, false);
 
                     // Trả về thông báo thành công cùng với thông tin người dùng đã cập nhật
                     response.IsSuccess = true;

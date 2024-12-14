@@ -14,8 +14,18 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Configuration.AddAzureKeyVault(new Uri("https://duantotnghiep.vault.azure.net/"),
-    new DefaultAzureCredential());
+// S? d?ng Managed Identity ?? c?u hình Azure Key Vault
+/*builder.Configuration.AddAzureKeyVault(
+    new Uri("https://duantotnghiep.vault.azure.net/"),
+        new ManagedIdentityCredential()
+
+);*/
+// S? d?ng Managed Identity ?? c?u hình Azure Key Vault c?c b?
+builder.Configuration.AddAzureKeyVault(
+    new Uri("https://duantotnghiep.vault.azure.net/"),
+        new VisualStudioCredential()
+
+);
 builder.Services.AddStartupService(builder.Configuration);
 
 builder.Services.AddSwaggerGen(opt =>
