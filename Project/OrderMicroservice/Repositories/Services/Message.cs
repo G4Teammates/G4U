@@ -16,11 +16,16 @@ namespace OrderMicroservice.Repositories.Services
         public event Action<FindUsernameModel> OnFindUserModelResponseReceived;
         private readonly IServiceScopeFactory _scopeFactory;
         private readonly IConfiguration _config;
-        public Message(IServiceScopeFactory scopeFactory, IConfiguration config)
+        private readonly IModel _channel2;
+        private readonly IModel _channel3;
+        public Message(IServiceScopeFactory scopeFactory, IConfiguration config, RabbitMQServer2ConnectionFactory server2Factory, RabbitMQServer3ConnectionFactory server3Factory)
         {
             _scopeFactory = scopeFactory;
             _config = config;
+            _channel2 = server2Factory.Factory.CreateConnection().CreateModel();
+            _channel3 = server3Factory.Factory.CreateConnection().CreateModel();
         }
+        //conn 3
         public void ReceiveMessageCheckPurchased()
         {
             try
@@ -30,7 +35,7 @@ namespace OrderMicroservice.Repositories.Services
                 // tên queue
                 const string QueueName = "Check_purchased_queue";
 
-                var connectionFactory = new ConnectionFactory
+                /*var connectionFactory = new ConnectionFactory
                 {
                     UserName = _config["25"],
                     Password = _config["26"],
@@ -39,16 +44,16 @@ namespace OrderMicroservice.Repositories.Services
                     HostName = _config["27"]
                 };
                 using var connection = connectionFactory.CreateConnection();
-                using var channel = connection.CreateModel();
+                using var channel = connection.CreateModel();*/
 
-                var queue = channel.QueueDeclare(
+                var queue = _channel3.QueueDeclare(
                     queue: QueueName,
                     durable: false,
                     exclusive: false,
                     autoDelete: false,
                     arguments: ImmutableDictionary<string, object>.Empty);
 
-                var consumer = new EventingBasicConsumer(channel);
+                var consumer = new EventingBasicConsumer(_channel3);
 
                 consumer.Received += async (sender, eventArgs) =>
                 {
@@ -83,14 +88,14 @@ namespace OrderMicroservice.Repositories.Services
                                 IsPurchased = isPur
                             };
 
-                            SendingMessage(response, "Check_purchased", "Check_purchased_confirm_queue", "Check_purchased_confirm_queue", ExchangeType.Direct, true, false, false, false);
+                            SendingMessage3(response, "Check_purchased", "Check_purchased_confirm_queue", "Check_purchased_confirm_queue", ExchangeType.Direct, true, false, false, false);
                             var jsonString = JsonSerializer.Serialize(response);
                             Console.WriteLine("Category sending message: " + jsonString); // Log raw message
 
                         }
                     }
                 };
-                channel.BasicConsume(
+                _channel3.BasicConsume(
                     queue: queue.QueueName,
                     autoAck: true,
                     consumer: consumer);
@@ -109,7 +114,7 @@ namespace OrderMicroservice.Repositories.Services
         }
 
 
-
+        //conn 3
         public void ReceiveMessageFromUser()
         {
             try
@@ -118,7 +123,7 @@ namespace OrderMicroservice.Repositories.Services
                 /*const string ExchangeName = "delete_category";*/
                 // tên queue
                 const string QueueName = "updateUserName_queue_od";
-                var connectionFactory = new ConnectionFactory
+               /* var connectionFactory = new ConnectionFactory
                 {
                     UserName = _config["31"],
                     Password = _config["32"],
@@ -127,16 +132,16 @@ namespace OrderMicroservice.Repositories.Services
                     HostName = _config["33"]
                 };
                 using var connection = connectionFactory.CreateConnection();
-                using var channel = connection.CreateModel();
+                using var channel = connection.CreateModel();*/
 
-                var queue = channel.QueueDeclare(
+                var queue = _channel3.QueueDeclare(
                     queue: QueueName,
                     durable: false,
                     exclusive: false,
                     autoDelete: false,
                     arguments: ImmutableDictionary<string, object>.Empty);
 
-                var consumer = new EventingBasicConsumer(channel);
+                var consumer = new EventingBasicConsumer(_channel3);
                 consumer.Received += async (model, EventArgs) =>
                 {
                     var boby = EventArgs.Body.ToArray();
@@ -175,7 +180,7 @@ namespace OrderMicroservice.Repositories.Services
                         }
                     }
                 };
-                channel.BasicConsume(
+                _channel3.BasicConsume(
                 queue: queue.QueueName,
                 autoAck: true,
                 consumer: consumer);
@@ -191,7 +196,7 @@ namespace OrderMicroservice.Repositories.Services
             }
 
         }
-
+        //conn 2
         public void ReceiveMessageStastisticalGroupByUserToOrder()
         {
             try
@@ -201,7 +206,7 @@ namespace OrderMicroservice.Repositories.Services
                 // tên queue
                 const string QueueName = "Stastistical_groupby_user_order";
 
-                var connectionFactory = new ConnectionFactory
+                /*var connectionFactory = new ConnectionFactory
                 {
                     UserName = _config["25"],
                     Password = _config["26"],
@@ -210,16 +215,16 @@ namespace OrderMicroservice.Repositories.Services
                     HostName = _config["27"]
                 };
                 using var connection = connectionFactory.CreateConnection();
-                using var channel = connection.CreateModel();
+                using var channel = connection.CreateModel();*/
 
-                var queue = channel.QueueDeclare(
+                var queue = _channel2.QueueDeclare(
                     queue: QueueName,
                     durable: false,
                     exclusive: false,
                     autoDelete: false,
                     arguments: ImmutableDictionary<string, object>.Empty);
 
-                var consumer = new EventingBasicConsumer(channel);
+                var consumer = new EventingBasicConsumer(_channel2);
 
                 consumer.Received += async (sender, eventArgs) =>
                 {
@@ -242,14 +247,14 @@ namespace OrderMicroservice.Repositories.Services
                             OrderGroupByUserData responseDTO = await StastisticalGroupByUserToOrder(repoProducts, StastisticalResponse);
 
                             
-                            SendingMessage(responseDTO, "StastisticalGroupByUser", "Stastistical_groupby_user_order_data", "Stastistical_groupby_user_order_data", ExchangeType.Direct, true, false, false, false);
+                            SendingMessage2(responseDTO, "StastisticalGroupByUser", "Stastistical_groupby_user_order_data", "Stastistical_groupby_user_order_data", ExchangeType.Direct, true, false, false, false);
                             var jsonString = JsonSerializer.Serialize(responseDTO);
                             Console.WriteLine("Order sending message: " + jsonString); // Log raw message
 
                         }
                     }
                 };
-                channel.BasicConsume(
+                _channel2.BasicConsume(
                     queue: queue.QueueName,
                     autoAck: true,
                     consumer: consumer);
@@ -269,20 +274,23 @@ namespace OrderMicroservice.Repositories.Services
 
 
         //sending message
-        public void SendingMessage<T>(T message, string exchangeName, string queueName, string routingKey, string exchangeType, bool exchangeDurable, bool queueDurable, bool exclusive, bool autoDelete)
+        // conn 2
+        public void SendingMessage2<T>(
+                                       T message,
+                                       string exchangeName,
+                                       string queueName,
+                                       string routingKey,
+                                       string exchangeType,
+                                       bool exchangeDurable,
+                                       bool queueDurable,
+                                       bool exclusive,
+                                       bool autoDelete)
         {
-            ConnectionFactory factory = new()
+            try
             {
-                UserName = _config["25"],
-                Password = _config["26"],
-                VirtualHost = _config["25"],
-                Port = 5672,
-                HostName = _config["27"]
-            };
+                // Sử dụng _channel1 (hoặc _channel2 nếu cần gửi qua server khác)
+                var channel = _channel2;
 
-            using var connection = factory.CreateConnection();
-            using (var channel = connection.CreateModel())
-            {
                 // Khai báo cổng Exchange
                 channel.ExchangeDeclare(
                     exchange: exchangeName,
@@ -291,7 +299,7 @@ namespace OrderMicroservice.Repositories.Services
                 );
 
                 // Khai báo hàng chờ
-                var queue = channel.QueueDeclare(
+                channel.QueueDeclare(
                     queue: queueName,
                     durable: queueDurable,
                     exclusive: exclusive,
@@ -320,21 +328,28 @@ namespace OrderMicroservice.Repositories.Services
                     body: body
                 );
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred while sending the message: {ex.Message}");
+            }
         }
-        public void SendingMessage2<T>(T message, string exchangeName, string queueName, string routingKey, string exchangeType, bool exchangeDurable, bool queueDurable, bool exclusive, bool autoDelete)
+        // conn 3
+        public void SendingMessage3<T>(
+                                        T message,
+                                        string exchangeName,
+                                        string queueName,
+                                        string routingKey,
+                                        string exchangeType,
+                                        bool exchangeDurable,
+                                        bool queueDurable,
+                                        bool exclusive,
+                                        bool autoDelete)
         {
-            ConnectionFactory factory = new()
+            try
             {
-                UserName = _config["31"],
-                Password = _config["32"],
-                VirtualHost = _config["31"],
-                Port = 5672,
-                HostName = _config["33"]
-            };
+                // Sử dụng _channel1 (hoặc _channel2 nếu cần gửi qua server khác)
+                var channel = _channel3;
 
-            using var connection = factory.CreateConnection();
-            using (var channel = connection.CreateModel())
-            {
                 // Khai báo cổng Exchange
                 channel.ExchangeDeclare(
                     exchange: exchangeName,
@@ -343,7 +358,7 @@ namespace OrderMicroservice.Repositories.Services
                 );
 
                 // Khai báo hàng chờ
-                var queue = channel.QueueDeclare(
+                channel.QueueDeclare(
                     queue: queueName,
                     durable: queueDurable,
                     exclusive: exclusive,
@@ -360,7 +375,7 @@ namespace OrderMicroservice.Repositories.Services
                     routingKey: routingKey
                 );
 
-                var jsonString = System.Text.Json.JsonSerializer.Serialize(message);
+                var jsonString = JsonSerializer.Serialize(message);
                 var body = Encoding.UTF8.GetBytes(jsonString);
 
                 // Gửi message
@@ -371,6 +386,10 @@ namespace OrderMicroservice.Repositories.Services
                     basicProperties: null,
                     body: body
                 );
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred while sending the message: {ex.Message}");
             }
         }
 
@@ -431,7 +450,7 @@ namespace OrderMicroservice.Repositories.Services
 
 
         #region Send and receive Message Export
-        //receive data export from user
+        //receive data export from user conn 3
         public void ReceiveMessageExport()
         {
             try

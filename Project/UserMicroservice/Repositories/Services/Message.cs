@@ -16,15 +16,19 @@ namespace UserMicroservice.Repositories.Services
     {
         private readonly IServiceScopeFactory _scopeFactory;
         private readonly IConfiguration _config;
-        public Message(IServiceScopeFactory scopeFactory, IConfiguration config)
+        private readonly IModel _channel2;
+        private readonly IModel _channel3;
+        public Message(IServiceScopeFactory scopeFactory, IConfiguration config, RabbitMQServer2ConnectionFactory server2Factory, RabbitMQServer3ConnectionFactory server3Factory)
         {
             _scopeFactory = scopeFactory;
 
             _config = config;
+            _channel2 = server2Factory.Factory.CreateConnection().CreateModel();
+            _channel3 = server3Factory.Factory.CreateConnection().CreateModel();
         }
 
 
-        //check-exist-user
+        //check-exist-user  conn 2
         public void ReceiveMessageCheckExist()
         {
             try
@@ -34,7 +38,7 @@ namespace UserMicroservice.Repositories.Services
                 // tên queue
                 const string QueueName = "CheckExistUserName_For_RreateProduct";
 
-                var connectionFactory = new ConnectionFactory
+                /*var connectionFactory = new ConnectionFactory
                 {
                     UserName = _config["25"],
                     Password = _config["26"],
@@ -43,16 +47,16 @@ namespace UserMicroservice.Repositories.Services
                     HostName = _config["27"]
                 };
                 using var connection = connectionFactory.CreateConnection();
-                using var channel = connection.CreateModel();
+                using var channel = connection.CreateModel();*/
 
-                var queue = channel.QueueDeclare(
+                var queue = _channel2.QueueDeclare(
                     queue: QueueName,
                     durable: false,
                     exclusive: false,
                     autoDelete: false,
                     arguments: ImmutableDictionary<string, object>.Empty);
 
-                var consumer = new EventingBasicConsumer(channel);
+                var consumer = new EventingBasicConsumer(_channel2);
 
                 consumer.Received += async (sender, eventArgs) =>
                 {
@@ -90,7 +94,7 @@ namespace UserMicroservice.Repositories.Services
                         }
                     }
                 };
-                channel.BasicConsume(
+                _channel2.BasicConsume(
                     queue: queue.QueueName,
                     autoAck: true,
                     consumer: consumer);
@@ -110,20 +114,23 @@ namespace UserMicroservice.Repositories.Services
         }
 
         //sending message
-        public void SendingMessage<T>(T message, string exchangeName, string queueName, string routingKey, string exchangeType, bool exchangeDurable, bool queueDurable, bool exclusive, bool autoDelete)
+        // conn 2
+        public void SendingMessage2<T>(
+                                       T message,
+                                       string exchangeName,
+                                       string queueName,
+                                       string routingKey,
+                                       string exchangeType,
+                                       bool exchangeDurable,
+                                       bool queueDurable,
+                                       bool exclusive,
+                                       bool autoDelete)
         {
-            ConnectionFactory factory = new()
+            try
             {
-                UserName = _config["31"],
-                Password = _config["32"],
-                VirtualHost = _config["31"],
-                Port = 5672,
-                HostName = _config["33"]
-            };
+                // Sử dụng _channel1 (hoặc _channel2 nếu cần gửi qua server khác)
+                var channel = _channel2;
 
-            using var connection = factory.CreateConnection();
-            using (var channel = connection.CreateModel())
-            {
                 // Khai báo cổng Exchange
                 channel.ExchangeDeclare(
                     exchange: exchangeName,
@@ -132,7 +139,7 @@ namespace UserMicroservice.Repositories.Services
                 );
 
                 // Khai báo hàng chờ
-                var queue = channel.QueueDeclare(
+                channel.QueueDeclare(
                     queue: queueName,
                     durable: queueDurable,
                     exclusive: exclusive,
@@ -161,21 +168,28 @@ namespace UserMicroservice.Repositories.Services
                     body: body
                 );
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred while sending the message: {ex.Message}");
+            }
         }
-        public void SendingMessage2<T>(T message, string exchangeName, string queueName, string routingKey, string exchangeType, bool exchangeDurable, bool queueDurable, bool exclusive, bool autoDelete)
+        // conn 3
+        public void SendingMessage3<T>(
+                               T message,
+                               string exchangeName,
+                               string queueName,
+                               string routingKey,
+                               string exchangeType,
+                               bool exchangeDurable,
+                               bool queueDurable,
+                               bool exclusive,
+                               bool autoDelete)
         {
-            ConnectionFactory factory = new()
+            try
             {
-                UserName = _config["25"],
-                Password = _config["26"],
-                VirtualHost = _config["25"],
-                Port = 5672,
-                HostName = _config["27"]
-            };
+                // Sử dụng _channel1 (hoặc _channel2 nếu cần gửi qua server khác)
+                var channel = _channel3;
 
-            using var connection = factory.CreateConnection();
-            using (var channel = connection.CreateModel())
-            {
                 // Khai báo cổng Exchange
                 channel.ExchangeDeclare(
                     exchange: exchangeName,
@@ -184,7 +198,7 @@ namespace UserMicroservice.Repositories.Services
                 );
 
                 // Khai báo hàng chờ
-                var queue = channel.QueueDeclare(
+                channel.QueueDeclare(
                     queue: queueName,
                     durable: queueDurable,
                     exclusive: exclusive,
@@ -212,6 +226,10 @@ namespace UserMicroservice.Repositories.Services
                     basicProperties: null,
                     body: body
                 );
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred while sending the message: {ex.Message}");
             }
         }
 
@@ -225,7 +243,7 @@ namespace UserMicroservice.Repositories.Services
 
 
 
-
+        // conn 3
         public void ReceiveMessageExport()
         {
             try
@@ -235,7 +253,7 @@ namespace UserMicroservice.Repositories.Services
                 // tên queue
                 const string QueueName = "findUser_for_export";
 
-                var connectionFactory = new ConnectionFactory
+               /* var connectionFactory = new ConnectionFactory
                 {
                     UserName = _config["31"],
                     Password = _config["32"],
@@ -244,16 +262,16 @@ namespace UserMicroservice.Repositories.Services
                     HostName = _config["33"]
                 };
                 using var connection = connectionFactory.CreateConnection();
-                using var channel = connection.CreateModel();
+                using var channel = connection.CreateModel();*/
 
-                var queue = channel.QueueDeclare(
+                var queue = _channel3.QueueDeclare(
                     queue: QueueName,
                     durable: false,
                     exclusive: false,
                     autoDelete: false,
                     arguments: ImmutableDictionary<string, object>.Empty);
 
-                var consumer = new EventingBasicConsumer(channel);
+                var consumer = new EventingBasicConsumer(_channel3);
 
                 consumer.Received += async (sender, eventArgs) =>
                 {
@@ -280,14 +298,14 @@ namespace UserMicroservice.Repositories.Services
                             else
                             {
                                 FindUsernameModel userDataExport = (FindUsernameModel)response.Result;
-                                SendingMessage<FindUsernameModel>(userDataExport, "Export", "prepareData_for_export", "prepareData_for_export", ExchangeType.Direct, true, false, false, false);
+                                SendingMessage3<FindUsernameModel>(userDataExport, "Export", "prepareData_for_export", "prepareData_for_export", ExchangeType.Direct, true, false, false, false);
                                 var jsonString = System.Text.Json.JsonSerializer.Serialize(response);
                                 Console.WriteLine($"User service received message from Order service.Have {userDataExport.UsersExport.Count} user(s) can export.Have {userDataExport.MissingUsers.Count} user(s) missing"); // Log raw message
                             }
                         }
                     }
                 };
-                channel.BasicConsume(
+                _channel3.BasicConsume(
                     queue: queue.QueueName,
                     autoAck: true,
                     consumer: consumer);

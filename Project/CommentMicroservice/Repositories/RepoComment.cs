@@ -6,6 +6,7 @@ using CommentMicroservice.Models;
 using CommentMicroservice.Models.DTO;
 using CommentMicroservice.Models.Message;
 using Microsoft.EntityFrameworkCore;
+using RabbitMQ.Client;
 using System.Collections.Generic;
 using X.PagedList.Extensions;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -117,7 +118,7 @@ namespace CommentMicroservice.Repositories
                     UserId = userId,
                     ProductId = Comment.ProductId
                 };
-                _message.SendingMessageCheckPurchased(data); // Gửi message
+                _message.SendingMessage(data, "Check_purchased", "Check_purchased_queue", "Check_purchased_queue", ExchangeType.Direct, true, false, false, false);// Gửi message
                 #endregion
 
                 #region wait for response and process response from rabbitmq

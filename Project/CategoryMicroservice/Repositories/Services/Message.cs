@@ -15,12 +15,15 @@ namespace CategoryMicroservice.Repositories.Services
         public event Action<CategoryDeleteResponse> OnCategoryResponseReceived;
         private readonly IServiceScopeFactory _scopeFactory;
         private readonly IConfiguration _config;
-        public Message(IServiceScopeFactory scopeFactory, IConfiguration config)
+        private readonly IModel _channel1;
+        public Message(IServiceScopeFactory scopeFactory, IConfiguration config, RabbitMQServer1ConnectionFactory server1Factory)
         {
             _scopeFactory = scopeFactory;
             _config = config;
+            _channel1 = server1Factory.Factory.CreateConnection().CreateModel();
+
         }
-        //delete-cate
+        //delete-cate conn1
         public void ReceiveMessage()
         {
             try
@@ -30,7 +33,7 @@ namespace CategoryMicroservice.Repositories.Services
                 /* const string ExchangeName = "delete_category";*/
                 // tên queue
                 const string QueueName = "delete_category_confirm_queue";
-                var connectionFactory = new ConnectionFactory
+                /*var connectionFactory = new ConnectionFactory
                 {
                     UserName = _config["25"],
                     Password = _config["26"],
@@ -40,16 +43,16 @@ namespace CategoryMicroservice.Repositories.Services
                 };
 
                 using var connection = connectionFactory.CreateConnection();
-                using var channel = connection.CreateModel();
+                using var channel = connection.CreateModel();*/
 
-                var queue = channel.QueueDeclare(
+                var queue = _channel1.QueueDeclare(
                     queue: QueueName,
                     durable: false,
                     exclusive: false,
                     autoDelete: false,
                     arguments: ImmutableDictionary<string, object>.Empty);
 
-                var consumer = new EventingBasicConsumer(channel);
+                var consumer = new EventingBasicConsumer(_channel1);
 
                 consumer.Received += (model, EventArgs) =>
                 {
@@ -76,7 +79,7 @@ namespace CategoryMicroservice.Repositories.Services
                     }
                 };
 
-                channel.BasicConsume(
+                _channel1.BasicConsume(
                     queue: queue.QueueName,
                     autoAck: true,
                     consumer: consumer);
@@ -91,7 +94,7 @@ namespace CategoryMicroservice.Repositories.Services
                 throw;
             }
         }
-        //check-exist-cate
+        //check-exist-cate conn1
         public void ReceiveMessageCheckExist()
         {
             try
@@ -101,7 +104,7 @@ namespace CategoryMicroservice.Repositories.Services
                 // tên queue
                 const string QueueName = "CheckExistCategory_For_RreateProduct";
 
-                var connectionFactory = new ConnectionFactory
+               /* var connectionFactory = new ConnectionFactory
                 {
                     UserName = _config["25"],
                     Password = _config["26"],
@@ -110,16 +113,16 @@ namespace CategoryMicroservice.Repositories.Services
                     HostName = _config["27"]
                 };
                 using var connection = connectionFactory.CreateConnection();
-                using var channel = connection.CreateModel();
+                using var channel = connection.CreateModel();*/
 
-                var queue = channel.QueueDeclare(
+                var queue = _channel1.QueueDeclare(
                     queue: QueueName,
                     durable: false,
                     exclusive: false,
                     autoDelete: false,
                     arguments: ImmutableDictionary<string, object>.Empty);
 
-                var consumer = new EventingBasicConsumer(channel);
+                var consumer = new EventingBasicConsumer(_channel1);
 
                 consumer.Received += async (sender, eventArgs) =>
                 {
@@ -162,7 +165,7 @@ namespace CategoryMicroservice.Repositories.Services
                         }
                     }
                 };
-                channel.BasicConsume(
+                _channel1.BasicConsume(
                     queue: queue.QueueName,
                     autoAck: true,
                     consumer: consumer);
@@ -180,21 +183,23 @@ namespace CategoryMicroservice.Repositories.Services
             }
 
         }
-        //sending message
-        public void SendingMessage<T>(T message, string exchangeName, string queueName, string routingKey, string exchangeType , bool exchangeDurable, bool queueDurable, bool exclusive, bool autoDelete )
+        //sending message conn1
+        public void SendingMessage<T>(
+                                       T message,
+                                       string exchangeName,
+                                       string queueName,
+                                       string routingKey,
+                                       string exchangeType,
+                                       bool exchangeDurable,
+                                       bool queueDurable,
+                                       bool exclusive,
+                                       bool autoDelete)
         {
-            ConnectionFactory factory = new()
+            try
             {
-                UserName = _config["25"],
-                Password = _config["26"],
-                VirtualHost = _config["25"],
-                Port = 5672,
-                HostName = _config["27"]
-            };
+                // Sử dụng _channel1 (hoặc _channel2 nếu cần gửi qua server khác)
+                var channel = _channel1;
 
-            using var connection = factory.CreateConnection();
-            using (var channel = connection.CreateModel())
-            {
                 // Khai báo cổng Exchange
                 channel.ExchangeDeclare(
                     exchange: exchangeName,
@@ -203,7 +208,7 @@ namespace CategoryMicroservice.Repositories.Services
                 );
 
                 // Khai báo hàng chờ
-                var queue = channel.QueueDeclare(
+                channel.QueueDeclare(
                     queue: queueName,
                     durable: queueDurable,
                     exclusive: exclusive,
@@ -231,6 +236,10 @@ namespace CategoryMicroservice.Repositories.Services
                     basicProperties: null,
                     body: body
                 );
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred while sending the message: {ex.Message}");
             }
         }
 

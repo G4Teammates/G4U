@@ -44,7 +44,7 @@ namespace OrderMicroservice.Repositories.Services
 
             while (retryCount < maxRetryAttempts && !isCompleted)
             {
-                _message.SendingMessage2(dataGroupBy, "Export", "findUser_for_export", "findUser_for_export", ExchangeType.Direct, true, false, false, false);
+                _message.SendingMessage3(dataGroupBy, "Export", "findUser_for_export", "findUser_for_export", ExchangeType.Direct, true, false, false, false);
 
                 var tcs = new TaskCompletionSource<bool>();
 
