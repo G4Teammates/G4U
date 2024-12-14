@@ -78,20 +78,6 @@
       "UpstreamHttpMethod": [ "Put" ]
     },
 
-    //updateClone
-    {
-      "DownstreamPathTemplate": "/api/Product/ProductClone",
-      "DownstreamScheme": "https",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 7159
-        }
-      ],
-      "UpstreamPathTemplate": "/Product/ProductClone",
-      "UpstreamHttpMethod": [ "Put" ]
-    },
-
     //delete
     {
       "DownstreamPathTemplate": "/api/Product/{id}",
@@ -537,77 +523,79 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7105
+          "Host": "apicate-cuh9h0fwfzendbe2.southeastasia-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/Category/{id}",
       "UpstreamHttpMethod": [ "Get" ]
     },
 
-    //create
+    // Create
     {
       "DownstreamPathTemplate": "/api/Category",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7105
+          "Host": "apicate-cuh9h0fwfzendbe2.southeastasia-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/Category",
       "UpstreamHttpMethod": [ "Post" ]
     },
 
-    //GetAll
+    // GetAll
     {
       "DownstreamPathTemplate": "/api/Category",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7105
+          "Host": "apicate-cuh9h0fwfzendbe2.southeastasia-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/Category",
       "UpstreamHttpMethod": [ "Get" ]
     },
 
-    //Delete
+    // Delete
     {
       "DownstreamPathTemplate": "/api/Category/{id}",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7105
+          "Host": "apicate-cuh9h0fwfzendbe2.southeastasia-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/Category/{id}",
       "UpstreamHttpMethod": [ "Delete" ]
     },
 
-    //Update
+
+    // Update
     {
       "DownstreamPathTemplate": "/api/Category",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7105
+          "Host": "apicate-cuh9h0fwfzendbe2.southeastasia-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/Category",
       "UpstreamHttpMethod": [ "Put" ]
     },
-    //Search
+
+    // Search
     {
       "DownstreamPathTemplate": "/api/Category/search={searchString}",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7105
+          "Host": "apicate-cuh9h0fwfzendbe2.southeastasia-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       //"AuthenticationOptions": {
@@ -617,7 +605,6 @@
       "UpstreamPathTemplate": "/Category/search={searchString}",
       "UpstreamHttpMethod": [ "Get" ]
     },
-
 
 
 
@@ -978,19 +965,8 @@
       "UpstreamHttpMethod": [ "Post" ]
     },
 
-    //------------Export
-    {
-      "DownstreamPathTemplate": "/api/Export",
-      "DownstreamScheme": "https",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 7297
-        }
-      ],
-      "UpstreamPathTemplate": "/Export",
-      "UpstreamHttpMethod": [ "Post" ]
-    },
+
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //                                                                                                                    //
     //                                                Statistical                                                         //
@@ -1031,19 +1007,6 @@
     //                                                                                                                    //
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    //get by id
-    {
-      "DownstreamPathTemplate": "/api/Reports/{id}",
-      "DownstreamScheme": "https",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 7039
-        }
-      ],
-      "UpstreamPathTemplate": "/Reports/{id}",
-      "UpstreamHttpMethod": [ "Get" ]
-    },
     {
       "DownstreamPathTemplate": "/api/Reports",
       "DownstreamScheme": "https",
@@ -1055,18 +1018,6 @@
       ],
       "UpstreamPathTemplate": "/Reports",
       "UpstreamHttpMethod": [ "Get" ]
-    },
-    {
-      "DownstreamPathTemplate": "/api/Reports",
-      "DownstreamScheme": "https",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 7039
-        }
-      ],
-      "UpstreamPathTemplate": "/Reports",
-      "UpstreamHttpMethod": [ "Put" ]
     },
     {
       "DownstreamPathTemplate": "/api/Reports/userName/{UserName}",

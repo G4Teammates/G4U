@@ -14,8 +14,18 @@ var builder = WebApplication.CreateBuilder(args);
 
 
 // Add services to the container.
-builder.Configuration.AddAzureKeyVault(new Uri("https://duantotnghiep.vault.azure.net/"),
-    new DefaultAzureCredential());
+// Sử dụng Managed Identity để cấu hình Azure Key Vault
+/*builder.Configuration.AddAzureKeyVault(
+    new Uri("https://duantotnghiep.vault.azure.net/"),
+        new ManagedIdentityCredential()
+
+);*/
+// Sử dụng Managed Identity để cấu hình Azure Key Vault cục bộ
+builder.Configuration.AddAzureKeyVault(
+    new Uri("https://duantotnghiep.vault.azure.net/"),
+        new VisualStudioCredential()
+
+);
 
 JwtOptions.Secret = builder.Configuration["9"]!;
 JwtOptions.Issuer = builder.Configuration["10"]!;

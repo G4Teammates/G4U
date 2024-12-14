@@ -2,19 +2,13 @@
 {
     public interface IMessage
     {
-
-        public void SendingMessageStatistiscal<T>(T message);
-
-        public void SendingMessagePrepareDataExcel<T>(T message);
         public void ReceiveMessageExport();
 
         //checl-exist-user
         public void ReceiveMessageCheckExist();
-        public void SendingMessageCheckExist<T>(T message);
-        //updateusername
-        public void SendingMessageUpdateUserNameCMT<T>(T message);
-        public void SendingMessageUpdateUserNameRP<T>(T message);
-        public void SendingMessageUpdateUserNameOD<T>(T message);
-        public void SendingMessageUpdateUserNamePRO<T>(T message);
+
+        //sending message
+        public void SendingMessage<T>(T message, string exchangeName, string queueName, string routingKey, string exchangeType, bool exchangeDurable, bool queueDurable, bool exclusive, bool autoDelete);
+        public void SendingMessage2<T>(T message, string exchangeName, string queueName, string routingKey, string exchangeType, bool exchangeDurable, bool queueDurable, bool exclusive, bool autoDelete);
     }
 }

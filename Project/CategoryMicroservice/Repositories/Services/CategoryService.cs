@@ -8,6 +8,7 @@ using CategoryMicroservice.Models.DTO;
 using CategoryMicroservice.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using RabbitMQ.Client;
 using X.PagedList.Extensions;
 
 namespace CategoryMicroservice.Repositories.Services
@@ -104,7 +105,9 @@ namespace CategoryMicroservice.Repositories.Services
 
                 while (retryCount < maxRetryAttempts && !isCompleted)
                 {
-                    _message.SendingMessage(name); // Gửi message
+                    /*_message.SendingMessage(name);*/ // Gửi message
+
+                    _message.SendingMessage(name, "delete_category", "delete_category_queue", "delete_category_queue", ExchangeType.Direct, true, false, false, false);// Gửi message
 
                     var tcs = new TaskCompletionSource<bool>(); // Tạo TaskCompletionSource
 

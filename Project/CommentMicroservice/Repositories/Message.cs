@@ -12,9 +12,11 @@ namespace CommentMicroservice.Repositories
     {
         private readonly IServiceScopeFactory _scopeFactory;
         public event Action<CheckPurchasedResponse> OnResponseReceived;
-        public Message(IServiceScopeFactory scopeFactory)
+        private readonly IConfiguration _config;
+        public Message(IServiceScopeFactory scopeFactory, IConfiguration config)
         {
             _scopeFactory = scopeFactory;
+            _config = config;
         }
         public void SendingMessageCheckPurchased<T>(T message)
         {
@@ -25,11 +27,11 @@ namespace CommentMicroservice.Repositories
 
             ConnectionFactory factory = new()
             {
-                UserName = "guest",
-                Password = "guest",
-                VirtualHost = "/",
+                UserName = _config["25"],
+                Password = _config["26"],
+                VirtualHost = _config["25"],
                 Port = 5672,
-                HostName = "localhost"
+                HostName = _config["27"]
             };
             using var conn = factory.CreateConnection();
             using (var channel = conn.CreateModel())
@@ -82,11 +84,11 @@ namespace CommentMicroservice.Repositories
 
                 var connectionFactory = new ConnectionFactory
                 {
-                    UserName = "guest",
-                    Password = "guest",
-                    VirtualHost = "/",
+                    UserName = _config["25"],
+                    Password = _config["26"],
+                    VirtualHost = _config["25"],
                     Port = 5672,
-                    HostName = "localhost"
+                    HostName = _config["27"]
                 };
                 using var connection = connectionFactory.CreateConnection();
                 using var channel = connection.CreateModel();
@@ -152,11 +154,11 @@ namespace CommentMicroservice.Repositories
                 const string QueueName = "updateUserName_queue_cmt";
                 var connectionFactory = new ConnectionFactory
                 {
-                    UserName = "guest",
-                    Password = "guest",
-                    VirtualHost = "/",
+                    UserName = _config["31"],
+                    Password = _config["32"],
+                    VirtualHost = _config["31"],
                     Port = 5672,
-                    HostName = "localhost"
+                    HostName = _config["33"]
                 };
                 using var connection = connectionFactory.CreateConnection();
                 using var channel = connection.CreateModel();
