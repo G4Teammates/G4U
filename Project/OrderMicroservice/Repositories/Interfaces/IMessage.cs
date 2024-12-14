@@ -6,8 +6,6 @@ namespace OrderMicroservice.Repositories.Interfaces
     {
 
         public event Action<FindUsernameModel> OnFindUserModelResponseReceived;
-
-        public void SendingMessageExport<T>(T message);
         public void ReceiveMessageExport();
 
 
@@ -25,5 +23,6 @@ namespace OrderMicroservice.Repositories.Interfaces
 
         //sending message
         public void SendingMessage<T>(T message, string exchangeName, string queueName, string routingKey, string exchangeType, bool exchangeDurable, bool queueDurable, bool exclusive, bool autoDelete);
+        public void SendingMessage2<T>(T message, string exchangeName, string queueName, string routingKey, string exchangeType, bool exchangeDurable, bool queueDurable, bool exclusive, bool autoDelete);
     }
 }

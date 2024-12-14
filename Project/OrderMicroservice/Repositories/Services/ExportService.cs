@@ -10,6 +10,7 @@ using OrderMicroservice.Models.UserModel;
 using DocumentFormat.OpenXml.Wordprocessing;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using Azure.Core;
+using RabbitMQ.Client;
 namespace OrderMicroservice.Repositories.Services
 {
     public class ExportService(IOrderService orderService, IMessage message, IHttpContextAccessor httpContext) : IExportService
@@ -43,7 +44,7 @@ namespace OrderMicroservice.Repositories.Services
 
             while (retryCount < maxRetryAttempts && !isCompleted)
             {
-                _message.SendingMessageExport(dataGroupBy);
+                _message.SendingMessage2(dataGroupBy, "Export", "findUser_for_export", "findUser_for_export", ExchangeType.Direct, true, false, false, false);
 
                 var tcs = new TaskCompletionSource<bool>();
 
