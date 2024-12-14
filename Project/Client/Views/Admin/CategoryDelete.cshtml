@@ -93,11 +93,22 @@
                     <button type="submit" class="btn btn-danger">
                         <i class="bi bi-trash"></i> Delete
                     </button>
-                    <button type="" class="btn btn-warning">
+                    @* <button formaction="/Admin/UpdateCategoryConfirm" formmethod="post" class="btn btn-warning">
                         <i class="bi bi-trash"></i> Delete Mềm
-                    </button>
+                    </button> *@
                 </div>
             </form>
+            <form asp-action="UpdateCategoryConfirm" method="post" class="mt-3">
+                <input type="hidden" name="Id" value="@Model.Id" />
+                <input type="hidden" name="Name" value="@Model.Name" />
+                <input type="hidden" name="Type" value="@Model.Type" />
+                <input type="hidden" name="Description" value="@Model.Description" />
+                <input type="hidden" name="Status" value="3" />
+                <button type="submit" class="btn btn-warning">
+                    <i class="bi bi-trash"></i> Delete Mềm
+                </button>
+            </form>
+
         </div>
     </div>
 </div>

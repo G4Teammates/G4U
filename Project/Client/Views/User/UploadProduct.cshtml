@@ -160,7 +160,6 @@
                         <input asp-for="@Model.Discount" class="form-control" type="number" id="inputDiscount" placeholder="30%" step="5" min="0" max="100" style="border: 1px solid #00A97F; border-radius: 8px;">
                         <span asp-validation-for="@Model.Discount" class="text-danger"></span>
                     </div>
-                    @* </div> *@
                 </div>
             </div>
 
@@ -190,12 +189,15 @@
                                         <strong>File Type:</strong> (@item.ProviderName)
                                     </p>
 
-                                    <!-- Nút Delete -->
-                                    <div class="text-end" data-bs-toggle="modal" data-bs-target="#deleteModal-@index">
-                                        <button class="delete-btn" onclick="removeItem(@index)" title="Delete">
+                                    <!-- Nút Delete, liên kết đến modal onclick="removeItem(index)" -->
+@*                                     <div class="text-end">
+                                        <button class="delete-btn" title="Delete" type="button" data-bs-toggle="modal"
+                                                data-bs-target="#deleteGameFileModal" onclick="setDeleteIndex(@index)">
                                             <i class="fa-solid fa-delete-left text-danger"></i>
                                         </button>
-                                    </div>
+                                    </div> *@
+
+
                                 </div>
                             }
                             else if (item.ProviderName.Contains("Cloudinary"))
@@ -222,7 +224,7 @@
                 </div>
 
                 <input asp-for="gameFile" type="file" name="gameFile" id="fileInput" class="d-none" accept=".rar, .zip" onchange="displayFileInfo()" />
-                <button type="button" class="btn btn-success" onclick="confirmDelete()">Upload</button>
+                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#overrideGameFileModal">Upload</button>
                 <span asp-validation-for="gameFile" class="m-2">File size limit: 1 GB</span>
             </div>
             <!-- Game File (Upload game file) -->
@@ -337,11 +339,17 @@
                                 else if (item.ProviderName.Contains("Cloudinary"))
                                 {
                                     <div class="imageUrl p-2 mb-2" id="item-@index">
-@*                                         <div class="text-end">
+@*                                         <div class="text-end delete-btn">
                                             <button onclick="removeItem(@index)" title="Delete" type="button">
                                                 <i class="fa-solid fa-delete-left text-danger"></i>
                                             </button>
                                         </div> *@
+                                        <div class="text-end">
+                                            <button class="delete-btn" title="Delete" type="button" data-bs-toggle="modal"
+                                                    data-bs-target="#deleteImageFileModal" onclick="setDeleteIndex(@index)">
+                                                <i class="fa-solid fa-delete-left text-danger"></i>
+                                            </button>
+                                        </div>
                                         <div class="text-center">
                                             <img src="@item.Url" class="" style="min-width:200px; max-height:200px; min-height:150px; max-width:300px" />
                                             @* <input type="file" multiple class="form-control mb-2" asp-for="@item" /> *@
@@ -392,7 +400,7 @@
         </div>
     </form>
 </div>
-<script>
+@* <script>
     function confirmDelete() {
         const modal = document.getElementById(`deleteModal`);
         if (modal) {
@@ -417,7 +425,7 @@
         }
     }
 
-</script>
+</script> *@
 <script type="text/javascript">
     // Sự kiện khi nhấn vào nút "+" để thêm select mới
     document.getElementById('add-category').addEventListener('click', function () {
@@ -489,63 +497,41 @@
     //                 <strong>File Name:</strong> ${fileNameFromServer} <br>
     //                 <strong>File Size:</strong> ${(fileSizeFromServer / 1024 / 1024).toFixed(2)} MB <br>
     //                 <strong>File Type:</strong> (from server)
-    @*     //                 <div class="m-2">
-        //                     <label class="p-2 border border-1">
-        //                         <input type="radio" value="Windows" name="Platforms" /> Windows
-        //                     </label>
-        //                     <label class="p-2 border border-1">
-        //                         <input type="radio" value="MacOS" name="Platforms" /> MacOS
-        //                     </label>
-        //                     <label class="p-2 border border-1">
-        //                         <input type="radio" value="Linux" name="Platforms" /> Linux
-        //                     </label>
-        //                 </div> *@
-        //             `;
-        //         document.getElementById('fileInfo').innerHTML = fileInfo;
+    //             `;
+    //         document.getElementById('fileInfo').innerHTML = fileInfo;
 
-        //         // Log khi thông tin được hiển thị thành công
-        //         console.log("File information is displayed successfully.");
-        //     }
-        // }
+    //         // Log khi thông tin được hiển thị thành công
+    //         console.log("File information is displayed successfully.");
+    //     }
+    // }
 
-        // // Gọi hàm khi trang load để hiển thị file từ server nếu có
-        // window.onload = function () {
-        //     console.log("Window loaded, calling showUploadedGameFileFromServer");
-        //     showUploadedGameFileFromServer();
-        // };
+    // // Gọi hàm khi trang load để hiển thị file từ server nếu có
+    // window.onload = function () {
+    //     console.log("Window loaded, calling showUploadedGameFileFromServer");
+    //     showUploadedGameFileFromServer();
+    // };
 
-        // Sự kiện thay đổi khi người dùng chọn file mới
-        function displayFileInfo() {
-            const input = document.getElementById('fileInput');
-            const file = input.files[0]; // Lấy file đầu tiên (người dùng có thể chọn nhiều file)
+    // Sự kiện thay đổi khi người dùng chọn file mới
+    function displayFileInfo() {
+        const input = document.getElementById('fileInput');
+        const file = input.files[0]; // Lấy file đầu tiên (người dùng có thể chọn nhiều file)
 
-            if (file) {
-                // Kiểm tra kích thước file (ví dụ 1GB = 1073741824 bytes)
-                if (file.size > 1073741824) {
-                    alert('File quá lớn, hãy chọn file dưới 1 GB.');
-                    return;
-                }
-
-                // Hiển thị thông tin file
-                const fileInfo = `
-                                                                                                                    <strong>File Name:</strong> <span class="d-inline-block text-truncate" style="max-width: 400px;">${file.name}</span> <br>
-                                                                                                            <strong>File Size:</strong> ${(file.size / 1024 / 1024).toFixed(2)} MB <br>
-    @* <strong>File Type:</strong> ${file.type} *@
-    @*                                 <div class="m-2">
-                                                                                                            <label class="p-2 border border-1">
-                                                                                                                <input type="radio" value="Windows" name="Platforms" /> Windows
-                                                                                                            </label>
-                                                                                                            <label class="p-2 border border-1">
-                                                                                                                <input type="radio" value="MacOS" name="Platforms" /> MacOS
-                                                                                                            </label>
-                                                                                                            <label class="p-2 border border-1">
-                                                                                                                <input type="radio" value="Linux" name="Platforms" /> Linux
-                                                                                                            </label>
-                                                                                                        </div> *@
-                                                                                                        `;
-                document.getElementById('fileInfo').innerHTML = fileInfo;
+        if (file) {
+            // Kiểm tra kích thước file (ví dụ 1GB = 1073741824 bytes)
+            if (file.size > 1073741824) {
+                alert('File quá lớn, hãy chọn file dưới 1 GB.');
+                return;
             }
+
+            // Hiển thị thông tin file
+            const fileInfo = `
+                                                                                    <strong>File Name:</strong> <span class="d-inline-block text-truncate" style="max-width: 400px;">${file.name}</span> <br>
+                                                                                                                <strong>File Size:</strong> ${(file.size / 1024 / 1024).toFixed(2)} MB <br>
+
+                                                                                                            `;
+            document.getElementById('fileInfo').innerHTML = fileInfo;
         }
+    }
 
     // Sự kiện khi chọn file mới từ input
     document.getElementById('fileInput').addEventListener('change', displayFileInfo);
@@ -564,6 +550,7 @@
         }
     });
 
+
     function removeItem(index) {
         let links = JSON.parse(document.getElementById("SerializedLinks").value);
 
@@ -576,6 +563,24 @@
         // Xóa phần tử khỏi giao diện
         document.getElementById("item-" + index).remove();
     }
+
+    let deleteIndex = null;
+
+    // Hàm lưu index của phần tử khi người dùng mở modal
+    function setDeleteIndex(index) {
+        deleteIndex = index;
+        console.log("Set deleteIndex to:", deleteIndex);
+    }
+
+    // Hàm thực thi việc xóa khi người dùng xác nhận
+    function confirmDelete() {
+        if (deleteIndex !== null) {
+            removeItem(deleteIndex); // Gọi hàm removeItem với index đã lưu
+            console.log("Deleted item with index:", deleteIndex);
+            deleteIndex = null; // Reset sau khi xóa
+        }
+    }
+
 
     document.addEventListener('DOMContentLoaded', function () {
         function switchToFree() {
@@ -615,6 +620,15 @@
         document.getElementById('paid-tab').onclick = switchToPaid;
     });
 
+    function confirmUploadGame() 
+    {
+        // Mở file explorer (tạo event click giả lập)
+        document.getElementById('fileInput').click();
+@*         const modal = document.getElementById(`overrideGameFileModal`);
+        if (modal) {
+            modal.classList.remove("show");
+        } *@
+    }
 </script>
 @section Scripts {
 
@@ -624,7 +638,7 @@
 
 
 <!-- Modal Xác nhận Xóa -->
-<div id="deleteModal" class="modal">
+@* <div id="deleteModal" class="modal">
     <div class="modal-content">
         <p>Are you sure you want to upload a new game file? This action will delete the current game file</p>
         <form class="modal-buttons">
@@ -632,7 +646,68 @@
             <a style="text-decoration:none" onclick="closeModal()" class="btn-cancel">No</a>
         </form>
     </div>
-</div>
+</div> *@
 <!-- Modal Xác nhận Xóa -->
+<!-- Modal Override Game File -->
+<div class="modal fade" id="overrideGameFileModal" tabindex="-1" aria-labelledby="overrideGameFileModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content custom-modal-content">
+            <div class="modal-header border-0">
+                <h5 class="modal-title" id="overrideGameFileModal" style="color: #00A97F;">Confirm Override Game File</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <p style="color: #00A97F;">Are you sure you want to upload a new game file? This action will delete the current game file.</p>
+            </div>
+            <div class="modal-footer border-0 justify-content-center">
+                <button type="button" class="btn btn-secondary custom-cancel-btn" onclick="confirmUploadGame()" data-bs-dismiss="modal">Upload Game</button>
+                <button type="button" class="btn btn-danger custom-delete-btn" data-bs-dismiss="modal">No</button>
+            </div>
+        </div>
+    </div>
+</div>
 
+@* 
+<!-- Modal Delete Game File (Chung cho tất cả) -->
+<div class="modal fade" id="deleteGameFileModal" tabindex="-1" aria-labelledby="deleteGameFileModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content custom-modal-content">
+            <div class="modal-header border-0">
+                <h5 class="modal-title" id="deleteGameFileModalLabel" style="color: #00A97F;">Confirm Deletion</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <p style="color: #00A97F;">Are you sure you want to delete this item? This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer border-0 justify-content-center">
+                <button type="button" class="btn btn-secondary custom-cancel-btn" data-bs-dismiss="modal">No</button>
+                <!-- Nút Yes Delete sẽ sử dụng biến index -->
+                <button type="button" class="btn btn-danger custom-delete-btn" onclick="confirmDelete()" data-bs-dismiss="modal">
+                    Yes, Delete
+                </button>
+            </div>
+        </div>
+    </div>
+</div> *@
 
+<!-- Modal Delete Image File (Chung cho tất cả) -->
+<div class="modal fade" id="deleteImageFileModal" tabindex="-1" aria-labelledby="deleteImageFileModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content custom-modal-content">
+            <div class="modal-header border-0">
+                <h5 class="modal-title" id="deleteImageFileModal" style="color: #00A97F;">Confirm Deletion</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <p style="color: #00A97F;">Are you sure you want to delete this item? This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer border-0 justify-content-center">
+                <button type="button" class="btn btn-secondary custom-cancel-btn" data-bs-dismiss="modal">No</button>
+                <!-- Nút Yes Delete sẽ sử dụng biến index -->
+                <button type="button" class="btn btn-danger custom-delete-btn" onclick="confirmDelete()" data-bs-dismiss="modal">
+                    Yes, Delete
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

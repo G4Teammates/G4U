@@ -35,11 +35,11 @@ namespace CategoryMicroservice.Repositories.Services
                 const string QueueName = "delete_category_confirm_queue";
                 /*var connectionFactory = new ConnectionFactory
                 {
-                    UserName = _config["25"],
-                    Password = _config["26"],
-                    VirtualHost = _config["25"],
+                    UserName = "guest",
+                    Password = "guest",
+                    VirtualHost = "/",
                     Port = 5672,
-                    HostName = _config["27"]
+                    HostName = "localhost"
                 };
 
                 using var connection = connectionFactory.CreateConnection();
@@ -106,11 +106,11 @@ namespace CategoryMicroservice.Repositories.Services
 
                /* var connectionFactory = new ConnectionFactory
                 {
-                    UserName = _config["25"],
-                    Password = _config["26"],
-                    VirtualHost = _config["25"],
+                    UserName = "guest",
+                    Password = "guest",
+                    VirtualHost = "/",
                     Port = 5672,
-                    HostName = _config["27"]
+                    HostName = "localhost"
                 };
                 using var connection = connectionFactory.CreateConnection();
                 using var channel = connection.CreateModel();*/

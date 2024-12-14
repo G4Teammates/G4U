@@ -38,11 +38,11 @@ namespace StatisticalMicroservice.Repostories
 
                 /*var connectionFactory = new ConnectionFactory
                 {
-                    UserName = _config["25"],
-                    Password = _config["26"],
-                    VirtualHost = _config["25"],
+                    UserName = "guest",
+                    Password = "guest",
+                    VirtualHost = "/",
                     Port = 5672,
-                    HostName = _config["27"]
+                    HostName = "localhost"
                 };
                 using var connection = connectionFactory.CreateConnection();
                 using var channel = connection.CreateModel();*/
@@ -115,11 +115,11 @@ namespace StatisticalMicroservice.Repostories
 
                 /*var connectionFactory = new ConnectionFactory
                 {
-                    UserName = _config["25"],
-                    Password = _config["26"],
-                    VirtualHost = _config["25"],
+                    UserName = "guest",
+                    Password = "guest",
+                    VirtualHost = "/",
                     Port = 5672,
-                    HostName = _config["27"]
+                    HostName = "localhost"
                 };
                 using var connection = connectionFactory.CreateConnection();
                 using var channel = connection.CreateModel();*/
@@ -192,11 +192,11 @@ namespace StatisticalMicroservice.Repostories
 
                 /*var connectionFactory = new ConnectionFactory
                 {
-                    UserName = _config["25"],
-                    Password = _config["26"],
-                    VirtualHost = _config["25"],
+                    UserName = "guest",
+                    Password = "guest",
+                    VirtualHost = "/",
                     Port = 5672,
-                    HostName = _config["27"]
+                    HostName = "localhost"
                 };
                 using var connection = connectionFactory.CreateConnection();
                 using var channel = connection.CreateModel();*/
@@ -276,11 +276,11 @@ namespace StatisticalMicroservice.Repostories
                 const string QueueName = "Stastistical_groupby_user_product_data";
                 /*var connectionFactory = new ConnectionFactory
                 {
-                    UserName = _config["25"],
-                    Password = _config["26"],
-                    VirtualHost = _config["25"],
+                    UserName = "guest",
+                    Password = "guest",
+                    VirtualHost = "/",
                     Port = 5672,
-                    HostName = _config["27"]
+                    HostName = "localhost"
                 };
 
                 using var connection = connectionFactory.CreateConnection();
@@ -347,11 +347,11 @@ namespace StatisticalMicroservice.Repostories
                 const string QueueName = "Stastistical_groupby_user_order_data";
                 /*var connectionFactory = new ConnectionFactory
                 {
-                    UserName = _config["25"],
-                    Password = _config["26"],
-                    VirtualHost = _config["25"],
+                    UserName = "guest",
+                    Password = "guest",
+                    VirtualHost = "/",
                     Port = 5672,
-                    HostName = _config["27"]
+                    HostName = "localhost"
                 };
 
                 using var connection = connectionFactory.CreateConnection();
@@ -489,6 +489,7 @@ namespace StatisticalMicroservice.Repostories
                                        bool autoDelete)
         {
             try
+
             {
                 // Sử dụng _channel1 (hoặc _channel2 nếu cần gửi qua server khác)
                 var channel = _channel2;

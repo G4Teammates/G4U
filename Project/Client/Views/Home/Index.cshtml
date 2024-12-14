@@ -12,47 +12,89 @@
     <div class="carousel-inner">
         @if (Model.Product != null)
         {
-            // Lọc và lấy 4 sản phẩm mới nhất theo CreatedAt
+            // Lấy 4 sản phẩm mới nhất theo CreatedAt
             var latestProducts = Model.Product
-            .OrderByDescending(p => p.CreatedAt) // Sắp xếp theo CreatedAt từ mới đến cũ
-            .Take(4); // Lấy 4 sản phẩm đầu tiên
+            .OrderByDescending(p => p.CreatedAt)
+            .Take(4)
+            .ToList();
 
-            // Biến để kiểm tra xem sản phẩm đầu tiên có được đánh dấu là "active" không
-            bool isFirstItem = true;
+            // Danh sách các sản phẩm có hình ảnh thứ 2
+            var productsWithSecondImage = new List<dynamic>();
+
+            // Biến để kiểm tra xem có sản phẩm nào có hình ảnh thứ 2 không
+            bool hasSecondImage = false;
 
             foreach (var product in latestProducts)
             {
-                <div class="carousel-item @(isFirstItem ? "active" : "")" data-bs-interval="3000" style="border-radius:5px;">
-                    @if (product.Links != null)
-                    {
-                        string secondImageUrl = null; // Biến để lưu URL hình ảnh thứ hai
+                if (product.Links != null)
+                {
+                    int imageCount = 0;
+                    string secondImageUrl = null;
 
-                        // Tìm hình ảnh thứ hai có chứa "cloudinary"
-                        int imageCount = 0; // Biến đếm số lượng hình ảnh đã tìm thấy
-                        foreach (var link in product.Links)
+                    foreach (var link in product.Links)
+                    {
+                        if (link.Url.Contains("cloudinary"))
                         {
-                            if (link.Url.Contains("cloudinary"))
+                            imageCount++;
+                            if (imageCount == 2) // Tìm hình ảnh thứ 2
                             {
-                                imageCount++;
-                                if (imageCount == 2) // Lấy hình ảnh thứ hai
-                                {
-                                    secondImageUrl = link.Url; // Lưu URL hình ảnh thứ hai
-                                    break; // Thoát khỏi vòng lặp khi đã tìm thấy
-                                }
+                                secondImageUrl = link.Url;
+                                hasSecondImage = true; // Đánh dấu là có hình ảnh thứ 2
+                                break;
                             }
                         }
+                    }
 
-                        // Hiển thị hình ảnh thứ hai nếu có
-                        if (secondImageUrl != null)
+                    if (secondImageUrl != null)
+                    {
+                        productsWithSecondImage.Add(new { Product = product, ImageUrl = secondImageUrl });
+                    }
+                }
+            }
+
+            // Nếu không có hình ảnh thứ 2, chọn ngẫu nhiên các sản phẩm khác có hình ảnh thứ 2
+            if (!hasSecondImage)
+            {
+                var randomProducts = Model.Product
+                .Where(p => p.Links != null && p.Links.Count(link => link.Url.Contains("cloudinary")) >= 2)
+                .OrderBy(p => Guid.NewGuid()) // Chọn ngẫu nhiên
+                .Take(4); // Lấy 4 sản phẩm
+
+                foreach (var product in randomProducts)
+                {
+                    int imageCount = 0;
+                    string secondImageUrl = null;
+
+                    foreach (var link in product.Links)
+                    {
+                        if (link.Url.Contains("cloudinary"))
                         {
-                            <div class="carousel-image-container">
-                                <img src="@secondImageUrl" alt="Product Image" class="d-block w-100 carousel-image" />
-                            </div>
+                            imageCount++;
+                            if (imageCount == 2)
+                            {
+                                secondImageUrl = link.Url;
+                                break;
+                            }
                         }
                     }
+
+                    if (secondImageUrl != null)
+                    {
+                        productsWithSecondImage.Add(new { Product = product, ImageUrl = secondImageUrl });
+                    }
+                }
+            }
+
+            // Hiển thị sản phẩm
+            bool isFirstItem = true;
+            foreach (var item in productsWithSecondImage)
+            {
+                <div class="carousel-item @(isFirstItem ? "active" : "")" data-bs-interval="3000" style="border-radius:5px;">
+                    <div class="carousel-image-container">
+                        <img src="@item.ImageUrl" alt="Product Image" class="d-block w-100 carousel-image" />
+                    </div>
                 </div>
 
-                // Đánh dấu item đầu tiên để thiết lập class "active"
                 isFirstItem = false;
             }
         }
@@ -66,6 +108,7 @@
         <span class="visually-hidden">Next</span>
     </button>
 </div>
+
 
 
 

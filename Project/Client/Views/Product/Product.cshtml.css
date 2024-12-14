@@ -66,18 +66,33 @@
 
 
 /*Cai nay là chu Other Product nhe*/
+
+/* Responsive font size and spacing */
 .modern-heading {
-    font-family: 'Poppins', sans-serif;
-    font-size: 36px;
-    font-weight: 600; 
-    text-align: left;
-    color: #333; 
-    text-transform: uppercase; 
-    letter-spacing: 2px; 
-    margin: 20px 0;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease; 
+    display: flex; /* Dùng flexbox để căn chỉnh */
+    justify-content: center; /* Canh giữa theo chiều ngang */
+    align-items: center; /* Canh giữa theo chiều dọc */
+    padding: 2px 10px; /* Khoảng cách bên trong */
+    border: 2px solid #333; /* Viền của section */
+    max-width: 55%; /* Giới hạn chiều rộng */
+    overflow: hidden; /* Đảm bảo chữ không tràn ra ngoài */
+    box-sizing: border-box;
+    margin: 20px auto; /* Canh giữa section */
 }
+
+.responsive-heading {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+    text-transform: uppercase;
+    margin: 0;
+    text-align: center;
+    white-space: nowrap; /* Không cho phép chữ xuống dòng */
+    font-size: clamp(16px, 5vw, 36px); /* Font chữ tự động điều chỉnh */
+    letter-spacing: 0.05em; /* Khoảng cách giữa các ký tự */
+    line-height: 1.2; /* Dòng chữ gọn gàng */
+    transition: font-size 0.3s ease; /* Hiệu ứng mượt khi thay đổi kích thước */
+}
+
 
 
 
