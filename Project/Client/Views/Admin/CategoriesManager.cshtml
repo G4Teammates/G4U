@@ -155,7 +155,6 @@
 	<table class="table table-bordered table-hover align-middle">
 		<thead class="table-light">
 			<tr>
-				<th scope="col"><input type="checkbox" id="selectAll"></th>
 				<th scope="col">ID</th>
 				<th scope="col">Name</th>
 				<th scope="col">Type</th>
@@ -169,7 +168,6 @@
 				foreach (var categories in Model.Categories)
 				{
 					<tr>
-						<td><input type="checkbox" class="user-checkbox" /></td>
 						<td>@categories.Id</td>
 						<td>@categories.Name</td>
 						<td>@categories.Type</td>
