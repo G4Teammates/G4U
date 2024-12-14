@@ -191,12 +191,12 @@
                                     </p>
 
                                     <!-- Nút Delete, liên kết đến modal onclick="removeItem(index)" -->
-                                    <div class="text-end">
+@*                                     <div class="text-end">
                                         <button class="delete-btn" title="Delete" type="button" data-bs-toggle="modal"
                                                 data-bs-target="#deleteGameFileModal" onclick="setDeleteIndex(@index)">
                                             <i class="fa-solid fa-delete-left text-danger"></i>
                                         </button>
-                                    </div>
+                                    </div> *@
 
 
                                 </div>
@@ -340,8 +340,14 @@
                                 else if (item.ProviderName.Contains("Cloudinary"))
                                 {
                                     <div class="imageUrl p-2 mb-2" id="item-@index">
-                                        <div class="text-end delete-btn">
+@*                                         <div class="text-end delete-btn">
                                             <button onclick="removeItem(@index)" title="Delete" type="button">
+                                                <i class="fa-solid fa-delete-left text-danger"></i>
+                                            </button>
+                                        </div> *@
+                                        <div class="text-end">
+                                            <button class="delete-btn" title="Delete" type="button" data-bs-toggle="modal"
+                                                    data-bs-target="#deleteImageFileModal" onclick="setDeleteIndex(@index)">
                                                 <i class="fa-solid fa-delete-left text-danger"></i>
                                             </button>
                                         </div>
@@ -615,14 +621,14 @@
         document.getElementById('paid-tab').onclick = switchToPaid;
     });
 
-    function confirmUploadGame() {
-
+    function confirmUploadGame() 
+    {
         // Mở file explorer (tạo event click giả lập)
         document.getElementById('fileInput').click();
-        const modal = document.getElementById(`deleteModal`);
+@*         const modal = document.getElementById(`overrideGameFileModal`);
         if (modal) {
             modal.classList.remove("show");
-        }
+        } *@
     }
 </script>
 @section Scripts {
@@ -655,20 +661,42 @@
                 <p style="color: #00A97F;">Are you sure you want to upload a new game file? This action will delete the current game file.</p>
             </div>
             <div class="modal-footer border-0 justify-content-center">
-                <button type="button" class="btn btn-secondary custom-cancel-btn" onclick="confirmUploadGame()">Upload Game</button>
+                <button type="button" class="btn btn-secondary custom-cancel-btn" onclick="confirmUploadGame()" data-bs-dismiss="modal">Upload Game</button>
                 <button type="button" class="btn btn-danger custom-delete-btn" data-bs-dismiss="modal">No</button>
             </div>
         </div>
     </div>
 </div>
 
-
+@* 
 <!-- Modal Delete Game File (Chung cho tất cả) -->
 <div class="modal fade" id="deleteGameFileModal" tabindex="-1" aria-labelledby="deleteGameFileModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content custom-modal-content">
             <div class="modal-header border-0">
                 <h5 class="modal-title" id="deleteGameFileModalLabel" style="color: #00A97F;">Confirm Deletion</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <p style="color: #00A97F;">Are you sure you want to delete this item? This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer border-0 justify-content-center">
+                <button type="button" class="btn btn-secondary custom-cancel-btn" data-bs-dismiss="modal">No</button>
+                <!-- Nút Yes Delete sẽ sử dụng biến index -->
+                <button type="button" class="btn btn-danger custom-delete-btn" onclick="confirmDelete()" data-bs-dismiss="modal">
+                    Yes, Delete
+                </button>
+            </div>
+        </div>
+    </div>
+</div> *@
+
+<!-- Modal Delete Image File (Chung cho tất cả) -->
+<div class="modal fade" id="deleteImageFileModal" tabindex="-1" aria-labelledby="deleteImageFileModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content custom-modal-content">
+            <div class="modal-header border-0">
+                <h5 class="modal-title" id="deleteImageFileModal" style="color: #00A97F;">Confirm Deletion</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body text-center">
