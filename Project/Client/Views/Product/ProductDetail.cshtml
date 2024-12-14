@@ -456,13 +456,11 @@
 
                 <h3 class="mt-4">Comment</h3>
                 <div id="comments-section">
-                    @if (Model.CommentDTOModels != null)
+                    @if (Model.CommentDTOModels != null && Model.CommentDTOModels.Any(c => (int)c.Status == 0))
                     {
-                        foreach (var comment in Model.CommentDTOModels)
+                        foreach (var comment in Model.CommentDTOModels.Where(c => (int)c.Status == 0))
                         {
                             @await Html.PartialAsync("_CommentPartial", comment)
-
-                           
                         }
                     }
                     else
@@ -470,6 +468,7 @@
                         <p>Không có bình luận nào để hiển thị.</p>
                     }
                 </div>
+
 
 
                 <!-- Form nhập bình luận -->
@@ -497,7 +496,7 @@
                     <!-- Gán trạng thái mặc định cho Status và hiển thị nhưng không cho nhập -->
                     <div class="form-group" style="display:none">
                         <label asp-for="createcomment.Status">Status:</label>
-                        <input asp-for="createcomment.Status" name="Status" class="form-control" value="1" readonly />
+                        <input asp-for="createcomment.Status" name="Status" class="form-control" value="0" readonly />
                     </div>
 
                     <button type="submit" class="btn btn-primary mt-2">Gửi bình luận</button>

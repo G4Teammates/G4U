@@ -192,7 +192,6 @@
     <table class="table table-bordered table-hover align-middle">
         <thead class="table-light">
             <tr>
-                <th scope="col"><input type="checkbox" id="selectAll"></th>
                 <th scope="col">Content</th>
                 <th scope="col">Likes</th>
                 <th scope="col">Status</th>
@@ -209,7 +208,6 @@
                 foreach (var comment in Model.Comment)
                 {
                     <tr>
-                        <td><input type="checkbox" class="user-checkbox" /></td>
                         <td>@comment.Content</td>
                         <td>@comment.NumberOfLikes</td>
                         <td>@comment.Status</td>
