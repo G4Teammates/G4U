@@ -32,11 +32,11 @@ namespace OrderMicroservice.Repositories.Services
 
                 var connectionFactory = new ConnectionFactory
                 {
-                    UserName = _config["25"],
-                    Password = _config["26"],
-                    VirtualHost = _config["25"],
+                    UserName = "guest",
+                    Password = "guest",
+                    VirtualHost = "/",
                     Port = 5672,
-                    HostName = _config["27"]
+                    HostName = "localhost"
                 };
                 using var connection = connectionFactory.CreateConnection();
                 using var channel = connection.CreateModel();
@@ -120,11 +120,11 @@ namespace OrderMicroservice.Repositories.Services
                 const string QueueName = "updateUserName_queue_od";
                 var connectionFactory = new ConnectionFactory
                 {
-                    UserName = _config["31"],
-                    Password = _config["32"],
-                    VirtualHost = _config["31"],
+                    UserName = "guest",
+                    Password = "guest",
+                    VirtualHost = "/",
                     Port = 5672,
-                    HostName = _config["33"]
+                    HostName = "localhost"
                 };
                 using var connection = connectionFactory.CreateConnection();
                 using var channel = connection.CreateModel();
@@ -203,11 +203,11 @@ namespace OrderMicroservice.Repositories.Services
 
                 var connectionFactory = new ConnectionFactory
                 {
-                    UserName = _config["25"],
-                    Password = _config["26"],
-                    VirtualHost = _config["25"],
+                    UserName = "guest",
+                    Password = "guest",
+                    VirtualHost = "/",
                     Port = 5672,
-                    HostName = _config["27"]
+                    HostName = "localhost"
                 };
                 using var connection = connectionFactory.CreateConnection();
                 using var channel = connection.CreateModel();
@@ -273,11 +273,11 @@ namespace OrderMicroservice.Repositories.Services
         {
             ConnectionFactory factory = new()
             {
-                UserName = _config["25"],
-                Password = _config["26"],
-                VirtualHost = _config["25"],
+                UserName = "guest",
+                Password = "guest",
+                VirtualHost = "/",
                 Port = 5672,
-                HostName = _config["27"]
+                HostName = "localhost"
             };
 
             using var connection = factory.CreateConnection();
@@ -325,11 +325,11 @@ namespace OrderMicroservice.Repositories.Services
         {
             ConnectionFactory factory = new()
             {
-                UserName = _config["31"],
-                Password = _config["32"],
-                VirtualHost = _config["31"],
+                UserName = "guest",
+                Password = "guest",
+                VirtualHost = "/",
                 Port = 5672,
-                HostName = _config["33"]
+                HostName = "localhost"
             };
 
             using var connection = factory.CreateConnection();
@@ -443,11 +443,11 @@ namespace OrderMicroservice.Repositories.Services
 
                 var connectionFactory = new ConnectionFactory
                 {
-                    UserName = _config["31"],
-                    Password = _config["32"],
-                    VirtualHost = _config["31"],
+                    UserName = "guest",
+                    Password = "guest",
+                    VirtualHost = "/",
                     Port = 5672,
-                    HostName = _config["33"]
+                    HostName = "localhost"
                 };
                 using var connection = connectionFactory.CreateConnection();
                 using var channel = connection.CreateModel();
