@@ -1,3 +1,4 @@
+using Client.Models.CustomValidation;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 using static Client.Models.Enum.UserEnum.User;
@@ -5,6 +6,7 @@ using static Client.Models.Enum.UserEnum.User;
 
 namespace Client.Models.UserDTO
 {
+    [BankInfoValidation]
     public class UpdateUser
     {
         public required string Id { get; set; }
@@ -28,11 +30,7 @@ namespace Client.Models.UserDTO
             get => string.IsNullOrEmpty(_displayName) ? Username : _displayName;
             set => _displayName = value;
         }
-        /// <summary>
-        /// The Bank Name of the user.
-        /// <br/>
-        /// Tên ngân hàng của người dùng.
-        /// </summary>
+
         public BankName BankName { get; set; }
 
 

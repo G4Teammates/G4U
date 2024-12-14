@@ -322,6 +322,7 @@ namespace UserMicroservice.Repositories.Services
                     user.Role = updatedUserModel.Role ?? user.Role;
                     user.EmailConfirmation = updatedUserModel.EmailConfirmation ?? user.EmailConfirmation;
                     user.Status = updatedUserModel.Status ?? user.Status;
+                    user.BankName = updatedUserModel.BankName;
                     user.BankAccount = updatedUserModel.BankAccount;
                     user.UpdatedAt = DateTime.UtcNow;
                     // Lưu các thay đổi vào cơ sở dữ liệu

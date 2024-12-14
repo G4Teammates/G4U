@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using OrderMicroservice.Configure;
 using OrderMicroservice.DBContexts;
+using OrderMicroservice.Models.UserModel;
 using OrderMicroservice.Repositories.Services;
 using System.Text.Json.Serialization;
 
@@ -15,7 +16,6 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-
 builder.Services.AddSwaggerGen(); 
 builder.Services.AddHostedService<TempFileCleaner>();
 builder.Services.AddHttpContextAccessor();

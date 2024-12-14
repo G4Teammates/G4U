@@ -34,14 +34,24 @@ namespace UserMicroservice.Repositories.Services
                 // tên queue
                 const string QueueName = "CheckExistUserName_For_RreateProduct";
 
+                //var connectionFactory = new ConnectionFactory
+                //{
+                //    UserName = _config["25"],
+                //    Password = _config["26"],
+                //    VirtualHost = _config["25"],
+                //    Port = 5672,
+                //    HostName = _config["27"]
+                //};
                 var connectionFactory = new ConnectionFactory
                 {
-                    UserName = _config["25"],
-                    Password = _config["26"],
-                    VirtualHost = _config["25"],
+                    UserName = "guest",
+                    Password = "guest",
+                    VirtualHost = "/",
                     Port = 5672,
-                    HostName = _config["27"]
+                    HostName = "localhost"
                 };
+
+
                 using var connection = connectionFactory.CreateConnection();
                 using var channel = connection.CreateModel();
 
@@ -112,16 +122,25 @@ namespace UserMicroservice.Repositories.Services
         //sending message
         public void SendingMessage<T>(T message, string exchangeName, string queueName, string routingKey, string exchangeType, bool exchangeDurable, bool queueDurable, bool exclusive, bool autoDelete)
         {
-            ConnectionFactory factory = new()
+            //ConnectionFactory factory = new()
+            //{
+            //    UserName = _config["31"],
+            //    Password = _config["32"],
+            //    VirtualHost = _config["31"],
+            //    Port = 5672,
+            //    HostName = _config["33"]
+            //};
+
+            var connectionFactory = new ConnectionFactory
             {
-                UserName = _config["31"],
-                Password = _config["32"],
-                VirtualHost = _config["31"],
+                UserName = "guest",
+                Password = "guest",
+                VirtualHost = "/",
                 Port = 5672,
-                HostName = _config["33"]
+                HostName = "localhost"
             };
 
-            using var connection = factory.CreateConnection();
+            using var connection = connectionFactory.CreateConnection();
             using (var channel = connection.CreateModel())
             {
                 // Khai báo cổng Exchange
@@ -164,16 +183,25 @@ namespace UserMicroservice.Repositories.Services
         }
         public void SendingMessage2<T>(T message, string exchangeName, string queueName, string routingKey, string exchangeType, bool exchangeDurable, bool queueDurable, bool exclusive, bool autoDelete)
         {
-            ConnectionFactory factory = new()
+            //ConnectionFactory factory = new()
+            //{
+            //    UserName = _config["25"],
+            //    Password = _config["26"],
+            //    VirtualHost = _config["25"],
+            //    Port = 5672,
+            //    HostName = _config["27"]
+            //};
+
+            var connectionFactory = new ConnectionFactory
             {
-                UserName = _config["25"],
-                Password = _config["26"],
-                VirtualHost = _config["25"],
+                UserName = "guest",
+                Password = "guest",
+                VirtualHost = "/",
                 Port = 5672,
-                HostName = _config["27"]
+                HostName = "localhost"
             };
 
-            using var connection = factory.CreateConnection();
+            using var connection = connectionFactory.CreateConnection();
             using (var channel = connection.CreateModel())
             {
                 // Khai báo cổng Exchange

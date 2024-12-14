@@ -6,19 +6,6 @@
 <form class="row" asp-action="UserCreate" enctype="multipart/form-data">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-    @if (TempData["success"] != null)
-    {
-        <div class="alert alert-success">
-            @TempData["success"]
-        </div>
-    }
-
-    @if (TempData["error"] != null)
-    {
-        <div class="alert alert-danger">
-            @TempData["error"]
-        </div>
-    }
 
     <div class="row">
         <div class="col">
@@ -50,26 +37,15 @@
 
         <div class="col">
             <div class="text-center">
-                @if (Model.AvatarFile != null)
-                {
-                    <div>
-                        <img id="avatarPreview" src="@Model.Avatar" alt="Avatar Preview" style="width:200px; height:200px;" />
-                    </div>
-                    <input type="file" id="avatarInput" asp-for="@Model.AvatarFile" class="form-control mt-2" style="display: none;" accept=".png, .jpg" />
-                    <a id="changeAvatarBtn" class="btn btn-outline-dark text-center mt-2">Change Avatar</a>
-                    <span asp-validation-for="@Model.Avatar" class="text-danger"></span>
+                <input hidden asp-for="@Model.Avatar" />
 
-                }
-                else
-                {
-                    <div>
-                        <img id="avatarPreview" src="@Model.Avatar" alt="Avatar Preview" style="width:200px; height:200px;" />
-                    </div>
-                    <input type="file" id="avatarInput" asp-for="@Model.Avatar" class="form-control mt-2" style="display: none;" accept=".png, .jpg" />
-                    <a id="changeAvatarBtn" class="btn btn-outline-dark text-center mt-2">Change Avatar</a>
-                    <span asp-validation-for="@Model.Avatar" class="text-danger"></span>
+                <div>
+                    <img id="avatarPreviewCreate" src="@Model.Avatar" alt="Avatar Preview" style="width:200px; height:200px; object-fit: cover" />
+                </div>
+                <input type="file" id="avatarInputCreate" asp-for="@Model.AvatarFile" class="form-control mt-2" style="display: none;" accept=".png, .jpg" />
+                <a id="changeAvatarCreateBtn" class="btn btn-outline-dark text-center mt-2">Change Avatar</a>
+                <span asp-validation-for="@Model.Avatar" class="text-danger"></span>
 
-                }
             </div>
         </div>
     </div>
@@ -83,18 +59,18 @@
 
 <script>
     // Mở hộp thoại chọn file khi nhấp vào nút "Change Avatar"
-    document.getElementById('changeAvatarBtn').addEventListener('click', function () {
-        document.getElementById('avatarInput').click();
+    document.getElementById('changeAvatarCreateBtn').addEventListener('click', function () {
+        document.getElementById('avatarInputCreate').click();
     });
 
     // Xử lý sự kiện khi file ảnh được chọn
-    document.getElementById('avatarInput').addEventListener('change', function (event) {
+    document.getElementById('avatarInputCreate').addEventListener('change', function (event) {
         const input = event.target;
         if (input.files && input.files[0]) {
             const reader = new FileReader();
             reader.onload = function (e) {
                 // Hiển thị ảnh vừa chọn lên thẻ img
-                document.getElementById('avatarPreview').src = e.target.result;
+                document.getElementById('avatarPreviewCreate').src = e.target.result;
             };
             reader.readAsDataURL(input.files[0]);
         }
