@@ -63,7 +63,14 @@
         justify-content: center;
         font-size: 18px;
         color: #6c757d;
+        transition: transform 0.3s ease, box-shadow 0.3s ease; /*  Thêm hiệu ứng mượt mà */
     }
+
+        .chart:hover {
+            transform: scale(1.02); /* Phóng to nhẹ nhàng */
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1); /* Thêm đổ bóng nhẹ */
+        }
+
 
     .btn-create-project {
         background-color: #007bff;
