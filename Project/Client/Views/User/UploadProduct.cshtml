@@ -340,11 +340,11 @@
                                 else if (item.ProviderName.Contains("Cloudinary"))
                                 {
                                     <div class="imageUrl p-2 mb-2" id="item-@index">
-                                        @*                                         <div class="text-end">
-                        <button onclick="removeItem(@index)" title="Delete" type="button">
-                        <i class="fa-solid fa-delete-left text-danger"></i>
-                        </button>
-                        </div> *@
+                                        <div class="text-end delete-btn">
+                                            <button onclick="removeItem(@index)" title="Delete" type="button">
+                                                <i class="fa-solid fa-delete-left text-danger"></i>
+                                            </button>
+                                        </div>
                                         <div class="text-center">
                                             <img src="@item.Url" class="" style="min-width:200px; max-height:200px; min-height:150px; max-width:300px" />
                                             @* <input type="file" multiple class="form-control mb-2" asp-for="@item" /> *@
@@ -492,41 +492,41 @@
     //                 <strong>File Name:</strong> ${fileNameFromServer} <br>
     //                 <strong>File Size:</strong> ${(fileSizeFromServer / 1024 / 1024).toFixed(2)} MB <br>
     //                 <strong>File Type:</strong> (from server)
-        //             `;
-        //         document.getElementById('fileInfo').innerHTML = fileInfo;
+    //             `;
+    //         document.getElementById('fileInfo').innerHTML = fileInfo;
 
-        //         // Log khi thông tin được hiển thị thành công
-        //         console.log("File information is displayed successfully.");
-        //     }
-        // }
+    //         // Log khi thông tin được hiển thị thành công
+    //         console.log("File information is displayed successfully.");
+    //     }
+    // }
 
-        // // Gọi hàm khi trang load để hiển thị file từ server nếu có
-        // window.onload = function () {
-        //     console.log("Window loaded, calling showUploadedGameFileFromServer");
-        //     showUploadedGameFileFromServer();
-        // };
+    // // Gọi hàm khi trang load để hiển thị file từ server nếu có
+    // window.onload = function () {
+    //     console.log("Window loaded, calling showUploadedGameFileFromServer");
+    //     showUploadedGameFileFromServer();
+    // };
 
-        // Sự kiện thay đổi khi người dùng chọn file mới
-        function displayFileInfo() {
-            const input = document.getElementById('fileInput');
-            const file = input.files[0]; // Lấy file đầu tiên (người dùng có thể chọn nhiều file)
+    // Sự kiện thay đổi khi người dùng chọn file mới
+    function displayFileInfo() {
+        const input = document.getElementById('fileInput');
+        const file = input.files[0]; // Lấy file đầu tiên (người dùng có thể chọn nhiều file)
 
-            if (file) {
-                // Kiểm tra kích thước file (ví dụ 1GB = 1073741824 bytes)
-                if (file.size > 1073741824) {
-                    alert('File quá lớn, hãy chọn file dưới 1 GB.');
-                    return;
-                }
-
-                // Hiển thị thông tin file
-                const fileInfo = `
-                                                                                <strong>File Name:</strong> <span class="d-inline-block text-truncate" style="max-width: 400px;">${file.name}</span> <br>
-                                                                                                            <strong>File Size:</strong> ${(file.size / 1024 / 1024).toFixed(2)} MB <br>
-
-                                                                                                        `;
-                document.getElementById('fileInfo').innerHTML = fileInfo;
+        if (file) {
+            // Kiểm tra kích thước file (ví dụ 1GB = 1073741824 bytes)
+            if (file.size > 1073741824) {
+                alert('File quá lớn, hãy chọn file dưới 1 GB.');
+                return;
             }
+
+            // Hiển thị thông tin file
+            const fileInfo = `
+                                                                                    <strong>File Name:</strong> <span class="d-inline-block text-truncate" style="max-width: 400px;">${file.name}</span> <br>
+                                                                                                                <strong>File Size:</strong> ${(file.size / 1024 / 1024).toFixed(2)} MB <br>
+
+                                                                                                            `;
+            document.getElementById('fileInfo').innerHTML = fileInfo;
         }
+    }
 
     // Sự kiện khi chọn file mới từ input
     document.getElementById('fileInput').addEventListener('change', displayFileInfo);
@@ -615,7 +615,7 @@
         document.getElementById('paid-tab').onclick = switchToPaid;
     });
 
-        function confirmUploadGame() {
+    function confirmUploadGame() {
 
         // Mở file explorer (tạo event click giả lập)
         document.getElementById('fileInput').click();
