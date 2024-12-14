@@ -38,11 +38,11 @@ namespace ProductMicroservice.Repostories.Messages
 
                 var connectionFactory = new ConnectionFactory
                 {
-                    UserName = _config["25"],
-                    Password = _config["26"],
-                    VirtualHost = _config["25"],
+                    UserName = "guest",
+                    Password = "guest",
+                    VirtualHost = "/",
                     Port = 5672,
-                    HostName = _config["27"]
+                    HostName = "localhost"
                 };
                 using var connection = connectionFactory.CreateConnection();
                 using var channel = connection.CreateModel();
@@ -125,11 +125,11 @@ namespace ProductMicroservice.Repostories.Messages
 
                 var connectionFactory = new ConnectionFactory
                 {
-                    UserName = _config["25"],
-                    Password = _config["26"],
-                    VirtualHost = _config["25"],
+                    UserName = "guest",
+                    Password = "guest",
+                    VirtualHost = "/",
                     Port = 5672,
-                    HostName = _config["27"]
+                    HostName = "localhost"
                 };
 
                 using var connection = connectionFactory.CreateConnection();
@@ -199,11 +199,11 @@ namespace ProductMicroservice.Repostories.Messages
 
                 var connectionFactory = new ConnectionFactory
                 {
-                    UserName = _config["25"],
-                    Password = _config["26"],
-                    VirtualHost = _config["25"],
+                    UserName = "guest",
+                    Password = "guest",
+                    VirtualHost = "/",
                     Port = 5672,
-                    HostName = _config["27"]
+                    HostName = "localhost"
                 };
 
                 using var connection = connectionFactory.CreateConnection();
@@ -271,11 +271,11 @@ namespace ProductMicroservice.Repostories.Messages
                 const string QueueName = "Stastistical_groupby_user_product";
                 var connectionFactory = new ConnectionFactory
                 {
-                    UserName = _config["25"],
-                    Password = _config["26"],
-                    VirtualHost = _config["25"],
+                    UserName = "guest",
+                    Password = "guest",
+                    VirtualHost = "/",
                     Port = 5672,
-                    HostName = _config["27"]
+                    HostName = "localhost"
                 };
                 using var connection = connectionFactory.CreateConnection();
                 using var channel = connection.CreateModel();
@@ -346,11 +346,11 @@ namespace ProductMicroservice.Repostories.Messages
                 const string QueueName = "order_for_sold_product";
                 var connectionFactory = new ConnectionFactory
                 {
-                    UserName = _config["25"],
-                    Password = _config["26"],
-                    VirtualHost = _config["25"],
+                    UserName = "guest",
+                    Password = "guest",
+                    VirtualHost = "/",
                     Port = 5672,
-                    HostName = _config["27"]
+                    HostName = "localhost"
                 };
                 using var connection = connectionFactory.CreateConnection();
                 using var channel = connection.CreateModel();
@@ -432,11 +432,11 @@ namespace ProductMicroservice.Repostories.Messages
                 const string QueueName = "updateUserName_queue_pro";
                 var connectionFactory = new ConnectionFactory
                 {
-                    UserName = _config["31"],
-                    Password = _config["32"],
-                    VirtualHost = _config["31"],
+                    UserName = "guest",
+                    Password = "guest",
+                    VirtualHost = "/",
                     Port = 5672,
-                    HostName = _config["33"]
+                    HostName = "localhost"
                 };
                 using var connection = connectionFactory.CreateConnection();
                 using var channel = connection.CreateModel();
@@ -510,11 +510,11 @@ namespace ProductMicroservice.Repostories.Messages
         {
             ConnectionFactory factory = new()
             {
-                UserName = _config["25"],
-                Password = _config["26"],
-                VirtualHost = _config["25"],
+                UserName = "guest",
+                Password = "guest",
+                VirtualHost = "/",
                 Port = 5672,
-                HostName = _config["27"]
+                HostName = "localhost"
             };
 
             using var connection = factory.CreateConnection();
