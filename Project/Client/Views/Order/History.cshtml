@@ -146,7 +146,7 @@
                     {
                         if (loginType == UserLoginType.Local)
                         {
-                                          <div class="custom-nav-item">
+                            <div class="custom-nav-item">
                                 <a asp-controller="User" asp-action="PasswordSecurity">
                                     <button type="button">
                                         <i class="fas fa-lock"></i> Password and Security
@@ -186,99 +186,114 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var i in Model.Orders) {
-
-
-                            <tr>
-                                <td scope="row">@i.Id</td>
-
-                                @if (i.TotalPrice==0)
-                                {
-                                    <td>Free</td>
-                                }
-                                else
-                                {
-                                    <td>@i.TotalPrice</td>
-                                }
-
-                                <td>@i.PaymentMethod.ToString()</td>
-                                <td>@i.CreatedAt</td>
-                                 <td>
-                                <a href="javascript:void(0);"
-                                   data-url="@Url.Action("OrderDetail", "Admin", new { id = i.Id })"
-                                   onclick="showDetailModal(this)"
-                                   title="Order Detail">
-                                    <i class="fa-solid fa-pen-to-square" style="color:#0b3d0d"></i>
-                                </a>
-
-
-                            </td>
+                        @*                         @if (Model == null || Model.Orders == null)
+                        {
+                        <tr>
+                        <td scope="row" colspan="5">You haven't bought any games</td>
                         </tr>
+                        } *@
+                        @if (Model.Orders.Count  != 0)
+                        {
+                            @foreach (var i in Model.Orders)
+                            {
+                                <tr>
+                                    <td scope="row">@i.Id</td>
+
+                                    @if (i.TotalPrice == 0)
+                                    {
+                                        <td>Free</td>
+                                    }
+                                    else
+                                    {
+                                        <td>@i.TotalPrice</td>
+                                    }
+
+                                    <td>@i.PaymentMethod.ToString()</td>
+                                    <td>@i.CreatedAt</td>
+                                    <td>
+                                        <a href="javascript:void(0);"
+                                           data-url="@Url.Action("OrderDetail", "Admin", new { id = i.Id })"
+                                           onclick="showDetailModal(this)"
+                                           title="Order Detail">
+                                            <i class="fa-solid fa-pen-to-square" style="color:#0b3d0d"></i>
+                                        </a>
+
+
+                                    </td>
+                                </tr>
+                            }
+                        }
+
+                        else
+                        {
+                            <tr>
+                                <td scope="row" colspan="5">You haven't bought any games</td>
+                            </tr>
                         }
                     </tbody>
                 </table>
 
 
                 <div class="d-flex justify-content-between align-items-center mt-3">
-        <!-- Total Items -->
-        <div>Total: @Model.Orders.Count items</div>
+                    <!-- Total Items -->
+                    <div>Total: @Model.Orders.Count items</div>
 
-        <!-- Records Per Page -->
-        <div class="d-flex align-items-center">
-            <form method="get" asp-controller="Order" asp-action="@ViewData["HistoryAction"]" class="d-inline">
-                    <select name="pageSize" class="form-select form-select-sm w-auto d-inline-block" onchange="this.form.submit()">
-                <option>Select records per page</option>
-                <option value="3">3 records per page</option>
-                <option value="5">5 records per page</option>
-                <option value="10">10 records per page</option>
-                <option value="20">20 records per page</option>
-            </select>
-                <input type="hidden" name="page" value="1" />
-            </form>
+                    <!-- Records Per Page -->
+                    <div class="d-flex align-items-center">
+                        <form method="get" asp-controller="Order" asp-action="@ViewData["HistoryAction"]" class="d-inline">
+                            <select name="pageSize" class="form-select form-select-sm w-auto d-inline-block" onchange="this.form.submit()">
+                                <option>Select records per page</option>
+                                <option value="3">3 records per page</option>
+                                <option value="5">5 records per page</option>
+                                <option value="10">10 records per page</option>
+                                <option value="20">20 records per page</option>
+                            </select>
+                            <input type="hidden" name="page" value="1" />
+                        </form>
 
 
-            <!-- Pagination -->
-            <nav aria-label="Page navigation example">
-                <ul class="pagination pagination-sm mb-0">
-                    <!-- Previous Page -->
-                    <li class="page-item @(Model.pageNumber == 1 ? "disabled" : "")">
-                        <a class="page-link"
-                           asp-controller="Order"
-                           asp-action="@ViewData["HistoryAction"]"
-                           asp-route-page="@(Model.pageNumber - 1)"
-                           asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
-                            Previous
-                        </a>
-                    </li>
+                        <!-- Pagination -->
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination pagination-sm mb-0">
+                                <!-- Previous Page -->
+                                <li class="page-item @(Model.pageNumber == 1 ? "disabled" : "")">
+                                    <a class="page-link"
+                                       asp-controller="Order"
+                                       asp-action="@ViewData["HistoryAction"]"
+                                       asp-route-page="@(Model.pageNumber - 1)"
+                                       asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
+                                        Previous
+                                    </a>
+                                </li>
 
-                    <!-- Page Numbers -->
-                    @for (var pg = 1; pg <= Model.pageCount; pg++)
-                    {
-                        <li class="page-item @(pg == Model.pageNumber ? "active" : "")">
-                            <a class="page-link"
-                               asp-controller="Order"
-                               asp-action="@ViewData["HistoryAction"]"
-                               asp-route-page="@pg"
-                               asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
-                                @pg
-                            </a>
-                        </li>
-                    }
+                                <!-- Page Numbers -->
+                                @for (var pg = 1; pg <= Model.pageCount; pg++)
+                                {
+                                    <li class="page-item @(pg == Model.pageNumber ? "active" : "")">
+                                        <a class="page-link"
+                                           asp-controller="Order"
+                                           asp-action="@ViewData["HistoryAction"]"
+                                           asp-route-page="@pg"
+                                           asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
+                                            @pg
+                                        </a>
+                                    </li>
+                                }
 
-                    <!-- Next Page -->
-                    <li class="page-item @(Model.pageNumber == Model.pageCount ? "disabled" : "")">
-                        <a class="page-link"
-                           asp-controller="Order"
-                           asp-action="@ViewData["HistoryAction"]"
-                           asp-route-page="@(Model.pageNumber + 1)"
-                           asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
-                            Next
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-        </div>
-    </div>
+                                <!-- Next Page -->
+                                <li class="page-item @(Model.pageNumber == Model.pageCount ? "disabled" : "")">
+                                    <a class="page-link"
+                                       asp-controller="Order"
+                                       asp-action="@ViewData["HistoryAction"]"
+                                       asp-route-page="@(Model.pageNumber + 1)"
+                                       asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
+                                        Next
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
 
 
             </div>
@@ -288,11 +303,11 @@
 <div id="modalContainer"></div>
 
 
-    @section Scripts {
-        @{
-            await Html.RenderPartialAsync("_ValidationScriptsPartial");
-        }
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+}
 
 <script>
     function showDetailModal(element) {

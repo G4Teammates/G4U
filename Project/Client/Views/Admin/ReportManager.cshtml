@@ -123,7 +123,6 @@
         <table class="table table-bordered table-hover align-middle">
             <thead class="table-light">
                 <tr>
-                    <th scope="col"><input type="checkbox" id="selectAll"></th>
                     <th scope="col">UserName</th>
                     <th scope="col">Email</th>
                     <th scope="col">Related</th>
@@ -138,7 +137,6 @@
                     foreach (var report in Model.Report)
                     {
                         <tr>
-                            <td><input type="checkbox" class="user-checkbox" /></td>
                             <td>@report.UserName</td>
                             <td>@report.Email</td>
                             <td>@report.Related</td>

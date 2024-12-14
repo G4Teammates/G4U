@@ -2,6 +2,8 @@ using Azure.Identity;
 using Microsoft.OpenApi.Models;
 using ReportMicroservice.Configure;
 using Azure.Identity;
+using ReportMicroservice.Repostories;
+using RabbitMQ.Client;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -50,6 +52,21 @@ builder.Services.AddSwaggerGen(opt =>
             new string[]{}
         }
     });
+});
+// ??ng ký các wrapper types
+builder.Services.AddSingleton<RabbitMQServer3ConnectionFactory>();
+// ??ng ký IConnection t? m?i Server
+builder.Services.AddSingleton(sp =>
+{
+    var factory = sp.GetRequiredService<RabbitMQServer3ConnectionFactory>().Factory;
+    return factory.CreateConnection();
+});
+
+// ??ng ký IModel (Channel) n?u c?n
+builder.Services.AddSingleton(sp =>
+{
+    var connection = sp.GetRequiredService<IConnection>(); // Server1 Connection
+    return connection.CreateModel();
 });
 var app = builder.Build();
 
