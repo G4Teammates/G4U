@@ -7,6 +7,7 @@ using CategoryMicroservice.Repositories.Interfaces;
 using CategoryMicroservice.Repositories.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using RabbitMQ.Client;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -57,6 +58,22 @@ builder.Services.AddSwaggerGen(opt =>
             new string[] { }
         }
     });
+});
+
+// Đăng ký các wrapper types
+builder.Services.AddSingleton<RabbitMQServer1ConnectionFactory>();
+// Đăng ký IConnection từ mỗi Server
+builder.Services.AddSingleton(sp =>
+{
+    var factory = sp.GetRequiredService<RabbitMQServer1ConnectionFactory>().Factory;
+    return factory.CreateConnection();
+});
+
+// Đăng ký IModel (Channel) nếu cần
+builder.Services.AddSingleton(sp =>
+{
+    var connection = sp.GetRequiredService<IConnection>(); // Server1 Connection
+    return connection.CreateModel();
 });
 
 var app = builder.Build();

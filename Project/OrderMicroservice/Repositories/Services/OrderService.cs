@@ -35,7 +35,7 @@ namespace OrderMicroservice.Repositories.Services
 
 
                 var totalRequest = await TotalRequest();
-                _message.SendingMessage(totalRequest.Result, "Stastistical", "totalOrder_for_stastistical", "totalOrder_for_stastistical", ExchangeType.Direct, true, false, false, false);
+                _message.SendingMessage2(totalRequest.Result, "Stastistical", "totalOrder_for_stastistical", "totalOrder_for_stastistical", ExchangeType.Direct, true, false, false, false);
                 response.Result = orderModel;
                 response.Message = $"Create order success";
             }
@@ -302,7 +302,7 @@ namespace OrderMicroservice.Repositories.Services
 
                 // Gửi thông điệp thống kê
                 var totalRequest = await TotalRequest();
-                _message.SendingMessage(totalRequest.Result, "Stastistical", "totalOrder_for_stastistical", "totalOrder_for_stastistical", ExchangeType.Direct, true, false, false, false);
+                _message.SendingMessage2(totalRequest.Result, "Stastistical", "totalOrder_for_stastistical", "totalOrder_for_stastistical", ExchangeType.Direct, true, false, false, false);
 
 
                 // Trả về thông báo cập nhật
@@ -333,7 +333,7 @@ namespace OrderMicroservice.Repositories.Services
         {
             try
             {
-                _message.SendingMessage(request, "Product", "order_for_sold_product", "order_for_sold_product", ExchangeType.Direct, true, false, false, false);
+                _message.SendingMessage2(request.ProductSoldModels, "Product", "order_for_sold_product", "order_for_sold_product", ExchangeType.Direct, true, false, false, false);
                 return new ResponseModel
                 {
                     IsSuccess = true,

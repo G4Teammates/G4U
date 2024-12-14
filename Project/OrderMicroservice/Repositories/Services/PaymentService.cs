@@ -278,7 +278,7 @@ namespace OrderMicroservice.Repositories.Services
         {
             try
             {
-                _message.SendingMessage(request, "Product", "order_for_sold_product", "order_for_sold_product", ExchangeType.Direct, true, false, false, false);
+                _message.SendingMessage2(request, "Product", "order_for_sold_product", "order_for_sold_product", ExchangeType.Direct, true, false, false, false);
                 return new ResponseModel
                 {
                     IsSuccess = true,

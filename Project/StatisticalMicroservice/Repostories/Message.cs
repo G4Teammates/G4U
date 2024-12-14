@@ -18,11 +18,14 @@ namespace StatisticalMicroservice.Repostories
         public event Action<ProductGroupByUserData> OnProductResponseReceived;
         public event Action<TotalGroupByUserResponse> OnFinalResponseReceived;
         private readonly IConfiguration _config;
-        public Message(IServiceScopeFactory scopeFactory, IConfiguration config)
+        private readonly IModel _channel2;
+        public Message(IServiceScopeFactory scopeFactory, IConfiguration config, RabbitMQServer2ConnectionFactory server1Factory)
         {
             _scopeFactory = scopeFactory;
             _config = config;
+            _channel2 = server1Factory.Factory.CreateConnection().CreateModel();
         }
+        // conn 2
         public void ReceiveMessageProduct()
         {
             try
@@ -33,7 +36,7 @@ namespace StatisticalMicroservice.Repostories
                 // tên queue
                 const string QueueName = "totalSold_totalProduct_for_stastistical";
 
-                var connectionFactory = new ConnectionFactory
+                /*var connectionFactory = new ConnectionFactory
                 {
                     UserName = "guest",
                     Password = "guest",
@@ -42,16 +45,16 @@ namespace StatisticalMicroservice.Repostories
                     HostName = "localhost"
                 };
                 using var connection = connectionFactory.CreateConnection();
-                using var channel = connection.CreateModel();
+                using var channel = connection.CreateModel();*/
 
-                var queue = channel.QueueDeclare(
+                var queue = _channel2.QueueDeclare(
                     queue: QueueName,
                     durable: false,
                     exclusive: false,
                     autoDelete: false,
                     arguments: ImmutableDictionary<string, object>.Empty);
 
-                var consumer = new EventingBasicConsumer(channel);
+                var consumer = new EventingBasicConsumer(_channel2);
 
                 consumer.Received += async (sender, eventArgs) =>
                 {
@@ -81,7 +84,7 @@ namespace StatisticalMicroservice.Repostories
                         }
                     }
                 };
-                channel.BasicConsume(
+                _channel2.BasicConsume(
                     queue: queue.QueueName,
                     autoAck: true,
                     consumer: consumer);
@@ -99,7 +102,7 @@ namespace StatisticalMicroservice.Repostories
             }
 
         }
-
+        // conn 2
         public void ReceiveMessageUser()
         {
             try
@@ -110,7 +113,7 @@ namespace StatisticalMicroservice.Repostories
                 // tên queue
                 const string QueueName = "totalUser_for_stastistical";
 
-                var connectionFactory = new ConnectionFactory
+                /*var connectionFactory = new ConnectionFactory
                 {
                     UserName = "guest",
                     Password = "guest",
@@ -119,16 +122,16 @@ namespace StatisticalMicroservice.Repostories
                     HostName = "localhost"
                 };
                 using var connection = connectionFactory.CreateConnection();
-                using var channel = connection.CreateModel();
+                using var channel = connection.CreateModel();*/
 
-                var queue = channel.QueueDeclare(
+                var queue = _channel2.QueueDeclare(
                     queue: QueueName,
                     durable: false,
                     exclusive: false,
                     autoDelete: false,
                     arguments: ImmutableDictionary<string, object>.Empty);
 
-                var consumer = new EventingBasicConsumer(channel);
+                var consumer = new EventingBasicConsumer(_channel2);
 
                 consumer.Received += async (sender, eventArgs) =>
                 {
@@ -158,7 +161,7 @@ namespace StatisticalMicroservice.Repostories
                         }
                     }
                 };
-                channel.BasicConsume(
+                _channel2.BasicConsume(
                     queue: queue.QueueName,
                     autoAck: true,
                     consumer: consumer);
@@ -176,7 +179,7 @@ namespace StatisticalMicroservice.Repostories
             }
 
         }
-
+        // conn 2
         public void ReceiveMessageOrder()
         {
             try
@@ -187,7 +190,7 @@ namespace StatisticalMicroservice.Repostories
                 // tên queue
                 const string QueueName = "totalOrder_for_stastistical";
 
-                var connectionFactory = new ConnectionFactory
+                /*var connectionFactory = new ConnectionFactory
                 {
                     UserName = "guest",
                     Password = "guest",
@@ -196,16 +199,16 @@ namespace StatisticalMicroservice.Repostories
                     HostName = "localhost"
                 };
                 using var connection = connectionFactory.CreateConnection();
-                using var channel = connection.CreateModel();
+                using var channel = connection.CreateModel();*/
 
-                var queue = channel.QueueDeclare(
+                var queue = _channel2.QueueDeclare(
                     queue: QueueName,
                     durable: false,
                     exclusive: false,
                     autoDelete: false,
                     arguments: ImmutableDictionary<string, object>.Empty);
 
-                var consumer = new EventingBasicConsumer(channel);
+                var consumer = new EventingBasicConsumer(_channel2);
 
                 consumer.Received += async (sender, eventArgs) =>
                 {
@@ -235,7 +238,7 @@ namespace StatisticalMicroservice.Repostories
                         }
                     }
                 };
-                channel.BasicConsume(
+                _channel2.BasicConsume(
                     queue: queue.QueueName,
                     autoAck: true,
                     consumer: consumer);
@@ -253,12 +256,15 @@ namespace StatisticalMicroservice.Repostories
             }
 
         }
-
+        
         public void SendingMessageStastisticalGroupByUser<T>(T message)
         {
+            // conn 2
             SendingMessage(message, "StastisticalGroupByUser", "Stastistical_groupby_user_product", "Stastistical_groupby_user_product", ExchangeType.Direct, true, false, false, false);
+            // conn 2
             SendingMessage(message, "StastisticalGroupByUser", "Stastistical_groupby_user_order", "Stastistical_groupby_user_order", ExchangeType.Direct, true, false, false, false);
         }
+        // conn 2
         public void ReceiveMessageStastisticalGroupByUserToProduct()
         {
             try
@@ -268,7 +274,7 @@ namespace StatisticalMicroservice.Repostories
                 /* const string ExchangeName = "delete_category";*/
                 // tên queue
                 const string QueueName = "Stastistical_groupby_user_product_data";
-                var connectionFactory = new ConnectionFactory
+                /*var connectionFactory = new ConnectionFactory
                 {
                     UserName = "guest",
                     Password = "guest",
@@ -278,16 +284,16 @@ namespace StatisticalMicroservice.Repostories
                 };
 
                 using var connection = connectionFactory.CreateConnection();
-                using var channel = connection.CreateModel();
+                using var channel = connection.CreateModel();*/
 
-                var queue = channel.QueueDeclare(
+                var queue = _channel2.QueueDeclare(
                     queue: QueueName,
                     durable: false,
                     exclusive: false,
                     autoDelete: false,
                     arguments: ImmutableDictionary<string, object>.Empty);
 
-                var consumer = new EventingBasicConsumer(channel);
+                var consumer = new EventingBasicConsumer(_channel2);
 
                 consumer.Received += (model, EventArgs) =>
                 {
@@ -314,7 +320,7 @@ namespace StatisticalMicroservice.Repostories
                     }
                 };
 
-                channel.BasicConsume(
+                _channel2.BasicConsume(
                     queue: queue.QueueName,
                     autoAck: true,
                     consumer: consumer);
@@ -329,6 +335,7 @@ namespace StatisticalMicroservice.Repostories
                 throw;
             }
         }
+        // conn 2
         public void ReceiveMessageStastisticalGroupByUserToOrder()
         {
             try
@@ -338,7 +345,7 @@ namespace StatisticalMicroservice.Repostories
                 /* const string ExchangeName = "delete_category";*/
                 // tên queue
                 const string QueueName = "Stastistical_groupby_user_order_data";
-                var connectionFactory = new ConnectionFactory
+                /*var connectionFactory = new ConnectionFactory
                 {
                     UserName = "guest",
                     Password = "guest",
@@ -348,16 +355,16 @@ namespace StatisticalMicroservice.Repostories
                 };
 
                 using var connection = connectionFactory.CreateConnection();
-                using var channel = connection.CreateModel();
+                using var channel = connection.CreateModel();*/
 
-                var queue = channel.QueueDeclare(
+                var queue = _channel2.QueueDeclare(
                     queue: QueueName,
                     durable: false,
                     exclusive: false,
                     autoDelete: false,
                     arguments: ImmutableDictionary<string, object>.Empty);
 
-                var consumer = new EventingBasicConsumer(channel);
+                var consumer = new EventingBasicConsumer(_channel2);
 
                 consumer.Received += (model, EventArgs) =>
                 {
@@ -384,7 +391,7 @@ namespace StatisticalMicroservice.Repostories
                     }
                 };
 
-                channel.BasicConsume(
+                _channel2.BasicConsume(
                     queue: queue.QueueName,
                     autoAck: true,
                     consumer: consumer);
@@ -470,20 +477,23 @@ namespace StatisticalMicroservice.Repostories
             return response;
         }
         //sending message
-        private void SendingMessage<T>(T message, string exchangeName, string queueName, string routingKey, string exchangeType, bool exchangeDurable, bool queueDurable, bool exclusive, bool autoDelete)
+        public void SendingMessage<T>(
+                                       T message,
+                                       string exchangeName,
+                                       string queueName,
+                                       string routingKey,
+                                       string exchangeType,
+                                       bool exchangeDurable,
+                                       bool queueDurable,
+                                       bool exclusive,
+                                       bool autoDelete)
         {
-            ConnectionFactory factory = new()
-            {
-                UserName = "guest",
-                Password = "guest",
-                VirtualHost = "/",
-                Port = 5672,
-                HostName = "localhost"
-            };
+            try
 
-            using var connection = factory.CreateConnection();
-            using (var channel = connection.CreateModel())
             {
+                // Sử dụng _channel1 (hoặc _channel2 nếu cần gửi qua server khác)
+                var channel = _channel2;
+
                 // Khai báo cổng Exchange
                 channel.ExchangeDeclare(
                     exchange: exchangeName,
@@ -492,7 +502,7 @@ namespace StatisticalMicroservice.Repostories
                 );
 
                 // Khai báo hàng chờ
-                var queue = channel.QueueDeclare(
+                channel.QueueDeclare(
                     queue: queueName,
                     durable: queueDurable,
                     exclusive: exclusive,
@@ -521,8 +531,11 @@ namespace StatisticalMicroservice.Repostories
                     body: body
                 );
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred while sending the message: {ex.Message}");
+            }
         }
-
         #endregion
     }
 }

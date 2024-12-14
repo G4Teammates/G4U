@@ -13,66 +13,74 @@ namespace CommentMicroservice.Repositories
         private readonly IServiceScopeFactory _scopeFactory;
         public event Action<CheckPurchasedResponse> OnResponseReceived;
         private readonly IConfiguration _config;
-        public Message(IServiceScopeFactory scopeFactory, IConfiguration config)
+        private readonly IModel _channel3;
+        public Message(IServiceScopeFactory scopeFactory, IConfiguration config, RabbitMQServer3ConnectionFactory server3Factory)
         {
             _scopeFactory = scopeFactory;
             _config = config;
+            _channel3 = server3Factory.Factory.CreateConnection().CreateModel();
         }
-        public void SendingMessageCheckPurchased<T>(T message)
+        //conn 3
+        public void SendingMessage<T>(
+                               T message,
+                               string exchangeName,
+                               string queueName,
+                               string routingKey,
+                               string exchangeType,
+                               bool exchangeDurable,
+                               bool queueDurable,
+                               bool exclusive,
+                               bool autoDelete)
         {
-            // tên cổng
-            const string ExchangeName = "Check_purchased";
-            // tên queue
-            const string QueueName = "Check_purchased_queue";
+            try
 
-            ConnectionFactory factory = new()
             {
-                UserName = "guest",
-                Password = "guest",
-                VirtualHost = "/",
-                Port = 5672,
-                HostName = "localhost"
-            };
-            using var conn = factory.CreateConnection();
-            using (var channel = conn.CreateModel())
-            {
+                // Sử dụng _channel1 (hoặc _channel2 nếu cần gửi qua server khác)
+                var channel = _channel3;
+
+                // Khai báo cổng Exchange
                 channel.ExchangeDeclare(
-                                      exchange: ExchangeName,
-                                      type: ExchangeType.Direct, // Lựa chọn loại cổng (ExchangeType)
-                                      durable: true              // Khi khởi động lại có bị mất dữ liệu hay không( true là không ) 
-                                    );
+                    exchange: exchangeName,
+                    type: exchangeType,
+                    durable: exchangeDurable
+                );
 
                 // Khai báo hàng chờ
-                var queue = channel.QueueDeclare(
-                                        queue: QueueName, // tên hàng chờ
-                                        durable: false, // khi khởi động lại có mất không
-                                                        // hàng đợi của bạn sẽ trở thành riêng tư và chỉ ứng dụng của
-                                                        // bạn mới có thể sử dụng. Điều này rất hữu ích khi bạn cần giới
-                                                        // hạn hàng đợi chỉ cho một người tiêu dùng.
-                                        exclusive: false,
-                                        autoDelete: false, // có tự động xóa không
-                                        arguments: ImmutableDictionary<string, object>.Empty);
+                channel.QueueDeclare(
+                    queue: queueName,
+                    durable: queueDurable,
+                    exclusive: exclusive,
+                    autoDelete: autoDelete,
+                    arguments: ImmutableDictionary<string, object>.Empty
+                );
 
+                Console.WriteLine($"Sending message to queue '{queueName}' on exchange '{exchangeName}': {message}");
 
-
-                // Liên kết hàng đợi với tên cổng bằng rounting key
+                // Liên kết hàng đợi với cổng bằng routing key
                 channel.QueueBind(
-                    queue: QueueName,
-                    exchange: ExchangeName,
-                    routingKey: QueueName); // Routing Key phải khớp với tên hàng chờ
+                    queue: queueName,
+                    exchange: exchangeName,
+                    routingKey: routingKey
+                );
 
                 var jsonString = JsonSerializer.Serialize(message);
+                var body = Encoding.UTF8.GetBytes(jsonString);
 
-                var Body = Encoding.UTF8.GetBytes(jsonString);
-
+                // Gửi message
                 channel.BasicPublish(
-                    exchange: ExchangeName,
-                    routingKey: QueueName,
+                    exchange: exchangeName,
+                    routingKey: routingKey,
                     mandatory: true,
                     basicProperties: null,
-                    body: Body);
-            };
+                    body: body
+                );
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred while sending the message: {ex.Message}");
+            }
         }
+        //conn 3
         public void ReceiveMessageCheckPurchased()
         {
             try
@@ -82,7 +90,7 @@ namespace CommentMicroservice.Repositories
                 // tên queue
                 const string QueueName = "Check_purchased_confirm_queue";
 
-                var connectionFactory = new ConnectionFactory
+               /* var connectionFactory = new ConnectionFactory
                 {
                     UserName = "guest",
                     Password = "guest",
@@ -91,16 +99,16 @@ namespace CommentMicroservice.Repositories
                     HostName = "localhost"
                 };
                 using var connection = connectionFactory.CreateConnection();
-                using var channel = connection.CreateModel();
+                using var channel = connection.CreateModel();*/
 
-                var queue = channel.QueueDeclare(
+                var queue = _channel3.QueueDeclare(
                     queue: QueueName,
                     durable: false,
                     exclusive: false,
                     autoDelete: false,
                     arguments: ImmutableDictionary<string, object>.Empty);
 
-                var consumer = new EventingBasicConsumer(channel);
+                var consumer = new EventingBasicConsumer(_channel3);
 
                 consumer.Received += async (sender, eventArgs) =>
                 {
@@ -127,7 +135,7 @@ namespace CommentMicroservice.Repositories
                         OnResponseReceived?.Invoke(Commt); // Gọi event để thông báo có phản hồi
                     }
                 };
-                channel.BasicConsume(
+                _channel3.BasicConsume(
                     queue: queue.QueueName,
                     autoAck: true,
                     consumer: consumer);
@@ -144,6 +152,7 @@ namespace CommentMicroservice.Repositories
                 throw;
             }
         }
+        //conn 3
         public void ReceiveMessageFromUser()
         {
             try
@@ -152,7 +161,7 @@ namespace CommentMicroservice.Repositories
                 /*const string ExchangeName = "delete_category";*/
                 // tên queue
                 const string QueueName = "updateUserName_queue_cmt";
-                var connectionFactory = new ConnectionFactory
+                /*var connectionFactory = new ConnectionFactory
                 {
                     UserName = "guest",
                     Password = "guest",
@@ -161,16 +170,16 @@ namespace CommentMicroservice.Repositories
                     HostName = "localhost"
                 };
                 using var connection = connectionFactory.CreateConnection();
-                using var channel = connection.CreateModel();
+                using var channel = connection.CreateModel();*/
 
-                var queue = channel.QueueDeclare(
+                var queue = _channel3.QueueDeclare(
                     queue: QueueName,
                     durable: false,
                     exclusive: false,
                     autoDelete: false,
                     arguments: ImmutableDictionary<string, object>.Empty);
 
-                var consumer = new EventingBasicConsumer(channel);
+                var consumer = new EventingBasicConsumer(_channel3);
                 consumer.Received += async (model, EventArgs) =>
                 {
                     var boby = EventArgs.Body.ToArray();
@@ -209,7 +218,7 @@ namespace CommentMicroservice.Repositories
                         }
                     }
                 };
-                channel.BasicConsume(
+                _channel3.BasicConsume(
                 queue: queue.QueueName,
                 autoAck: true,
                 consumer: consumer);
