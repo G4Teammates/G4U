@@ -2,13 +2,14 @@
 using Ocelot.Middleware;
 using Azure.Identity;
 using Microsoft.OpenApi.Models;
-using Gateway.Models;
+using GatewaysLocal.Models;
 using Ocelot.Values;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http.Features;
+using Microsoft.Extensions.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -65,11 +66,11 @@ builder.Services.AddAuthentication(options =>
             });
 builder.Services.Configure<FormOptions>(options =>
 {
-	options.MultipartBodyLengthLimit = 104857600; // Giới hạn tối đa (ví dụ: 100 MB)
+    options.MultipartBodyLengthLimit = 104857600; // Giới hạn tối đa (ví dụ: 100 MB)
 });
 builder.WebHost.ConfigureKestrel(options =>
 {
-	options.Limits.MaxRequestBodySize = 104857600; // 100 MB
+    options.Limits.MaxRequestBodySize = 104857600; // 100 MB
 });
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -92,8 +93,11 @@ builder.Services.AddOcelot(configuration);
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-app.UseSwagger();
-app.UseSwaggerUI();
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 app.UseCors("AllowAll");
 
 app.UseHttpsRedirection();

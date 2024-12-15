@@ -1,105 +1,105 @@
 ﻿@using Client.Models.CategorisDTO
 
 @{
-	Layout = "_LayoutAdmin";
+    Layout = "_LayoutAdmin";
 }
 @model CategoriesViewModel
 
 <style>
-	/* Căn giữa nội dung của các ô trong bảng */
-	.table td, .table th {
-		text-align: center; /* Căn giữa cho văn bản */
-		vertical-align: middle; /* Căn giữa theo chiều dọc */
-	}
+    /* Căn giữa nội dung của các ô trong bảng */
+    .table td, .table th {
+        text-align: center; /* Căn giữa cho văn bản */
+        vertical-align: middle; /* Căn giữa theo chiều dọc */
+    }
 
-		/* Căn giữa hình ảnh trong các ô */
-		.table td img {
-			display: block; /* Đảm bảo hình ảnh chiếm toàn bộ không gian */
-			text-align: center;
-			justify-content: center;
-		}
+        /* Căn giữa hình ảnh trong các ô */
+        .table td img {
+            display: block; /* Đảm bảo hình ảnh chiếm toàn bộ không gian */
+            text-align: center;
+            justify-content: center;
+        }
 
-		/* Căn giữa nội dung của các phần tử ul, li trong bảng */
-		.table td ul {
-			list-style-type: none; /* Loại bỏ dấu chấm đầu dòng */
-			padding: 0;
-			text-align: center; /* Căn giữa văn bản trong danh sách */
-		}
+        /* Căn giữa nội dung của các phần tử ul, li trong bảng */
+        .table td ul {
+            list-style-type: none; /* Loại bỏ dấu chấm đầu dòng */
+            padding: 0;
+            text-align: center; /* Căn giữa văn bản trong danh sách */
+        }
 
-		.table td li {
-			text-align: center; /* Căn giữa văn bản trong mỗi mục danh sách */
-		}
+        .table td li {
+            text-align: center; /* Căn giữa văn bản trong mỗi mục danh sách */
+        }
 
-		/* Căn giữa cho các icon trong các liên kết */
-		.table td a i {
-			display: inline-block; /* Đảm bảo icon được căn giữa */
-			text-align: center;
-			margin-left: auto;
-			margin-right: auto;
-		}
+        /* Căn giữa cho các icon trong các liên kết */
+        .table td a i {
+            display: inline-block; /* Đảm bảo icon được căn giữa */
+            text-align: center;
+            margin-left: auto;
+            margin-right: auto;
+        }
 
-	/* Cải tiến border cho thead và tbody */
-	.table thead {
-		background-color: #f8f9fa; /* Màu nền sáng cho thead */
-		border-radius: 10px 10px 0 0; /* Làm tròn góc trên của thead */
-		box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); /* Thêm bóng nhẹ cho thead */
-	}
+    /* Cải tiến border cho thead và tbody */
+    .table thead {
+        background-color: #f8f9fa; /* Màu nền sáng cho thead */
+        border-radius: 10px 10px 0 0; /* Làm tròn góc trên của thead */
+        box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); /* Thêm bóng nhẹ cho thead */
+    }
 
-	.table tbody {
-		border-radius: 0 0 10px 10px; /* Làm tròn góc dưới của tbody */
-		box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.1); /* Thêm bóng nhẹ cho tbody */
-	}
+    .table tbody {
+        border-radius: 0 0 10px 10px; /* Làm tròn góc dưới của tbody */
+        box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.1); /* Thêm bóng nhẹ cho tbody */
+    }
 
-		/* Chỉnh sửa khi hover vào dòng */
-		.table tbody tr:hover {
-			background-color: #00A97F; /* Nền màu #00A97F khi hover vào dòng */
-			color: white !important; /* Chữ trắng khi hover vào dòng */
-			cursor: pointer; /* Thêm hiệu ứng con trỏ khi hover */
-			border-top: 2px solid #00A97F; /* Viền trên của tr khi hover */
-			border-bottom: 2px solid #00A97F; /* Viền dưới của tr khi hover */
-		}
+        /* Chỉnh sửa khi hover vào dòng */
+        .table tbody tr:hover {
+            background-color: #00A97F; /* Nền màu #00A97F khi hover vào dòng */
+            color: white !important; /* Chữ trắng khi hover vào dòng */
+            cursor: pointer; /* Thêm hiệu ứng con trỏ khi hover */
+            border-top: 2px solid #00A97F; /* Viền trên của tr khi hover */
+            border-bottom: 2px solid #00A97F; /* Viền dưới của tr khi hover */
+        }
 
-		/* Giữ nguyên màu nền và chữ trong các ô mặc định */
-		.table tbody tr td {
-			background-color: transparent; /* Nền của các ô là trong suốt */
-			color: inherit; /* Màu chữ kế thừa từ dòng */
-		}
+        /* Giữ nguyên màu nền và chữ trong các ô mặc định */
+        .table tbody tr td {
+            background-color: transparent; /* Nền của các ô là trong suốt */
+            color: inherit; /* Màu chữ kế thừa từ dòng */
+        }
 
-	/* Hiệu ứng chuyển động khi hover vào hình ảnh */
-	.table td img {
-		border-radius: 8px; /* Làm tròn góc hình ảnh */
-		box-shadow: 0 0 10px rgba(0, 169, 127, 0.7); /* Bóng cho hình ảnh */
-		transition: all 0.3s ease; /* Chuyển tiếp hiệu ứng */
-	}
+    /* Hiệu ứng chuyển động khi hover vào hình ảnh */
+    .table td img {
+        border-radius: 8px; /* Làm tròn góc hình ảnh */
+        box-shadow: 0 0 10px rgba(0, 169, 127, 0.7); /* Bóng cho hình ảnh */
+        transition: all 0.3s ease; /* Chuyển tiếp hiệu ứng */
+    }
 
-		.table td img:hover {
-			transform: scale(1.05); /* Tăng kích thước hình ảnh khi hover */
-		}
+        .table td img:hover {
+            transform: scale(1.05); /* Tăng kích thước hình ảnh khi hover */
+        }
 
-	/* Chỉnh sửa liên kết trong bảng */
-	.table td a {
-		color: inherit; /* Màu liên kết kế thừa từ dòng */
-		text-decoration: none; /* Loại bỏ gạch dưới */
-		transition: color 0.3s ease;
-	}
+    /* Chỉnh sửa liên kết trong bảng */
+    .table td a {
+        color: inherit; /* Màu liên kết kế thừa từ dòng */
+        text-decoration: none; /* Loại bỏ gạch dưới */
+        transition: color 0.3s ease;
+    }
 
-		.table td a:hover {
-			color: #00A97F; /* Màu chữ của liên kết khi hover */
-		}
+        .table td a:hover {
+            color: #00A97F; /* Màu chữ của liên kết khi hover */
+        }
 
-		/* Hiệu ứng hover cho các icon trong bảng */
-		.table td a i {
-			transition: transform 0.5s ease; /* Thêm hiệu ứng chuyển động cho icon */
-		}
+        /* Hiệu ứng hover cho các icon trong bảng */
+        .table td a i {
+            transition: transform 0.5s ease; /* Thêm hiệu ứng chuyển động cho icon */
+        }
 
-		/* Khi hover vào icon */
-		.table td a:hover i {
-			transform: scale(1.5); /* Tăng kích thước icon lên 20% khi hover */
-		}
+        /* Khi hover vào icon */
+        .table td a:hover i {
+            transform: scale(1.5); /* Tăng kích thước icon lên 20% khi hover */
+        }
 
 </style>
 <div class="pt-3 pb-4">
-	<span class="titleManager bg-success py-3 px-5 rounded-4 fw-bold text-white">Categories Manager</span>
+    <span class="titleManager bg-success py-3 px-5 rounded-4 fw-bold text-white">Categories Manager</span>
 </div>
 
 
@@ -109,282 +109,286 @@
 @* @if (!string.IsNullOrEmpty(notification))
 { *@
 @* <div class="alert alert-success">
-	
+
 	Bạn đã thành công vào Admin Category
 </div>
 <div class="alert alert-danger">
-	
+
 	Bạn đã thành công vào Admin Category
 </div> *@
 @* } *@
 
 <div class="container mt-4">
-	<!-- Thanh tìm kiếm và nút Thêm -->
-	<div class="d-flex justify-content-between mb-3">
-		<form asp-action="SearchCategory" asp-controller="Admin" method="post">
-			<input class="form-control" type="text" placeholder="Search by..." name="searchString" />
-		</form>
-		<div class="w-100">
-			<div class="text-end">
-				<!-- Dropdown cho User Status -->
-				<span class="dropdown">
-					<button class="btn btn-secondary dropdown-toggle" type="button" style="width:100px" id="statusDropdown" data-bs-toggle="dropdown">
-						Status
-					</button>
-					<span class="dropdown-menu" aria-labelledby="statusDropdown">
-						<a class="dropdown-item" href="">Active</a>
-						<a class="dropdown-item" href="">Inactive</a>
-						<a class="dropdown-item" href="">Block</a>
-						<a class="dropdown-item" href="">Deleted</a>
-					</span>
-				</span>
-				<button class="btn btn-success" data-toggle="modal" data-target="#modalCategory">+ Add</button>
-			</div>
-		</div>
-	</div>
+    <!-- Thanh tìm kiếm và nút Thêm -->
+    <div class="d-flex justify-content-between mb-3">
+        <form asp-action="SearchCategory" asp-controller="Admin" method="post">
+            <input class="form-control" type="text" placeholder="Search by..." name="searchString" />
+        </form>
+        <div class="w-100 d-flex justify-content-end">
+            <form class="text-end" asp-action="@ViewData["CurrentAction"]" asp-controller="Admin">
+                <span class="dropdown me-2">
 
-	<!-- Bảng thông tin -->
-	<div id="checkBoxBar" style="display:none">
-		<div class="text-end m-2">
-			@* <button class="btn btn-success mx-2 w-100">Public All</button> *@
-			<a class="text-danger mx-2" href="" data-toggle="modal" data-target="#deleteProductModal">
-				<i class="fas fa-trash"></i>
-			</a>
-		</div>
-	</div>
-	<table class="table table-bordered table-hover align-middle">
-		<thead class="table-light">
-			<tr>
-				<th scope="col"><input type="checkbox" id="selectAll"></th>
-				<th scope="col">ID</th>
-				<th scope="col">Name</th>
-				<th scope="col">Type</th>
-				<th scope="col">Description</th>
-				<th scope="col">Status</th>
-			</tr>
-		</thead>
-		<tbody>
-			@if (Model.Categories != null)
-			{
-				foreach (var categories in Model.Categories)
-				{
-					<tr>
-						<td><input type="checkbox" class="user-checkbox" /></td>
-						<td>@categories.Id</td>
-						<td>@categories.Name</td>
-						<td>@categories.Type</td>
-						<td>@categories.Description</td>
-						<td>@categories.Status</td>
-						@*Đây là nút Update*@
-						<td>
-							<a asp-action="UpdateCategory" asp-route-Id="@categories.Id" class="text-danger mx-2"><span><i class="fa-regular fa-pen-to-square"></i></span></a>
+                    <button class="btn btn-secondary dropdown-toggle" type="button" style="width:100px" id="statusDropdown" data-bs-toggle="dropdown">
+                        Status
+                    </button>
+                    <span class="dropdown-menu" aria-labelledby="statusDropdown">
+                        <a class="dropdown-item" asp-action="FilterCategoryStatus" asp-route-status="1">Inactive</a>
+                        <a class="dropdown-item" asp-action="FilterCategoryStatus" asp-route-status="0">Active</a>
+                        <a class="dropdown-item" asp-action="FilterCategoryStatus" asp-route-status="2">Block</a>
+                        <a class="dropdown-item" asp-action="FilterCategoryStatus" asp-route-status="3">Deleted</a>
+                    </span>
 
-						</td>
-						
-						<td>
 
-							<a asp-action="CategoryDelete" asp-route-Id="@categories.Id" class="text-danger mx-2"> <i class="fas fa-trash"></i></a>
-							@* <a asp-action="UsersDelete" asp-route-Id="@user.Id"> <i class="fas fa-trash"></i></a> *@
-						</td>
-					</tr>
-				}
-			}
-			else
-			{
-				<tr>
-					<td colspan="9" class="text-center">Không có người dùng nào để hiển thị.</td>
-				</tr>
-			}
-			@* @{
-			@await Component.InvokeAsync("UsersIndex")
-			} *@
-			@* @Html.Partial("~/Views/User/UsersIndex.cshtml") *@
-			<!-- Thêm các dòng dữ liệu tương tự -->
-		</tbody>
-	</table>
+                </span>
+            </form>
 
-	<!-- Phân trang -->
-	<div class="d-flex justify-content-between" style="margin-top:1.5vw;">
-		@* <div>Total: @(Model.totalItem) items</div> *@
-		<div style=";font-size: 1em; font-weight: bold; color: #00A97F; display: flex; align-items: center; justify-content: center; padding: 15px 30px; background-color: transparent; border: 2px solid #00A97F; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 169, 127, 0.4), 0 0 15px rgba(0, 169, 127, 0.3); position: relative; text-align: center; transition: all 0.3s;">
-			<i class="fas fa-rocket" style="margin-right: 15px; color: #00A97F;"></i>
-			Total: <span style="color: #00A97F; padding-left: 5px; padding-right: 5px;">@(Model.totalItem)</span> items
-			<div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(135deg, #00A97F, #800080); border-radius: 8px; opacity: 0.2; z-index: -1;"></div>
-		</div>
-		<div style="display: flex; align-items: center; justify-content: center;">
-			@if (ViewData["Parameters"] != null)
-			{
-				@if (ViewData["Parameters"] is Dictionary<string, object> routeParams)
-				{
-					<form asp-controller="Admin" asp-action="@ViewData["CurrentAction"]" class="d-inline">
-						@foreach (var param in routeParams)
-						{
-							<input name="@param.Key" value="@param.Value" style="display:none" />
-						}
-						<select name="pageSize" class="form-select form-select-sm w-auto d-inline-block" onchange="this.form.submit()">
-							<option>Select records per page</option>
-							<option value="3">3 records per page</option>
-							<option value="5">5 records per page</option>
-							<option value="10">10 records per page</option>
-						</select>
-						<input type="hidden" name="page" value="1" />
-					</form>
+            <button class="btn btn-success" data-toggle="modal" data-target="#modalCategory">+ Add</button>
 
-				}
-				else
-				{
-					<form asp-controller="Admin" asp-action="@ViewData["CurrentAction"]" class="d-inline">
-						<input name="@ViewData["NamePara"]" value="@ViewData["Parameters"]" style="display:none" />
-						<select name="pageSize" class="form-select form-select-sm w-auto d-inline-block" onchange="this.form.submit()">
-							<option>Select records per page</option>
-							<option value="3">3 records per page</option>
-							<option value="5">5 records per page</option>
-							<option value="10">10 records per page</option>
-						</select>
-						<input type="hidden" name="page" value="1" />
-					</form>
-				}
+        </div>
+    </div>
 
-			}
-			else
-			{
-				<form method="get" asp-controller="Admin" asp-action="@ViewData["CurrentAction"]" class="d-inline">
-					<select name="pageSize" class="form-select form-select-sm w-auto d-inline-block" onchange="this.form.submit()">
-						<option>Select records per page</option>
-						<option value="3">3 records per page</option>
-						<option value="5">5 records per page</option>
-						<option value="10">10 records per page</option>
-					</select>
-					<input type="hidden" name="page" value="1" />
-				</form>
-			}
+    <!-- Bảng thông tin -->
+    <div id="checkBoxBar" style="display:none">
+        <div class="text-end m-2">
+            @* <button class="btn btn-success mx-2 w-100">Public All</button> *@
+            <a class="text-danger mx-2" href="" data-toggle="modal" data-target="#deleteProductModal">
+                <i class="fas fa-trash"></i>
+            </a>
+        </div>
+    </div>
+    <table class="table table-bordered table-hover align-middle">
+        <thead class="table-light">
+            <tr>
+                <th scope="col"><input type="checkbox" id="selectAll"></th>
+                <th scope="col">ID</th>
+                <th scope="col">Name</th>
+                <th scope="col">Type</th>
+                <th scope="col">Description</th>
+                <th scope="col">Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Categories != null)
+            {
+                foreach (var categories in Model.Categories)
+                {
+                    <tr>
+                        <td><input type="checkbox" class="user-checkbox" /></td>
+                        <td>@categories.Id</td>
+                        <td>@categories.Name</td>
+                        <td>@categories.Type</td>
+                        <td>@categories.Description</td>
+                        <td>@categories.Status</td>
+                        @*Đây là nút Update*@
+                        <td>
+                            <a asp-action="UpdateCategory" asp-route-Id="@categories.Id" class="text-danger mx-2"><span><i class="fa-regular fa-pen-to-square"></i></span></a>
 
-			<nav aria-label="Page navigation example" class="d-inline-block">
-				<ul class="pagination pagination-sm mb-0">
-					<li class="page-item @(Model.pageNumber == 1 ? "disabled" : "")">
-						@if (ViewData["Parameters"] != null)
-						{
-							@* <a class="page-link" asp-controller="Admin" asp-route-@param.Key="@(param.Value)" asp-action="@ViewData["CurrentAction"]" asp-route-page="@(Model.pageNumber - 1)" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
-						Previous
-						</a> *@
-							@if (ViewData["Parameters"] is Dictionary<string, object> routeParams)
-							{
-								<form asp-controller="Admin" asp-action="@ViewData["CurrentAction"]" asp-route-page="@(Model.pageNumber - 1)" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
-									@* <option value="@ViewData["Parameters"]" style="display:none;" selected></option> *@
-									@* <input name="@ViewData["NamePara"]" value="@ViewData["Parameters"]" style="display:none" /> *@
-									@foreach (var param in routeParams)
-									{
-										<input name="@param.Key" value="@param.Value" style="display:none" />
-									}
-									<button type="submit" class="page-link">
-										Previous
-									</button>
-								</form>
-							}
-							else
-							{
-								<form asp-controller="Admin" asp-action="@ViewData["CurrentAction"]" asp-route-page="@(Model.pageNumber - 1)" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
-									@* <option value="@ViewData["Parameters"]" style="display:none;" selected></option> *@
-									<input name="@ViewData["NamePara"]" value="@ViewData["Parameters"]" style="display:none" />
+                        </td>
 
-									<button type="submit" class="page-link">
-										Previous
-									</button>
-								</form>
-							}
-						}
-						else
-						{
-							<a class="page-link" asp-controller="Admin" asp-action="@ViewData["CurrentAction"]" asp-route-page="@(Model.pageNumber - 1)" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
-								Previous
-							</a>
-						}
-					</li>
-					@for (var pg = 1; pg <= Model.pageCount; pg++)
-					{
-						<li class="page-item @(pg == Model.pageNumber ? "active" : "")">
+                        <td>
 
-							@if (ViewData["Parameters"] != null)
-							{
-								@* foreach (var param in routeParams2)
-						{
-						<a class="page-link" asp-controller="Admin" asp-route-@param.Key="@(param.Value)" asp-action="@ViewData["CurrentAction"]" asp-route-page="@pg" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
-						@pg
-						</a>
-						} *@
-								@if (ViewData["Parameters"] is Dictionary<string, object> routeParams)
-								{
-									<form asp-controller="Admin" asp-action="@ViewData["CurrentAction"]" asp-route-page="@pg" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
-										@*  <option value="@ViewData["Parameters"]" style="display:none;" selected></option> *@
-										@* <input name="@ViewData["NamePara"]" value="@ViewData["Parameters"]" style="display:none" /> *@
-										@foreach (var param in routeParams)
-										{
-											<input name="@param.Key" value="@param.Value" style="display:none" />
-										}
-										<button type="submit" class="page-link">
-											@pg
-										</button>
-									</form>
-								}
-								else
-								{
-									<form asp-controller="Admin" asp-action="@ViewData["CurrentAction"]" asp-route-page="@pg" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
-										@*  <option value="@ViewData["Parameters"]" style="display:none;" selected></option> *@
-										<input name="@ViewData["NamePara"]" value="@ViewData["Parameters"]" style="display:none" />
-										<button type="submit" class="page-link">
-											@pg
-										</button>
-									</form>
-								}
-							}
-							else
-							{
-								<a class="page-link" asp-controller="Admin" asp-action="@ViewData["CurrentAction"]" asp-route-page="@pg" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
-									@pg
-								</a>
-							}
-						</li>
-					}
-					<li class="page-item @(Model.pageNumber == Model.pageCount ? "disabled" : "")">
+                            <a asp-action="CategoryDelete" asp-route-Id="@categories.Id" class="text-danger mx-2"> <i class="fas fa-trash"></i></a>
+                            @* <a asp-action="UsersDelete" asp-route-Id="@user.Id"> <i class="fas fa-trash"></i></a> *@
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="9" class="text-center">Không có người dùng nào để hiển thị.</td>
+                </tr>
+            }
+            @* @{
+            @await Component.InvokeAsync("UsersIndex")
+            } *@
+            @* @Html.Partial("~/Views/User/UsersIndex.cshtml") *@
+            <!-- Thêm các dòng dữ liệu tương tự -->
+        </tbody>
+    </table>
 
-						@if (ViewData["Parameters"] != null)
-						{
-							@if (ViewData["Parameters"] is Dictionary<string, object> routeParams)
-							{
-								<form asp-controller="Admin" asp-action="@ViewData["CurrentAction"]" asp-route-page="@(Model.pageNumber + 1)" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
-									@* <option value="@ViewData["Parameters"]" style="display:none;" selected></option> *@
-									@foreach (var param in routeParams)
-									{
-										<input name="@param.Key" value="@param.Value" style="display:none" />
-									}
-									<button type="submit" class="page-link">
-										Next
-									</button>
-								</form>
-							}
-							else
-							{
-								<form asp-controller="Admin" asp-action="@ViewData["CurrentAction"]" asp-route-page="@(Model.pageNumber + 1)" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
-									@* <option value="@ViewData["Parameters"]" style="display:none;" selected></option> *@
-									<input name="@ViewData["NamePara"]" value="@ViewData["Parameters"]" style="display:none" />
-									<button type="submit" class="page-link">
-										Next
-									</button>
-								</form>
-							}
+    <!-- Phân trang -->
+    <div class="d-flex justify-content-between" style="margin-top:1.5vw;">
+        @* <div>Total: @(Model.totalItem) items</div> *@
+        <div style=";font-size: 1em; font-weight: bold; color: #00A97F; display: flex; align-items: center; justify-content: center; padding: 15px 30px; background-color: transparent; border: 2px solid #00A97F; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 169, 127, 0.4), 0 0 15px rgba(0, 169, 127, 0.3); position: relative; text-align: center; transition: all 0.3s;">
+            <i class="fas fa-rocket" style="margin-right: 15px; color: #00A97F;"></i>
+            Total: <span style="color: #00A97F; padding-left: 5px; padding-right: 5px;">@(Model.totalItem)</span> items
+            <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(135deg, #00A97F, #800080); border-radius: 8px; opacity: 0.2; z-index: -1;"></div>
+        </div>
+        <div style="display: flex; align-items: center; justify-content: center;">
+            @if (ViewData["Parameters"] != null)
+            {
+                @if (ViewData["Parameters"] is Dictionary<string, object> routeParams)
+                {
+                    <form asp-controller="Admin" asp-action="@ViewData["CurrentAction"]" class="d-inline">
+                        @foreach (var param in routeParams)
+                        {
+                            <input name="@param.Key" value="@param.Value" style="display:none" />
+                        }
+                        <select name="pageSize" class="form-select form-select-sm w-auto d-inline-block" onchange="this.form.submit()">
+                            <option>Select records per page</option>
+                            <option value="3">3 records per page</option>
+                            <option value="5">5 records per page</option>
+                            <option value="10">10 records per page</option>
+                        </select>
+                        <input type="hidden" name="page" value="1" />
+                    </form>
 
-						}
-						else
-						{
-							<a class="page-link" asp-controller="Admin" asp-action="@ViewData["CurrentAction"]" asp-route-page="@(Model.pageNumber + 1)" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
-								Next
-							</a>
-						}
-					</li>
-				</ul>
-			</nav>
-		</div>
-	</div>
+                }
+                else
+                {
+                    <form asp-controller="Admin" asp-action="@ViewData["CurrentAction"]" class="d-inline">
+                        <input name="@ViewData["NamePara"]" value="@ViewData["Parameters"]" style="display:none" />
+                        <select name="pageSize" class="form-select form-select-sm w-auto d-inline-block" onchange="this.form.submit()">
+                            <option>Select records per page</option>
+                            <option value="3">3 records per page</option>
+                            <option value="5">5 records per page</option>
+                            <option value="10">10 records per page</option>
+                        </select>
+                        <input type="hidden" name="page" value="1" />
+                    </form>
+                }
+
+            }
+            else
+            {
+                <form method="get" asp-controller="Admin" asp-action="@ViewData["CurrentAction"]" class="d-inline">
+                    <select name="pageSize" class="form-select form-select-sm w-auto d-inline-block" onchange="this.form.submit()">
+                        <option>Select records per page</option>
+                        <option value="3">3 records per page</option>
+                        <option value="5">5 records per page</option>
+                        <option value="10">10 records per page</option>
+                    </select>
+                    <input type="hidden" name="page" value="1" />
+                </form>
+            }
+
+            <nav aria-label="Page navigation example" class="d-inline-block">
+                <ul class="pagination pagination-sm mb-0">
+                    <li class="page-item @(Model.pageNumber == 1 ? "disabled" : "")">
+                        @if (ViewData["Parameters"] != null)
+                        {
+                            @* <a class="page-link" asp-controller="Admin" asp-route-@param.Key="@(param.Value)" asp-action="@ViewData["CurrentAction"]" asp-route-page="@(Model.pageNumber - 1)" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
+                        Previous
+                        </a> *@
+                            @if (ViewData["Parameters"] is Dictionary<string, object> routeParams)
+                            {
+                                <form asp-controller="Admin" asp-action="@ViewData["CurrentAction"]" asp-route-page="@(Model.pageNumber - 1)" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
+                                    @* <option value="@ViewData["Parameters"]" style="display:none;" selected></option> *@
+                                    @* <input name="@ViewData["NamePara"]" value="@ViewData["Parameters"]" style="display:none" /> *@
+                                    @foreach (var param in routeParams)
+                                    {
+                                        <input name="@param.Key" value="@param.Value" style="display:none" />
+                                    }
+                                    <button type="submit" class="page-link">
+                                        Previous
+                                    </button>
+                                </form>
+                            }
+                            else
+                            {
+                                <form asp-controller="Admin" asp-action="@ViewData["CurrentAction"]" asp-route-page="@(Model.pageNumber - 1)" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
+                                    @* <option value="@ViewData["Parameters"]" style="display:none;" selected></option> *@
+                                    <input name="@ViewData["NamePara"]" value="@ViewData["Parameters"]" style="display:none" />
+
+                                    <button type="submit" class="page-link">
+                                        Previous
+                                    </button>
+                                </form>
+                            }
+                        }
+                        else
+                        {
+                            <a class="page-link" asp-controller="Admin" asp-action="@ViewData["CurrentAction"]" asp-route-page="@(Model.pageNumber - 1)" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
+                                Previous
+                            </a>
+                        }
+                    </li>
+                    @for (var pg = 1; pg <= Model.pageCount; pg++)
+                    {
+                        <li class="page-item @(pg == Model.pageNumber ? "active" : "")">
+
+                            @if (ViewData["Parameters"] != null)
+                            {
+                                @* foreach (var param in routeParams2)
+                        {
+                        <a class="page-link" asp-controller="Admin" asp-route-@param.Key="@(param.Value)" asp-action="@ViewData["CurrentAction"]" asp-route-page="@pg" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
+                        @pg
+                        </a>
+                        } *@
+                                @if (ViewData["Parameters"] is Dictionary<string, object> routeParams)
+                                {
+                                    <form asp-controller="Admin" asp-action="@ViewData["CurrentAction"]" asp-route-page="@pg" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
+                                        @*  <option value="@ViewData["Parameters"]" style="display:none;" selected></option> *@
+                                        @* <input name="@ViewData["NamePara"]" value="@ViewData["Parameters"]" style="display:none" /> *@
+                                        @foreach (var param in routeParams)
+                                        {
+                                            <input name="@param.Key" value="@param.Value" style="display:none" />
+                                        }
+                                        <button type="submit" class="page-link">
+                                            @pg
+                                        </button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <form asp-controller="Admin" asp-action="@ViewData["CurrentAction"]" asp-route-page="@pg" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
+                                        @*  <option value="@ViewData["Parameters"]" style="display:none;" selected></option> *@
+                                        <input name="@ViewData["NamePara"]" value="@ViewData["Parameters"]" style="display:none" />
+                                        <button type="submit" class="page-link">
+                                            @pg
+                                        </button>
+                                    </form>
+                                }
+                            }
+                            else
+                            {
+                                <a class="page-link" asp-controller="Admin" asp-action="@ViewData["CurrentAction"]" asp-route-page="@pg" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
+                                    @pg
+                                </a>
+                            }
+                        </li>
+                    }
+                    <li class="page-item @(Model.pageNumber == Model.pageCount ? "disabled" : "")">
+
+                        @if (ViewData["Parameters"] != null)
+                        {
+                            @if (ViewData["Parameters"] is Dictionary<string, object> routeParams)
+                            {
+                                <form asp-controller="Admin" asp-action="@ViewData["CurrentAction"]" asp-route-page="@(Model.pageNumber + 1)" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
+                                    @* <option value="@ViewData["Parameters"]" style="display:none;" selected></option> *@
+                                    @foreach (var param in routeParams)
+                                    {
+                                        <input name="@param.Key" value="@param.Value" style="display:none" />
+                                    }
+                                    <button type="submit" class="page-link">
+                                        Next
+                                    </button>
+                                </form>
+                            }
+                            else
+                            {
+                                <form asp-controller="Admin" asp-action="@ViewData["CurrentAction"]" asp-route-page="@(Model.pageNumber + 1)" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
+                                    @* <option value="@ViewData["Parameters"]" style="display:none;" selected></option> *@
+                                    <input name="@ViewData["NamePara"]" value="@ViewData["Parameters"]" style="display:none" />
+                                    <button type="submit" class="page-link">
+                                        Next
+                                    </button>
+                                </form>
+                            }
+
+                        }
+                        else
+                        {
+                            <a class="page-link" asp-controller="Admin" asp-action="@ViewData["CurrentAction"]" asp-route-page="@(Model.pageNumber + 1)" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
+                                Next
+                            </a>
+                        }
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
 </div>
 
 
@@ -398,24 +402,24 @@
 
 @* Modal *@
 <div class="modal fade" id="modalCategory" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-	<div class="modal-dialog modal-xl">
-		<div class="modal-content">
-			<div class="container-fluid p-5">
-				@await Html.PartialAsync("CreateCategory", Model.CreateCategory)
-			</div>
-		</div>
-	</div>
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="container-fluid p-5">
+                @await Html.PartialAsync("CreateCategory", Model.CreateCategory)
+            </div>
+        </div>
+    </div>
 </div>
 
 
 <script>
-	function showSuccessToast() {
-		$('#successToast').toast('show');
-	}
+    function showSuccessToast() {
+        $('#successToast').toast('show');
+    }
 
-	function showErrorToast() {
-		$('#errorToast').toast('show');
-	}
+    function showErrorToast() {
+        $('#errorToast').toast('show');
+    }
 
 
 </script>

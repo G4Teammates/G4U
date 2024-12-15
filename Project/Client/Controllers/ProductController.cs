@@ -102,7 +102,7 @@ namespace Client.Controllers
                 ResponseModel? response = await _productService.FilterProductAsync(minRange, maxRange, sold, discount, platform, category, page, pageSize);
                 ResponseModel? response2 = await _productService.GetAllProductAsync(1, int.MaxValue);
                 ResponseModel? response3 = await _categoryService.GetAllCategoryAsync(1, 99);
-                ResponseModel? response4 = await _productService.FilterProductAsync(minRange, maxRange, sold, discount, platform, category, page, int.MaxValue);
+                ResponseModel? response4 = await _productService.FilterProductAsync(minRange, maxRange, sold, discount, platform, category, 1, int.MaxValue);
                 var total = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response4.Result.ToString()!));
                 if (response != null && response.IsSuccess)
                 {
@@ -337,7 +337,7 @@ namespace Client.Controllers
                 ResponseModel? response = await _productService.SortProductAsync(sort, page, pageSize);
                 ResponseModel? response2 = await _productService.GetAllProductAsync(1, int.MaxValue);
                 ResponseModel? response3 = await _categoryService.GetAllCategoryAsync(1, 99);
-                ResponseModel? response4 = await _productService.SortProductAsync(sort, page, int.MaxValue);
+                ResponseModel? response4 = await _productService.SortProductAsync(sort, 1, int.MaxValue);
                 var total = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response4.Result.ToString()!));
                 if (response != null && response.IsSuccess)
                 {
@@ -684,7 +684,7 @@ namespace Client.Controllers
                 // Lấy tất cả sản phẩm để tính tổng số
                 ResponseModel? response2 = await _productService.GetAllProductAsync(1, int.MaxValue);
                 ResponseModel? response3 = await _categoryService.GetAllCategoryAsync(1, 99);
-                ResponseModel? response4 = await _productService.SearchProductAsync(searchString, page, int.MaxValue);
+                ResponseModel? response4 = await _productService.SearchProductAsync(searchString, 1, int.MaxValue);
                 // Giải mã dữ liệu tổng số sản phẩm
                 var total = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response4.Result.ToString()!));
 

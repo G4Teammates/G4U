@@ -14,8 +14,8 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7159
+          "Host": "proapi-ejbbcrademenhuf3.southeastasia-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/Product",
@@ -28,8 +28,8 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7159
+          "Host": "proapi-ejbbcrademenhuf3.southeastasia-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/Product/{id}",
@@ -42,8 +42,8 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7159
+          "Host": "proapi-ejbbcrademenhuf3.southeastasia-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/Product",
@@ -56,8 +56,8 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7159
+          "Host": "proapi-ejbbcrademenhuf3.southeastasia-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/Product/ProductClone",
@@ -70,8 +70,8 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7159
+          "Host": "proapi-ejbbcrademenhuf3.southeastasia-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/Product",
@@ -84,8 +84,8 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7159
+          "Host": "proapi-ejbbcrademenhuf3.southeastasia-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/Product/ProductClone",
@@ -98,8 +98,8 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7159
+          "Host": "proapi-ejbbcrademenhuf3.southeastasia-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/Product/{id}",
@@ -111,8 +111,8 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7159
+          "Host": "proapi-ejbbcrademenhuf3.southeastasia-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/Product/sort={sort}",
@@ -125,8 +125,8 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7159
+          "Host": "proapi-ejbbcrademenhuf3.southeastasia-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       //"AuthenticationOptions": {
@@ -143,8 +143,8 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7159
+          "Host": "proapi-ejbbcrademenhuf3.southeastasia-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       //"AuthenticationOptions": {
@@ -161,8 +161,8 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7159
+          "Host": "proapi-ejbbcrademenhuf3.southeastasia-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/Product/detail={id}",
@@ -175,8 +175,8 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7159
+          "Host": "proapi-ejbbcrademenhuf3.southeastasia-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/Product/getAllProductByUserName/{userName}",
@@ -189,8 +189,8 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7159
+          "Host": "proapi-ejbbcrademenhuf3.southeastasia-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/Product/IncreaseLike/{productId}",
@@ -203,8 +203,8 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7159
+          "Host": "proapi-ejbbcrademenhuf3.southeastasia-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/Product/DecreaseLike/{productId}",
@@ -216,8 +216,8 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7159
+          "Host": "proapi-ejbbcrademenhuf3.southeastasia-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       //"AuthenticationOptions": {
@@ -241,8 +241,8 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7107
+          "Host": "userapi-b2htg9apasf5gzdv.canadacentral-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       //"AuthenticationOptions": {
@@ -259,8 +259,8 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7107
+          "Host": "userapi-b2htg9apasf5gzdv.canadacentral-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/User/{id}",
@@ -273,8 +273,8 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7107
+          "Host": "userapi-b2htg9apasf5gzdv.canadacentral-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/User",
@@ -287,8 +287,8 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7107
+          "Host": "userapi-b2htg9apasf5gzdv.canadacentral-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/User",
@@ -301,8 +301,8 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7107
+          "Host": "userapi-b2htg9apasf5gzdv.canadacentral-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/User/delete/{id}",
@@ -315,8 +315,8 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7107
+          "Host": "userapi-b2htg9apasf5gzdv.canadacentral-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/User",
@@ -329,8 +329,8 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7107
+          "Host": "userapi-b2htg9apasf5gzdv.canadacentral-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/User/status/{id}",
@@ -343,8 +343,8 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7107
+          "Host": "userapi-b2htg9apasf5gzdv.canadacentral-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/User/addWishList/{userName}",
@@ -361,8 +361,8 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7107
+          "Host": "userapi-b2htg9apasf5gzdv.canadacentral-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/Auth/register",
@@ -375,8 +375,8 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7107
+          "Host": "userapi-b2htg9apasf5gzdv.canadacentral-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/Auth/login",
@@ -389,8 +389,8 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7107
+          "Host": "userapi-b2htg9apasf5gzdv.canadacentral-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/Auth/login-google",
@@ -402,8 +402,8 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7107
+          "Host": "userapi-b2htg9apasf5gzdv.canadacentral-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/Auth/signin-google",
@@ -416,8 +416,8 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7107
+          "Host": "userapi-b2htg9apasf5gzdv.canadacentral-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/Auth/external-login-callback",
@@ -431,8 +431,8 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7107
+          "Host": "userapi-b2htg9apasf5gzdv.canadacentral-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/Auth/login-without-password",
@@ -446,8 +446,8 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7107
+          "Host": "userapi-b2htg9apasf5gzdv.canadacentral-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/Auth/forgot-password",
@@ -459,8 +459,8 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7107
+          "Host": "userapi-b2htg9apasf5gzdv.canadacentral-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/Auth/reset-password",
@@ -472,8 +472,8 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7107
+          "Host": "userapi-b2htg9apasf5gzdv.canadacentral-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/Auth/change-password",
@@ -486,8 +486,8 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7107
+          "Host": "userapi-b2htg9apasf5gzdv.canadacentral-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/Auth/active-user",
@@ -505,8 +505,8 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7107
+          "Host": "userapi-b2htg9apasf5gzdv.canadacentral-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/User/getAllProductsInWishList/{id}",
@@ -518,8 +518,8 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7107
+          "Host": "userapi-b2htg9apasf5gzdv.canadacentral-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/User/removeWishList/{userName}/{productId}",
@@ -537,77 +537,79 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7105
+          "Host": "apicate-cuh9h0fwfzendbe2.southeastasia-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/Category/{id}",
       "UpstreamHttpMethod": [ "Get" ]
     },
 
-    //create
+    // Create
     {
       "DownstreamPathTemplate": "/api/Category",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7105
+          "Host": "apicate-cuh9h0fwfzendbe2.southeastasia-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/Category",
       "UpstreamHttpMethod": [ "Post" ]
     },
 
-    //GetAll
+    // GetAll
     {
       "DownstreamPathTemplate": "/api/Category",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7105
+          "Host": "apicate-cuh9h0fwfzendbe2.southeastasia-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/Category",
       "UpstreamHttpMethod": [ "Get" ]
     },
 
-    //Delete
+    // Delete
     {
       "DownstreamPathTemplate": "/api/Category/{id}",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7105
+          "Host": "apicate-cuh9h0fwfzendbe2.southeastasia-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/Category/{id}",
       "UpstreamHttpMethod": [ "Delete" ]
     },
 
-    //Update
+
+    // Update
     {
       "DownstreamPathTemplate": "/api/Category",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7105
+          "Host": "apicate-cuh9h0fwfzendbe2.southeastasia-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/Category",
       "UpstreamHttpMethod": [ "Put" ]
     },
-    //Search
+
+    // Search
     {
       "DownstreamPathTemplate": "/api/Category/search={searchString}",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7105
+          "Host": "apicate-cuh9h0fwfzendbe2.southeastasia-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       //"AuthenticationOptions": {
@@ -632,8 +634,8 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7250
+          "Host": "cmtapi-b0enf6b9dmc4axcd.southeastasia-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/Comment/{id}",
@@ -645,8 +647,8 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7250
+          "Host": "cmtapi-b0enf6b9dmc4axcd.southeastasia-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/Comment/get={productId}",
@@ -658,8 +660,8 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7250
+          "Host": "cmtapi-b0enf6b9dmc4axcd.southeastasia-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/Comment/List/{id}",
@@ -672,8 +674,8 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7250
+          "Host": "cmtapi-b0enf6b9dmc4axcd.southeastasia-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/Comment/{userId}",
@@ -686,8 +688,8 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7250
+          "Host": "cmtapi-b0enf6b9dmc4axcd.southeastasia-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/Comment",
@@ -700,8 +702,8 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7250
+          "Host": "cmtapi-b0enf6b9dmc4axcd.southeastasia-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/Comment/{id}",
@@ -714,8 +716,8 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7250
+          "Host": "cmtapi-b0enf6b9dmc4axcd.southeastasia-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/Comment",
@@ -727,8 +729,8 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7250
+          "Host": "cmtapi-b0enf6b9dmc4axcd.southeastasia-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       //"AuthenticationOptions": {
@@ -745,8 +747,8 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7250
+          "Host": "cmtapi-b0enf6b9dmc4axcd.southeastasia-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/Comment/ParentId/{id}",
@@ -759,8 +761,8 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7250
+          "Host": "cmtapi-b0enf6b9dmc4axcd.southeastasia-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/Comment/IncreaseLike/{commentId}",
@@ -773,8 +775,8 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7250
+          "Host": "cmtapi-b0enf6b9dmc4axcd.southeastasia-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/Comment/DecreaseLike/{commentId}",
@@ -796,8 +798,8 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7297
+          "Host": "oderapi-fkddgtb7ayeweyab.southeastasia-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/Order",
@@ -811,8 +813,8 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7297
+          "Host": "oderapi-fkddgtb7ayeweyab.southeastasia-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/Order",
@@ -825,8 +827,8 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7297
+          "Host": "oderapi-fkddgtb7ayeweyab.southeastasia-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/Order/search/{id}",
@@ -839,8 +841,8 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7297
+          "Host": "oderapi-fkddgtb7ayeweyab.southeastasia-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/Order/search-payment/{id}",
@@ -853,8 +855,8 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7297
+          "Host": "oderapi-fkddgtb7ayeweyab.southeastasia-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/Order/{id}/items",
@@ -867,8 +869,8 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7297
+          "Host": "oderapi-fkddgtb7ayeweyab.southeastasia-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/Order/customer/{id}/items",
@@ -882,8 +884,8 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7297
+          "Host": "oderapi-fkddgtb7ayeweyab.southeastasia-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/Order/{id}",
@@ -895,8 +897,8 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7297
+          "Host": "oderapi-fkddgtb7ayeweyab.southeastasia-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/Order/transid",
@@ -912,8 +914,8 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7297
+          "Host": "oderapi-fkddgtb7ayeweyab.southeastasia-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/Payment/momo",
@@ -926,8 +928,8 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7297
+          "Host": "oderapi-fkddgtb7ayeweyab.southeastasia-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/Payment/vietqr",
@@ -941,8 +943,8 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7297
+          "Host": "oderapi-fkddgtb7ayeweyab.southeastasia-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/Payment/ipn/momo",
@@ -955,8 +957,8 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7297
+          "Host": "oderapi-fkddgtb7ayeweyab.southeastasia-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/Payment/paid",
@@ -970,8 +972,8 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7297
+          "Host": "oderapi-fkddgtb7ayeweyab.southeastasia-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/Payment/send-notification",
@@ -984,8 +986,8 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7297
+          "Host": "oderapi-fkddgtb7ayeweyab.southeastasia-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/Export",
@@ -1003,8 +1005,8 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7019
+          "Host": "stastisapi-bcedbncchhgkffeb.southeastasia-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/Statistical",
@@ -1017,8 +1019,8 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7019
+          "Host": "stastisapi-bcedbncchhgkffeb.southeastasia-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/Statistical/GetStastisticalByUser",
@@ -1037,8 +1039,8 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7039
+          "Host": "rpapi-d2fpfvezc0c7gjhx.southeastasia-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/Reports/{id}",
@@ -1049,8 +1051,8 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7039
+          "Host": "rpapi-d2fpfvezc0c7gjhx.southeastasia-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/Reports",
@@ -1061,8 +1063,8 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7039
+          "Host": "rpapi-d2fpfvezc0c7gjhx.southeastasia-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/Reports",
@@ -1073,8 +1075,8 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7039
+          "Host": "rpapi-d2fpfvezc0c7gjhx.southeastasia-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/Reports/userName/{UserName}",
@@ -1083,7 +1085,7 @@
 
   ],
   "GlobalConfiguration": {
-    "BaseUrl": "https://localhost:7260",
+    "BaseUrl": "https://gatewayapi-fbb8b8hcdcdgcqfq.southeastasia-01.azurewebsites.net",
     "RequestBodySizeLimit": 104857600
   }
 }

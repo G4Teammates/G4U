@@ -29,6 +29,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StatisticalMicroservice", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReportMicroservice", "ReportMicroservice\ReportMicroservice.csproj", "{391AC503-8C05-4521-9BF3-1B524A8974BF}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GatewaysLocal", "GatewaysLocal", "{E88AB29F-23F3-439D-BF3E-1E7ED38D6E76}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GatewaysLocal", "GatewaysLocal\GatewaysLocal.csproj", "{54C1EFBF-7BDE-4BAE-84FC-D6788EE69DF0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -71,6 +75,10 @@ Global
 		{391AC503-8C05-4521-9BF3-1B524A8974BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{391AC503-8C05-4521-9BF3-1B524A8974BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{391AC503-8C05-4521-9BF3-1B524A8974BF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{54C1EFBF-7BDE-4BAE-84FC-D6788EE69DF0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54C1EFBF-7BDE-4BAE-84FC-D6788EE69DF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{54C1EFBF-7BDE-4BAE-84FC-D6788EE69DF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{54C1EFBF-7BDE-4BAE-84FC-D6788EE69DF0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -86,6 +94,7 @@ Global
 		{34F11068-217D-4475-B018-12E00643D09E} = {397437C9-9964-42A4-97E8-8EF7CFEB379C}
 		{C6D2E0CC-5228-4B93-89E8-85D19860DC90} = {56B7627A-B72E-47E5-8E3D-FED301C4AF75}
 		{391AC503-8C05-4521-9BF3-1B524A8974BF} = {56B7627A-B72E-47E5-8E3D-FED301C4AF75}
+		{54C1EFBF-7BDE-4BAE-84FC-D6788EE69DF0} = {E88AB29F-23F3-439D-BF3E-1E7ED38D6E76}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1E6A3270-A546-4DE9-A6DD-3B8A912B449E}
