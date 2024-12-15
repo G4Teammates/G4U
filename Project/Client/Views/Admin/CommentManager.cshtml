@@ -161,22 +161,26 @@
                 <button class="btn btn-primary" style="width: 150px;" type="submit">Search</button>
             </form>
 
-            <div class="w-100">
-                <div class="text-end">
-                    <!-- Dropdown cho User Status -->
-                    <span class="dropdown">
+            <div class="w-100 d-flex justify-content-end">
+                <form class="text-end" asp-action="@ViewData["CurrentAction"]" asp-controller="Admin">
+                    <span class="dropdown me-2">
+
                         <button class="btn btn-secondary dropdown-toggle" type="button" style="width:100px" id="statusDropdown" data-bs-toggle="dropdown">
                             Status
                         </button>
                         <span class="dropdown-menu" aria-labelledby="statusDropdown">
-                            <a class="dropdown-item" href="">Active</a>
-                            <a class="dropdown-item" href="">Inactive</a>
-                            <a class="dropdown-item" href="">Block</a>
-                            <a class="dropdown-item" href="">Deleted</a>
+                            <a class="dropdown-item" asp-action="FilterCommentStatus" asp-route-status="1">Inactive</a>
+                            <a class="dropdown-item" asp-action="FilterCommentStatus" asp-route-status="0">Active</a>
+                            <a class="dropdown-item" asp-action="FilterCommentStatus" asp-route-status="2">Block</a>
+                            <a class="dropdown-item" asp-action="FilterCommentStatus" asp-route-status="3">Deleted</a>
                         </span>
+
+
                     </span>
-                    @* <button class="btn btn-success" data-toggle="modal" data-target="#modalComment">+ Add</button> *@
-                </div> 
+                </form>
+
+                <button class="btn btn-success" data-toggle="modal" data-target="#modalCategory">+ Add</button>
+
             </div>
         </div>
 
@@ -257,7 +261,7 @@
                 {
                     @if (ViewData["Parameters"] is Dictionary<string, object> routeParams)
                     {
-                        <form asp-controller="Admin" asp-action="@ViewData["CurrentAction"]" class="d-inline">
+                        <form method="get" asp-controller="Admin" asp-action="@ViewData["CurrentAction"]" class="d-inline">
                             @foreach (var param in routeParams)
                             {
                                 <input name="@param.Key" value="@param.Value" style="display:none" />
@@ -274,7 +278,7 @@
                     }
                     else
                     {
-                        <form asp-controller="Admin" asp-action="@ViewData["CurrentAction"]" class="d-inline">
+                        <form method="get" asp-controller="Admin" asp-action="@ViewData["CurrentAction"]" class="d-inline">
                             <input name="@ViewData["NamePara"]" value="@ViewData["Parameters"]" style="display:none" />
                             <select name="pageSize" class="form-select form-select-sm w-auto d-inline-block" onchange="this.form.submit()">
                                 <option>Select records per page</option>
