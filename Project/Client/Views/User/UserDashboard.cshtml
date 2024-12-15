@@ -140,9 +140,9 @@
 
 <div class="dashboard-container">
     <!-- Projects Section -->
-    <div class="projects-section">
+    <div class="projects-section" style="background: #ffffff; box-shadow: 0 0 10px rgba(0, 169, 127, 0.3); border: 1px solid #00A97F;">
         <h4>Projects</h4>
-        @if (Model.Product != null)
+        @if (Model.Product.Count != 0)
         {
             foreach (var product in Model.Product)
             {
@@ -190,13 +190,13 @@
         }
         else
         {
-            <p>Khong co gì</p>
+            <p>Let create your first game</p>
         }
         <a asp-controller="User" asp-action="UploadProduct" class="btn btn-danger w-100">Create New Project</a>
     </div>
 
     <!-- Summary Section -->
-    <div class="summary-section">
+    <div class="summary-section" style="background: #ffffff; box-shadow: 0 0 10px rgba(0, 169, 127, 0.3); border: 1px solid #00A97F;">
         <h4>Summary</h4>
         <p>View more →</p>
         <div class="summary-charts">
