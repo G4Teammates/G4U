@@ -210,10 +210,10 @@ namespace Client.Controllers
                 var response = await _authenService.ForgotPasswordAsync(model);
                 if (response.IsSuccess)
                 {
-                    TempData["success"] = "Check your email";
+                    TempData["success"] = "Email reset password have send you. Check your email";
                     return View();
                 }
-                TempData["success"] = "Forgot password is fail";
+                TempData["error"] = "Forgot password is fail. " + response.Message;
             }
             return View();
         }
@@ -246,7 +246,7 @@ namespace Client.Controllers
                 TempData["success"] = "Reset password is success";
                 return RedirectToAction(nameof(Logout));
             }
-            TempData["error"] = "Reset password is fail";
+            TempData["error"] = "Reset password is fail. " + response.Message;
             return View();
         }
 
