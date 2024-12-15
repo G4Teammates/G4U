@@ -648,8 +648,6 @@ namespace Client.Controllers
                 int pageSize = 5;
                 if (ProductsModel != null)
                 {
-
-
                     productViewModel.Product = ProductsModel ?? new List<ProductModel>();
                     // Gán danh sách comments vào ProductViewModel
 

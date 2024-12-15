@@ -29,11 +29,11 @@ namespace ReportMicroservice.Repostories
                 const string QueueName = "updateUserName_queue_rp";
                 /*var connectionFactory = new ConnectionFactory
                 {
-                    UserName = _config["31"],
-                    Password = _config["32"],
-                    VirtualHost = _config["31"],
+                    UserName = "guest",
+                    Password = "guest",
+                    VirtualHost = "/",
                     Port = 5672,
-                    HostName = _config["33"]
+                    HostName = "localhost"
                 };
                 using var connection = connectionFactory.CreateConnection();
                 using var channel = connection.CreateModel();*/

@@ -54,16 +54,51 @@
     }
 
     .chart {
+        position: relative; /* Đảm bảo phần tử gốc là tham chiếu cho pseudo-element */
         width: 48%;
         height: 200px;
         background-color: #e9ecef;
-        border-radius: 8px;
+        border-radius: 1rem;
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 18px;
-        color: #6c757d;
+        overflow: hidden; /* Ngăn background bị tràn ra ngoài */
+        text-align: center;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        background-size: cover; /* Ảnh phủ kín toàn bộ ô */
+        background-position: center;
+        filter: blur(0.1px);
     }
+
+        .chart::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.3); /* Lớp phủ màu đen với độ mờ */
+            z-index: 1;
+            border-radius: 1rem;
+        }
+
+        .chart:hover .overlay {
+            opacity: 0; /* Tắt lớp phủ khi hover */
+        }
+
+        .chart:hover {
+            transform: translateY(-10px); /* Di chuyển sản phẩm lên khi hover */
+            filter: blur(0px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); /* Thêm bóng đổ */
+        }
+
+        .chart span {
+            text-decoration: none;
+            color: white;
+            z-index: 2;
+        }
+
 
     .btn-create-project {
         background-color: #007bff;
@@ -162,14 +197,17 @@
         <a asp-controller="User" asp-action="UploadProduct" class="btn btn-danger w-100">Create New Project</a>
     </div>
 
-
     <!-- Summary Section -->
     <div class="summary-section">
         <h4>Summary</h4>
         <p>View more →</p>
         <div class="summary-charts">
-            <a asp-controller="Product" asp-action="Collection" class="chart text-decoration-none">Wishlist</a>
-            <a asp-controller="Product" asp-action="Product" class="chart text-decoration-none">All Products</a>
+            <a asp-controller="Product" asp-action="Collection" class="chart text-decoration-none" style="background-image: url('/Image/giayto1.jpeg')">
+                <span class="fw-bold fs-5">Wishlist</span>
+            </a>
+            <a asp-controller="Order" asp-action="History" class="chart text-decoration-none" style="background-image: url('/Image/giaytohaitac.jpeg')">
+                <span class="fw-bold fs-5">Order History</span>
+            </a>
         </div>
         <div class="card col m-3 p-3">
             <h4>Total Revenue</h4>
