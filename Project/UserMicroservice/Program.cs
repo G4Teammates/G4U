@@ -1,6 +1,8 @@
 ﻿using Azure.Identity;
 using Microsoft.OpenApi.Models;
+using RabbitMQ.Client;
 using System.Text.Json.Serialization;
+using UserMicroservice.Repositories;
 using UserMicroService.Configure;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -69,6 +71,32 @@ builder.Services.AddCors(options =>
         });
 });
 builder.Services.AddHttpContextAccessor(); // Đăng ký IHttpContextAccessor
+
+// Đăng ký các wrapper types
+builder.Services.AddSingleton<RabbitMQServer2ConnectionFactory>();
+builder.Services.AddSingleton<RabbitMQServer3ConnectionFactory>();
+// Đăng ký IConnection từ mỗi Server
+builder.Services.AddSingleton(sp =>
+{
+    var factory = sp.GetRequiredService<RabbitMQServer2ConnectionFactory>().Factory;
+    return factory.CreateConnection();
+});
+builder.Services.AddSingleton(sp =>
+{
+    var factory = sp.GetRequiredService<RabbitMQServer3ConnectionFactory>().Factory;
+    return factory.CreateConnection();
+});
+// Đăng ký IModel (Channel) nếu cần
+builder.Services.AddSingleton(sp =>
+{
+    var connection = sp.GetRequiredService<IConnection>(); // Server1 Connection
+    return connection.CreateModel();
+});
+builder.Services.AddSingleton(sp =>
+{
+    var connection = sp.GetRequiredService<IConnection>(); // Server1 Connection
+    return connection.CreateModel();
+});
 
 var app = builder.Build();
 

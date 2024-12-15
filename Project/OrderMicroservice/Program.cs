@@ -4,6 +4,7 @@ using Microsoft.OpenApi.Models;
 using OrderMicroservice.Configure;
 using OrderMicroservice.DBContexts;
 using OrderMicroservice.Repositories.Services;
+using RabbitMQ.Client;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -61,6 +62,32 @@ builder.Services.AddSwaggerGen(opt =>
         }
     });
 });
+// Đăng ký các wrapper types
+builder.Services.AddSingleton<RabbitMQServer2ConnectionFactory>();
+builder.Services.AddSingleton<RabbitMQServer3ConnectionFactory>();
+// Đăng ký IConnection từ mỗi Server
+builder.Services.AddSingleton(sp =>
+{
+    var factory = sp.GetRequiredService<RabbitMQServer2ConnectionFactory>().Factory;
+    return factory.CreateConnection();
+});
+builder.Services.AddSingleton(sp =>
+{
+    var factory = sp.GetRequiredService<RabbitMQServer3ConnectionFactory>().Factory;
+    return factory.CreateConnection();
+});
+// Đăng ký IModel (Channel) nếu cần
+builder.Services.AddSingleton(sp =>
+{
+    var connection = sp.GetRequiredService<IConnection>(); // Server1 Connection
+    return connection.CreateModel();
+});
+builder.Services.AddSingleton(sp =>
+{
+    var connection = sp.GetRequiredService<IConnection>(); // Server2 Connection
+    return connection.CreateModel();
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

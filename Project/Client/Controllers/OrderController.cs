@@ -48,7 +48,11 @@ namespace Client.Controllers
                 // Khởi tạo ViewData
                 ViewData["HistoryAction"] = nameof(History);
                 int pageNumber = (page ?? 1); // Trang hiện tại
-                OrderViewModel orders = new();
+                OrderViewModel orders = new()
+                {
+                    Orders = []
+
+                };
 
                 // Gọi API để lấy tất cả dữ liệu
                 ResponseModel? response = await _orderService.GetOrderById(id, 1, 999);
@@ -77,7 +81,16 @@ namespace Client.Controllers
                 }
                 else
                 {
-                    TempData["error"] = response?.Message ?? "An unexpected error occurred while fetching the orders.";
+                    if (orders.Orders.Count == 0)
+                    {
+                        //TempData["success"] = "You are newbie huh? Buy game now!!";
+
+                    }
+                    else
+                    {
+                        TempData["error"] = response?.Message ?? "An unexpected error occurred while fetching the orders.";
+
+                    }
                 }
 
                 return View(orders);
@@ -86,7 +99,7 @@ namespace Client.Controllers
             {
                 // Ghi log nếu cần
                 TempData["error"] = $"An error occurred: {ex.Message}";
-                return View(new OrderViewModel()); // Trả về View rỗng hoặc một đối tượng ViewModel mặc định
+                return View(new OrderViewModel() { Orders = null }); // Trả về View rỗng hoặc một đối tượng ViewModel mặc định
             }
         }
 
@@ -182,7 +195,7 @@ namespace Client.Controllers
                     Items = cart.Order.Items
                 };
                 ResponseModel responsePayment = await _paymentService.VietQRPayment(request);
-                TempData["orderId"] = newOrder.Id;
+                HttpContext.Response.Cookies.Append("orderId", newOrder.Id);
                 if (responsePayment.IsSuccess)
                 {
                     HttpContext.Response.Cookies.Delete("cart");
@@ -273,11 +286,14 @@ namespace Client.Controllers
        string? status,
          long? orderCode)
         {
-            string orderId = TempData["orderId"].ToString();
             if (orderCode == null)
             {
                 return RedirectToAction(nameof(PaymentFailure));
             }
+
+            string orderId = HttpContext.Request.Cookies["orderId"];
+            HttpContext.Response.Cookies.Delete("orderId");
+
             ResponseModel response = await _paymentService.Paid(new PaidModel()
             {
                 OrderId = orderId,

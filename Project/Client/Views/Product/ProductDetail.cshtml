@@ -218,7 +218,7 @@
                                 <div class="col">
                                     <strong>Sold: </strong>
                                     <span style="padding-left: 5px;">
-                                        @(product.Sold == 0 ? " None" : product.Sold.ToString())
+                                        @(product.Sold == 0 ? " None" : product.Sold.ToString("N0")) VNĐ
                                     </span>
                                 </div>
                             </div>
@@ -384,7 +384,10 @@
                                         <input type="text" hidden asp-for="@Model.Prod.Price" />
                                         @Model.Prod.Price vnđ
                                     </span>
-                                    <span class="discounted-price">@(Model.Prod.Price - (Model.Prod.Price * (decimal)Model.Prod.Discount / 100m)) vnđ</span>
+                                    @{
+                                        var price = Model.Prod.Price - (Model.Prod.Price * (decimal)Model.Prod.Discount / 100m);
+                                    }
+                                    <span class="discounted-price">@price.ToString("N0") VNĐ</span>
                                 </div>
                             }
                         </div>

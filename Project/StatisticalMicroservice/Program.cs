@@ -1,7 +1,9 @@
 using Azure.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
+using RabbitMQ.Client;
 using StatisticalMicroservice.Configure;
+using StatisticalMicroservice.Repostories;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -61,6 +63,23 @@ builder.Services.AddCors(options =>
                    .AllowAnyHeader();
         });
 });
+
+// ??ng ký các wrapper types
+builder.Services.AddSingleton<RabbitMQServer2ConnectionFactory>();
+// ??ng ký IConnection t? m?i Server
+builder.Services.AddSingleton(sp =>
+{
+    var factory = sp.GetRequiredService<RabbitMQServer2ConnectionFactory>().Factory;
+    return factory.CreateConnection();
+});
+
+// ??ng ký IModel (Channel) n?u c?n
+builder.Services.AddSingleton(sp =>
+{
+    var connection = sp.GetRequiredService<IConnection>(); // Server1 Connection
+    return connection.CreateModel();
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

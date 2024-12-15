@@ -1,9 +1,10 @@
-using Azure.Identity;
+﻿using Azure.Identity;
 using CommentMicroservice.Configure;
 using CommentMicroservice.DBContexts;
 using CommentMicroservice.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using RabbitMQ.Client;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,13 +15,13 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// S? d?ng Managed Identity ?? c?u h�nh Azure Key Vault
+// S? d?ng Managed Identity ?? c?u hình Azure Key Vault
 /*builder.Configuration.AddAzureKeyVault(
     new Uri("https://duantotnghiep.vault.azure.net/"),
         new ManagedIdentityCredential()
 
 );*/
-// S? d?ng Managed Identity ?? c?u h�nh Azure Key Vault c?c b?
+// S? d?ng Managed Identity ?? c?u hình Azure Key Vault c?c b?
 builder.Configuration.AddAzureKeyVault(
     new Uri("https://duantotnghiep.vault.azure.net/"),
         new VisualStudioCredential()
@@ -54,6 +55,22 @@ builder.Services.AddSwaggerGen(opt =>
             new string[]{}
         }
     });
+});
+
+// Đăng ký các wrapper types
+builder.Services.AddSingleton<RabbitMQServer3ConnectionFactory>();
+// Đăng ký IConnection từ mỗi Server
+builder.Services.AddSingleton(sp =>
+{
+    var factory = sp.GetRequiredService<RabbitMQServer3ConnectionFactory>().Factory;
+    return factory.CreateConnection();
+});
+
+// Đăng ký IModel (Channel) nếu cần
+builder.Services.AddSingleton(sp =>
+{
+    var connection = sp.GetRequiredService<IConnection>(); // Server1 Connection
+    return connection.CreateModel();
 });
 
 var app = builder.Build();
