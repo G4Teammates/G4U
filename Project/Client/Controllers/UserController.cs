@@ -192,12 +192,7 @@ namespace Client.Controllers
         [HttpGet]
         public async Task<IActionResult> Logout()
         {
-            _tokenProvider.ClearToken(IsLogin);
-            _tokenProvider.ClearToken(GoogleToken);
-            _tokenProvider.ClearToken(RememberMe);
-            _tokenProvider.ClearToken(JWT);
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-
+            await LogoutActionAsync();
             return RedirectToAction("Index", "Home");
         }
 
@@ -215,10 +210,10 @@ namespace Client.Controllers
                 var response = await _authenService.ForgotPasswordAsync(model);
                 if (response.IsSuccess)
                 {
-                    TempData["success"] = "Check your email";
+                    TempData["success"] = "Email reset password have send you. Check your email";
                     return View();
                 }
-                TempData["success"] = "Forgot password is fail";
+                TempData["error"] = "Forgot password is fail. " + response.Message;
             }
             return View();
         }
@@ -251,7 +246,7 @@ namespace Client.Controllers
                 TempData["success"] = "Reset password is success";
                 return RedirectToAction(nameof(Logout));
             }
-            TempData["error"] = "Reset password is fail";
+            TempData["error"] = "Reset password is fail. " + response.Message;
             return View();
         }
 
@@ -330,6 +325,7 @@ namespace Client.Controllers
                 updateUser.Status = Models.Enum.UserEnum.User.UserStatus.Active;
                 updateUser.EmailConfirmation = Models.Enum.UserEnum.User.EmailStatus.Confirmed;
                 ResponseModel response = await _userService.UpdateUser(updateUser);
+                await LogoutActionAsync();
                 response = await _authenService.LoginWithoutPassword(updateUser.Email);
                 if (response.IsSuccess)
                 {
@@ -347,12 +343,14 @@ namespace Client.Controllers
                     IEnumerable<Claim> claim = HttpContext.User.Claims;
                     UserClaimModel userClaim = new UserClaimModel
                     {
-                        Id = userLogin.Id!,
-                        Username = userLogin.Username!,
-                        Email = userLogin.Email!,
-                        Role = userLogin.Role!,
-                        DisplayName = userLogin.DisplayName!,
-                        Avatar = userLogin.Avatar!
+                        Id = user.Id!,
+                        Username = user.Username!,
+                        Email = user.Email!,
+                        Role = user.Role.ToString()!,
+                        DisplayName = user.DisplayName!,
+                        Avatar = user.Avatar!,
+                        LoginType = user.LoginType.ToString(),
+
                     };
                     await _helperService.UpdateClaim(userClaim, HttpContext);
 
@@ -1086,6 +1084,16 @@ namespace Client.Controllers
         public IActionResult DownloadProduct()
         {
             return View();
+        }
+
+        private async Task LogoutActionAsync()
+        {
+            _tokenProvider.ClearToken(IsLogin);
+            _tokenProvider.ClearToken(GoogleToken);
+            _tokenProvider.ClearToken(RememberMe);
+            _tokenProvider.ClearToken(JWT);
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
         }
     }
 }

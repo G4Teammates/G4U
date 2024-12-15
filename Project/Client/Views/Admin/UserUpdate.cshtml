@@ -5,20 +5,7 @@
         <div class="modal-content">
             <div class="container p-5">
 
-                @if (TempData["success"] != null)
-                {
-                    <div class="alert alert-success">
-                        @TempData["success"]
-                    </div>
-                }
-
-                @if (TempData["error"] != null)
-                {
-                    <div class="alert alert-danger">
-                        @TempData["error"]
-                    </div>
-                }
-
+                
                 @if (Model != null)
                 {
                     <form class="row" asp-action="UserUpdate" method="post" enctype="multipart/form-data">
@@ -91,7 +78,7 @@
                                     <input hidden asp-for="@Model.Avatar" />
                                
                                         <div>
-                                            <img id="avatarPreviewUpdate" src="@Model.Avatar" alt="Avatar Preview" style="width:200px; height:200px;" />
+                                        <img id="avatarPreviewUpdate" src="@Model.Avatar" alt="Avatar Preview" style="width:200px; height:200px; object-fit: cover" />
                                         </div>
                                         <input type="file" id="avatarInputUpdate" asp-for="@Model.AvatarFile" class="form-control mt-2" style="display: none;" accept=".png, .jpg" />
                                         <a id="changeAvatarUpdateBtn" class="btn btn-outline-dark text-center mt-2">Change Avatar</a>

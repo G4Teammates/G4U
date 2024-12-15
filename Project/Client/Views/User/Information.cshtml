@@ -28,8 +28,9 @@
                     UserLoginType loginType;
                     if (Enum.TryParse(loginTypeAsString, out loginType))
                     {
-                        if(loginType == UserLoginType.Local)
-                        {              <div class="custom-nav-item">
+                        if (loginType == UserLoginType.Local)
+                        {
+                            <div class="custom-nav-item">
                                 <a asp-controller="User" asp-action="PasswordSecurity">
                                     <button type="button">
                                         <i class="fas fa-lock"></i> Password and Security
@@ -94,6 +95,7 @@
                     </div>
                     <div class="col-md-8">
                         <!-- Bắt đầu form -->
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                         <input type="hidden" name="Id" asp-for="@Model.Id" />
                         <input type="hidden" name="EmailConfirmation" asp-for="@Model.EmailConfirmation" />
                         <input type="hidden" name="Status" asp-for="@Model.Status" />
@@ -140,6 +142,33 @@
                                 <span asp-validation-for="@Model.PhoneNumber" class="text-danger"></span>
                             </div>
                         </div>
+
+
+                        <div class="row mb-3 px-3">
+                            <div class="col-md-3 align-content-center">
+                                <label asp-for="@Model.BankName" class="text-center fw-bold" style="color:#33CC33">
+                                    Bank Name
+                                </label>
+                            </div>
+                            <div class="col-md-9">
+                                <select asp-for="@Model.BankName" class="form-control">
+                                    <option value="Unknown">Not set</option>
+                                    <option value="Vietcombank">Vietcombank</option>
+                                    <option value="VietinBank">VietinBank</option>
+                                    <option value="Techcombank">Techcombank</option>
+                                    <option value="BIDV">BIDV</option>
+                                    <option value="MBBank">MBBank</option>
+                                    <option value="VPBank">VPBank</option>
+                                    <option value="ACB">ACB</option>
+                                    <option value="TPBank">TPBank</option>
+                                    <option value="VIB">VIB</option>
+                                    <option value="Agribank">Agribank</option>
+                                </select>
+                                <span asp-validation-for="BankName" class="text-danger"></span>
+                            </div>
+
+                        </div>
+
                         <div class="row mb-3 px-3">
                             <div class="col-md-3 align-content-center">
                                 <div class="text-center fw-bold">

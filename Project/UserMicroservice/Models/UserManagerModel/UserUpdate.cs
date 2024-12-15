@@ -81,7 +81,7 @@ namespace UserMicroservice.Models.UserManagerModel
         /// <br/>
         /// Số tài khoản của người dùng.
         /// </summary>
-        [StringLength(17, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 5)]
+        [StringLength(17, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 8)]
         [RegularExpression("^[0-9]+$", ErrorMessage = "The {0} must be number.")]
         public string? BankAccount { get; set; }
 
