@@ -7,12 +7,12 @@
     - Kiểm duyệt file game (bằng VirusTotal)
     - Kiểm duyệt hình ảnh (Azure Content Safety)
   Sử dụng ngôn ngữ, design pattern, công cụ, và 3rd party liên quan:
-  Design pattern
+  # Design pattern
       - Microservice Architecture
       - MVC Design Pattern
       - API Gateway Pattern 
       - Repository và Dependency injection Design Pattern
-  Database
+  # Database
       - MongoDB
   # Bankend
       - C#
