@@ -78,6 +78,20 @@
       "UpstreamHttpMethod": [ "Put" ]
     },
 
+    //updateClone
+    {
+      "DownstreamPathTemplate": "/api/Product/ProductClone",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7159
+        }
+      ],
+      "UpstreamPathTemplate": "/Product/ProductClone",
+      "UpstreamHttpMethod": [ "Put" ]
+    },
+
     //delete
     {
       "DownstreamPathTemplate": "/api/Product/{id}",
@@ -603,7 +617,7 @@
       "UpstreamPathTemplate": "/Category/search={searchString}",
       "UpstreamHttpMethod": [ "Get" ]
     },
-   
+
 
 
 
