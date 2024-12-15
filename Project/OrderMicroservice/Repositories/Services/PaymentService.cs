@@ -20,9 +20,9 @@ namespace OrderMicroservice.Repositories.Services
         private readonly IOrderService _orderService = orderService;
         private readonly IHelperService _helperService = helperService;
         private static readonly HttpClient client = new();
-        private static readonly string Gateway = "https://localhost:7296";
+        private static readonly string Gateway = "https://gatewayapi-fbb8b8hcdcdgcqfq.southeastasia-01.azurewebsites.net";
         private static readonly string MoMoGateway = "https://test-payment.momo.vn/v2/gateway/api/create";
-        private static readonly string IpnMomo = "https://5c16-2402-800-6346-23b3-38c1-d46d-fbda-2c63.ngrok-free.app" + "/api/payment/ipn/momo";
+        private static readonly string IpnMomo = "https://oderapi-fkddgtb7ayeweyab.southeastasia-01.azurewebsites.net" + "/api/payment/ipn/momo";
         private IMessage _message = message;
         public async Task<ResponseModel> MoMoPayment(MoMoRequestFromClient requestClient)
         {

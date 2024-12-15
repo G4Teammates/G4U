@@ -34,7 +34,7 @@ namespace Client.Models.UserDTO
         public BankName BankName { get; set; }
 
 
-        [StringLength(17, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 5)]
+        [StringLength(17, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 8)]
         [RegularExpression(@"^\d+$", ErrorMessage = "The {0} field can only contain numbers.")]
         public string? BankAccount { get; set; }
 
