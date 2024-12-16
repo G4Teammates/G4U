@@ -443,7 +443,7 @@ namespace UserMicroservice.Repositories.Services
             {
                 // Tạo token đặt lại mật khẩu
                 var token = _helper.GeneratePasswordResetToken(model);
-                var gateway = "https://localhost:7296";
+                var gateway = "https://gatewayapi-fbb8b8hcdcdgcqfq.southeastasia-01.azurewebsites.net";
                 // Tạo URL thủ công nếu không có ngữ cảnh HttpRequest
                 string confirmationLink = $"{gateway}/User/ResetPassword?userId={model.Id}&token={token}";
 
@@ -542,7 +542,7 @@ namespace UserMicroservice.Repositories.Services
             {
                 // Tạo token đặt lại mật khẩu
                 //var token = _helper.GeneratePasswordResetToken(model);
-                var gateway = "https://localhost:7296";
+                var gateway = "https://gatewayapi-fbb8b8hcdcdgcqfq.southeastasia-01.azurewebsites.net";
                 // Tạo URL thủ công nếu không có ngữ cảnh HttpRequest
                 string confirmationLink = $"{gateway}/User/ActiveUser?userId={model.Id}";
 

@@ -34,9 +34,7 @@ using Client.Repositories.Interfaces.Reports;
 using Client.Repositories.Services.Reports;
 using Client.Models.ReportDTO;
 using System;
-
-
-
+using Client.Models.Enum.ProductEnum;
 
 namespace Client.Controllers
 {
@@ -614,8 +612,8 @@ namespace Client.Controllers
         }
 
         [HttpPost]
-        [RequestSizeLimit(60 * 1024 * 1024)] // 50MB
-        [RequestFormLimits(MultipartBodyLengthLimit = 60 * 1024 * 1024)] // Đặt giới hạn cho form multipart
+        [RequestSizeLimit(100 * 1024 * 1024)] // 50MB
+        [RequestFormLimits(MultipartBodyLengthLimit = 100 * 1024 * 1024)] // Đặt giới hạn cho form multipart
         public async Task<IActionResult> UpdateProduct(UpdateProductModel model)
         {
             if (!ModelState.IsValid)
@@ -637,13 +635,25 @@ namespace Client.Controllers
                     gameFile = model.gameFile
                 };
 
+                ResponseModel? responsee = await _productService.GetProductByIdAsync(model.Id);
+                if (responsee == null)
+                {
+                    throw new Exception("Không thấy game nào có ID vậy hết");
+                }
+                ProductModel? product = JsonConvert.DeserializeObject<ProductModel>(Convert.ToString(responsee.Result));
+
+                if (model.gameFile == null)
+                {
+                    model.WinrarPassword = product.WinrarPassword;
+                }
+
                 // Gọi service UpdateProduct từ phía Client
-                var response = await _productService.UpdateProductAsync(
+                var response = await _productService.UpdateProductCloneAsync(
                     model.Id, model.Name, model.Description, model.Price, model.Sold,
                    numOfView, numOfLike, numOfDisLike, model.Discount,
                     model.Links, model.Categories, (int)model.Platform,
                     (int)model.Status, model.CreatedAt, model.ImageFiles,
-                    request, model.UserName, model.Interactions.UserLikes, model.Interactions.UserDisLikes);
+                    request, model.UserName, model.Interactions.UserLikes, model.Interactions.UserDisLikes, model.WinrarPassword);
 
                 if (response.IsSuccess)
                 {
@@ -663,10 +673,9 @@ namespace Client.Controllers
             }
         }
 
-
         [HttpPost]
-        [RequestSizeLimit(60 * 1024 * 1024)] // 50MB
-        [RequestFormLimits(MultipartBodyLengthLimit = 60 * 1024 * 1024)] // Đặt giới hạn cho form multipart
+        [RequestSizeLimit(100 * 1024 * 1024)] // 50MB
+        [RequestFormLimits(MultipartBodyLengthLimit = 100 * 1024 * 1024)] // Đặt giới hạn cho form multipart
         public async Task<IActionResult> CreateProduct(CreateProductModel model)
         {
             if (!ModelState.IsValid)
@@ -687,7 +696,7 @@ namespace Client.Controllers
                 };
 
                 // Gọi API CreateProductAsync
-                var response = await _productService.CreateProductAsync(
+                var response = await _productService.CreateProductCloneAsync(
                     model.Name,
                     model.Description,
                     model.Price,
@@ -697,7 +706,8 @@ namespace Client.Controllers
                     model.Status,
                     model.imageFiles,
                     request,
-                    model.Username);
+                    model.Username,
+                    model.winrarPassword);
 
                 if (response != null && response.IsSuccess)
                 {
@@ -926,7 +936,64 @@ namespace Client.Controllers
             return View("ProductsManager", productViewModel); // Trả về view ProductsManager với danh sách sản phẩm đã lọc
         }
 
+        public async Task<IActionResult> FilterStatus(int status, int? page, int pageSize = 5)
+        {
+            int pageNumber = (page ?? 1);
+            ProductViewModel productViewModel = new();
 
+            try
+            {
+                // Gọi API để lấy danh sách tất cả sản phẩm
+                ResponseModel? response2 = await _productService.GetAllProductAsync(1, 99);
+                ResponseModel? response3 = await _categoryService.GetAllCategoryAsync(1, 99);
+
+                // Deserialize dữ liệu sản phẩm từ API
+                var allProducts = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response2.Result.ToString()!));
+
+                if (allProducts != null && allProducts.Any())
+                {
+                    // Lọc sản phẩm theo status
+                    var filteredProducts = allProducts.Where(p => p.Status == (ProductStatus)status).ToList();
+
+                    // Tính toán thông tin phân trang
+                    productViewModel.Product = filteredProducts
+                        .Skip((pageNumber - 1) * pageSize)
+                        .Take(pageSize)
+                        .ToList();
+
+                    productViewModel.totalItem = filteredProducts.Count;
+                    productViewModel.pageSize = pageSize;
+                    productViewModel.pageNumber = pageNumber;
+                    productViewModel.pageCount = (int)Math.Ceiling(filteredProducts.Count / (double)pageSize);
+
+                    // Gán danh mục sản phẩm (nếu cần)
+                    productViewModel.CategoriesModel = JsonConvert.DeserializeObject<ICollection<CategoriesModel>>(Convert.ToString(response3.Result.ToString()!));
+
+                    TempData["success"] = "Filter product by status successfully";
+                    ViewData["CurrentAction"] = "FilterStatus";
+                    ViewData["Parameters"] = status;
+                    ViewData["NamePara"] = "status";
+                    // Tạo mã QR cho từng sản phẩm
+                    foreach (var item in productViewModel.Product)
+                    {
+                        string qrCodeUrl = Url.Action("UpdateProduct", "Admin", new { id = item.Id }, Request.Scheme);
+                        item.QrCode = _productService.GenerateQRCode(qrCodeUrl); // Tạo mã QR và lưu vào thuộc tính
+                    }
+                }
+                else
+                {
+                    TempData["error"] = "No products found to filter.";
+                    return RedirectToAction(nameof(ProductsManager));
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = ex.Message;
+                return RedirectToAction(nameof(ProductsManager));
+            }
+
+            return View("ProductsManager", productViewModel); // Trả về view ProductsManager với danh sách sản phẩm đã lọc
+        }
         #endregion
 
 
@@ -1495,6 +1562,59 @@ namespace Client.Controllers
             return View("CategoriesManager", categoryViewModel); // Trả về view ProductsManager với danh sách sản phẩm đã tìm kiếm
         }
 
+
+        public async Task<IActionResult> FilterCategoryStatus(int status, int? page, int pageSize = 5)
+        {
+            int pageNumber = (page ?? 1);
+            CategoriesViewModel categoryViewModel = new();
+            try
+            {
+                // Gọi API để lấy danh sách tất cả sản phẩm
+                ResponseModel? response2 = await _categoryService.GetAllCategoryAsync(1, 99);
+
+                // Deserialize dữ liệu sản phẩm từ API
+                var allCategories = JsonConvert.DeserializeObject<ICollection<CategoriesModel>>(Convert.ToString(response2.Result.ToString()!));
+
+                if (allCategories != null && allCategories.Any())
+                {
+                    // Lọc sản phẩm theo status
+                    var filteredCategories = allCategories.Where(p => p.Status == (CategoryStatus)status).ToList();
+
+                    // Tính toán thông tin phân trang
+                    categoryViewModel.Categories = (ICollection<CategoriesModel>?)filteredCategories
+                        .Skip((pageNumber - 1) * pageSize)
+                        .Take(pageSize)
+                        .ToList();
+
+                    categoryViewModel.totalItem = filteredCategories.Count;
+                    categoryViewModel.pageSize = pageSize;
+                    categoryViewModel.pageNumber = pageNumber;
+                    categoryViewModel.pageCount = (int)Math.Ceiling(filteredCategories.Count / (double)pageSize);
+
+                    TempData["success"] = "Filter categories by status successfully";
+                    ViewData["CurrentAction"] = "FilterCategoryStatus";
+                    ViewData["Parameters"] = status;
+                    ViewData["NamePara"] = "status";
+                }
+                else
+                {
+                    TempData["error"] = "No categories found to filter.";
+                    return RedirectToAction(nameof(CategoriesManager));
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = ex.Message;
+                return RedirectToAction(nameof(CategoriesManager));
+            }
+
+
+
+            return View("CategoriesManager", categoryViewModel); // Trả về view ProductsManager với danh sách sản phẩm đã lọc
+        }
+
+
+
         #endregion
 
 
@@ -1670,6 +1790,61 @@ namespace Client.Controllers
 
             return View("CommentManager", cmtViewModel); // Trả về view ProductsManager với danh sách sản phẩm đã tìm kiếm
         }
+
+
+        public async Task<IActionResult> FilterCommentStatus(int status, int? page, int pageSize = 5)
+        {
+            int pageNumber = (page ?? 1);
+            CommentViewModel commentViewModel = new();
+            try
+            {
+                // Gọi API để lấy danh sách tất cả sản phẩm
+                ResponseModel? response2 = await _commentService.GetAllCommentAsync(1, 9999);
+
+                // Deserialize dữ liệu sản phẩm từ API
+                var allComments = JsonConvert.DeserializeObject<ICollection<CommentDTOModel>>(Convert.ToString(response2.Result.ToString()!));
+
+                if (allComments != null && allComments.Any())
+                {
+                    // Lọc sản phẩm theo status
+                    var filteredComments = allComments.Where(p => p.Status == (CommentStatus)status).ToList();
+
+                    // Tính toán thông tin phân trang
+                    commentViewModel.Comment = (ICollection<CommentDTOModel>?)filteredComments
+                        .Skip((pageNumber - 1) * pageSize)
+                        .Take(pageSize)
+                        .ToList();
+
+                    commentViewModel.totalItem = filteredComments.Count;
+                    commentViewModel.pageSize = pageSize;
+                    commentViewModel.pageNumber = pageNumber;
+                    commentViewModel.pageCount = (int)Math.Ceiling(filteredComments.Count / (double)pageSize);
+
+                    TempData["success"] = "Filter comments by status successfully";
+                    ViewData["CurrentAction"] = "FilterCommentStatus";
+                    ViewData["Parameters"] = status;
+                    ViewData["NamePara"] = "status";
+                }
+                else
+                {
+                    TempData["error"] = "No comments found to filter.";
+                    return RedirectToAction(nameof(CommentManager));
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = ex.Message;
+                return RedirectToAction(nameof(CommentManager));
+            }
+
+
+
+            return View("CommentManager", commentViewModel); // Trả về view ProductsManager với danh sách sản phẩm đã lọc
+        }
+
+
+
+
 
         [HttpPost]
         public async Task<IActionResult> AddWishList(WishlistModel wishlist)

@@ -78,6 +78,20 @@
       "UpstreamHttpMethod": [ "Put" ]
     },
 
+    //updateClone
+    {
+      "DownstreamPathTemplate": "/api/Product/ProductClone",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7159
+        }
+      ],
+      "UpstreamPathTemplate": "/Product/ProductClone",
+      "UpstreamHttpMethod": [ "Put" ]
+    },
+
     //delete
     {
       "DownstreamPathTemplate": "/api/Product/{id}",
@@ -523,79 +537,77 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "apicate-cuh9h0fwfzendbe2.southeastasia-01.azurewebsites.net",
-          "Port": 443
+          "Host": "localhost",
+          "Port": 7105
         }
       ],
       "UpstreamPathTemplate": "/Category/{id}",
       "UpstreamHttpMethod": [ "Get" ]
     },
 
-    // Create
+    //create
     {
       "DownstreamPathTemplate": "/api/Category",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "apicate-cuh9h0fwfzendbe2.southeastasia-01.azurewebsites.net",
-          "Port": 443
+          "Host": "localhost",
+          "Port": 7105
         }
       ],
       "UpstreamPathTemplate": "/Category",
       "UpstreamHttpMethod": [ "Post" ]
     },
 
-    // GetAll
+    //GetAll
     {
       "DownstreamPathTemplate": "/api/Category",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "apicate-cuh9h0fwfzendbe2.southeastasia-01.azurewebsites.net",
-          "Port": 443
+          "Host": "localhost",
+          "Port": 7105
         }
       ],
       "UpstreamPathTemplate": "/Category",
       "UpstreamHttpMethod": [ "Get" ]
     },
 
-    // Delete
+    //Delete
     {
       "DownstreamPathTemplate": "/api/Category/{id}",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "apicate-cuh9h0fwfzendbe2.southeastasia-01.azurewebsites.net",
-          "Port": 443
+          "Host": "localhost",
+          "Port": 7105
         }
       ],
       "UpstreamPathTemplate": "/Category/{id}",
       "UpstreamHttpMethod": [ "Delete" ]
     },
 
-
-    // Update
+    //Update
     {
       "DownstreamPathTemplate": "/api/Category",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "apicate-cuh9h0fwfzendbe2.southeastasia-01.azurewebsites.net",
-          "Port": 443
+          "Host": "localhost",
+          "Port": 7105
         }
       ],
       "UpstreamPathTemplate": "/Category",
       "UpstreamHttpMethod": [ "Put" ]
     },
-
-    // Search
+    //Search
     {
       "DownstreamPathTemplate": "/api/Category/search={searchString}",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "apicate-cuh9h0fwfzendbe2.southeastasia-01.azurewebsites.net",
-          "Port": 443
+          "Host": "localhost",
+          "Port": 7105
         }
       ],
       //"AuthenticationOptions": {
@@ -605,6 +617,7 @@
       "UpstreamPathTemplate": "/Category/search={searchString}",
       "UpstreamHttpMethod": [ "Get" ]
     },
+
 
 
 
@@ -1034,7 +1047,7 @@
 
   ],
   "GlobalConfiguration": {
-    "BaseUrl": "https://localhost:7260",
+    "BaseUrl": "https://localhost:7032",
     "RequestBodySizeLimit": 104857600
   }
 }

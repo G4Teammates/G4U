@@ -26,8 +26,8 @@ namespace ProductMicroService.Controllers
         }
 
         [HttpPost]
-        [RequestSizeLimit(60 * 1024 * 1024)] // 50MB
-        [RequestFormLimits(MultipartBodyLengthLimit = 60 * 1024 * 1024)] // Đặt giới hạn cho form multipart
+        [RequestSizeLimit(100 * 1024 * 1024)] // 50MB
+        [RequestFormLimits(MultipartBodyLengthLimit = 100 * 1024 * 1024)] // Đặt giới hạn cho form multipart
         public async Task<IActionResult> CreateProduct(
                             [FromForm] string name,
                             [FromForm] string description,
@@ -545,8 +545,8 @@ namespace ProductMicroService.Controllers
         }
 
         [HttpPost("ProductClone")]
-        [RequestSizeLimit(60 * 1024 * 1024)] // 50MB
-        [RequestFormLimits(MultipartBodyLengthLimit = 60 * 1024 * 1024)] // Đặt giới hạn cho form multipart
+        [RequestSizeLimit(100 * 1024 * 1024)] // 50MB
+        [RequestFormLimits(MultipartBodyLengthLimit = 100 * 1024 * 1024)] // Đặt giới hạn cho form multipart
         public async Task<IActionResult> CreateProductClone(
                             [FromForm] string name,
                             [FromForm] string description,
