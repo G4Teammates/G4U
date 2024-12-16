@@ -35,7 +35,7 @@ namespace Client.Models.ProductDTO
 
         public IFormFile gameFile { get; set; } // Giả sử bạn có model này cho game file
 
-
+        public string? winrarPassword { get; set; }
 
         public string? Username { get; set; } // Tên người dùng
 

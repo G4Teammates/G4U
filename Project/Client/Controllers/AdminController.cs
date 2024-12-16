@@ -638,13 +638,25 @@ namespace Client.Controllers
                     gameFile = model.gameFile
                 };
 
+                ResponseModel? responsee = await _productService.GetProductByIdAsync(model.Id);
+                if (responsee == null)
+                {
+                    throw new Exception("Không thấy game nào có ID vậy hết");
+                }
+                ProductModel? product = JsonConvert.DeserializeObject<ProductModel>(Convert.ToString(responsee.Result));
+
+                if (model.gameFile == null)
+                {
+                    model.WinrarPassword = product.WinrarPassword;
+                }
+
                 // Gọi service UpdateProduct từ phía Client
-                var response = await _productService.UpdateProductAsync(
+                var response = await _productService.UpdateProductCloneAsync(
                     model.Id, model.Name, model.Description, model.Price, model.Sold,
                    numOfView, numOfLike, numOfDisLike, model.Discount,
                     model.Links, model.Categories, (int)model.Platform,
                     (int)model.Status, model.CreatedAt, model.ImageFiles,
-                    request, model.UserName, model.Interactions.UserLikes, model.Interactions.UserDisLikes);
+                    request, model.UserName, model.Interactions.UserLikes, model.Interactions.UserDisLikes, model.WinrarPassword);
 
                 if (response.IsSuccess)
                 {
@@ -688,7 +700,7 @@ namespace Client.Controllers
                 };
 
                 // Gọi API CreateProductAsync
-                var response = await _productService.CreateProductAsync(
+                var response = await _productService.CreateProductCloneAsync(
                     model.Name,
                     model.Description,
                     model.Price,
@@ -698,7 +710,8 @@ namespace Client.Controllers
                     model.Status,
                     model.imageFiles,
                     request,
-                    model.Username);
+                    model.Username,
+                    model.winrarPassword);
 
                 if (response != null && response.IsSuccess)
                 {

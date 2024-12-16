@@ -71,8 +71,8 @@
                         <input type="number" class="form-control bg-white text-[#00A97F] border-[#00A97F]" asp-for="Discount" step="0.01" max="99.99" required style="border: 1px solid #00A97F;" />
                         <span asp-validation-for="Discount" class="text-danger"></span>
                     </div>
-
                 </div>
+
 
             </div>
             
@@ -82,6 +82,13 @@
                 <input type="datetime-local" class="form-control bg-white text-[#00A97F] border-[#00A97F]" asp-for="CreatedAt" required style="border: 1px solid #00A97F;" />
                 <span asp-validation-for="CreatedAt" class="text-danger"></span>
             </div>
+
+            <div class="form-group mt-2">
+                <label class="fw-bold text-[#00A97F]" for="winrarPassword">Rar Password</label>
+                <input type="text" class="form-control bg-white text-[#00A97F] border-[#00A97F]" asp-for="WinrarPassword" style="border: 1px solid #00A97F;" />
+                <span asp-validation-for="WinrarPassword" class="text-danger"></span>
+            </div>
+
             <!-- Cập nhật các danh mục sản phẩm -->
             <div class="form-group mt-2">
                 <label class="fw-bold text-[#00A97F]">Categories</label>
@@ -104,6 +111,9 @@
                 <span asp-validation-for="Categories" class="text-danger"></span>
                 <button type="button" class="btn btn-success mt-2 add-category">Add Category</button>
             </div>
+
+
+
             <!-- Cập nhật các userlike/dislike sản phẩm -->
 
             <div class="form-group mt-2" hidden>
@@ -272,10 +282,13 @@
                             <label class="d-block" style="font-weight: bold; color: #00A97F; padding-bottom: 5px;"></label>
                             <input type="text" name="Links[@i].Url" value="@link.Url" class="form-control bg-white text-[#00A97F] border-[#00A97F] text-center" style="width: 100%; border: 1px solid #00A97F;" />
                         </div>
-                        <!-- Remove Button -->
-                        <div class="text-center">
-                            <button type="button" class="btn btn-outline-danger remove-link text-center mt-3" style="border-radius: 12px; color: #ff4d4d; border: 1px solid #ff4d4d; width: 100%; max-width: 100px;">Remove</button>
-                        </div>
+                        @if (link.Url.Contains("cloudinary"))
+                        {
+                            <!-- Remove Button -->
+                            <div class="text-center">
+                                <button type="button" class="btn btn-outline-danger remove-link text-center mt-3" style="border-radius: 12px; color: #ff4d4d; border: 1px solid #ff4d4d; width: 100%; max-width: 100px;">Remove</button>
+                            </div>
+                        }
                     </div>
                     i++;
                 }
