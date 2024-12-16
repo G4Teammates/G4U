@@ -683,10 +683,11 @@ namespace Client.Controllers
                 ResponseModel? response3 = await _categoryService.GetAllCategoryAsync(1, 99);
                 ResponseModel? response4 = await _productService.SearchProductAsync(searchString, 1, int.MaxValue);
                 // Giải mã dữ liệu tổng số sản phẩm
-                var total = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response4.Result.ToString()!));
+                
 
                 if (response != null && response.IsSuccess)
                 {
+                    var total = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response4.Result.ToString()!));
                     productViewModel.Product = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response.Result.ToString()!));
                     productViewModel.CategoriesModel = JsonConvert.DeserializeObject<ICollection<CategoriesModel>>(Convert.ToString(response3.Result.ToString()!));
                     var data = productViewModel.Product;
@@ -701,7 +702,9 @@ namespace Client.Controllers
                 }
                 else
                 {
-                    TempData["error"] = response?.Message;
+                    TempData["error"] = "No product matching";
+                    return RedirectToAction(nameof(Product));
+
                 }
             }
             catch (Exception ex)

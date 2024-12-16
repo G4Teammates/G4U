@@ -777,9 +777,10 @@ namespace Client.Controllers
                 ResponseModel? response3 = await _categoryService.GetAllCategoryAsync(1, 9999);
                 ResponseModel? response4 = await _productService.SearchProductAsync(searchString, 1, 9999);
                 var total = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response2.Result.ToString()!));
-                var resultCount = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response4.Result.ToString()!));
+               
                 if (response != null && response.IsSuccess)
                 {
+                    var resultCount = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response4.Result.ToString()!));
                     productViewModel.Product = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response.Result.ToString()!));
                     productViewModel.CategoriesModel = JsonConvert.DeserializeObject<ICollection<CategoriesModel>>(Convert.ToString(response3.Result.ToString()!));
                     var data = productViewModel.Product;
@@ -791,10 +792,19 @@ namespace Client.Controllers
                     ViewData["CurrentAction"] = "SearchProduct";
                     ViewData["Parameters"] = searchString;
                     ViewData["NamePara"] = "searchString";
+                    // Tạo mã QR cho từng sản phẩm
+                    foreach (var item in productViewModel.Product)
+                    {
+                        string qrCodeUrl = Url.Action("UpdateProduct", "Admin", new { id = item.Id }, Request.Scheme);
+                        item.QrCode = _productService.GenerateQRCode(qrCodeUrl); // Tạo mã QR và lưu vào thuộc tính
+
+                        /*string barCodeUrl = Url.Action("UpdateProduct", "Admin", new { id = item.Id }, Request.Scheme);
+                        item.BarCode = _productService.GenerateBarCode(11111111111); // Tạo mã QR và lưu vào thuộc tính*/
+                    }
                 }
                 else
                 {
-                    TempData["error"] = response?.Message;
+                    TempData["error"] = "No product matching";
                     return RedirectToAction(nameof(ProductsManager));
                 }
             }
@@ -802,15 +812,7 @@ namespace Client.Controllers
             {
                 TempData["error"] = ex.Message;
             }
-            // Tạo mã QR cho từng sản phẩm
-            foreach (var item in productViewModel.Product)
-            {
-                string qrCodeUrl = Url.Action("UpdateProduct", "Admin", new { id = item.Id }, Request.Scheme);
-                item.QrCode = _productService.GenerateQRCode(qrCodeUrl); // Tạo mã QR và lưu vào thuộc tính
 
-                /*string barCodeUrl = Url.Action("UpdateProduct", "Admin", new { id = item.Id }, Request.Scheme);
-                item.BarCode = _productService.GenerateBarCode(11111111111); // Tạo mã QR và lưu vào thuộc tính*/
-            }
 
 
             return View("ProductsManager", productViewModel); // Trả về view ProductsManager với danh sách sản phẩm đã tìm kiếm
@@ -1535,23 +1537,25 @@ namespace Client.Controllers
                 // Gọi API để tìm kiếm sản phẩm theo từ khóa
                 ResponseModel? response = await _categoryService.SearchProductAsync(searchString, page, pageSize);
                 ResponseModel? response2 = await _categoryService.GetAllCategoryAsync(1, 99);
-                ResponseModel? response3 = await _categoryService.SearchProductAsync(searchString, page, pageSize);
-                var total = JsonConvert.DeserializeObject<ICollection<CategoriesModel>>(Convert.ToString(response2.Result.ToString()!));
-                var resultCount = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response3.Result.ToString()!));
-                if (response != null && response.IsSuccess)
+                ResponseModel? response3 = await _categoryService.SearchProductAsync(searchString, page, int.MaxValue);
+                /*var total = JsonConvert.DeserializeObject<ICollection<CategoriesModel>>(Convert.ToString(response2.Result.ToString()!));*/
+                
+                if (response.Result is string resultString && !string.IsNullOrEmpty(resultString) && response.IsSuccess )
                 {
+                    var resultCount = JsonConvert.DeserializeObject<ICollection<CategoriesModel>>(Convert.ToString(response3.Result.ToString()!));
                     categoryViewModel.Categories = JsonConvert.DeserializeObject<ICollection<CategoriesModel>>(Convert.ToString(response.Result.ToString()!));
                     var data = categoryViewModel.Categories;
                     categoryViewModel.pageNumber = pageNumber;
                     categoryViewModel.totalItem = resultCount.Count;
                     categoryViewModel.pageSize = pageSize;
-                    categoryViewModel.pageCount = (int)Math.Ceiling(total.Count / (double)pageSize);
+                    categoryViewModel.pageCount = (int)Math.Ceiling(resultCount.Count / (double)pageSize);
                     TempData["success"] = "Search category successfully";
                     ViewData["CurrentAction"] = "SearchCategory";
                 }
                 else
                 {
-                    TempData["error"] = response?.Message;
+                    TempData["error"] = "No Category matching";
+                    return RedirectToAction(nameof(CategoriesManager));
                 }
             }
             catch (Exception ex)
@@ -1765,22 +1769,24 @@ namespace Client.Controllers
                 ResponseModel? response = await _commentService.SearchCmtAsync(searchString, page, pageSize);
                 ResponseModel? response2 = await _commentService.GetAllCommentAsync(1, 99);
                 ResponseModel? response3 = await _commentService.SearchCmtAsync(searchString, 1, 9999);
-                var total = JsonConvert.DeserializeObject<ICollection<CommentDTOModel>>(Convert.ToString(response2.Result.ToString()!));
-                var resultCount = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response3.Result.ToString()!));
-                if (response != null && response.IsSuccess)
+               /* var total = JsonConvert.DeserializeObject<ICollection<CommentDTOModel>>(Convert.ToString(response2.Result.ToString()!));*/
+                
+                if ( response.Result != "" && response.IsSuccess)
                 {
+                    var resultCount = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response3.Result.ToString()!));
                     cmtViewModel.Comment = JsonConvert.DeserializeObject<ICollection<CommentDTOModel>>(Convert.ToString(response.Result.ToString()!));
                     var data = cmtViewModel.Comment;
                     cmtViewModel.pageNumber = pageNumber;
-                    cmtViewModel.totalItem = total.Count;
+                    cmtViewModel.totalItem = resultCount.Count;
                     cmtViewModel.pageSize = pageSize;
-                    cmtViewModel.pageCount = (int)Math.Ceiling(total.Count / (double)pageSize);
+                    cmtViewModel.pageCount = (int)Math.Ceiling(resultCount.Count / (double)pageSize);
                     TempData["success"] = "Search comment successfully";
                     ViewData["CurrentAction"] = "SearchCmt";
                 }
                 else
                 {
-                    TempData["error"] = response?.Message;
+                    TempData["error"] = "No Comment matching";
+                    return RedirectToAction(nameof(CommentManager));
                 }
             }
             catch (Exception ex)
@@ -1851,6 +1857,11 @@ namespace Client.Controllers
         {
             IEnumerable<Claim> claim = HttpContext.User.Claims;
             string un = claim.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value!;
+            if (un == null)
+            {
+                TempData["error"] = "Please login first";
+                return Json(new { success = false, message = TempData["error"] });
+            }
             if (!ModelState.IsValid)
             {
                 var errors = ModelState.Values.SelectMany(v => v.Errors)

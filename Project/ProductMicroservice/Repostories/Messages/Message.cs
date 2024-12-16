@@ -274,7 +274,7 @@ namespace ProductMicroservice.Repostories.Messages
             try
             {
                 // tên cổng
-                const string ExchangeName = "delete_category";
+               /* const string ExchangeName = "StastisticalGroupByUser";*/
                 // tên queue
                 const string QueueName = "Stastistical_groupby_user_product";
                 /*var connectionFactory = new ConnectionFactory
@@ -303,7 +303,7 @@ namespace ProductMicroservice.Repostories.Messages
 
                     if (!string.IsNullOrEmpty(message))
                     {
-                        message = JsonSerializer.Deserialize<string>(message);
+                        /*message = JsonSerializer.Deserialize<string>(message);*/
                         Console.WriteLine("Product received message: " + message); // Log raw message
 
                         // Deserialize JSON message to CategoryDeleteResponse object

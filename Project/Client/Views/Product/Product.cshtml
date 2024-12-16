@@ -415,56 +415,69 @@
     function validatePriceInput(inputElement, errorElement) {
         if (inputElement.value < 0) {
             errorElement.classList.remove('d-none');
+            return false; // Có lỗi
         } else {
             errorElement.classList.add('d-none');
+            return true; // Không có lỗi
         }
     }
 
+    // Hàm kiểm tra giá trị minRange và maxRange
+    function validateRange() {
+        const minRangeValue = parseFloat(minRangeInput.value) || 0;
+        const maxRangeValue = parseFloat(maxRangeInput.value) || 0;
+
+        if (maxRangeValue <= minRangeValue && maxRangeInput.value && minRangeInput.value) {
+            rangeError.classList.remove('d-none'); // Hiển thị lỗi
+            return false; // Có lỗi
+        } else {
+            rangeError.classList.add('d-none'); // Ẩn lỗi
+            return true; // Không có lỗi
+        }
+    }
+
+    // Hàm tổng hợp để kiểm tra tất cả các lỗi
+    function validateAll() {
+        const isMinPriceValid = validatePriceInput(minRangeInput, minPriceError);
+        const isMaxPriceValid = validatePriceInput(maxRangeInput, maxPriceError);
+        const isRangeValid = validateRange();
+
+        // Trả về true nếu tất cả các kiểm tra hợp lệ
+        return isMinPriceValid && isMaxPriceValid && isRangeValid;
+    }
+
     // Lấy các phần tử input và các phần tử thông báo lỗi
-    const minRange = document.getElementById('minRange');
-    const maxRange = document.getElementById('maxRange');
+    const minRangeInput = document.getElementById('minRange');
+    const maxRangeInput = document.getElementById('maxRange');
     const minPriceError = document.getElementById('minPriceError');
     const maxPriceError = document.getElementById('maxPriceError');
+    const rangeError = document.getElementById('rangeError');
+    const submitButton = document.querySelector('button[type="submit"]');
 
-    // Gắn sự kiện input để kiểm tra giá trị khi người dùng nhập
-    minRange.addEventListener('input', function () {
-        validatePriceInput(minRange, minPriceError);
+    // Thêm sự kiện khi nhập giá trị
+    minRangeInput.addEventListener('input', function () {
+        validatePriceInput(minRangeInput, minPriceError);
+        validateRange();
+        submitButton.disabled = !validateAll();
     });
 
-    maxRange.addEventListener('input', function () {
-        validatePriceInput(maxRange, maxPriceError);
+    maxRangeInput.addEventListener('input', function () {
+        validatePriceInput(maxRangeInput, maxPriceError);
+        validateRange();
+        submitButton.disabled = !validateAll();
     });
 
     // Ngăn form submit nếu có lỗi
     document.getElementById('filterForm').addEventListener('submit', function (event) {
-        if (minRange.value < 0 || maxRange.value < 0) {
-            event.preventDefault();
+        if (!validateAll()) {
+            event.preventDefault(); // Ngăn form submit
         }
     });
+
+    // Khởi tạo trạng thái ban đầu của nút submit
+    submitButton.disabled = !validateAll();
 </script>
-<script>
-    // Lấy các phần tử HTML
-    const minRangeInput = document.getElementById('minRange');
-    const maxRangeInput = document.getElementById('maxRange');
-    const rangeError = document.getElementById('rangeError');
 
-    // Hàm kiểm tra giá trị
-    function validateRange() {
-        const minRange = parseFloat(minRangeInput.value) || 0;
-        const maxRange = parseFloat(maxRangeInput.value) || 0;
-
-        // Kiểm tra điều kiện maxRange <= minRange
-        if (maxRange <= minRange && maxRangeInput.value && minRangeInput.value) {
-            rangeError.classList.remove('d-none'); // Hiển thị lỗi
-        } else {
-            rangeError.classList.add('d-none'); // Ẩn lỗi
-        }
-    }
-
-    // Thêm sự kiện khi nhập giá trị
-    minRangeInput.addEventListener('input', validateRange);
-    maxRangeInput.addEventListener('input', validateRange);
-</script>
 <script>
     function addToWishList(productId, productName, productPrice, productImage) {
         // Cập nhật các giá trị input ẩn với thông tin của sản phẩm hiện tại

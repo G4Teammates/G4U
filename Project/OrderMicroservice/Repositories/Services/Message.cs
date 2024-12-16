@@ -461,7 +461,7 @@ namespace OrderMicroservice.Repositories.Services
                 // tên queue
                 const string QueueName = "prepareData_for_export";
 
-                var connectionFactory = new ConnectionFactory
+                /*var connectionFactory = new ConnectionFactory
                 {
                     UserName = "guest",
                     Password = "guest",
@@ -470,16 +470,16 @@ namespace OrderMicroservice.Repositories.Services
                     HostName = "localhost"
                 };
                 using var connection = connectionFactory.CreateConnection();
-                using var channel = connection.CreateModel();
+                using var channel = connection.CreateModel();*/
 
-                var queue = channel.QueueDeclare(
+                var queue = _channel3.QueueDeclare(
                     queue: QueueName,
                     durable: false,
                     exclusive: false,
                     autoDelete: false,
                     arguments: ImmutableDictionary<string, object>.Empty);
 
-                var consumer = new EventingBasicConsumer(channel);
+                var consumer = new EventingBasicConsumer(_channel3);
 
                 consumer.Received += (sender, eventArgs) =>
                 {
@@ -499,7 +499,7 @@ namespace OrderMicroservice.Repositories.Services
                         }
                     }
                 };
-                channel.BasicConsume(
+                _channel3.BasicConsume(
                     queue: queue.QueueName,
                     autoAck: true,
                     consumer: consumer);

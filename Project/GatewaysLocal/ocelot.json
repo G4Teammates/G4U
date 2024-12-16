@@ -1020,6 +1020,19 @@
     //                                                                                                                    //
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    //get by id
+    {
+      "DownstreamPathTemplate": "/api/Reports/{id}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7039
+        }
+      ],
+      "UpstreamPathTemplate": "/Reports/{id}",
+      "UpstreamHttpMethod": [ "Get" ]
+    },
     {
       "DownstreamPathTemplate": "/api/Reports",
       "DownstreamScheme": "https",
@@ -1031,6 +1044,18 @@
       ],
       "UpstreamPathTemplate": "/Reports",
       "UpstreamHttpMethod": [ "Get" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/Reports",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7039
+        }
+      ],
+      "UpstreamPathTemplate": "/Reports",
+      "UpstreamHttpMethod": [ "Put" ]
     },
     {
       "DownstreamPathTemplate": "/api/Reports/userName/{UserName}",
