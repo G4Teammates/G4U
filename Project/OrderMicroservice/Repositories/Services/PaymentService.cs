@@ -24,12 +24,12 @@ namespace OrderMicroservice.Repositories.Services
         private static readonly string MoMoGateway = "https://test-payment.momo.vn/v2/gateway/api/create";
 
         //Host
-        //private static readonly string ClientUrl = "https://webmvc-gbfngyfng2bfbccj.southeastasia-01.azurewebsites.net";
-        //private static readonly string IpnMomo = "https://oderapi-fkddgtb7ayeweyab.southeastasia-01.azurewebsites.net" + "/api/payment/ipn/momo";    
+        private static readonly string ClientUrl = "https://webmvc-gbfngyfng2bfbccj.southeastasia-01.azurewebsites.net";
+        private static readonly string IpnMomo = "https://oderapi-fkddgtb7ayeweyab.southeastasia-01.azurewebsites.net" + "/api/payment/ipn/momo";
 
         //Local
-        private static readonly string ClientUrl = "https://localhost:7296";
-        private static readonly string IpnMomo = "https://8210-2402-800-63b6-c615-1a5-b818-834e-68c7.ngrok-free.app" + "/api/payment/ipn/momo";
+        //private static readonly string ClientUrl = "https://localhost:7296";
+        //private static readonly string IpnMomo = "https://8210-2402-800-63b6-c615-1a5-b818-834e-68c7.ngrok-free.app" + "/api/payment/ipn/momo";
 
         private IMessage _message = message;
         public async Task<ResponseModel> MoMoPayment(MoMoRequestFromClient requestClient)
