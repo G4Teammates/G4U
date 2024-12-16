@@ -547,8 +547,11 @@ namespace UserMicroservice.Repositories.Services
             try
             {
                 // Tạo token đặt lại mật khẩu
-                //var token = _helper.GeneratePasswordResetToken(model);
-                var gateway = "https://gatewayapi-fbb8b8hcdcdgcqfq.southeastasia-01.azurewebsites.net";
+                //gateway host
+                //var gateway = "https://gatewayapi-fbb8b8hcdcdgcqfq.southeastasia-01.azurewebsites.net";
+
+                //gateway local
+                var gateway = "https://localhost:7296";
                 // Tạo URL thủ công nếu không có ngữ cảnh HttpRequest
                 string confirmationLink = $"{gateway}/User/ActiveUser?userId={model.Id}";
 
