@@ -292,3 +292,93 @@ body.dark-theme .game-info{
 body.dark-theme .same {
     color: white;
 }
+
+
+/*Phần hiển thị giá tiền và button add to cart*/
+.product-price-container {
+    display: flex;
+    align-items: center;
+    gap: 5px; /* Giảm khoảng cách giữa các phần tử */
+    flex-wrap: nowrap; /* Không xuống hàng */
+    text-align: center;
+}
+
+/* Discount Section */
+.discount-section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #198754, #1f9b6c);
+    padding: 5px 10px; /* Giảm padding để tiết kiệm không gian */
+    border: 2px solid #146c43;
+    border-radius: 8px;
+    color: white;
+    font-weight: bold;
+    font-size: 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: auto;
+}
+
+/* Giá trước và sau giảm */
+.price-section {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-right: 5px; /* Tạo khoảng cách rất nhỏ nếu cần */
+}
+
+.original-price {
+    text-decoration: line-through;
+    color: #b0b0b0;
+    font-size: 0.9rem;
+}
+
+.discounted-price {
+    color: white;
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+
+/* Nút */
+.btn {
+    padding: 5px 10px;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 5px;
+    text-align: center;
+    width: auto;
+}
+
+.btn-play {
+    background-color: #198754;
+    border-color: #146c43;
+}
+
+.btn-cart {
+    background-color: #007bff;
+    border-color: #0056b3;
+}
+
+.btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .product-price-container {
+        gap: 3px; /* Giảm thêm khoảng cách cho màn hình nhỏ */
+    }
+
+    .discount-section {
+        font-size: 0.9rem;
+        padding: 3px 8px;
+    }
+
+    .btn {
+        font-size: 0.9rem;
+    }
+}
+
+
+
