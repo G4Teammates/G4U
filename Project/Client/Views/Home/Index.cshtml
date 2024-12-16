@@ -2,7 +2,6 @@
 @model AllModel
 
 
-
 <div id="g_id_onload"
      data-client_id="931532368031-fve5bfiu4t6uvu5laj3gq9fbj7okl43e.apps.googleusercontent.com"
      data-login_uri='/google-response'
@@ -127,7 +126,7 @@
 }
 <div class="gamemonth" style="margin-top:3vw;">
     <section class="header_section">
-        <h1 style="font-family: 'Poppins', sans-serif; text-transform: uppercase;  text-align: center;">
+        <h1 style="font-size: 4vw;font-family: 'Poppins', sans-serif; text-transform: uppercase;  text-align: center;">
             Game Of The Month
         </h1>
     </section>
@@ -183,13 +182,13 @@
                                 </p>
                             </div>
                             <div class="row footeer_card">
-                                <div class="col-md-6 btn_card">
+                                <div class="col-6 col-sm-6 col-md-6 btn_card">
                                     <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@product.Id" class="btn_orther">Read More</a>
                                 </div>
-                                <div class="col-md-5"></div>
+                                <div class="col-5 col-sm-5 col-md-5"></div>
                                 <!-- Form để gửi yêu cầu thêm vào danh sách yêu thích -->
                                 @* Day la trai tym ne *@
-                                <div title="Wishlist" class="col-md-1 heart-container">
+                                <div title="Wishlist" class="col-1 col-sm-1 col-md-1 heart-container">
                                     <form id="wishlistForm" method="post">
                                         <input type="hidden" name="ProductId" id="ProductId" value="@product.Id" />
                                         <input type="hidden" name="ProductName" id="ProductName" value="@product.Name" />
@@ -268,12 +267,12 @@
 
 <div class="gamefree row">
     <div class="row">
-        <div class="col-9 col-sm-9 col-md-9 free-games-section">
+        <div class="col-4 col-sm-4 col-md-4 free-games-section">
             <i class="fa-solid fa-gift"></i>
             <span>Featured Discounts</span>
         </div>
-        <div class="col-3 col-sm-3 col-md-3 footeer_card" >
-            <div class="btn_card" style="display:flex;justify-content:flex-end;" style="width:250px;font-size:font: 15px Montserrat;">
+        <div class="col-8 col-sm-8 col-md-8 footeer_card d-flex justify-content-end" >
+            <div class="btn_card" style="display:flex;justify-content:flex-end;width:250px;font-size:font: 15px Montserrat;">
                 <a asp-action="ViewAll" asp-controller="Product" asp-route-viewString="discount" value="discount" class="btn_orther">View More</a>
             </div>
         </div>
@@ -289,103 +288,104 @@
 
             foreach (var product in topDiscountProducts)
             {
-                <div class="col-12 col-sm-12 col-md-3 card_other mt-4">
-                    <div class="image-container d-flex justify-content-center align-items-center" style="height: 200px;">
-                        @if (product.Links != null)
-                        {
-                            string firstImageUrl = product.Links.FirstOrDefault(link => link.Url.Contains("cloudinary"))?.Url;
-                            if (firstImageUrl != null)
+                <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@product.Id" class="col-3 col-sm-3 col-md-3 mt-4 text-decoration-none" >
+                    <div class="card_other">
+                        <div class="image-container d-flex justify-content-center align-items-center" style="width:100%;height: 200px;">
+                            @if (product.Links != null)
                             {
-                                <img src="@firstImageUrl" alt="Cloudinary Image" class="img-fluid" style="height: 100%; width: auto; object-fit: cover;" />
+                                string firstImageUrl = product.Links.FirstOrDefault(link => link.Url.Contains("cloudinary"))?.Url;
+                                if (firstImageUrl != null)
+                                {
+                                    <img src="@firstImageUrl" alt="Cloudinary Image" class="img-fluid" style="height: 100%; width: auto; object-fit: cover;" />
+                                }
                             }
-                        }
-                    </div>
+                        </div>
 
-                    <div class="info_other">
-                        <h1>@product.Name</h1>
-                        <p>
-                            @(product.Description.Length > 100
-                                ? product.Description.Substring(0, 100) + "..."
-                                : product.Description)
-                        </p>
-                        <div class="row">
-                            <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@product.Id" class="col-md-6 btn_orther text-center">Read More</a>
-                            <div class="col-md-4"></div>
+                        <div class="info_other">
+                            <h1>@product.Name</h1>
+                            <p>
+                                @(product.Description.Length > 100
+                                    ? product.Description.Substring(0, 100) + "..."
+                                    : product.Description)
+                            </p>
+                            <div class="row">
+                                <div class="col-md-6 btn_orther text-center">Read More</div>
+                                <div class="col-md-4"></div>
 
-                            @* Day la trai tym ne *@
-                            <div title="Wishlist" class="col-md-1 heart-container">
-                                <form id="wishlistForm" method="post">
-                                    <input type="hidden" name="ProductId" id="ProductId" value="@product.Id" />
-                                    <input type="hidden" name="ProductName" id="ProductName" value="@product.Name" />
-                                    <input type="hidden" name="ProductPrice" id="ProductPrice" value="@product.Price" />
+                                @* Day la trai tym ne *@
+                                <div title="Wishlist" class="col-md-1 heart-container">
+                                    <form id="wishlistForm" method="post">
+                                        <input type="hidden" name="ProductId" id="ProductId" value="@product.Id" />
+                                        <input type="hidden" name="ProductName" id="ProductName" value="@product.Name" />
+                                        <input type="hidden" name="ProductPrice" id="ProductPrice" value="@product.Price" />
 
-                                    @{
-                                        string secondImageUrl2 = null;
-                                        int imageCount2 = 0;
-                                    }
-                                    @foreach (var link in product.Links)
-                                    {
-                                        if (link.Url.Contains("cloudinary"))
+                                        @{
+                                            string secondImageUrl2 = null;
+                                            int imageCount2 = 0;
+                                        }
+                                        @foreach (var link in product.Links)
                                         {
-                                            imageCount2++;
-                                            if (imageCount2 == 2)
+                                            if (link.Url.Contains("cloudinary"))
                                             {
-                                                secondImageUrl2 = link.Url;
-                                                break;
+                                                imageCount2++;
+                                                if (imageCount2 == 2)
+                                                {
+                                                    secondImageUrl2 = link.Url;
+                                                    break;
+                                                }
                                             }
                                         }
-                                    }
-                                    <input type="hidden" name="ProductImage" id="ProductImage" value="@secondImageUrl2" />
+                                        <input type="hidden" name="ProductImage" id="ProductImage" value="@secondImageUrl2" />
 
-                                    <!-- Checkbox hidden -->
-                                    <input type="checkbox" id="wishlistCheckbox" class="checkbox" onclick="addToWishList('@product.Id', '@product.Name', '@product.Price', '@secondImageUrl2')" />
+                                        <!-- Checkbox hidden -->
+                                        <input type="checkbox" id="wishlistCheckbox" class="checkbox" onclick="addToWishList('@product.Id', '@product.Name', '@product.Price', '@secondImageUrl2')" />
 
-                                    <!-- Icon trái tim -->
-                                    <div class="svg-container">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="svg-outline" viewBox="0 0 24 24">
-                                            <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Zm-3.585,18.4a2.973,2.973,0,0,1-3.83,0C4.947,16.006,2,11.87,2,8.967a4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,11,8.967a1,1,0,0,0,2,0,4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,22,8.967C22,11.87,19.053,16.006,13.915,20.313Z"></path>
-                                        </svg>
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="svg-filled" viewBox="0 0 24 24">
-                                            <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Z"></path>
-                                        </svg>
-                                        <svg xmlns="http://www.w3.org/2000/svg" height="100" width="100" class="svg-celebrate">
-                                            <polygon points="10,10 20,20"></polygon>
-                                            <polygon points="10,50 20,50"></polygon>
-                                            <polygon points="20,80 30,70"></polygon>
-                                            <polygon points="90,10 80,20"></polygon>
-                                            <polygon points="90,50 80,50"></polygon>
-                                            <polygon points="80,80 70,70"></polygon>
-                                        </svg>
-                                    </div>
-                                </form>
+                                        <!-- Icon trái tim -->
+                                        <div class="svg-container">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="svg-outline" viewBox="0 0 24 24">
+                                                <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Zm-3.585,18.4a2.973,2.973,0,0,1-3.83,0C4.947,16.006,2,11.87,2,8.967a4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,11,8.967a1,1,0,0,0,2,0,4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,22,8.967C22,11.87,19.053,16.006,13.915,20.313Z"></path>
+                                            </svg>
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="svg-filled" viewBox="0 0 24 24">
+                                                <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Z"></path>
+                                            </svg>
+                                            <svg xmlns="http://www.w3.org/2000/svg" height="100" width="100" class="svg-celebrate">
+                                                <polygon points="10,10 20,20"></polygon>
+                                                <polygon points="10,50 20,50"></polygon>
+                                                <polygon points="20,80 30,70"></polygon>
+                                                <polygon points="90,10 80,20"></polygon>
+                                                <polygon points="90,50 80,50"></polygon>
+                                                <polygon points="80,80 70,70"></polygon>
+                                            </svg>
+                                        </div>
+                                    </form>
+                                </div>
+
                             </div>
-                            
+
                         </div>
-                        
+                        <!-- Thêm phần số lượt view -->
+                        <div class="view-count">
+                            <i class="fa-solid fa-eye"></i>
+                            <span>@product.Interactions.NumberOfViews</span>
+                        </div>
+
+                        <div class="like-dislike-container">
+                            <!-- Like và Dislike -->
+                            <form asp-action="IncreaseLikeProduct" asp-controller="Product" method="post">
+                                <input type="hidden" name="productID" value="@product.Id" />
+                                <span id="like-count-@product.Id" class="like-count">@product.Interactions.NumberOfLikes</span>
+                                <i class="fa-solid fa-thumbs-up like-icon"></i>
+                            </form>
+
+                            <form asp-action="DecreaseLikeProduct" asp-controller="Product" method="post">
+                                <input type="hidden" name="productID" value="@product.Id" />
+                                <span id="dislike-count-@product.Id" class="dislike-count">@product.Interactions.NumberOfDisLikes</span>
+                                <i class="fa-solid fa-thumbs-down dislike-icon"></i>
+                            </form>
+                        </div>
                     </div>
-                    <!-- Thêm phần số lượt view -->
-                    <div class="view-count">
-                        <i class="fa-solid fa-eye" ></i>
-                        <span>@product.Interactions.NumberOfViews</span>
-                    </div>
-
-                    <div class="like-dislike-container">
-                        <!-- Like và Dislike -->
-                        <form asp-action="IncreaseLikeProduct" asp-controller="Product" method="post">
-                            <input type="hidden" name="productID" value="@product.Id" />
-                            <span id="like-count-@product.Id" class="like-count">@product.Interactions.NumberOfLikes</span>
-                            <i class="fa-solid fa-thumbs-up like-icon"></i>
-                        </form>
-
-                        <form asp-action="DecreaseLikeProduct" asp-controller="Product" method="post">
-                            <input type="hidden" name="productID" value="@product.Id" />
-                            <span id="dislike-count-@product.Id" class="dislike-count">@product.Interactions.NumberOfDisLikes</span>
-                            <i class="fa-solid fa-thumbs-down dislike-icon"></i>
-                        </form>
-                    </div>
-                </div>
-
-
+                </a>
+                
             }
         }
     </div>
@@ -395,7 +395,7 @@
 <div class="ortherproduct">
 
     <section class="header_section">
-        <h1 style="font-family: 'Poppins', sans-serif; text-transform: uppercase; text-align: center;">
+        <h1 style="font-size:4vw;font-family: 'Poppins', sans-serif; text-transform: uppercase; text-align: center;">
             Orther Product
         </h1>
     </section>
@@ -415,10 +415,10 @@
 
     <section id="popular">
         <div class="d-flex justify-content-between align-items-center row">
-            <h3 class="col-2 col-sm-2 col-md-2 ms-3">Popular</h3>
-            <div class="col-2 col-sm-2 col-md-2 footeer_card">
-                <div class="btn_card" style="display:flex;justify-content:end;width:200px;font-size:font: 15px Montserrat;">
-                    <a asp-action="ViewAll" asp-controller="Product" asp-route-viewString="popular" value="popular" class="btn_orther">View More</a>
+            <h3 class="col-4 col-sm-4 col-md-4 ms-3" style="font-size:3vw;">Popular</h3>
+            <div class="col-6 col-sm-6 col-md-6 footeer_card d-flex justify-content-end">
+                <div class="btn_card" style="display:flex;justify-content:end;width:150px;font-size: 2.5vw Montserrat;">
+                    <a asp-action="ViewAll" asp-controller="Product" asp-route-viewString="popular" value="popular" class="btn_orther" style="font-size:15px;">View More</a>
                 </div>
             </div>
         </div>
@@ -434,96 +434,99 @@
 
                 foreach (var product in topViewedProducts)
                 {
-                    <div class="card_other mt-4">
-                        @if (product.Links != null)
-                        {
-                            string firstImageUrl = product.Links.FirstOrDefault(link => link.Url.Contains("cloudinary"))?.Url;
-                            if (firstImageUrl != null)
+                    <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@product.Id" class="col-3 col-sm-3 col-md-3 mt-4 text-decoration-none">
+                        <div class="card_other1">
+                            @if (product.Links != null)
                             {
-                                <img src="@firstImageUrl" alt="Cloudinary Image" class="img-fluid" />
+                                string firstImageUrl = product.Links.FirstOrDefault(link => link.Url.Contains("cloudinary"))?.Url;
+                                if (firstImageUrl != null)
+                                {
+                                    <img src="@firstImageUrl" alt="Cloudinary Image" class="img-fluid" />
+                                }
                             }
-                        }
-                        <div class="info_other">
-                            <h1>@product.Name</h1>
-                            <p>
-                                @(product.Description.Length > 100
-                                    ? product.Description.Substring(0, 100) + "..."
-                                    : product.Description)
-                            </p>
-                            <div class="row d-flex align-items-center justify-content-between">
-                                <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@product.Id" class="col-md-6 btn_orther ms-2 text-center">Read More</a>
-                                <div class="col-md-2"></div>
-                                @* Day la trai tym ne *@
-                                <div title="Wishlist" class="col-md-1 heart-container">
-                                    <form id="wishlistForm" method="post">
-                                        <input type="hidden" name="ProductId" id="ProductId" value="@product.Id" />
-                                        <input type="hidden" name="ProductName" id="ProductName" value="@product.Name" />
-                                        <input type="hidden" name="ProductPrice" id="ProductPrice" value="@product.Price" />
+                            <div class="info_other">
+                                <h1>@product.Name</h1>
+                                <p>
+                                    @(product.Description.Length > 100
+                                        ? product.Description.Substring(0, 100) + "..."
+                                        : product.Description)
+                                </p>
+                                <div class="row d-flex align-items-center justify-content-between">
+                                    <div class="col-6 col-sm-6 col-md-6 text-center btn_orther">Read More</div>
+                                    <div class="col-2 colsm-2 col-md-2"></div>
+                                    @* Day la trai tym ne *@
+                                    <div title="Wishlist" class="col-1 col-sm-1 col-md-1 heart-container">
+                                        <form id="wishlistForm" method="post">
+                                            <input type="hidden" name="ProductId" id="ProductId" value="@product.Id" />
+                                            <input type="hidden" name="ProductName" id="ProductName" value="@product.Name" />
+                                            <input type="hidden" name="ProductPrice" id="ProductPrice" value="@product.Price" />
 
-                                        @{
-                                            string secondImageUrl2 = null;
-                                            int imageCount2 = 0;
-                                        }
-                                        @foreach (var link in product.Links)
-                                        {
-                                            if (link.Url.Contains("cloudinary"))
+                                            @{
+                                                string secondImageUrl2 = null;
+                                                int imageCount2 = 0;
+                                            }
+                                            @foreach (var link in product.Links)
                                             {
-                                                imageCount2++;
-                                                if (imageCount2 == 2)
+                                                if (link.Url.Contains("cloudinary"))
                                                 {
-                                                    secondImageUrl2 = link.Url;
-                                                    break;
+                                                    imageCount2++;
+                                                    if (imageCount2 == 2)
+                                                    {
+                                                        secondImageUrl2 = link.Url;
+                                                        break;
+                                                    }
                                                 }
                                             }
-                                        }
-                                        <input type="hidden" name="ProductImage" id="ProductImage" value="@secondImageUrl2" />
+                                            <input type="hidden" name="ProductImage" id="ProductImage" value="@secondImageUrl2" />
 
-                                        <!-- Checkbox hidden -->
-                                        <input type="checkbox" id="wishlistCheckbox" class="checkbox" onclick="addToWishList('@product.Id', '@product.Name', '@product.Price', '@secondImageUrl2')" />
+                                            <!-- Checkbox hidden -->
+                                            <input type="checkbox" id="wishlistCheckbox" class="checkbox" onclick="addToWishList('@product.Id', '@product.Name', '@product.Price', '@secondImageUrl2')" />
 
-                                        <!-- Icon trái tim -->
-                                        <div class="svg-container">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="svg-outline" viewBox="0 0 24 24">
-                                                <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Zm-3.585,18.4a2.973,2.973,0,0,1-3.83,0C4.947,16.006,2,11.87,2,8.967a4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,11,8.967a1,1,0,0,0,2,0,4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,22,8.967C22,11.87,19.053,16.006,13.915,20.313Z"></path>
-                                            </svg>
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="svg-filled" viewBox="0 0 24 24">
-                                                <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Z"></path>
-                                            </svg>
-                                            <svg xmlns="http://www.w3.org/2000/svg" height="100" width="100" class="svg-celebrate">
-                                                <polygon points="10,10 20,20"></polygon>
-                                                <polygon points="10,50 20,50"></polygon>
-                                                <polygon points="20,80 30,70"></polygon>
-                                                <polygon points="90,10 80,20"></polygon>
-                                                <polygon points="90,50 80,50"></polygon>
-                                                <polygon points="80,80 70,70"></polygon>
-                                            </svg>
-                                        </div>
-                                    </form>
+                                            <!-- Icon trái tim -->
+                                            <div class="svg-container">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="svg-outline" viewBox="0 0 24 24">
+                                                    <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Zm-3.585,18.4a2.973,2.973,0,0,1-3.83,0C4.947,16.006,2,11.87,2,8.967a4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,11,8.967a1,1,0,0,0,2,0,4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,22,8.967C22,11.87,19.053,16.006,13.915,20.313Z"></path>
+                                                </svg>
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="svg-filled" viewBox="0 0 24 24">
+                                                    <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Z"></path>
+                                                </svg>
+                                                <svg xmlns="http://www.w3.org/2000/svg" height="100" width="100" class="svg-celebrate">
+                                                    <polygon points="10,10 20,20"></polygon>
+                                                    <polygon points="10,50 20,50"></polygon>
+                                                    <polygon points="20,80 30,70"></polygon>
+                                                    <polygon points="90,10 80,20"></polygon>
+                                                    <polygon points="90,50 80,50"></polygon>
+                                                    <polygon points="80,80 70,70"></polygon>
+                                                </svg>
+                                            </div>
+                                        </form>
+                                    </div>
                                 </div>
+
                             </div>
-                            
-                        </div>
-                        <!-- Thêm phần số lượt view -->
-                        <div class="view-count">
-                            <i class="fa-solid fa-eye" ></i>
-                            <span>@product.Interactions.NumberOfViews</span>
-                        </div>
+                            <!-- Thêm phần số lượt view -->
+                            <div class="view-count">
+                                <i class="fa-solid fa-eye"></i>
+                                <span>@product.Interactions.NumberOfViews</span>
+                            </div>
 
-                        <div class="like-dislike-container">
-                            <!-- Like và Dislike -->
-                            <form asp-action="IncreaseLikeProduct" asp-controller="Product" method="post">
-                                <input type="hidden" name="productID" value="@product.Id" />
-                                <span id="like-count-@product.Id" class="like-count">@product.Interactions.NumberOfLikes</span>
-                                <i class="fa-solid fa-thumbs-up like-icon"></i>
-                            </form>
+                            <div class="like-dislike-container">
+                                <!-- Like và Dislike -->
+                                <form asp-action="IncreaseLikeProduct" asp-controller="Product" method="post">
+                                    <input type="hidden" name="productID" value="@product.Id" />
+                                    <span id="like-count-@product.Id" class="like-count">@product.Interactions.NumberOfLikes</span>
+                                    <i class="fa-solid fa-thumbs-up like-icon"></i>
+                                </form>
 
-                            <form asp-action="DecreaseLikeProduct" asp-controller="Product" method="post">
-                                <input type="hidden" name="productID" value="@product.Id" />
-                                <span id="dislike-count-@product.Id" class="dislike-count">@product.Interactions.NumberOfDisLikes</span>
-                                <i class="fa-solid fa-thumbs-down dislike-icon"></i>
-                            </form>
+                                <form asp-action="DecreaseLikeProduct" asp-controller="Product" method="post">
+                                    <input type="hidden" name="productID" value="@product.Id" />
+                                    <span id="dislike-count-@product.Id" class="dislike-count">@product.Interactions.NumberOfDisLikes</span>
+                                    <i class="fa-solid fa-thumbs-down dislike-icon"></i>
+                                </form>
+                            </div>
                         </div>
-                    </div>
+                    </a>
+                    
                 }
             }
         </div>
@@ -531,12 +534,12 @@
 
 
 
-    <section id="free">
+    <section id="free" style="margin-top:10vw;">
         <div class="d-flex justify-content-between align-items-center row">
-            <h3 class="col-2 col-sm-2 col-md-2 ms-3">Free</h3>
-            <div class="col-2 col-sm-2 col-md-2 footeer_card">
-                <div class="btn_card" style="display:flex;justify-content:end;width:200px;font-size:font: 15px Montserrat;">
-                    <a asp-action="ViewAll" asp-controller="Product" asp-route-viewString="free" value="free" class="btn_orther">View More</a>
+            <h3 class="col-4 col-sm-4 col-md-4 ms-3" style="font-size:3vw;">Free</h3>
+            <div class="col-6 col-sm-6 col-md-6 footeer_card d-flex justify-content-end">
+                <div class="btn_card" style="display:flex;justify-content:end;width:150px;font-size: 2.5vw Montserrat;">
+                    <a asp-action="ViewAll" asp-controller="Product" asp-route-viewString="free" value="free" class="btn_orther" style="font-size:15px;">View More</a>
                 </div>
             </div>
         </div>
@@ -550,111 +553,114 @@
 
                 foreach (var product in freeProducts)
                 {
-                    <div class="card_other mt-4">
-                        @if (product.Links != null)
-                        {
-                            // Tìm link ảnh đầu tiên từ Cloudinary
-                            string firstImageUrl = product.Links.FirstOrDefault(link => link.Url.Contains("cloudinary"))?.Url;
-
-                            // Hiển thị ảnh đầu tiên nếu tồn tại
-                            if (firstImageUrl != null)
+                    <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@product.Id" class="col-3 col-sm-3 col-md-3 mt-4 text-decoration-none">
+                        <div class="card_other1">
+                            @if (product.Links != null)
                             {
-                                <img src="@firstImageUrl" alt="Cloudinary Image" class="img-fluid" />
-                            }
-                        }
-                        <div class="info_other">
-                            <h1>@product.Name</h1>
-                            <p>
-                                @(product.Description.Length > 100
-                                    ? product.Description.Substring(0, 100) + "..."
-                                    : product.Description)
-                            </p>
-                            <div class="row d-flex align-items-center justify-content-between">
-                                <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@product.Id" class="col-md-6 btn_orther ms-2 text-center">Read More</a>
-                                <div class="col-md-2"></div>
-                                @* Day la trai tym ne *@
-                                <div title="Wishlist" class="col-md-1 heart-container">
-                                    <form id="wishlistForm" method="post">
-                                        <input type="hidden" name="ProductId" id="ProductId" value="@product.Id" />
-                                        <input type="hidden" name="ProductName" id="ProductName" value="@product.Name" />
-                                        <input type="hidden" name="ProductPrice" id="ProductPrice" value="@product.Price" />
+                                // Tìm link ảnh đầu tiên từ Cloudinary
+                                string firstImageUrl = product.Links.FirstOrDefault(link => link.Url.Contains("cloudinary"))?.Url;
 
-                                        @{
-                                            string secondImageUrl2 = null;
-                                            int imageCount2 = 0;
-                                        }
-                                        @foreach (var link in product.Links)
-                                        {
-                                            if (link.Url.Contains("cloudinary"))
+                                // Hiển thị ảnh đầu tiên nếu tồn tại
+                                if (firstImageUrl != null)
+                                {
+                                    <img src="@firstImageUrl" alt="Cloudinary Image" class="img-fluid" />
+                                }
+                            }
+                            <div class="info_other">
+                                <h1>@product.Name</h1>
+                                <p>
+                                    @(product.Description.Length > 100
+                                        ? product.Description.Substring(0, 100) + "..."
+                                        : product.Description)
+                                </p>
+                                <div class="row d-flex align-items-center justify-content-between">
+                                    <div class="col-6 col-sm-6 col-md-6 text-center btn_orther">Read More</div>
+                                    <div class="col-2 col-sm-2 col-md-2"></div>
+                                    @* Day la trai tym ne *@
+                                    <div title="Wishlist" class="col-1 col-sm-1 col-md-1 heart-container">
+                                        <form id="wishlistForm" method="post">
+                                            <input type="hidden" name="ProductId" id="ProductId" value="@product.Id" />
+                                            <input type="hidden" name="ProductName" id="ProductName" value="@product.Name" />
+                                            <input type="hidden" name="ProductPrice" id="ProductPrice" value="@product.Price" />
+
+                                            @{
+                                                string secondImageUrl2 = null;
+                                                int imageCount2 = 0;
+                                            }
+                                            @foreach (var link in product.Links)
                                             {
-                                                imageCount2++;
-                                                if (imageCount2 == 2)
+                                                if (link.Url.Contains("cloudinary"))
                                                 {
-                                                    secondImageUrl2 = link.Url;
-                                                    break;
+                                                    imageCount2++;
+                                                    if (imageCount2 == 2)
+                                                    {
+                                                        secondImageUrl2 = link.Url;
+                                                        break;
+                                                    }
                                                 }
                                             }
-                                        }
-                                        <input type="hidden" name="ProductImage" id="ProductImage" value="@secondImageUrl2" />
+                                            <input type="hidden" name="ProductImage" id="ProductImage" value="@secondImageUrl2" />
 
-                                        <!-- Checkbox hidden -->
-                                        <input type="checkbox" id="wishlistCheckbox" class="checkbox" onclick="addToWishList('@product.Id', '@product.Name', '@product.Price', '@secondImageUrl2')" />
+                                            <!-- Checkbox hidden -->
+                                            <input type="checkbox" id="wishlistCheckbox" class="checkbox" onclick="addToWishList('@product.Id', '@product.Name', '@product.Price', '@secondImageUrl2')" />
 
-                                        <!-- Icon trái tim -->
-                                        <div class="svg-container">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="svg-outline" viewBox="0 0 24 24">
-                                                <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Zm-3.585,18.4a2.973,2.973,0,0,1-3.83,0C4.947,16.006,2,11.87,2,8.967a4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,11,8.967a1,1,0,0,0,2,0,4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,22,8.967C22,11.87,19.053,16.006,13.915,20.313Z"></path>
-                                            </svg>
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="svg-filled" viewBox="0 0 24 24">
-                                                <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Z"></path>
-                                            </svg>
-                                            <svg xmlns="http://www.w3.org/2000/svg" height="100" width="100" class="svg-celebrate">
-                                                <polygon points="10,10 20,20"></polygon>
-                                                <polygon points="10,50 20,50"></polygon>
-                                                <polygon points="20,80 30,70"></polygon>
-                                                <polygon points="90,10 80,20"></polygon>
-                                                <polygon points="90,50 80,50"></polygon>
-                                                <polygon points="80,80 70,70"></polygon>
-                                            </svg>
-                                        </div>
-                                    </form>
+                                            <!-- Icon trái tim -->
+                                            <div class="svg-container">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="svg-outline" viewBox="0 0 24 24">
+                                                    <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Zm-3.585,18.4a2.973,2.973,0,0,1-3.83,0C4.947,16.006,2,11.87,2,8.967a4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,11,8.967a1,1,0,0,0,2,0,4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,22,8.967C22,11.87,19.053,16.006,13.915,20.313Z"></path>
+                                                </svg>
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="svg-filled" viewBox="0 0 24 24">
+                                                    <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Z"></path>
+                                                </svg>
+                                                <svg xmlns="http://www.w3.org/2000/svg" height="100" width="100" class="svg-celebrate">
+                                                    <polygon points="10,10 20,20"></polygon>
+                                                    <polygon points="10,50 20,50"></polygon>
+                                                    <polygon points="20,80 30,70"></polygon>
+                                                    <polygon points="90,10 80,20"></polygon>
+                                                    <polygon points="90,50 80,50"></polygon>
+                                                    <polygon points="80,80 70,70"></polygon>
+                                                </svg>
+                                            </div>
+                                        </form>
+                                    </div>
+
                                 </div>
-                               
+                            </div>
+                            <!-- Thêm phần số lượt view -->
+                            <div class="view-count">
+                                <i class="fa-solid fa-eye"></i>
+                                <span>@product.Interactions.NumberOfViews</span>
+                            </div>
+
+                            <div class="like-dislike-container">
+                                <!-- Like và Dislike -->
+                                <form asp-action="IncreaseLikeProduct" asp-controller="Product" method="post">
+                                    <input type="hidden" name="productID" value="@product.Id" />
+                                    <span id="like-count-@product.Id" class="like-count">@product.Interactions.NumberOfLikes</span>
+                                    <i class="fa-solid fa-thumbs-up like-icon"></i>
+                                </form>
+
+                                <form asp-action="DecreaseLikeProduct" asp-controller="Product" method="post">
+                                    <input type="hidden" name="productID" value="@product.Id" />
+                                    <span id="dislike-count-@product.Id" class="dislike-count">@product.Interactions.NumberOfDisLikes</span>
+                                    <i class="fa-solid fa-thumbs-down dislike-icon"></i>
+                                </form>
                             </div>
                         </div>
-                        <!-- Thêm phần số lượt view -->
-                        <div class="view-count">
-                            <i class="fa-solid fa-eye"></i>
-                            <span>@product.Interactions.NumberOfViews</span>
-                        </div>
-
-                        <div class="like-dislike-container">
-                            <!-- Like và Dislike -->
-                            <form asp-action="IncreaseLikeProduct" asp-controller="Product" method="post">
-                                <input type="hidden" name="productID" value="@product.Id" />
-                                <span id="like-count-@product.Id" class="like-count">@product.Interactions.NumberOfLikes</span>
-                                <i class="fa-solid fa-thumbs-up like-icon"></i>
-                            </form>
-
-                            <form asp-action="DecreaseLikeProduct" asp-controller="Product" method="post">
-                                <input type="hidden" name="productID" value="@product.Id" />
-                                <span id="dislike-count-@product.Id" class="dislike-count">@product.Interactions.NumberOfDisLikes</span>
-                                <i class="fa-solid fa-thumbs-down dislike-icon"></i>
-                            </form>
-                        </div>
-                    </div>
+                    </a>
+                    
                 }
             }
         </div>
     </section>
 
 
-    <section id="new">
+    <section id="new" style="margin-top:10vw;">
         <div class="d-flex justify-content-between align-items-center row">
-            <h3 class="col-2 col-sm-2 col-md-2 ms-3">New</h3>
-            <div class="col-2 col-sm-2 col-md-2 footeer_card">
-                <div class="btn_card" style="display:flex;justify-content:end;width:200px;font-size:font: 15px Montserrat;">
-                    <a asp-action="ViewAll" asp-controller="Product" asp-route-viewString="new" value="new" class="btn_orther">View More</a>
+            <h3 class="col-4 col-sm-4 col-md-4 ms-3" style="font-size:3vw;">New</h3>
+            <div class="col-6 col-sm-6 col-md-6 footeer_card d-flex justify-content-end">
+                <div class="btn_card" style="display:flex;justify-content:end;width:150px;font-size: 2.5vw Montserrat;">
+                    <a asp-action="ViewAll" asp-controller="Product" asp-route-viewString="new" value="new" class="btn_orther" style="font-size:15px;">View More</a>
                 </div>
             </div>
         </div>
@@ -668,111 +674,113 @@
 
                 foreach (var product in latestProducts)
                 {
-                    <div class="card_other mt-4">
-                        @if (product.Links != null)
-                        {
-                            string firstImageUrl = product.Links.FirstOrDefault(link => link.Url.Contains("cloudinary"))?.Url;
-
-                            // Hiển thị hình ảnh đầu tiên nếu có
-                            if (firstImageUrl != null)
+                    <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@product.Id" class="col-3 col-sm-3 col-md-3 mt-4 text-decoration-none">
+                        <div class="card_other1">
+                            @if (product.Links != null)
                             {
-                                <img src="@firstImageUrl" alt="Cloudinary Image" class="img-fluid" />
+                                string firstImageUrl = product.Links.FirstOrDefault(link => link.Url.Contains("cloudinary"))?.Url;
+
+                                // Hiển thị hình ảnh đầu tiên nếu có
+                                if (firstImageUrl != null)
+                                {
+                                    <img src="@firstImageUrl" alt="Cloudinary Image" class="img-fluid" />
+                                }
                             }
-                        }
-                        <div class="info_other">
-                            <h1>@product.Name</h1>
-                            <p>
-                                @(product.Description.Length > 100
-                                    ? product.Description.Substring(0, 100) + "..."
-                                    : product.Description)
-                            </p>
-                            <div class="row d-flex align-items-center justify-content-between">
-                                <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@product.Id" class="col-md-6 btn_orther ms-2 text-center">Read More</a>
-                                <div class="col-md-2"></div>
+                            <div class="info_other">
+                                <h1>@product.Name</h1>
+                                <p>
+                                    @(product.Description.Length > 100
+                                        ? product.Description.Substring(0, 100) + "..."
+                                        : product.Description)
+                                </p>
+                                <div class="row d-flex align-items-center justify-content-between">
+                                    <div class="col-6 col-sm-6 col-md-6 text-center btn_orther">Read More</div>
+                                    <div class="col-2 col-sm-2 col-md-2"></div>
 
-                                @* Day la trai tym ne *@
-                                <div title="Wishlist" class="col-md-1 heart-container">
-                                    <form id="wishlistForm" method="post">
-                                        <input type="hidden" name="ProductId" id="ProductId" value="@product.Id" />
-                                        <input type="hidden" name="ProductName" id="ProductName" value="@product.Name" />
-                                        <input type="hidden" name="ProductPrice" id="ProductPrice" value="@product.Price" />
+                                    @* Day la trai tym ne *@
+                                    <div title="Wishlist" class="col-1 col-sm-1 col-md-1 heart-container">
+                                        <form id="wishlistForm" method="post">
+                                            <input type="hidden" name="ProductId" id="ProductId" value="@product.Id" />
+                                            <input type="hidden" name="ProductName" id="ProductName" value="@product.Name" />
+                                            <input type="hidden" name="ProductPrice" id="ProductPrice" value="@product.Price" />
 
-                                        @{
-                                            string secondImageUrl2 = null;
-                                            int imageCount2 = 0;
-                                        }
-                                        @foreach (var link in product.Links)
-                                        {
-                                            if (link.Url.Contains("cloudinary"))
+                                            @{
+                                                string secondImageUrl2 = null;
+                                                int imageCount2 = 0;
+                                            }
+                                            @foreach (var link in product.Links)
                                             {
-                                                imageCount2++;
-                                                if (imageCount2 == 2)
+                                                if (link.Url.Contains("cloudinary"))
                                                 {
-                                                    secondImageUrl2 = link.Url;
-                                                    break;
+                                                    imageCount2++;
+                                                    if (imageCount2 == 2)
+                                                    {
+                                                        secondImageUrl2 = link.Url;
+                                                        break;
+                                                    }
                                                 }
                                             }
-                                        }
-                                        <input type="hidden" name="ProductImage" id="ProductImage" value="@secondImageUrl2" />
+                                            <input type="hidden" name="ProductImage" id="ProductImage" value="@secondImageUrl2" />
 
-                                        <!-- Checkbox hidden -->
-                                        <input type="checkbox" id="wishlistCheckbox" class="checkbox" onclick="addToWishList('@product.Id', '@product.Name', '@product.Price', '@secondImageUrl2')" />
+                                            <!-- Checkbox hidden -->
+                                            <input type="checkbox" id="wishlistCheckbox" class="checkbox" onclick="addToWishList('@product.Id', '@product.Name', '@product.Price', '@secondImageUrl2')" />
 
-                                        <!-- Icon trái tim -->
-                                        <div class="svg-container">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="svg-outline" viewBox="0 0 24 24">
-                                                <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Zm-3.585,18.4a2.973,2.973,0,0,1-3.83,0C4.947,16.006,2,11.87,2,8.967a4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,11,8.967a1,1,0,0,0,2,0,4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,22,8.967C22,11.87,19.053,16.006,13.915,20.313Z"></path>
-                                            </svg>
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="svg-filled" viewBox="0 0 24 24">
-                                                <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Z"></path>
-                                            </svg>
-                                            <svg xmlns="http://www.w3.org/2000/svg" height="100" width="100" class="svg-celebrate">
-                                                <polygon points="10,10 20,20"></polygon>
-                                                <polygon points="10,50 20,50"></polygon>
-                                                <polygon points="20,80 30,70"></polygon>
-                                                <polygon points="90,10 80,20"></polygon>
-                                                <polygon points="90,50 80,50"></polygon>
-                                                <polygon points="80,80 70,70"></polygon>
-                                            </svg>
-                                        </div>
-                                    </form>
+                                            <!-- Icon trái tim -->
+                                            <div class="svg-container">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="svg-outline" viewBox="0 0 24 24">
+                                                    <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Zm-3.585,18.4a2.973,2.973,0,0,1-3.83,0C4.947,16.006,2,11.87,2,8.967a4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,11,8.967a1,1,0,0,0,2,0,4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,22,8.967C22,11.87,19.053,16.006,13.915,20.313Z"></path>
+                                                </svg>
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="svg-filled" viewBox="0 0 24 24">
+                                                    <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Z"></path>
+                                                </svg>
+                                                <svg xmlns="http://www.w3.org/2000/svg" height="100" width="100" class="svg-celebrate">
+                                                    <polygon points="10,10 20,20"></polygon>
+                                                    <polygon points="10,50 20,50"></polygon>
+                                                    <polygon points="20,80 30,70"></polygon>
+                                                    <polygon points="90,10 80,20"></polygon>
+                                                    <polygon points="90,50 80,50"></polygon>
+                                                    <polygon points="80,80 70,70"></polygon>
+                                                </svg>
+                                            </div>
+                                        </form>
+                                    </div>
+
                                 </div>
-                                
+                            </div>
+                            <!-- Thêm phần số lượt view -->
+                            <div class="view-count">
+                                <i class="fa-solid fa-eye"></i>
+                                <span>@product.Interactions.NumberOfViews</span>
+                            </div>
+
+                            <div class="like-dislike-container">
+                                <!-- Like và Dislike -->
+                                <form asp-action="IncreaseLikeProduct" asp-controller="Product" method="post">
+                                    <input type="hidden" name="productID" value="@product.Id" />
+                                    <span id="like-count-@product.Id" class="like-count">@product.Interactions.NumberOfLikes</span>
+                                    <i class="fa-solid fa-thumbs-up like-icon"></i>
+                                </form>
+
+                                <form asp-action="DecreaseLikeProduct" asp-controller="Product" method="post">
+                                    <input type="hidden" name="productID" value="@product.Id" />
+                                    <span id="dislike-count-@product.Id" class="dislike-count">@product.Interactions.NumberOfDisLikes</span>
+                                    <i class="fa-solid fa-thumbs-down dislike-icon"></i>
+                                </form>
                             </div>
                         </div>
-                        <!-- Thêm phần số lượt view -->
-                        <div class="view-count">
-                            <i class="fa-solid fa-eye"></i>
-                            <span>@product.Interactions.NumberOfViews</span>
-                        </div>
-
-                        <div class="like-dislike-container">
-                            <!-- Like và Dislike -->
-                            <form asp-action="IncreaseLikeProduct" asp-controller="Product" method="post" >
-                                <input type="hidden" name="productID" value="@product.Id" />
-                                <span id="like-count-@product.Id" class="like-count">@product.Interactions.NumberOfLikes</span>
-                                <i class="fa-solid fa-thumbs-up like-icon"></i>
-                            </form>
-
-                            <form asp-action="DecreaseLikeProduct" asp-controller="Product" method="post">
-                                <input type="hidden" name="productID" value="@product.Id" />
-                                <span id="dislike-count-@product.Id" class="dislike-count">@product.Interactions.NumberOfDisLikes</span>
-                                <i class="fa-solid fa-thumbs-down dislike-icon"></i>
-                            </form>
-                        </div>
-                    </div>
+                    </a>
                 }
             }
         </div>
     </section>
 
 
-    <section id="more">
+    <section id="more" style="margin-top:10vw;">
         <div class="d-flex justify-content-between align-items-center row">
-            <h3 class="col-2 col-sm-2 col-md-2 ms-3">More</h3>
-            <div class="col-2 col-sm-2 col-md-2 footeer_card">
-                <div class="btn_card" style="display:flex;justify-content:end;width:200px;font-size:font: 15px Montserrat;">
-                    <a asp-controller="Product" asp-action="Product" class="btn_orther">View More</a>
+            <h3 class="col-4 col-sm-4 col-md-4 ms-3" style="font-size:3vw;">More</h3>
+            <div class="col-6 col-sm-6 col-md-6 footeer_card d-flex justify-content-end">
+                <div class="btn_card" style="display:flex;justify-content:end;width:150px;font-size: 2.5vw Montserrat;">
+                    <a asp-controller="Product" asp-action="Product" class="btn_orther" style="font-size:15px;">View More</a>
                 </div>
             </div>
         </div>
@@ -781,110 +789,113 @@
             {
                 foreach (var product in Model.Product)
                 {
-                    <div class="card_other mt-4">
-                        @if (product.Links != null)
-                        {
-                            string firstImageUrl = null; // Biến để lưu URL hình ảnh đầu tiên
-
-                            foreach (var link in product.Links) // Lặp qua từng đối tượng LinkModel
+                    <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@product.Id" class="col-3 col-sm-3 col-md-3 mt-4 text-decoration-none">
+                        <div class="card_other1">
+                            @if (product.Links != null)
                             {
-                                if (link.Url.Contains("cloudinary"))
+                                string firstImageUrl = null; // Biến để lưu URL hình ảnh đầu tiên
+
+                                foreach (var link in product.Links) // Lặp qua từng đối tượng LinkModel
                                 {
-                                    firstImageUrl = link.Url; // Lưu URL hình ảnh đầu tiên
-                                    break; // Thoát khỏi vòng lặp khi đã tìm thấy
+                                    if (link.Url.Contains("cloudinary"))
+                                    {
+                                        firstImageUrl = link.Url; // Lưu URL hình ảnh đầu tiên
+                                        break; // Thoát khỏi vòng lặp khi đã tìm thấy
+                                    }
                                 }
+
+                                // Hiển thị hình ảnh đầu tiên nếu có
+                                if (firstImageUrl != null)
+                                {
+                                    <img src="@firstImageUrl" alt="Cloudinary Image" class="img-fluid" />
+                                }
+
+
                             }
+                            <div class="info_other">
+                                <h1>@product.Name</h1>
+                                <p>
+                                    @(product.Description.Length > 100
+                                        ? product.Description.Substring(0, 100) + "..."
+                                        : product.Description)
+                                </p>
+                                <div class="row d-flex align-items-center justify-content-between">
+                                    <div class="col-6 col-sm-6 col-md-6 text-center btn_orther">Read More</div>
+                                    <div class="col-2 col-sm-2 col-md-2"></div>
+                                    @* Day la trai tym ne *@
+                                    @* Day la trai tym ne *@
+                                    <div title="Wishlist" class="col-1 col-sm-1 col-md-1 heart-container">
+                                        <form id="wishlistForm" method="post">
+                                            <input type="hidden" name="ProductId" id="ProductId" value="@product.Id" />
+                                            <input type="hidden" name="ProductName" id="ProductName" value="@product.Name" />
+                                            <input type="hidden" name="ProductPrice" id="ProductPrice" value="@product.Price" />
 
-                            // Hiển thị hình ảnh đầu tiên nếu có
-                            if (firstImageUrl != null)
-                            {
-                                <img src="@firstImageUrl" alt="Cloudinary Image" class="img-fluid" />
-                            }
-
-
-                        }
-                        <div class="info_other">
-                            <h1>@product.Name</h1>
-                            <p>
-                                @(product.Description.Length > 100
-                                    ? product.Description.Substring(0, 100) + "..."
-                                    : product.Description)
-                            </p>
-                            <div class="row d-flex align-items-center justify-content-between">
-                                <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@product.Id" class="col-md-6 btn_orther ms-2 text-center">Read More</a>
-                                <div class="col-md-2"></div>
-                                @* Day la trai tym ne *@
-                                @* Day la trai tym ne *@
-                                <div title="Wishlist" class="col-md-1 heart-container">
-                                    <form id="wishlistForm" method="post">
-                                        <input type="hidden" name="ProductId" id="ProductId" value="@product.Id" />
-                                        <input type="hidden" name="ProductName" id="ProductName" value="@product.Name" />
-                                        <input type="hidden" name="ProductPrice" id="ProductPrice" value="@product.Price" />
-
-                                        @{
-                                            string secondImageUrl2 = null;
-                                            int imageCount2 = 0;
-                                        }
-                                        @foreach (var link in product.Links)
-                                        {
-                                            if (link.Url.Contains("cloudinary"))
+                                            @{
+                                                string secondImageUrl2 = null;
+                                                int imageCount2 = 0;
+                                            }
+                                            @foreach (var link in product.Links)
                                             {
-                                                imageCount2++;
-                                                if (imageCount2 == 2)
+                                                if (link.Url.Contains("cloudinary"))
                                                 {
-                                                    secondImageUrl2 = link.Url;
-                                                    break;
+                                                    imageCount2++;
+                                                    if (imageCount2 == 2)
+                                                    {
+                                                        secondImageUrl2 = link.Url;
+                                                        break;
+                                                    }
                                                 }
                                             }
-                                        }
-                                        <input type="hidden" name="ProductImage" id="ProductImage" value="@secondImageUrl2" />
+                                            <input type="hidden" name="ProductImage" id="ProductImage" value="@secondImageUrl2" />
 
-                                        <!-- Checkbox hidden -->
-                                        <input type="checkbox" id="wishlistCheckbox" class="checkbox" onclick="addToWishList('@product.Id', '@product.Name', '@product.Price', '@secondImageUrl2')" />
+                                            <!-- Checkbox hidden -->
+                                            <input type="checkbox" id="wishlistCheckbox" class="checkbox" onclick="addToWishList('@product.Id', '@product.Name', '@product.Price', '@secondImageUrl2')" />
 
-                                        <!-- Icon trái tim -->
-                                        <div class="svg-container">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="svg-outline" viewBox="0 0 24 24">
-                                                <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Zm-3.585,18.4a2.973,2.973,0,0,1-3.83,0C4.947,16.006,2,11.87,2,8.967a4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,11,8.967a1,1,0,0,0,2,0,4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,22,8.967C22,11.87,19.053,16.006,13.915,20.313Z"></path>
-                                            </svg>
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="svg-filled" viewBox="0 0 24 24">
-                                                <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Z"></path>
-                                            </svg>
-                                            <svg xmlns="http://www.w3.org/2000/svg" height="100" width="100" class="svg-celebrate">
-                                                <polygon points="10,10 20,20"></polygon>
-                                                <polygon points="10,50 20,50"></polygon>
-                                                <polygon points="20,80 30,70"></polygon>
-                                                <polygon points="90,10 80,20"></polygon>
-                                                <polygon points="90,50 80,50"></polygon>
-                                                <polygon points="80,80 70,70"></polygon>
-                                            </svg>
-                                        </div>
-                                    </form>
+                                            <!-- Icon trái tim -->
+                                            <div class="svg-container">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="svg-outline" viewBox="0 0 24 24">
+                                                    <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Zm-3.585,18.4a2.973,2.973,0,0,1-3.83,0C4.947,16.006,2,11.87,2,8.967a4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,11,8.967a1,1,0,0,0,2,0,4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,22,8.967C22,11.87,19.053,16.006,13.915,20.313Z"></path>
+                                                </svg>
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="svg-filled" viewBox="0 0 24 24">
+                                                    <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Z"></path>
+                                                </svg>
+                                                <svg xmlns="http://www.w3.org/2000/svg" height="100" width="100" class="svg-celebrate">
+                                                    <polygon points="10,10 20,20"></polygon>
+                                                    <polygon points="10,50 20,50"></polygon>
+                                                    <polygon points="20,80 30,70"></polygon>
+                                                    <polygon points="90,10 80,20"></polygon>
+                                                    <polygon points="90,50 80,50"></polygon>
+                                                    <polygon points="80,80 70,70"></polygon>
+                                                </svg>
+                                            </div>
+                                        </form>
+                                    </div>
+
                                 </div>
-                                
+                            </div>
+                            <!-- Thêm phần số lượt view -->
+                            <div class="view-count">
+                                <i class="fa-solid fa-eye"></i>
+                                <span>@product.Interactions.NumberOfViews</span>
+                            </div>
+
+                            <div class="like-dislike-container">
+                                <!-- Like và Dislike -->
+                                <form asp-action="IncreaseLikeProduct" asp-controller="Product" method="post">
+                                    <input type="hidden" name="productID" value="@product.Id" />
+                                    <span id="like-count-@product.Id" class="like-count">@product.Interactions.NumberOfLikes</span>
+                                    <i class="fa-solid fa-thumbs-up like-icon"></i>
+                                </form>
+
+                                <form asp-action="DecreaseLikeProduct" asp-controller="Product" method="post">
+                                    <input type="hidden" name="productID" value="@product.Id" />
+                                    <span id="dislike-count-@product.Id" class="dislike-count">@product.Interactions.NumberOfDisLikes</span>
+                                    <i class="fa-solid fa-thumbs-down dislike-icon"></i>
+                                </form>
                             </div>
                         </div>
-                        <!-- Thêm phần số lượt view -->
-                        <div class="view-count">
-                            <i class="fa-solid fa-eye"></i>
-                            <span>@product.Interactions.NumberOfViews</span>
-                        </div>
-
-                        <div class="like-dislike-container">
-                            <!-- Like và Dislike -->
-                            <form asp-action="IncreaseLikeProduct" asp-controller="Product" method="post">
-                                <input type="hidden" name="productID" value="@product.Id" />
-                                <span id="like-count-@product.Id" class="like-count" >@product.Interactions.NumberOfLikes</span>
-                                <i class="fa-solid fa-thumbs-up like-icon"></i>
-                            </form>
-
-                            <form asp-action="DecreaseLikeProduct" asp-controller="Product" method="post">
-                                <input type="hidden" name="productID" value="@product.Id" />
-                                <span id="dislike-count-@product.Id" class="dislike-count">@product.Interactions.NumberOfDisLikes</span>
-                                <i class="fa-solid fa-thumbs-down dislike-icon"></i>
-                            </form>
-                        </div>
-                    </div>
+                    </a>
+                    
                 }
             }
         </div>
