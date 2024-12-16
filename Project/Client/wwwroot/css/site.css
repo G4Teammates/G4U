@@ -8,6 +8,30 @@
   }
 }
 
+/* Tùy chỉnh để hình ảnh phù hợp với các kích thước màn hình */
+.carousel-image-container {
+    position: relative;
+    overflow: hidden;
+    border-radius: 5px;
+}
+
+.carousel-image {
+    object-fit: cover;
+    height: 400px;
+}
+
+
+/* Điều chỉnh kích thước cho màn hình nhỏ */
+@media (max-width: 750px) {
+    .carousel-image {
+        height: 250px;
+    }
+
+    #carouselExampleInterval {
+        max-width: 95%;
+    }
+}
+
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
   box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
