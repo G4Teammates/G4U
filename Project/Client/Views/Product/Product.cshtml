@@ -3,352 +3,246 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
 
 
-<div class="container-fluid mt-5" style="min-height:1100px;">
-    <section class="modern-heading ms-3">
+<div class="container-fluid mt-5" style="min-height:700px;">
+    <section class="modern-heading">
         <h1 class="responsive-heading">Other Product</h1>
     </section>
 
-    <div class="row mt-2">
-        <div class="col-3 col-sm-3 col-md-3">
-            <!-- Tăng độ rộng của cột chứa -->
-            <div class="filter-container m-3 p-3 shadow-sm rounded">
-                <h4 class="mt-3 text-center">Filters</h4>
-                <hr class="mb-4">
-                <!-- -------------------------------------------------------------------------------------------------------------------------------------------------- -->
-                <form asp-action="FilterProducts" asp-controller="Product" method="post">
-                    <!-- Price Filter -->
-                    <div class="filter-section mb-4">
-                        <h5 class="filter-title">Price</h5>
-                        <div class="d-flex gap-2">
-                            <input type="number" class="form-control price-input" name="minRange" id="minRange" placeholder="Min price" min="0">
-                            <small id="minPriceError" class="text-danger d-none">Price cannot be less than 0.</small>
+    <div class="mt-3">
+        
+        <div class="d-flex align-items-center justify-content-between sort-container row ms-1">
+            <button class="col-3 col-sm-3 col-md-3 btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
+                Filter
+            </button>
+            <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel" style="padding:0 5px;">
+                <div class="offcanvas-header filter-container">
+                    <h4 class="mt-3 text-center">Filters</h4>
+                    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body">
+                    <hr class="mb-4">
+                    <!-- -------------------------------------------------------------------------------------------------------------------------------------------------- -->
+                    <form asp-action="FilterProducts" asp-controller="Product" method="post">
+                        <!-- Price Filter -->
+                        <div class="filter-section mb-4">
+                            <h5 class="filter-title">Price</h5>
+                            <div class="d-flex gap-2">
+                                <input type="number" class="form-control price-input" name="minRange" id="minRange" placeholder="Min price" min="0">
+                                <small id="minPriceError" class="text-danger d-none">Price cannot be less than 0.</small>
 
-                            <input type="number" class="form-control price-input" name="maxRange" id="maxRange" placeholder="Max price" min="0">
-                            <small id="maxPriceError" class="text-danger d-none">Price cannot be less than 0.</small>
-                            <small id="rangeError" class="text-danger d-none">Max price must be greater than Min price.</small>
-                        </div>
-                        <div id="priceError" style="color: red; display: none;">Price cannot be less than 0.</div>
-                    </div>
-
-                    <!-- Category Filter -->
-                    <div class="filter-section mb-4">
-                        <h5 class="filter-title">Category</h5>
-                        <select class="form-select" name="category">
-                            @if (Model.CategoriesModel != null)
-                            {
-                                <option value="">None</option>
-                                foreach (var cate in Model.CategoriesModel)
-                                {
-                                    <option value="@cate.Name">@cate.Name</option>
-                                }
-                            }
-                            else
-                            {
-                                <option disabled>Không có danh mục nào</option>
-                            }
-                        </select>
-                    </div>
-
-                    <!-- Platform Filter -->
-                    <div class="filter-section mb-4">
-                        <h5 class="filter-title">Platform</h5>
-                        <select class="form-select" name="platform">
-                            @if (Model.Product != null)
-                            {
-                                <option value="">None</option>
-                                foreach (Client.Models.Enum.ProductEnum.PlatformType platform in Enum.GetValues(typeof(Client.Models.Enum.ProductEnum.PlatformType)))
-                                {
-                                    <option value="@(platform)">@platform</option>
-                                }
-                            }
-                            else
-                            {
-                                <option disabled>Không có danh mục nào</option>
-                            }
-                        </select>
-                    </div>
-
-                    <!-- Discount Filter -->
-                    <div class="filter-section mb-4">
-                        <h5 class="filter-title">Discount</h5>
-                        <select name="discount" class="form-select">
-                            <option value="">None</option>
-                            <option value="True">True</option>
-                            <option value="False">False</option>
-                        </select>
-                    </div>
-
-                    <!-- Sold Filter -->
-                    <div class="filter-section mb-4">
-                        <h5 class="filter-title">Sold</h5>
-                        <select name="sold" class="form-select" aria-label="Type">
-                            <option value="">None</option>
-                            <option value="0">>0</option>
-                            <option value="100">>100</option>
-                            <option value="200">>200</option>
-                            <option value="500">>500</option>
-                            <option value="1000">>1000</option>
-                        </select>
-                    </div>
-
-                    <!-- Submit Button -->
-                    <button type="submit" class="btn btn-primary w-100">Apply Filters</button>
-                </form>
-            </div>
-        </div>
-        <div class="col-9 col-sm-9 col-md-9 mt-2">
-            <div class="d-flex align-items-center justify-content-center sort-container">
-                <!-- Sort -->
-                <form class="col-md-5 d-inline-flex align-items-center ms-2" asp-action="SortProducts" asp-controller="Product" method="post">
-                    <select name="sort" class="form-select me-2 w-75 sort-select">
-                        <option value="ascPrice" class="sort-option">Price Ascending</option>
-                        <option value="descPrice" class="sort-option">Price Descending</option>
-                        <option value="ascView" class="sort-option">View Ascending</option>
-                        <option value="descView" class="sort-option">View Descending</option>
-                        <option value="ascLike" class="sort-option">Like Ascending</option>
-                        <option value="descLike" class="sort-option">Like Descending</option>
-                        <option value="ascSold" class="sort-option">Purchase Count Ascending</option>
-                        <option value="descSold" class="sort-option">Purchase Count Descending</option>
-                        <option value="free" class="sort-option">Free</option>
-                    </select>
-                    <button type="submit" class="btn btn-primary sort-btn">
-                        Sort
-                    </button>
-                </form>
-
-                <!-- Phần Bản ghi và Nút Free nằm cùng một hàng và sát bên phải -->
-                <div class="d-flex align-items-center justify-content-end col-md-5 ms-auto">
-                    @* @if (ViewData["Parameters"] != null)
-                    {
-                        @if (ViewData["Parameters"] is Dictionary<string, object> routeParams)
-                        {
-
-                            <!-- Bản ghi -->
-                            <form asp-controller="Product" asp-action="@ViewData["CurrentAction"]" class="col-md-2 col-4 d-inline ms-2 mb-2">
-                                <div class="dropdown">
-                                    <a href="#" type="button" class="d-flex align-items-center justify-content-around dropdown-toggle text-white" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="fa-regular fa-rectangle-list"></i>
-                                    </a>
-                                    <ul class="dropdown-menu p-0">
-                                        <li>
-                                            <select name="pageSize" class="form-select form-select-sm w-auto d-inline-block" onchange="this.form.submit()">
-                                                <option>Select records per page</option>
-                                                <option value="3">3 records per page</option>
-                                                <option value="5">5 records per page</option>
-                                                <option value="10">10 records per page</option>
-                                            </select>
-                                        </li>
-                                    </ul>
-                                    <input type="hidden" name="page" value="1" />
-                                    @foreach (var param in routeParams)
-                                    {
-                                        <input name="@param.Key" value="@param.Value" style="display:none" />
-                                    }
-                                </div>
-                            </form>
-                        }
-                        else
-                        {
-                            <!-- Bản ghi -->
-                            <form asp-controller="Product" asp-action="@ViewData["CurrentAction"]" class="col-md-2 col-4 d-inline ms-2 mb-2">
-                                <div class="dropdown">
-                                    <a href="#" type="button" class="d-flex align-items-center justify-content-around dropdown-toggle text-white" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="fa-regular fa-rectangle-list"></i>
-                                    </a>
-                                    <ul class="dropdown-menu p-0">
-                                        <li>
-                                            <select name="pageSize" class="form-select form-select-sm w-auto d-inline-block" onchange="this.form.submit()">
-                                                <option>Select records per page</option>
-                                                <option value="3">3 records per page</option>
-                                                <option value="5">5 records per page</option>
-                                                <option value="10">10 records per page</option>
-                                            </select>
-                                        </li>
-                                    </ul>
-                                    <input type="hidden" name="page" value="1" />
-                                    <input name="@ViewData["NamePara"]" value="@ViewData["Parameters"]" style="display:none" />
-                                </div>
-                            </form>
-                        }
-
-                    }
-                    else
-                    {
-                        <!-- Bản ghi -->
-                        <form asp-controller="Product" asp-action="@ViewData["CurrentAction"]" class="col-md-2 col-4 d-inline ms-2 mb-2">
-                            <div class="dropdown">
-                                <a href="#" type="button" class="d-flex align-items-center justify-content-around dropdown-toggle text-white" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="fa-regular fa-rectangle-list"></i>
-                                </a>
-                                <ul class="dropdown-menu p-0">
-                                    <li>
-                                        <select name="pageSize" class="form-select form-select-sm w-auto d-inline-block" onchange="this.form.submit()">
-                                            <option>Select records per page</option>
-                                            <option value="3">3 records per page</option>
-                                            <option value="5">5 records per page</option>
-                                            <option value="10">10 records per page</option>
-                                        </select>
-                                    </li>
-                                </ul>                               
-                                <input type="hidden" name="page" value="1" />
+                                <input type="number" class="form-control price-input" name="maxRange" id="maxRange" placeholder="Max price" min="0">
+                                <small id="maxPriceError" class="text-danger d-none">Price cannot be less than 0.</small>
+                                <small id="rangeError" class="text-danger d-none">Max price must be greater than Min price.</small>
                             </div>
-                        </form>
-                    } *@
+                            <div id="priceError" style="color: red; display: none;">Price cannot be less than 0.</div>
+                        </div>
 
+                        <!-- Category Filter -->
+                        <div class="filter-section mb-4">
+                            <h5 class="filter-title">Category</h5>
+                            <select class="form-select" name="category">
+                                @if (Model.CategoriesModel != null)
+                                {
+                                    <option value="">None</option>
+                                    foreach (var cate in Model.CategoriesModel)
+                                    {
+                                        <option value="@cate.Name">@cate.Name</option>
+                                    }
+                                }
+                                else
+                                {
+                                    <option disabled>Không có danh mục nào</option>
+                                }
+                            </select>
+                        </div>
 
-                    <!-- Nút Free -->
+                        <!-- Platform Filter -->
+                        <div class="filter-section mb-4">
+                            <h5 class="filter-title">Platform</h5>
+                            <select class="form-select" name="platform">
+                                @if (Model.Product != null)
+                                {
+                                    <option value="">None</option>
+                                    foreach (Client.Models.Enum.ProductEnum.PlatformType platform in Enum.GetValues(typeof(Client.Models.Enum.ProductEnum.PlatformType)))
+                                    {
+                                        <option value="@(platform)">@platform</option>
+                                    }
+                                }
+                                else
+                                {
+                                    <option disabled>Không có danh mục nào</option>
+                                }
+                            </select>
+                        </div>
+
+                        <!-- Discount Filter -->
+                        <div class="filter-section mb-4">
+                            <h5 class="filter-title">Discount</h5>
+                            <select name="discount" class="form-select">
+                                <option value="">None</option>
+                                <option value="True">True</option>
+                                <option value="False">False</option>
+                            </select>
+                        </div>
+
+                        <!-- Sold Filter -->
+                        <div class="filter-section mb-4">
+                            <h5 class="filter-title">Sold</h5>
+                            <select name="sold" class="form-select" aria-label="Type">
+                                <option value="">None</option>
+                                <option value="0">>0</option>
+                                <option value="100">>100</option>
+                                <option value="200">>200</option>
+                                <option value="500">>500</option>
+                                <option value="1000">>1000</option>
+                            </select>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" class="btn btn-primary w-100">Apply Filters</button>
+                    </form>
                 </div>
             </div>
+            <!-- Sort -->
+            <form class="col-8 col-sm-8 col-md-8 d-inline-flex align-items-center justify-content-end" asp-action="SortProducts" asp-controller="Product" method="post">
+                <select name="sort" class="form-select me-2 w-75 sort-select">
+                    <option value="ascPrice" class="sort-option">Price Ascending</option>
+                    <option value="descPrice" class="sort-option">Price Descending</option>
+                    <option value="ascView" class="sort-option">View Ascending</option>
+                    <option value="descView" class="sort-option">View Descending</option>
+                    <option value="ascLike" class="sort-option">Like Ascending</option>
+                    <option value="descLike" class="sort-option">Like Descending</option>
+                    <option value="ascSold" class="sort-option">Purchase Count Ascending</option>
+                    <option value="descSold" class="sort-option">Purchase Count Descending</option>
+                    <option value="free" class="sort-option">Free</option>
+                </select>
+                <button type="submit" class="btn btn-primary sort-btn">
+                    Sort
+                </button>
+            </form>
+
+        </div>
 
 
-
-
-
-            
-            
-            <div >
-                <div class="d-flex flex-wrap">
-                    @if (Model.Product != null)
+        <div class="me-1">
+            <div class="d-flex flex-wrap">
+                @if (Model.Product != null)
+                {
+                    foreach (var product in Model.Product)
                     {
-                        foreach (var product in Model.Product)
-                        {
-                            <div class="col-12 col-sm-12 col-md-4 card_other mt-4">
-                                @if (product.Links != null)
+                        <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@product.Id" class="card_other mt-4 text-decoration-none" style="color: inherit;">
+                            @if (product.Links != null)
+                            {
+                                string firstImageUrl = null;
+
+                                foreach (var link in product.Links)
                                 {
-                                    string firstImageUrl = null; // Biến để lưu URL hình ảnh đầu tiên
-
-                                    foreach (var link in product.Links) // Lặp qua từng đối tượng LinkModel
+                                    if (link.Url.Contains("cloudinary"))
                                     {
-                                        if (link.Url.Contains("cloudinary"))
-                                        {
-                                            firstImageUrl = link.Url; // Lưu URL hình ảnh đầu tiên
-                                            break; // Thoát khỏi vòng lặp khi đã tìm thấy
-                                        }
+                                        firstImageUrl = link.Url;
+                                        break;
                                     }
-
-                                    // Hiển thị hình ảnh đầu tiên nếu có
-                                    if (firstImageUrl != null)
-                                    {
-                                        <img src="@firstImageUrl" alt="Cloudinary Image" />
-                                    }
-
-
                                 }
-                                <div class="info_other">
-                                    <h4>@product.Name</h4>
-                                    <p>
-                                        @(product.Description.Length > 100
-                                            ? product.Description.Substring(0, 100) + "..."
-                                            : product.Description)
-                                    </p>
-                                    <div class="row d-flex align-items-center justify-content-between">
-                                        <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@product.Id" class="ms-2 text-center col-md-6 btn_orther">Read More</a>
-                                        <div class="col-md-4"></div>
-                                        @* Day la trai tym ne *@
-                                        <div title="Wishlist" class="col-md-1 heart-container">
-                                            <form id="wishlistForm" method="post">
-                                                <input type="hidden" name="ProductId" id="ProductId" value="@product.Id" />
-                                                <input type="hidden" name="ProductName" id="ProductName" value="@product.Name" />
-                                                <input type="hidden" name="ProductPrice" id="ProductPrice" value="@product.Price" />
 
-                                                @{
-                                                    string secondImageUrl2 = null;
-                                                    int imageCount2 = 0;
-                                                }
-                                                @foreach (var link in product.Links)
+                                if (firstImageUrl != null)
+                                {
+                                    <img src="@firstImageUrl" alt="Cloudinary Image" />
+                                }
+                            }
+                            <div class="info_other">
+                                <h4>@product.Name</h4>
+                                <p>
+                                    @(product.Description.Length > 100
+                                        ? product.Description.Substring(0, 100) + "..."
+                                        : product.Description)
+                                </p>
+                                <div class="row d-flex align-items-center justify-content-between">
+                                    <div class="col-5 col-sm-5 col-md-5 text-center btn_orther">Read More</div>
+                                    <div class="col-4 col-sm-4 col-md-4 col-md-4"></div>
+                                    <div title="Wishlist" class="col-1 col-sm-1 col-md-1 col-md-1 heart-container">
+                                        <form id="wishlistForm" method="post">
+                                            <input type="hidden" name="ProductId" id="ProductId" value="@product.Id" />
+                                            <input type="hidden" name="ProductName" id="ProductName" value="@product.Name" />
+                                            <input type="hidden" name="ProductPrice" id="ProductPrice" value="@product.Price" />
+
+                                            @{
+                                                string secondImageUrl2 = null;
+                                                int imageCount2 = 0;
+                                            }
+                                            @foreach (var link in product.Links)
+                                            {
+                                                if (link.Url.Contains("cloudinary"))
                                                 {
-                                                    if (link.Url.Contains("cloudinary"))
+                                                    imageCount2++;
+                                                    if (imageCount2 == 2)
                                                     {
-                                                        imageCount2++;
-                                                        if (imageCount2 == 2)
-                                                        {
-                                                            secondImageUrl2 = link.Url;
-                                                            break;
-                                                        }
+                                                        secondImageUrl2 = link.Url;
+                                                        break;
                                                     }
                                                 }
-                                                <input type="hidden" name="ProductImage" id="ProductImage" value="@secondImageUrl2" />
+                                            }
+                                            <input type="hidden" name="ProductImage" id="ProductImage" value="@secondImageUrl2" />
 
-                                                <!-- Checkbox hidden -->
-                                                <input type="checkbox" id="wishlistCheckbox" class="checkbox" onclick="addToWishList('@product.Id', '@product.Name', '@product.Price', '@secondImageUrl2')" />
-
-                                                <!-- Icon trái tim -->
-                                                <div class="svg-container">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="svg-outline" viewBox="0 0 24 24">
-                                                        <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Zm-3.585,18.4a2.973,2.973,0,0,1-3.83,0C4.947,16.006,2,11.87,2,8.967a4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,11,8.967a1,1,0,0,0,2,0,4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,22,8.967C22,11.87,19.053,16.006,13.915,20.313Z"></path>
-                                                    </svg>
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="svg-filled" viewBox="0 0 24 24">
-                                                        <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Z"></path>
-                                                    </svg>
-                                                    <svg xmlns="http://www.w3.org/2000/svg" height="100" width="100" class="svg-celebrate">
-                                                        <polygon points="10,10 20,20"></polygon>
-                                                        <polygon points="10,50 20,50"></polygon>
-                                                        <polygon points="20,80 30,70"></polygon>
-                                                        <polygon points="90,10 80,20"></polygon>
-                                                        <polygon points="90,50 80,50"></polygon>
-                                                        <polygon points="80,80 70,70"></polygon>
-                                                    </svg>
-                                                </div>
-                                            </form>
-                                        </div>
-                                        
+                                            <input type="checkbox" id="wishlistCheckbox" class="checkbox" onclick="addToWishList('@product.Id', '@product.Name', '@product.Price', '@secondImageUrl2')" />
+                                            <div class="svg-container">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="svg-outline" viewBox="0 0 24 24">
+                                                    <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Zm-3.585,18.4a2.973,2.973,0,0,1-3.83,0C4.947,16.006,2,11.87,2,8.967a4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,11,8.967a1,1,0,0,0,2,0,4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,22,8.967C22,11.87,19.053,16.006,13.915,20.313Z"></path>
+                                                </svg>
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="svg-filled" viewBox="0 0 24 24">
+                                                    <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Z"></path>
+                                                </svg>
+                                                <svg xmlns="http://www.w3.org/2000/svg" height="100" width="100" class="svg-celebrate">
+                                                    <polygon points="10,10 20,20"></polygon>
+                                                    <polygon points="10,50 20,50"></polygon>
+                                                    <polygon points="20,80 30,70"></polygon>
+                                                    <polygon points="90,10 80,20"></polygon>
+                                                    <polygon points="90,50 80,50"></polygon>
+                                                    <polygon points="80,80 70,70"></polygon>
+                                                </svg>
+                                            </div>
+                                        </form>
                                     </div>
-                                    
-
-                                </div>
-                                <!-- Thêm phần số lượt view -->
-                                <div class="view-count">
-                                    <i class="fa-solid fa-eye" style="color:black;  width:20px;height:20px;"></i>
-                                    <span style="color:black;">@product.Interactions.NumberOfViews</span>
-                                </div>
-
-                                <div class="like-dislike-container">
-                                    <!-- Like và Dislike -->
-                                    <form asp-action="IncreaseLikeProduct" asp-controller="Product" method="post" style="display:inline;">
-                                        <input type="hidden" name="productID" value="@product.Id" />
-                                        <span id="like-count-@product.Id" class="like-count" style="color:black;">@product.Interactions.NumberOfLikes</span>
-                                        <i class="fa-solid fa-thumbs-up like-icon" style="color:black; width:20px;height:20px;"></i>
-                                    </form>
-
-                                    <form asp-action="DecreaseLikeProduct" asp-controller="Product" method="post" style="display:inline;">
-                                        <input type="hidden" name="productID" value="@product.Id" />
-                                        <span id="dislike-count-@product.Id" class="dislike-count" style="color:black;">@product.Interactions.NumberOfDisLikes</span>
-                                        <i class="fa-solid fa-thumbs-down dislike-icon" style="color:black; width:20px;height:20px;"></i>
-                                    </form>
                                 </div>
                             </div>
-                        }
+                            <div class="view-count">
+                                <i class="fa-solid fa-eye" style="color:black; width:20px; height:20px;"></i>
+                                <span style="color:black;">@product.Interactions.NumberOfViews</span>
+                            </div>
+                            <div class="like-dislike-container">
+                                <form asp-action="IncreaseLikeProduct" asp-controller="Product" method="post" style="display:inline;">
+                                    <input type="hidden" name="productID" value="@product.Id" />
+                                    <span id="like-count-@product.Id" class="like-count" style="color:black;">@product.Interactions.NumberOfLikes</span>
+                                    <i class="fa-solid fa-thumbs-up like-icon" style="color:black; width:20px; height:20px;"></i>
+                                </form>
+                                <form asp-action="DecreaseLikeProduct" asp-controller="Product" method="post" style="display:inline;">
+                                    <input type="hidden" name="productID" value="@product.Id" />
+                                    <span id="dislike-count-@product.Id" class="dislike-count" style="color:black;">@product.Interactions.NumberOfDisLikes</span>
+                                    <i class="fa-solid fa-thumbs-down dislike-icon" style="color:black; width:20px; height:20px;"></i>
+                                </form>
+                            </div>
+                        </a>
                     }
-
-                    
-                    
-@*                     <div class=" card cardgamemonth m-1" style="width: 12rem; height:230px;">
-                        <img src="~/image/game.jpg" class="card-img-top" alt="..." />
-                        <div class="card-body">
-                            <h5 style="font-size:15px;">Trick Tactics - Card Adventure Game</h5>
-                            <p class="text-end">109.000 <sup>đ</sup></p>
-                        </div>
-                    </div> *@
-                </div>
+                }
             </div>
         </div>
+
     </div>
 </div>
 
-<div class="d-flex justify-content-between" style="margin-top:3vw;">
-    <div style="font-size: 1em; font-weight: bold; color: #00A97F; display: flex; align-items: center; justify-content: center; padding: 15px 30px; background-color: transparent; border: 2px solid #00A97F; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 169, 127, 0.4), 0 0 15px rgba(0, 169, 127, 0.3); position: relative; text-align: center; transition: all 0.3s;">
+<div class="d-flex align-items-center justify-content-between row" style="margin-top:3vw;">
+    <div class="col-12 col-sm-12 col-md-2" style=" font-weight: bold; color: #00A97F; display: flex; align-items: center; justify-content: center; padding: 15px 30px; background-color: transparent; border: 2px solid #00A97F; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 169, 127, 0.4), 0 0 15px rgba(0, 169, 127, 0.3); position: relative; text-align: center; transition: all 0.3s;">
         <i class="fas fa-rocket" style="margin-right: 15px; color: #00A97F;"></i>
         Total: <span style="color: #00A97F; padding-left: 5px; padding-right: 5px;">@(Model.totalItem)</span> items
-        <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(135deg, #00A97F, #800080); border-radius: 8px; opacity: 0.2; z-index: -1;"></div>
+
     </div>
 
 
-    <div>
+    <div class="col-12 col-md-12 col-md-8 d-flex justify-content-end align-items-center">
         @if (ViewData["Parameters"] != null)
         {
             @if (ViewData["Parameters"] is Dictionary<string, object> routeParams)
             {
-                <form method="get" asp-controller="Product" asp-action="@ViewData["CurrentAction"]" class="d-inline">
+                <form method="get" asp-controller="Product" asp-action="@ViewData["CurrentAction"]" class="d-inline mt-2">
                     @foreach (var param in routeParams)
                     {
                         <input name="@param.Key" value="@param.Value" style="display:none" />
@@ -395,14 +289,9 @@
                 <li class="page-item @(Model.pageNumber == 1 ? "disabled" : "")">
                     @if (ViewData["Parameters"] != null)
                     {
-                        @* <a class="page-link" asp-controller="Admin" asp-route-@param.Key="@(param.Value)" asp-action="@ViewData["CurrentAction"]" asp-route-page="@(Model.pageNumber - 1)" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
-                    Previous
-                    </a> *@
                         @if (ViewData["Parameters"] is Dictionary<string, object> routeParams)
                         {
                             <form asp-controller="Product" asp-action="@ViewData["CurrentAction"]" asp-route-page="@(Model.pageNumber - 1)" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
-                                @* <option value="@ViewData["Parameters"]" style="display:none;" selected></option> *@
-                                @* <input name="@ViewData["NamePara"]" value="@ViewData["Parameters"]" style="display:none" /> *@
                                 @foreach (var param in routeParams)
                                 {
                                     <input name="@param.Key" value="@param.Value" style="display:none" />
@@ -416,7 +305,6 @@
                         else
                         {
                             <form asp-controller="Product" asp-action="@ViewData["CurrentAction"]" asp-route-page="@(Model.pageNumber - 1)" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
-                                @* <option value="@ViewData["Parameters"]" style="display:none;" selected></option> *@
                                 <input name="@ViewData["NamePara"]" value="@ViewData["Parameters"]" style="display:none" />
                                 <input type="hidden" name="pageSize" value="@(ViewContext.HttpContext.Request.Query["pageSize"])" />
                                 <button type="submit" class="page-link">
@@ -427,12 +315,7 @@
                     }
                     else
                     {
-                        @* <a class="page-link" asp-controller="Product" asp-action="@ViewData["CurrentAction"]" asp-route-page="@(Model.pageNumber - 1)" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
-                            Previous
-                        </a> *@
                         <form asp-controller="Product" asp-action="@ViewData["CurrentAction"]" asp-route-page="@(Model.pageNumber - 1)" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
-                            @* <option value="@ViewData["Parameters"]" style="display:none;" selected></option> *@
-                            @* <input name="@ViewData["NamePara"]" value="@ViewData["Parameters"]" style="display:none" /> *@
                             <input type="hidden" name="pageSize" value="@(ViewContext.HttpContext.Request.Query["pageSize"])" />
                             <button type="submit" class="page-link">
                                 Previous
@@ -446,17 +329,9 @@
 
                         @if (ViewData["Parameters"] != null)
                         {
-                            @* foreach (var param in routeParams2)
-                    {
-                    <a class="page-link" asp-controller="Admin" asp-route-@param.Key="@(param.Value)" asp-action="@ViewData["CurrentAction"]" asp-route-page="@pg" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
-                    @pg
-                    </a>
-                    } *@
                             @if (ViewData["Parameters"] is Dictionary<string, object> routeParams)
                             {
                                 <form asp-controller="Product" asp-action="@ViewData["CurrentAction"]" asp-route-page="@pg" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
-                                    @*  <option value="@ViewData["Parameters"]" style="display:none;" selected></option> *@
-                                    @* <input name="@ViewData["NamePara"]" value="@ViewData["Parameters"]" style="display:none" /> *@
                                     @foreach (var param in routeParams)
                                     {
                                         <input name="@param.Key" value="@param.Value" style="display:none" />
@@ -470,7 +345,6 @@
                             else
                             {
                                 <form asp-controller="Product" asp-action="@ViewData["CurrentAction"]" asp-route-page="@pg" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
-                                    @*  <option value="@ViewData["Parameters"]" style="display:none;" selected></option> *@
                                     <input name="@ViewData["NamePara"]" value="@ViewData["Parameters"]" style="display:none" />
                                     <input type="hidden" name="pageSize" value="@(ViewContext.HttpContext.Request.Query["pageSize"])" />
                                     <button type="submit" class="page-link">
@@ -482,8 +356,6 @@
                         else
                         {
                             <form asp-controller="Product" asp-action="@ViewData["CurrentAction"]" asp-route-page="@pg" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
-                                @* <option value="@ViewData["Parameters"]" style="display:none;" selected></option> *@
-                                @* <input name="@ViewData["NamePara"]" value="@ViewData["Parameters"]" style="display:none" /> *@
                                 <input type="hidden" name="pageSize" value="@(ViewContext.HttpContext.Request.Query["pageSize"])" />
                                 <button type="submit" class="page-link">
                                     @pg
@@ -499,7 +371,6 @@
                         @if (ViewData["Parameters"] is Dictionary<string, object> routeParams)
                         {
                             <form asp-controller="Product" asp-action="@ViewData["CurrentAction"]" asp-route-page="@(Model.pageNumber + 1)" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
-                                @* <option value="@ViewData["Parameters"]" style="display:none;" selected></option> *@
                                 @foreach (var param in routeParams)
                                 {
                                     <input name="@param.Key" value="@param.Value" style="display:none" />
@@ -513,7 +384,6 @@
                         else
                         {
                             <form asp-controller="Product" asp-action="@ViewData["CurrentAction"]" asp-route-page="@(Model.pageNumber + 1)" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
-                                @* <option value="@ViewData["Parameters"]" style="display:none;" selected></option> *@
                                 <input name="@ViewData["NamePara"]" value="@ViewData["Parameters"]" style="display:none" />
                                 <input type="hidden" name="pageSize" value="@(ViewContext.HttpContext.Request.Query["pageSize"])" />
                                 <button type="submit" class="page-link">
@@ -526,8 +396,6 @@
                     else
                     {
                         <form asp-controller="Product" asp-action="@ViewData["CurrentAction"]" asp-route-page="@(Model.pageNumber + 1)" asp-route-pageSize="@(ViewContext.HttpContext.Request.Query["pageSize"])">
-                            @* <option value="@ViewData["Parameters"]" style="display:none;" selected></option> *@
-                            @* <input name="@ViewData["NamePara"]" value="@ViewData["Parameters"]" style="display:none" /> *@
                             <input type="hidden" name="pageSize" value="@(ViewContext.HttpContext.Request.Query["pageSize"])" />
                             <button type="submit" class="page-link">
                                 Next
@@ -538,8 +406,6 @@
             </ul>
         </nav>
     </div>
-
-
 </div>
 
 

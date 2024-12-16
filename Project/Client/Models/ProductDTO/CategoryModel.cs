@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Client.Models.CategorisDTO;
+using System.ComponentModel.DataAnnotations;
 
 namespace Client.Models.ProductDTO
 {
@@ -11,5 +12,6 @@ namespace Client.Models.ProductDTO
         /// </summary>
         [Required(ErrorMessage = "Tên danh mục là bắt buộc.")]
         public string CategoryName { get; set; }
+
     }
 }

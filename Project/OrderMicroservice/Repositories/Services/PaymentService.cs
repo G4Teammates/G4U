@@ -20,6 +20,7 @@ namespace OrderMicroservice.Repositories.Services
         private readonly IOrderService _orderService = orderService;
         private readonly IHelperService _helperService = helperService;
         private static readonly HttpClient client = new();
+
         private static readonly string MoMoGateway = "https://test-payment.momo.vn/v2/gateway/api/create";
 
         //Host

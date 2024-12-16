@@ -8,20 +8,21 @@
      data-login_uri='/google-response'
      data-auto_prompt='false'>
 </div>
-<div id="carouselExampleInterval" class="carousel slide mt-5 w-100 h-100" data-bs-ride="carousel" style="border-radius:5px; margin: 0 auto; width: 80%;">
+
+<div id="carouselExampleInterval"
+     class="carousel slide mt-5"
+     data-bs-ride="carousel"
+     style="border-radius:5px; margin: 0 auto; max-width: 100%;">
+
     <div class="carousel-inner">
         @if (Model.Product != null)
         {
-            // Lấy 4 sản phẩm mới nhất theo CreatedAt
             var latestProducts = Model.Product
             .OrderByDescending(p => p.CreatedAt)
             .Take(4)
             .ToList();
 
-            // Danh sách các sản phẩm có hình ảnh thứ 2
             var productsWithSecondImage = new List<dynamic>();
-
-            // Biến để kiểm tra xem có sản phẩm nào có hình ảnh thứ 2 không
             bool hasSecondImage = false;
 
             foreach (var product in latestProducts)
@@ -36,10 +37,10 @@
                         if (link.Url.Contains("cloudinary"))
                         {
                             imageCount++;
-                            if (imageCount == 2) // Tìm hình ảnh thứ 2
+                            if (imageCount == 2)
                             {
                                 secondImageUrl = link.Url;
-                                hasSecondImage = true; // Đánh dấu là có hình ảnh thứ 2
+                                hasSecondImage = true;
                                 break;
                             }
                         }
@@ -52,13 +53,12 @@
                 }
             }
 
-            // Nếu không có hình ảnh thứ 2, chọn ngẫu nhiên các sản phẩm khác có hình ảnh thứ 2
             if (!hasSecondImage)
             {
                 var randomProducts = Model.Product
                 .Where(p => p.Links != null && p.Links.Count(link => link.Url.Contains("cloudinary")) >= 2)
-                .OrderBy(p => Guid.NewGuid()) // Chọn ngẫu nhiên
-                .Take(4); // Lấy 4 sản phẩm
+                .OrderBy(p => Guid.NewGuid())
+                .Take(4);
 
                 foreach (var product in randomProducts)
                 {
@@ -85,7 +85,6 @@
                 }
             }
 
-            // Hiển thị sản phẩm
             bool isFirstItem = true;
             foreach (var item in productsWithSecondImage)
             {
@@ -94,11 +93,11 @@
                         <img src="@item.ImageUrl" alt="Product Image" class="d-block w-100 carousel-image" />
                     </div>
                 </div>
-
                 isFirstItem = false;
             }
         }
     </div>
+
     <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleInterval" data-bs-slide="prev">
         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
         <span class="visually-hidden">Previous</span>
