@@ -269,6 +269,7 @@ namespace UserMicroservice.Repositories.Services
                 new Claim(ClaimTypes.Name, model.Username),
                 new Claim(ClaimTypes.GivenName, model.DisplayName),
                 new Claim("Avatar", model.Avatar),
+                new Claim("LoginType", model.LoginType.ToString())
             };
 
             var token = new JwtSecurityToken(

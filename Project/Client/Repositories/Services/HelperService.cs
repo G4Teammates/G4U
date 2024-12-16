@@ -17,6 +17,7 @@ using static Google.Apis.Requests.BatchRequest;
 using Client.Utility;
 using static Client.Models.Enum.UserEnum.User;
 using Client.Repositories.Interfaces.Authentication;
+using Microsoft.AspNetCore.Connections;
 
 namespace Client.Repositories.Services
 {
@@ -30,9 +31,9 @@ namespace Client.Repositories.Services
         private IBaseService _baseService = baseService;
         private ITokenProvider _tokenProvider = tokenProvider;
         
-
         public async Task<string> UploadImageAsync(Stream imageStream, string fileName)
         {
+
             ImageUploadResult result = new();
             try
             {
