@@ -20,9 +20,9 @@ namespace OrderMicroservice.Repositories.Services
         private readonly IOrderService _orderService = orderService;
         private readonly IHelperService _helperService = helperService;
         private static readonly HttpClient client = new();
-        private static readonly string Gateway = "https://localhost:7296";
+        private static readonly string ClientUrl = "https://webmvc-gbfngyfng2bfbccj.southeastasia-01.azurewebsites.net";
         private static readonly string MoMoGateway = "https://test-payment.momo.vn/v2/gateway/api/create";
-        private static readonly string IpnMomo = "https://5c16-2402-800-6346-23b3-38c1-d46d-fbda-2c63.ngrok-free.app" + "/api/payment/ipn/momo";
+        private static readonly string IpnMomo = "https://oderapi-fkddgtb7ayeweyab.southeastasia-01.azurewebsites.net" + "/api/payment/ipn/momo";
         private IMessage _message = message;
         public async Task<ResponseModel> MoMoPayment(MoMoRequestFromClient requestClient)
         {
@@ -37,7 +37,7 @@ namespace OrderMicroservice.Repositories.Services
                 {
                     orderInfo = "Pay with MoMo",
                     partnerCode = "MOMO",
-                    redirectUrl = $"{Gateway}/Order/PaymentSuccess",
+                    redirectUrl = $"{ClientUrl}/Order/PaymentSuccess",
                     ipnUrl = IpnMomo,
                     amount = requestClient.Amount,
                     orderId = requestClient.Id,
@@ -94,7 +94,7 @@ namespace OrderMicroservice.Repositories.Services
                 List<ItemData> itemData = request.Items.Select(i => new ItemData(i.ProductName, i.Quantity, (int)i.Price)).ToList();
 
                 PaymentData paymentData = new PaymentData(orderId, (int)request.Amount, $"Payment with G4T",
-                     itemData, cancelUrl: $"{Gateway}/Order/PaymentFailure", returnUrl: $"{Gateway}/Order/PaymentSuccessPayOs");
+                     itemData, cancelUrl: $"{ClientUrl}/Order/PaymentFailure", returnUrl: $"{ClientUrl}/Order/PaymentSuccessPayOs");
 
                 CreatePaymentResult createPayment = await payOS.createPaymentLink(paymentData);
 
@@ -278,7 +278,7 @@ namespace OrderMicroservice.Repositories.Services
         {
             try
             {
-                _message.SendingMessage(request, "Product", "order_for_sold_product", "order_for_sold_product", ExchangeType.Direct, true, false, false, false);
+                _message.SendingMessage2(request, "Product", "order_for_sold_product", "order_for_sold_product", ExchangeType.Direct, true, false, false, false);
                 return new ResponseModel
                 {
                     IsSuccess = true,

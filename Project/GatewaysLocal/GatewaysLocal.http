@@ -1,0 +1,6 @@
+@GatewaysLocal_HostAddress = http://localhost:5003
+
+GET {{GatewaysLocal_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

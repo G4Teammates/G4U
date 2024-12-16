@@ -25,7 +25,6 @@ namespace Client.Controllers
 {
     public class ProductController(ICompositeViewEngine viewEngine, IHelperService helperService, IRepoProduct repoProduct, ICategoriesService categoryService, ICommentService commentService, IUserService userService, IOrderService orderService) : Controller
     {
-
         private readonly IHelperService _helperService = helperService;
         public readonly IRepoProduct _productService = repoProduct;
         public readonly ICategoriesService _categoryService = categoryService;

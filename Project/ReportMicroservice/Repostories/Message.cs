@@ -11,11 +11,14 @@ namespace ReportMicroservice.Repostories
     {
         private readonly IServiceScopeFactory _scopeFactory;
         private readonly IConfiguration _config;
-        public Message(IServiceScopeFactory scopeFactory, IConfiguration config)
+        private readonly IModel _channel3;
+        public Message(IServiceScopeFactory scopeFactory, IConfiguration config, RabbitMQServer3ConnectionFactory server3Factory)
         {
             _scopeFactory = scopeFactory;
             _config = config;
+            _channel3 = server3Factory.Factory.CreateConnection().CreateModel();
         }
+        // conn 3
         public void ReceiveMessageFromUser()
         {
             try
@@ -24,7 +27,7 @@ namespace ReportMicroservice.Repostories
                 /*const string ExchangeName = "delete_category";*/
                 // tên queue
                 const string QueueName = "updateUserName_queue_rp";
-                var connectionFactory = new ConnectionFactory
+                /*var connectionFactory = new ConnectionFactory
                 {
                     UserName = "guest",
                     Password = "guest",
@@ -33,16 +36,16 @@ namespace ReportMicroservice.Repostories
                     HostName = "localhost"
                 };
                 using var connection = connectionFactory.CreateConnection();
-                using var channel = connection.CreateModel();
+                using var channel = connection.CreateModel();*/
 
-                var queue = channel.QueueDeclare(
+                var queue = _channel3.QueueDeclare(
                     queue: QueueName,
                     durable: false,
                     exclusive: false,
                     autoDelete: false,
                     arguments: ImmutableDictionary<string, object>.Empty);
 
-                var consumer = new EventingBasicConsumer(channel);
+                var consumer = new EventingBasicConsumer(_channel3);
                 consumer.Received += async (model, EventArgs) =>
                 {
                     var boby = EventArgs.Body.ToArray();
@@ -81,7 +84,7 @@ namespace ReportMicroservice.Repostories
                         }
                     }
                 };
-                channel.BasicConsume(
+                _channel3.BasicConsume(
                 queue: queue.QueueName,
                 autoAck: true,
                 consumer: consumer);

@@ -322,19 +322,20 @@ namespace UserMicroservice.Repositories.Services
                     user.Role = updatedUserModel.Role ?? user.Role;
                     user.EmailConfirmation = updatedUserModel.EmailConfirmation ?? user.EmailConfirmation;
                     user.Status = updatedUserModel.Status ?? user.Status;
+                    user.BankName = updatedUserModel.BankName;
                     user.BankAccount = updatedUserModel.BankAccount;
                     user.UpdatedAt = DateTime.UtcNow;
                     // Lưu các thay đổi vào cơ sở dữ liệu
                     _context.Users.Update(user);
                     await _context.SaveChangesAsync();
 
-                    _message.SendingMessage(data, "UpdateUserName", "updateUserName_queue_cmt", "updateUserName_queue_cmt", ExchangeType.Direct, true, false, false, false);
+                    _message.SendingMessage3(data, "UpdateUserName", "updateUserName_queue_cmt", "updateUserName_queue_cmt", ExchangeType.Direct, true, false, false, false);
 
-                    _message.SendingMessage(data, "UpdateUserName", "updateUserName_queue_od", "updateUserName_queue_od", ExchangeType.Direct, true, false, false, false);
+                    _message.SendingMessage3(data, "UpdateUserName", "updateUserName_queue_od", "updateUserName_queue_od", ExchangeType.Direct, true, false, false, false);
 
-                    _message.SendingMessage(data, "UpdateUserName", "updateUserName_queue_pro", "updateUserName_queue_pro", ExchangeType.Direct, true, false, false, false);
+                    _message.SendingMessage3(data, "UpdateUserName", "updateUserName_queue_pro", "updateUserName_queue_pro", ExchangeType.Direct, true, false, false, false);
 
-                    _message.SendingMessage(data, "UpdateUserName", "updateUserName_queue_rp", "updateUserName_queue_rp", ExchangeType.Direct, true, false, false, false);
+                    _message.SendingMessage3(data, "UpdateUserName", "updateUserName_queue_rp", "updateUserName_queue_rp", ExchangeType.Direct, true, false, false, false);
 
                     // Trả về thông báo thành công cùng với thông tin người dùng đã cập nhật
                     response.IsSuccess = true;

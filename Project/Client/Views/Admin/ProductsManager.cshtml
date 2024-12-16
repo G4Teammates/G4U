@@ -215,20 +215,26 @@
             <button type="submit" class="btn btn-primary">Sort</button>
         </form>
 
-        <!-- Nút Thêm sản phẩm -->
+        
         <div class="col-md-4 d-flex justify-content-center">
             <!-- Dropdown cho User Status -->
-            <span class="dropdown me-2">
-                <button class="btn btn-secondary dropdown-toggle" type="button" style="width:100px" id="statusDropdown" data-bs-toggle="dropdown">
-                    Status
-                </button>
-                <span class="dropdown-menu" aria-labelledby="statusDropdown">
-                    <a class="dropdown-item" href="">Active</a>
-                    <a class="dropdown-item" href="">Inactive</a>
-                    <a class="dropdown-item" href="">Block</a>
-                    <a class="dropdown-item" href="">Deleted</a>
+            <form asp-action="@ViewData["CurrentAction"]" asp-controller="Admin">
+                <span class="dropdown me-2">
+                
+                        <button class="btn btn-secondary dropdown-toggle" type="button" style="width:100px" id="statusDropdown" data-bs-toggle="dropdown">
+                            Status
+                        </button>
+                    <span class="dropdown-menu" aria-labelledby="statusDropdown">
+                        <a class="dropdown-item" asp-action="FilterStatus" asp-route-status="0">Active</a>
+                        <a class="dropdown-item" asp-action="FilterStatus" asp-route-status="1">Inactive</a>
+                        <a class="dropdown-item" asp-action="FilterStatus" asp-route-status="2">Block</a>
+                        <a class="dropdown-item" asp-action="FilterStatus" asp-route-status="3">Deleted</a>
+                        </span>
+                
+
                 </span>
-            </span>
+            </form>
+            <!-- Nút Thêm sản phẩm -->
             <button class="btn btn-success w-75" data-toggle="modal" data-target="#modalProduct">+ Add</button>
         </div>
     </div>

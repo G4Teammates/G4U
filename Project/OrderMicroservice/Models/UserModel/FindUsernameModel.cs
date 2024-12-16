@@ -1,4 +1,6 @@
-﻿namespace OrderMicroservice.Models.UserModel
+﻿using RabbitMQ.Client;
+
+namespace OrderMicroservice.Models.UserModel
 {
     public class FindUsernameModel
     {

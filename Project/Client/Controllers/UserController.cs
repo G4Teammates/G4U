@@ -30,6 +30,7 @@ using AutoMapper;
 using Azure;
 using static Client.Models.Enum.UserEnum.User;
 using Microsoft.AspNetCore.Http;
+using Client.Models.Enum.ProductEnum;
 
 namespace Client.Controllers
 {
@@ -82,13 +83,13 @@ namespace Client.Controllers
 
                     if (user.IsRememberMe)
                     {
-                        _tokenProvider.SetToken(JWT,user!.Token, 7);
+                        _tokenProvider.SetToken(JWT, user!.Token, 7);
                         _tokenProvider.SetToken(IsLogin, response.IsSuccess.ToString(), 7);
-                        _tokenProvider.SetToken(RememberMe,user.IsRememberMe.ToString(), 7);
+                        _tokenProvider.SetToken(RememberMe, user.IsRememberMe.ToString(), 7);
                     }
                     else
                     {
-                        _tokenProvider.SetToken(JWT,user!.Token, 1,false);
+                        _tokenProvider.SetToken(JWT, user!.Token, 1, false);
                         _tokenProvider.SetToken(IsLogin, response.IsSuccess.ToString(), 1, false);
                         _tokenProvider.SetToken(RememberMe, user.IsRememberMe.ToString(), 1);
 
@@ -160,7 +161,7 @@ namespace Client.Controllers
                 if (response.IsSuccess)
                 {
                     var user = JsonConvert.DeserializeObject<LoginResponseModel>(response.Result.ToString()!);
-                    
+
                     IEnumerable<Claim> claim = HttpContext.User.Claims;
                     UserClaimModel userClaim = new UserClaimModel
                     {
@@ -174,9 +175,9 @@ namespace Client.Controllers
                     };
                     await _helperService.UpdateClaim(userClaim, HttpContext);
 
-                    _tokenProvider.SetToken(JWT,user.Token, 7);
-                    _tokenProvider.SetToken(IsLogin,response.IsSuccess.ToString(), 7);
-                    _tokenProvider.SetToken(RememberMe,"true", 7);
+                    _tokenProvider.SetToken(JWT, user.Token, 7);
+                    _tokenProvider.SetToken(IsLogin, response.IsSuccess.ToString(), 7);
+                    _tokenProvider.SetToken(RememberMe, "true", 7);
 
                     return RedirectToAction("Index", "Home");
                 }
@@ -192,12 +193,7 @@ namespace Client.Controllers
         [HttpGet]
         public async Task<IActionResult> Logout()
         {
-            _tokenProvider.ClearToken(IsLogin);
-            _tokenProvider.ClearToken(GoogleToken);
-            _tokenProvider.ClearToken(RememberMe);
-            _tokenProvider.ClearToken(JWT);
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-
+            await LogoutActionAsync();
             return RedirectToAction("Index", "Home");
         }
 
@@ -215,10 +211,10 @@ namespace Client.Controllers
                 var response = await _authenService.ForgotPasswordAsync(model);
                 if (response.IsSuccess)
                 {
-                    TempData["success"] = "Check your email";
+                    TempData["success"] = "Email reset password have send you. Check your email";
                     return View();
                 }
-                TempData["success"] = "Forgot password is fail";
+                TempData["error"] = "Forgot password is fail. " + response.Message;
             }
             return View();
         }
@@ -251,7 +247,7 @@ namespace Client.Controllers
                 TempData["success"] = "Reset password is success";
                 return RedirectToAction(nameof(Logout));
             }
-            TempData["error"] = "Reset password is fail";
+            TempData["error"] = "Reset password is fail. " + response.Message;
             return View();
         }
 
@@ -330,6 +326,7 @@ namespace Client.Controllers
                 updateUser.Status = Models.Enum.UserEnum.User.UserStatus.Active;
                 updateUser.EmailConfirmation = Models.Enum.UserEnum.User.EmailStatus.Confirmed;
                 ResponseModel response = await _userService.UpdateUser(updateUser);
+                await LogoutActionAsync();
                 response = await _authenService.LoginWithoutPassword(updateUser.Email);
                 if (response.IsSuccess)
                 {
@@ -340,19 +337,21 @@ namespace Client.Controllers
                         return View();
                     }
 
-                    _tokenProvider.SetToken(JWT,userLogin!.Token, 7);
-                    _tokenProvider.SetToken(IsLogin,response.IsSuccess.ToString(), 7);
-                    _tokenProvider.SetToken(RememberMe,"true", 7);
+                    _tokenProvider.SetToken(JWT, userLogin!.Token, 7);
+                    _tokenProvider.SetToken(IsLogin, response.IsSuccess.ToString(), 7);
+                    _tokenProvider.SetToken(RememberMe, "true", 7);
 
                     IEnumerable<Claim> claim = HttpContext.User.Claims;
                     UserClaimModel userClaim = new UserClaimModel
                     {
-                        Id = userLogin.Id!,
-                        Username = userLogin.Username!,
-                        Email = userLogin.Email!,
-                        Role = userLogin.Role!,
-                        DisplayName = userLogin.DisplayName!,
-                        Avatar = userLogin.Avatar!
+                        Id = user.Id!,
+                        Username = user.Username!,
+                        Email = user.Email!,
+                        Role = user.Role.ToString()!,
+                        DisplayName = user.DisplayName!,
+                        Avatar = user.Avatar!,
+                        LoginType = user.LoginType.ToString(),
+
                     };
                     await _helperService.UpdateClaim(userClaim, HttpContext);
 
@@ -396,7 +395,7 @@ namespace Client.Controllers
             else
             {
                 token = _tokenProvider.GetToken(JWT, false);
-                isLogin = Convert.ToBoolean(_tokenProvider.GetToken(IsLogin,false));
+                isLogin = Convert.ToBoolean(_tokenProvider.GetToken(IsLogin, false));
             }
 
             if (token == null || !isLogin)
@@ -465,7 +464,7 @@ namespace Client.Controllers
                     Role = claim.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value!,
                     DisplayName = updateUser.DisplayName!,
                     Avatar = updateUser.Avatar!,
-                    LoginType = claim.FirstOrDefault(c=>c.Type == "LoginType")?.Value
+                    LoginType = claim.FirstOrDefault(c => c.Type == "LoginType")?.Value
                 };
 
                 await _helperService.UpdateClaim(user, HttpContext);
@@ -648,7 +647,7 @@ namespace Client.Controllers
             else
             {
                 token = _tokenProvider.GetToken(JWT, false);
-                isLogin = Convert.ToBoolean(_tokenProvider.GetToken(IsLogin,false));
+                isLogin = Convert.ToBoolean(_tokenProvider.GetToken(IsLogin, false));
             }
 
             if (token == null || !isLogin)
@@ -714,8 +713,8 @@ namespace Client.Controllers
         }
 
         [HttpPost]
-        [RequestSizeLimit(60 * 1024 * 1024)] // 50MB
-        [RequestFormLimits(MultipartBodyLengthLimit = 60 * 1024 * 1024)] // Đặt giới hạn cho form multipart
+        [RequestSizeLimit(100 * 1024 * 1024)] // 50MB
+        [RequestFormLimits(MultipartBodyLengthLimit = 100 * 1024 * 1024)] // Đặt giới hạn cho form multipart
         public async Task<IActionResult> UpdateProduct(UpdateProductModel updateProductModel, string SerializedLinks)
         {
             //if (!ModelState.IsValid)
@@ -751,12 +750,11 @@ namespace Client.Controllers
                 var numOfLike = product.Interactions.NumberOfLikes;
                 var numOfDisLike = product.Interactions.NumberOfDisLikes;
 
-
-                    // Tạo đối tượng ScanFileRequest
-                    var request = new ScanFileRequest
-                    {
-                        gameFile = updateProductModel.gameFile
-                    };
+                // Tạo đối tượng ScanFileRequest
+                var request = new ScanFileRequest
+                {
+                    gameFile = updateProductModel.gameFile
+                };
                 if (updateProductModel.gameFile == null)
                 {
                     updateProductModel.WinrarPassword = product.WinrarPassword;
@@ -906,15 +904,15 @@ namespace Client.Controllers
 
                 if (updateProductModel.Categories.Count <= 0)
                 {
-					updateProductModel.Categories.Add(listCate[0]);
-				}
+                    updateProductModel.Categories.Add(listCate[0]);
+                }
 
-				//if (updateProductModel != null)
-				//{
-				//    updateProductModel = updateProductModel;
-				//}
+                //if (updateProductModel != null)
+                //{
+                //    updateProductModel = updateProductModel;
+                //}
 
-				return View(updateProductModel);
+                return View(updateProductModel);
             }
             catch (Exception ex)
             {
@@ -925,8 +923,8 @@ namespace Client.Controllers
         }
 
         [HttpPost]
-        [RequestSizeLimit(60 * 1024 * 1024)] // 50MB
-        [RequestFormLimits(MultipartBodyLengthLimit = 60 * 1024 * 1024)] // Đặt giới hạn cho form multipart
+        [RequestSizeLimit(100 * 1024 * 1024)] // 50MB
+        [RequestFormLimits(MultipartBodyLengthLimit = 100 * 1024 * 1024)] // Đặt giới hạn cho form multipart
         public async Task<IActionResult> UploadProductPost(UpdateProductModel updateProductModel)
         {
             try
@@ -1050,7 +1048,7 @@ namespace Client.Controllers
             else
             {
                 token = _tokenProvider.GetToken(JWT, false);
-                isLogin = Convert.ToBoolean(_tokenProvider.GetToken(IsLogin,false));
+                isLogin = Convert.ToBoolean(_tokenProvider.GetToken(IsLogin, false));
             }
 
             if (token == null || !isLogin)
@@ -1065,19 +1063,34 @@ namespace Client.Controllers
             ResponseModel? ProResponese = await _productService.GetAllProductsByUserName(un);
             /*ResponseModel? WishListResponse = await _userService.GetAllProductsInWishList(i);*/
             /*ResponseModel? response2 = await _userService.GetUserAsync(i);*/
+            var pro = new List<ProductModel>();
 
             // Kiểm tra và gán oderitem nếu ItemResponse thành công
             if (ProResponese != null && ProResponese.IsSuccess)
             {
                 productViewModel.Product = JsonConvert.DeserializeObject<List<ProductModel>>(Convert.ToString(ProResponese.Result))
                     ?? new List<ProductModel>();
+
+                if (productViewModel.Product != null)
+                {
+                    foreach (var p in productViewModel.Product)
+                    {
+                        if (p.Status != ProductStatus.Deleted)
+                        {
+                            pro.Add(p);
+                        }
+                    }
+                    productViewModel.Product = pro;
+                }
             }
             else
             {
-                // Nếu không có ItemResponse hợp lệ, gán danh sách trống
-                productViewModel.Product = new List<ProductModel>();
-            }
+                pro = new List<ProductModel>();
 
+                // Nếu không có ItemResponse hợp lệ, gán danh sách trống
+                productViewModel.Product = pro;
+
+            }
 
             // Trả về View với ProductViewModel
             return View(productViewModel);
@@ -1086,6 +1099,16 @@ namespace Client.Controllers
         public IActionResult DownloadProduct()
         {
             return View();
+        }
+
+        private async Task LogoutActionAsync()
+        {
+            _tokenProvider.ClearToken(IsLogin);
+            _tokenProvider.ClearToken(GoogleToken);
+            _tokenProvider.ClearToken(RememberMe);
+            _tokenProvider.ClearToken(JWT);
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
         }
     }
 }
