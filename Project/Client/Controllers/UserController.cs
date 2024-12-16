@@ -1071,17 +1071,17 @@ namespace Client.Controllers
                 productViewModel.Product = JsonConvert.DeserializeObject<List<ProductModel>>(Convert.ToString(ProResponese.Result))
                     ?? new List<ProductModel>();
 
-                if (productViewModel.Product != null)
-                {
-                    foreach (var p in productViewModel.Product)
-                    {
-                        if (p.Status != ProductStatus.Deleted)
-                        {
-                            pro.Add(p);
-                        }
-                    }
-                    productViewModel.Product = pro;
-                }
+                //if (productViewModel.Product != null)
+                //{
+                //    foreach (var p in productViewModel.Product)
+                //    {
+                //        if (p.Status != ProductStatus.Deleted)
+                //        {
+                //            pro.Add(p);
+                //        }
+                //    }
+                //    productViewModel.Product = pro;
+                //}
             }
             else
             {
