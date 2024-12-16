@@ -223,9 +223,10 @@ namespace CategoryMicroservice.Repositories.Services
             try
             {
                 var Category = _db.Categories.AsQueryable();
+
                 if (!string.IsNullOrEmpty(searchstring))
                 {
-                    var resultByName = Category.Where(x => x.Name.Contains(searchstring)).ToPagedList(page, pageSize);
+                    var resultByName = Category.Where(x => x.Name.ToLower().Contains(searchstring.ToLower())).ToPagedList(page, pageSize);
                     response.Result = _mapper.Map<List<Category>>(resultByName);
                 }
                 else

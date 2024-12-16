@@ -240,7 +240,7 @@
                             </div>
                         </div>
                     </div>
-                   
+
                     <div class="col-md-2 d-flex justify-content-between" style="margin-top:2vw;">
                         <!-- Form for Increasing Like -->
                         <form asp-action="IncreaseLikeProduct" asp-controller="Product" method="post" style="display:inline;" class="like-form2 ">
@@ -272,30 +272,44 @@
 
                 <p>by @product.UserName</p>
 
-                @if (LinkDownload != null)
+                @if (HasOwned)
                 {
-                    @if (LinkDownload.Count != 0)
+                    @if (LinkDownload != null)
                     {
-                        <div class="product-price-container">
-                            <div class="discount-section">
-                                <div class="price-section">
-                                    <span class="discounted-price">Owned</span>
+                        @if (LinkDownload.Count != 0)
+                        {
+                            <div class="product-price-container">
+                                <div class="discount-section">
+                                    <div class="price-section">
+                                        <span class="discounted-price">Owned</span>
+                                    </div>
                                 </div>
+                                <a data-bs-toggle="modal" data-bs-target="#downloadModal" class="btn  btn-play btn-success align-content-center w-25 fw-bold">Play</a>
                             </div>
-                            <a data-bs-toggle="modal" data-bs-target="#downloadModal" class="btn-play btn btn-success align-content-center w-25 fw-bold">Play</a>
-                        </div>
+                        }
                     }
                 }
                 else if (product.UserName == username)
                 {
-                    <div class="product-price-container">
-                        <div class="discount-section">
-                            <div class="price-section">
-                                <span class="discounted-price">Owned</span>
+                    @if (LinkDownload != null)
+                    {
+                        @if (LinkDownload.Count != 0)
+                        {
+                            <div class="product-price-container">
+                                <div class="discount-section">
+                                    <div class="price-section">
+                                        <span class="discounted-price">Owned</span>
+                                    </div>
+                                </div>
+                                <a data-bs-toggle="modal" data-bs-target="#downloadModal" class="btn btn-play btn-success align-content-center w-25 fw-bold">Play</a>
+
+                                @if (product.Status != Client.Models.Enum.ProductEnum.ProductStatus.Active)
+                                {
+                                    <h3> This game has been <span>@Model.Prod.Status</span> </h3>
+                                }
                             </div>
-                        </div>
-                        <a data-bs-toggle="modal" data-bs-target="#downloadModal" class="btn btn-success align-content-center w-25 fw-bold">Play</a>
-                    </div>
+                        }       
+                    }
                 }
                 else
                 {
@@ -343,11 +357,11 @@
                         {
                             <h1> This game has been <span>@Model.Prod.Status</span> </h1>
                         }
-                        
+
 
                     </div>
                 }
-                
+
 
 
 
@@ -447,7 +461,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="wrapper_other" >
+                        <div class="wrapper_other">
                             @if (Model.Product != null)
                             {
                                 // Lấy một danh mục ngẫu nhiên từ sản phẩm hiện tại
@@ -495,7 +509,7 @@
                                                             <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@products.Id" class="ms-3 col-md-5 text-center btn_orther">Read More</a>
                                                             <div class="col-md-3"></div>
                                                             @* Day la trai tym ne *@
-                                                            <div title="Wishlist" class="col-md-1 heart-container">
+                                                            @* <div title="Wishlist" class="col-md-1 heart-container">
                                                                 <form id="wishlistForm" method="post">
                                                                     <input type="hidden" name="ProductId" id="ProductId" value="@product.Id" />
                                                                     <input type="hidden" name="ProductName" id="ProductName" value="@product.Name" />
@@ -540,7 +554,7 @@
                                                                         </svg>
                                                                     </div>
                                                                 </form>
-                                                            </div>
+                                                            </div> *@
                                                         </div>
                                                     </div>
                                                 </div>
@@ -958,13 +972,13 @@
                                 <a class="btn btn-success me-3" href="@item.Url">Download</a>
 
                                 <!-- File Info -->
-                                <div class="align-content-center"> 
+                                <div class="align-content-center">
                                     <span class="d-inline-block text-truncate" style="max-width: 300px;">@item.Url</span>
                                     @* <p class="mb-1 text-secondary">363 MB</p> *@
-@*                                     <div>
-                                        <!-- Platform Icon -->
-                                        <i class="bi bi-windows fs-5 text-success" title="Windows"></i>
-                                    </div> *@
+                                    @*                                     <div>
+                        <!-- Platform Icon -->
+                        <i class="bi bi-windows fs-5 text-success" title="Windows"></i>
+                        </div> *@
                                 </div>
                             </div>
                         }

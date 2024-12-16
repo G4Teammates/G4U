@@ -72,7 +72,7 @@
                         <input type="hidden" name="UpdatedAt" value="@comment.UpdatedAt.ToString("yyyy-MM-dd")" />
                         <input type="hidden" name="ParentId" value="@comment.ParentId" />
                         <button type="submit" class="btn btn-warning">
-                            <i class="bi bi-trash"></i> Delete Mềm
+                            <i class="bi bi-trash"></i> Delete
                         </button>
                     </form>
                 }
@@ -85,14 +85,35 @@
                 <!-- Actions -->
                 <form asp-action="CommentDeleteConfirmed" method="post" class="text-center">
                     <input type="hidden" name="ids" value="@string.Join(",", (ViewBag.Comments as List<CommentDTOModel>).Select(c => c.Id))" />
-                    <button type="submit" class="btn btn-danger me-2">
+                    @* <button type="submit" class="btn btn-danger me-2">
                         <i class="bi bi-trash"></i> Delete
-                    </button>
+                    </button> *@
                     <a asp-action="CommentManager" class="btn btn-secondary">
                         <i class="bi bi-arrow-left-circle"></i> Back to List
                     </a>
                 </form>
+
+                <form asp-action="UpdateCommentConfirm" method="post" class="mt-3">
+                    @foreach (var comment2 in ViewBag.Comments as List<CommentDTOModel>)
+                    {
+                        <input type="hidden" name="Id" value="@comment2.Id" />
+                        <input type="hidden" name="Status" value="3" />
+                        <input type="hidden" name="NumberOfLikes" value="@comment2.NumberOfLikes" />
+                        <input type="hidden" name="NumberOfDisLikes" value="@comment2.NumberOfDisLikes" />
+                        <input type="hidden" name="Content" value="@comment2.Content" />
+                        <input type="hidden" name="UserName" value="@comment2.UserName" />
+                        <input type="hidden" name="ProductId" value="@comment2.ProductId" />
+                        <input type="hidden" name="CreatedAt" value="@comment2.CreatedAt.ToString("yyyy-MM-dd")" />
+                        <input type="hidden" name="UpdatedAt" value="@comment2.UpdatedAt.ToString("yyyy-MM-dd")" />
+                        <input type="hidden" name="ParentId" value="@comment2.ParentId" />
+                        
+                    }
+                    <button type="submit" class="btn btn-warning">
+                        <i class="bi bi-trash"></i> Delete All
+                    </button>
+                </form>
                 
+
             }
             else
             {

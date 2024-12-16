@@ -246,45 +246,42 @@ namespace Client.Controllers
 
                     productViewModel.userName = claim.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value!;
 
+                    ViewBag.HasOwned = false;
 
                     if (ItemResponse != null && ItemResponse.IsSuccess)
                     {
                         List<OrderItemModel>? orderProducts = JsonConvert.DeserializeObject<List<OrderItemModel>>(Convert.ToString(ItemResponse.Result));
 
-                        ViewBag.HasOwned = false;
-
-                        if (un == ProductModel.UserName)
+                        foreach (var item in orderProducts)
                         {
-                            List<LinkModel> urls = new List<LinkModel>();
-                            foreach (var link in productViewModel.Prod.Links)
+                            if (item.ProductId == id)
                             {
-                                if (link.Url.Contains("drive.google.com"))
+                                ViewBag.HasOwned = true;
+                                List<LinkModel> urls = new List<LinkModel>();
+                                foreach (var link in productViewModel.Prod.Links)
                                 {
-                                    urls.Add(link);
-                                }
-                            }
-                            ViewBag.UrlsDownLoad = urls;
-                        }
-                        else
-                        {
-                            foreach (var item in orderProducts)
-                            {
-                                if (item.ProductId == id)
-                                {
-                                    ViewBag.HasOwned = true;
-                                    List<LinkModel> urls = new List<LinkModel>();
-                                    foreach (var link in productViewModel.Prod.Links)
+                                    if (link.Url.Contains("drive.google.com"))
                                     {
-                                        if (link.Url.Contains("drive.google.com"))
-                                        {
-                                            urls.Add(link);
-                                        }
+                                        urls.Add(link);
                                     }
-                                    ViewBag.UrlsDownLoad = urls;
-                                    break;
                                 }
+                                ViewBag.UrlsDownLoad = urls;
+                                break;
                             }
                         }
+                    }
+
+                    if (un == ProductModel.UserName)
+                    {
+                        List<LinkModel> urls = new List<LinkModel>();
+                        foreach (var link in productViewModel.Prod.Links)
+                        {
+                            if (link.Url.Contains("drive.google.com"))
+                            {
+                                urls.Add(link);
+                            }
+                        }
+                        ViewBag.UrlsDownLoad = urls;
                     }
                 }
             }
@@ -683,10 +680,11 @@ namespace Client.Controllers
                 ResponseModel? response3 = await _categoryService.GetAllCategoryAsync(1, 99);
                 ResponseModel? response4 = await _productService.SearchProductAsync(searchString, 1, int.MaxValue);
                 // Giải mã dữ liệu tổng số sản phẩm
-                var total = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response4.Result.ToString()!));
+                
 
                 if (response != null && response.IsSuccess)
                 {
+                    var total = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response4.Result.ToString()!));
                     productViewModel.Product = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response.Result.ToString()!));
                     productViewModel.CategoriesModel = JsonConvert.DeserializeObject<ICollection<CategoriesModel>>(Convert.ToString(response3.Result.ToString()!));
                     var data = productViewModel.Product;
@@ -701,7 +699,9 @@ namespace Client.Controllers
                 }
                 else
                 {
-                    TempData["error"] = response?.Message;
+                    TempData["error"] = "No product matching";
+                    return RedirectToAction(nameof(Product));
+
                 }
             }
             catch (Exception ex)
