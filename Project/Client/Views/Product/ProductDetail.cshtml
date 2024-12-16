@@ -286,23 +286,6 @@
                             </div>
                         </div>
                     </div>
-                    <!-- Nút Like và Dislike nằm ở phía trên bên phải -->
-                    @* <form asp-controller="Product" method="post" class="col-md-2 d-flex justify-content-between" style="margin-top:2vw;">
-                <input type="hidden" name="ProductId" value="@product.Id" />
-
-                <!-- Nút Like với số lượt like -->
-                <button type="submit" name="action" value="like" class="sci-fi-btn like-btn  ">
-                <i class="fas fa-thumbs-up"></i>
-                <span class="like-count">
-                @(product.Interactions.NumberOfLikes == 0 ? "0" : product.Interactions.NumberOfLikes.ToString())
-                </span>
-                </button>
-
-                <!-- Nút Dislike -->
-                <button type="submit" name="action" value="dislike" class="sci-fi-btn dislike-btn ms-2  ">
-                <i class="fas fa-thumbs-down"></i>
-                </button>
-                </form> *@
 
                     <div class="col-md-2 d-flex justify-content-between" style="margin-top:2vw;">
                         <!-- Form for Increasing Like -->
@@ -335,30 +318,44 @@
 
                 <p>by @product.UserName</p>
 
-                @if (LinkDownload != null)
+                @if (HasOwned)
                 {
-                    @if (LinkDownload.Count != 0)
+                    @if (LinkDownload != null)
                     {
-                        <div class="product-price-container">
-                            <div class="discount-section">
-                                <div class="price-section">
-                                    <span class="discounted-price">Owned</span>
+                        @if (LinkDownload.Count != 0)
+                        {
+                            <div class="product-price-container">
+                                <div class="discount-section">
+                                    <div class="price-section">
+                                        <span class="discounted-price">Owned</span>
+                                    </div>
                                 </div>
+                                <a data-bs-toggle="modal" data-bs-target="#downloadModal" class="btn btn-success align-content-center w-25 fw-bold">Play</a>
                             </div>
-                            <a data-bs-toggle="modal" data-bs-target="#downloadModal" class="btn btn-success align-content-center w-25 fw-bold">Play</a>
-                        </div>
+                        }
                     }
                 }
                 else if (product.UserName == username)
                 {
-                    <div class="product-price-container">
-                        <div class="discount-section">
-                            <div class="price-section">
-                                <span class="discounted-price">Owned</span>
+                    @if (LinkDownload != null)
+                    {
+                        @if (LinkDownload.Count != 0)
+                        {
+                            <div class="product-price-container">
+                                <div class="discount-section">
+                                    <div class="price-section">
+                                        <span class="discounted-price">Owned</span>
+                                    </div>
+                                </div>
+                                <a data-bs-toggle="modal" data-bs-target="#downloadModal" class="btn btn-success align-content-center w-25 fw-bold">Play</a>
+
+                                @if (product.Status != Client.Models.Enum.ProductEnum.ProductStatus.Active)
+                                {
+                                    <h3> This game has been <span>@Model.Prod.Status</span> </h3>
+                                }
                             </div>
-                        </div>
-                        <a data-bs-toggle="modal" data-bs-target="#downloadModal" class="btn btn-success align-content-center w-25 fw-bold">Play</a>
-                    </div>
+                        }       
+                    }
                 }
                 else
                 {
@@ -368,13 +365,9 @@
                             @* Free *@
                             @if (Model.Prod.Discount == 100 || Model.Prod.Price == 0)
                             {
-                                @* <div class="product-price-container"> *@
-                                    @* <div class="discount-section"> *@
-                                        <div class="price-section">
-                                            <span class="discounted-price">Free</span>
-                                        </div>
-                                    @* </div> *@
-                                @* </div> *@
+                                <div class="price-section">
+                                    <span class="discounted-price">Free</span>
+                                </div>
                             }
                             else
                             {
@@ -410,19 +403,11 @@
                         {
                             <h1> This game has been <span>@Model.Prod.Status</span> </h1>
                         }
-                        
+
 
                     </div>
                 }
-                //Free
-                @* <div class="product-price-container">
-            <div class="discount-section">
-            <div class="price-section">
-            <span class="discounted-price">Free</span>
-            </div>
-            </div>
-            <a href="#" class="btn btn-success align-content-center w-25 fw-bold">Play</a>
-            </div> *@
+
 
 
 
@@ -512,7 +497,7 @@
             {
                 var product = Model.Prod;
                 var cate = product.Categories.FirstOrDefault()?.CategoryName;
-                <div class="mt-3">
+                <div class="mt-3" style="width:100%;">
                     <section id="popular">
                         <div class="d-flex justify-content-between align-items-center">
                             <h2 class="same" style="font-size:2vw;">Same category</h2>
@@ -1033,13 +1018,13 @@
                                 <a class="btn btn-success me-3" href="@item.Url">Download</a>
 
                                 <!-- File Info -->
-                                <div class="align-content-center"> 
+                                <div class="align-content-center">
                                     <span class="d-inline-block text-truncate" style="max-width: 300px;">@item.Url</span>
                                     @* <p class="mb-1 text-secondary">363 MB</p> *@
-@*                                     <div>
-                                        <!-- Platform Icon -->
-                                        <i class="bi bi-windows fs-5 text-success" title="Windows"></i>
-                                    </div> *@
+                                    @*                                     <div>
+                        <!-- Platform Icon -->
+                        <i class="bi bi-windows fs-5 text-success" title="Windows"></i>
+                        </div> *@
                                 </div>
                             </div>
                         }

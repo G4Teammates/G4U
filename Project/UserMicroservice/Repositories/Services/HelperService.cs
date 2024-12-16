@@ -228,7 +228,7 @@ namespace UserMicroservice.Repositories.Services
 
                 using var mailMessage = new MailMessage
                 {
-                    From = new MailAddress("kiet43012@gmail.com"),
+                    From = new MailAddress(emailstring),
                     Subject = subject,
                     Body = htmlMessage,
                     IsBodyHtml = true

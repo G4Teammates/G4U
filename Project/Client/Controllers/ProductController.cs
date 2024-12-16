@@ -25,7 +25,6 @@ namespace Client.Controllers
 {
     public class ProductController(ICompositeViewEngine viewEngine, IHelperService helperService, IRepoProduct repoProduct, ICategoriesService categoryService, ICommentService commentService, IUserService userService, IOrderService orderService) : Controller
     {
-
         private readonly IHelperService _helperService = helperService;
         public readonly IRepoProduct _productService = repoProduct;
         public readonly ICategoriesService _categoryService = categoryService;
@@ -247,45 +246,42 @@ namespace Client.Controllers
 
                     productViewModel.userName = claim.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value!;
 
+                    ViewBag.HasOwned = false;
 
                     if (ItemResponse != null && ItemResponse.IsSuccess)
                     {
                         List<OrderItemModel>? orderProducts = JsonConvert.DeserializeObject<List<OrderItemModel>>(Convert.ToString(ItemResponse.Result));
 
-                        ViewBag.HasOwned = false;
-
-                        if (un == ProductModel.UserName)
+                        foreach (var item in orderProducts)
                         {
-                            List<LinkModel> urls = new List<LinkModel>();
-                            foreach (var link in productViewModel.Prod.Links)
+                            if (item.ProductId == id)
                             {
-                                if (link.Url.Contains("drive.google.com"))
+                                ViewBag.HasOwned = true;
+                                List<LinkModel> urls = new List<LinkModel>();
+                                foreach (var link in productViewModel.Prod.Links)
                                 {
-                                    urls.Add(link);
-                                }
-                            }
-                            ViewBag.UrlsDownLoad = urls;
-                        }
-                        else
-                        {
-                            foreach (var item in orderProducts)
-                            {
-                                if (item.ProductId == id)
-                                {
-                                    ViewBag.HasOwned = true;
-                                    List<LinkModel> urls = new List<LinkModel>();
-                                    foreach (var link in productViewModel.Prod.Links)
+                                    if (link.Url.Contains("drive.google.com"))
                                     {
-                                        if (link.Url.Contains("drive.google.com"))
-                                        {
-                                            urls.Add(link);
-                                        }
+                                        urls.Add(link);
                                     }
-                                    ViewBag.UrlsDownLoad = urls;
-                                    break;
                                 }
+                                ViewBag.UrlsDownLoad = urls;
+                                break;
                             }
                         }
+                    }
+
+                    if (un == ProductModel.UserName)
+                    {
+                        List<LinkModel> urls = new List<LinkModel>();
+                        foreach (var link in productViewModel.Prod.Links)
+                        {
+                            if (link.Url.Contains("drive.google.com"))
+                            {
+                                urls.Add(link);
+                            }
+                        }
+                        ViewBag.UrlsDownLoad = urls;
                     }
                 }
             }

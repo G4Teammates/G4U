@@ -72,12 +72,12 @@
     display: flex; /* Dùng flexbox để căn chỉnh */
     justify-content: center; /* Canh giữa theo chiều ngang */
     align-items: center; /* Canh giữa theo chiều dọc */
-    padding: 2px 10px; /* Khoảng cách bên trong */
-    border: 2px solid #333; /* Viền của section */
-    max-width: 55%; /* Giới hạn chiều rộng */
+    border: 2px solid transparent; /* Viền trong suốt */
+    background: linear-gradient(#fff, #fff) padding-box, linear-gradient(135deg, #00A97F, #800080) border-box; /* Hiệu ứng gradient */
+    max-width: 100%; /* Giới hạn chiều rộng */
     overflow: hidden; /* Đảm bảo chữ không tràn ra ngoài */
-    box-sizing: border-box;
-    margin: 20px auto; /* Canh giữa section */
+    border-radius: 8px; /* Bo góc nếu cần */
+    transition: all 0.3s ease; /* Hiệu ứng mượt */
 }
 
 .responsive-heading {
@@ -90,8 +90,10 @@
     font-size: clamp(16px, 5vw, 36px); /* Font chữ tự động điều chỉnh */
     letter-spacing: 0.05em; /* Khoảng cách giữa các ký tự */
     line-height: 1.2; /* Dòng chữ gọn gàng */
-    transition: font-size 0.3s ease; /* Hiệu ứng mượt khi thay đổi kích thước */
+    transition: font-size 0.3s ease, color 0.3s ease; /* Hiệu ứng mượt */
+    color: #00A97F; /* Màu chữ (có thể đổi gradient nếu muốn) */
 }
+
 
 
 
@@ -208,49 +210,123 @@
 
 /*Phân trang nè*/
 /* Style cho phần phân trang */
-.pagination {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
-    font-family: 'Poppins', sans-serif;
+/* Total items */
+/* Tăng chiều rộng và padding cho phần select */
+.form-select.form-select-sm {
+    width: auto;
+    min-width: 150px; /* Kéo dài chiều rộng tối thiểu */
+    padding: 10px 20px; /* Tăng padding bên trong */
+    font-size: 1rem;
+    transition: all 0.3s;
 }
 
-    /* Base style cho các nút phân trang */
-    .pagination .page-link {
-        font-size: 1em;
-        font-weight: bold;
-        color: #00A97F;
-        background-color: transparent;
-        border: 2px solid #00A97F; /* Viền bên ngoài */
-        padding: 8px 16px;
-        margin: 0 5px;
-        border-radius: 8px;
-        position: relative;
-        text-align: center;
-        transition: all 0.3s;
+    /* Hiệu ứng hover */
+    .form-select.form-select-sm:hover {
+        background-color: #f8f9fa;
+        transform: scale(1.05);
     }
 
-        /* Hiệu ứng hover */
-        .pagination .page-link:hover {
-            background-color: #00A97F;
-            color: #fff;
-            box-shadow: 0 0 20px rgba(0, 169, 127, 0.8), 0 0 30px rgba(0, 169, 127, 0.6);
-            transform: scale(1.1);
-        }
+/* Responsive Design */
+@media (max-width: 768px) {
+    .form-select.form-select-sm {
+        width: 100%;
+        min-width: 0;
+        padding: 8px 12px;
+        font-size: 0.9rem;
+    }
+}
 
-    /* Nút active */
-    .pagination .page-item.active .page-link {
+.d-flex.align-items-center.justify-content-between .col-2 {
+    font-weight: bold;
+    color: #00A97F;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px 30px;
+    background-color: transparent;
+    border: 2px solid #00A97F;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 169, 127, 0.4), 0 0 15px rgba(0, 169, 127, 0.3);
+    text-align: center;
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 1.2rem;
+    transform-origin: center;
+}
+
+/* Pagination */
+.pagination .page-link {
+    font-weight: bold;
+    color: #00A97F;
+    background-color: transparent;
+    border: 2px solid #00A97F;
+    padding: 8px 16px;
+    font-size: 1rem;
+    transition: all 0.3s;
+    transform-origin: center;
+}
+
+    /* Hiệu ứng hover */
+    .pagination .page-link:hover {
         background-color: #00A97F;
-        color: white;
-        box-shadow: 0 0 15px rgba(0, 169, 127, 1), 0 0 25px rgba(0, 169, 127, 0.8);
+        color: #fff;
+        box-shadow: 0 0 20px rgba(0, 169, 127, 0.8), 0 0 30px rgba(0, 169, 127, 0.6);
+        transform: scale(1.1);
     }
 
-    /* Disabled state */
-    .pagination .page-item.disabled .page-link {
-        background-color: #6c757d;
-        color: #fff;
-        pointer-events: none;
+/* Media Queries - Responsive Design */
+@media (max-width: 1200px) {
+    .d-flex.align-items-center.justify-content-between .col-2 {
+        font-size: 1rem;
+        padding: 12px 24px;
+        transform: scale(0.95);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
+
+    .pagination .page-link {
+        font-size: 0.9rem;
+        padding: 6px 12px;
+        transform: scale(0.95);
+    }
+}
+
+@media (max-width: 768px) {
+    .d-flex.align-items-center.justify-content-between .col-2 {
+        font-size: 0.9rem;
+        padding: 10px 20px;
+        transform: scale(0.9);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .pagination .page-link {
+        font-size: 0.8rem;
+        padding: 5px 10px;
+        transform: scale(0.9);
+    }
+}
+
+@media (max-width: 480px) {
+    .d-flex.align-items-center.justify-content-between .col-2 {
+        font-size: 0.8rem;
+        padding: 8px 16px;
+        transform: scale(0.85);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .pagination .page-link {
+        font-size: 0.7rem;
+        padding: 4px 8px;
+        transform: scale(0.85);
+    }
+}
 
 /* Style viền khoa học viễn tưởng */
 .sci-fi-btn {
@@ -281,4 +357,7 @@
     .sci-fi-btn:active {
         box-shadow: 0 0 30px rgba(0, 169, 127, 1), 0 0 50px rgba(0, 169, 127, 0.8);
     }
+
+
+
 
