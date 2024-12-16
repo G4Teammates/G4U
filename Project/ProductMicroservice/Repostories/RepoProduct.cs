@@ -598,8 +598,7 @@ namespace ProductMicroservice.Repostories
 
                     if (result.Any())
                     {
-                        response.Result = _mapper
-                            .Map<ICollection<Products>>(result)
+                        response.Result = result
                             .ToPagedList(page, pageSize); // Áp dụng phân trang
                         response.IsSuccess = true;
                     }

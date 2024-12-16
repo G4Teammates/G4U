@@ -314,6 +314,7 @@ namespace UserMicroservice.Repositories.Services
             {
                 response.IsSuccess = false;
                 response.Message = "The Username is not for community";
+                return response;
             }
 
             try

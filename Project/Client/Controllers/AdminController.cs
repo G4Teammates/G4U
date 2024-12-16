@@ -1540,7 +1540,7 @@ namespace Client.Controllers
                 ResponseModel? response3 = await _categoryService.SearchProductAsync(searchString, page, int.MaxValue);
                 /*var total = JsonConvert.DeserializeObject<ICollection<CategoriesModel>>(Convert.ToString(response2.Result.ToString()!));*/
                 
-                if (response.Result is string resultString && !string.IsNullOrEmpty(resultString) && response.IsSuccess )
+                if (response.Result.ToString() != "[]" && response.IsSuccess )
                 {
                     var resultCount = JsonConvert.DeserializeObject<ICollection<CategoriesModel>>(Convert.ToString(response3.Result.ToString()!));
                     categoryViewModel.Categories = JsonConvert.DeserializeObject<ICollection<CategoriesModel>>(Convert.ToString(response.Result.ToString()!));
