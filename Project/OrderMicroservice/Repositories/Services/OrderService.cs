@@ -563,7 +563,7 @@ namespace OrderMicroservice.Repositories.Services
         {
             // Check if any order contains the specified UserId
             var userOrder = await Task.Run(() => _context.Orders
-                .FirstOrDefault(o => o.CustomerId == order.UserId));
+                .Where(o => o.CustomerId == order.UserId).ToList());
             // If no order is found for the given UserId, return false
             if (userOrder == null)
             {
@@ -571,9 +571,18 @@ namespace OrderMicroservice.Repositories.Services
             }
 
             // Check if the ProductId exists in the items list of the order
-            bool isProductInOrder = userOrder.Items.Any(item => item.ProductId == order.ProductId);
+            var iexist = userOrder.Where(x=> x.Items.Any(item => item.ProductId == order.ProductId));
+            bool isProductInOrder = false;
+            if (iexist.Count() > 0)
+            {
+                isProductInOrder = true;
+                return isProductInOrder;
+            }
+            else
+            {
+                return isProductInOrder;
+            }
 
-            return isProductInOrder;
         }
         public async Task<OrderGroupByUserData> Data(TotalGroupByUserResponse response)
         {
