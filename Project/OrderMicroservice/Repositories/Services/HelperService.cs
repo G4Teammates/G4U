@@ -2,26 +2,30 @@
 using System.Net.Mail;
 using System.Net;
 using OrderMicroservice.Models;
+using Microsoft.Extensions.Configuration;
 
 namespace OrderMicroservice.Repositories.Services
 {
-    public class HelperService : IHelperService
+    public class HelperService(IConfiguration configuration) : IHelperService
     {
+        private readonly IConfiguration _configuration = configuration;
         public async Task<ResponseModel> SendEmailAsync(string email, string subject, string htmlMessage)
         {
             ResponseModel response = new();
             try
             {
+                var emailstring = _configuration["21"];
+                var SenderPassword = _configuration["22"];
                 using var smtpClient = new SmtpClient("smtp.gmail.com")
                 {
                     Port = 587,
-                    Credentials = new NetworkCredential("kiet43012@gmail.com", "fjrq yuus fmaf ugbt"),
+                    Credentials = new NetworkCredential(emailstring, SenderPassword),
                     EnableSsl = true
                 };
 
                 using var mailMessage = new MailMessage
                 {
-                    From = new MailAddress("kiet43012@gmail.com"),
+                    From = new MailAddress(emailstring),
                     Subject = subject,
                     Body = htmlMessage,
                     IsBodyHtml = true
