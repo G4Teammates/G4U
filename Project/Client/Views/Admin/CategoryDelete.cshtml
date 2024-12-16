@@ -90,9 +90,9 @@
                     <a asp-action="CategoriesManager" class="btn btn-secondary">
                         <i class="bi bi-arrow-left-circle"></i> Back to List
                     </a>
-                    @* <button type="submit" class="btn btn-danger">
+                    <button type="submit" class="btn btn-danger">
                         <i class="bi bi-trash"></i> Delete
-                    </button> *@
+                    </button>
                     @* <button formaction="/Admin/UpdateCategoryConfirm" formmethod="post" class="btn btn-warning">
                         <i class="bi bi-trash"></i> Delete Mềm
                     </button> *@
@@ -105,7 +105,7 @@
                 <input type="hidden" name="Description" value="@Model.Description" />
                 <input type="hidden" name="Status" value="3" />
                 <button type="submit" class="btn btn-warning">
-                    <i class="bi bi-trash"></i> Delete Mềm
+                    <i class="bi bi-trash"></i> Soft Delete
                 </button>
             </form>
 
