@@ -300,8 +300,8 @@ namespace Client.Controllers
                         await _helperService.SendMail(new SendMailModel()
                         {
                             Email = email,
-                            Subject = $"Password of {product.Name}",
-                            Body = $"This is password of {product.Name} \n {product.WinrarPassword}"
+                            Subject = $"Password of '{product.Name}'",
+                            Body = $"This is password of '{product.Name}': {product.WinrarPassword}"
                         });
                     }
                 }
@@ -382,8 +382,8 @@ namespace Client.Controllers
                         await _helperService.SendMail(new SendMailModel()
                         {
                             Email = email,
-                            Subject = $"Password of {product.Name}",
-                            Body = $"This is password of {product.Name} \n {product.WinrarPassword}"
+                            Subject = $"Password of '{product.Name}'",
+                            Body = $"This is password of '{product.Name}': {product.WinrarPassword}"
                         });
                     }
                 }
