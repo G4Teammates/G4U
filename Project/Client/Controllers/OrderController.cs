@@ -276,7 +276,12 @@ namespace Client.Controllers
             }
 
             ResponseModel responseOrder = await _orderService.GetOrderById(orderId,1,1);
-            OrderModel order = JsonConvert.DeserializeObject<OrderModel>(responseOrder.Result.ToString());
+
+
+            // Nếu cần chuyển đổi sang ICollection<OrderModel>
+            ICollection<OrderModel> orders = JsonConvert.DeserializeObject<ICollection<OrderModel>>(responseOrder.Result.ToString());
+
+            var order = orders.FirstOrDefault();
 
             if (order == null || order.Items == null)
             {
