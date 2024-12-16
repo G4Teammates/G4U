@@ -166,7 +166,7 @@
             @*             <!-- Discount -->
             <div class="mb-3">
             <label class="form-label fw-bold fs-5">Discount</label>
-            <input asp-for="@Model.Discount" class="form-control" />
+            <input asp-for="@Model.Discount" class="form-control" />s
             <span asp-validation-for="@Model.Discount" class="text-danger"></span>
             </div> *@
 
@@ -190,12 +190,12 @@
                                     </p>
 
                                     <!-- Nút Delete, liên kết đến modal onclick="removeItem(index)" -->
-@*                                     <div class="text-end">
-                                        <button class="delete-btn" title="Delete" type="button" data-bs-toggle="modal"
-                                                data-bs-target="#deleteGameFileModal" onclick="setDeleteIndex(@index)">
-                                            <i class="fa-solid fa-delete-left text-danger"></i>
-                                        </button>
-                                    </div> *@
+                                    @*                                     <div class="text-end">
+                    <button class="delete-btn" title="Delete" type="button" data-bs-toggle="modal"
+                    data-bs-target="#deleteGameFileModal" onclick="setDeleteIndex(@index)">
+                    <i class="fa-solid fa-delete-left text-danger"></i>
+                    </button>
+                    </div> *@
 
 
                                 </div>
@@ -288,14 +288,27 @@
                 </div>
 
                 <div class="mb-2">
-                    <label class="form-label fw-bold fs-6">Status</label>
-                    <select asp-for="@Model.Status" class="form-select" style="border: 1px solid #00A97F; border-radius: 8px;">
-                        <option value="0">Inactive</option>
-                        <option value="1">Active</option>
-                        <option value="2">Block</option>
-                        <option value="3">Deleted</option>
-                    </select>
-                    <span asp-validation-for="@Model.Status" class="text-danger"></span>
+                    @if (saveBtn == "UploadProductPost")
+                    {
+                        <label class="form-label fw-bold fs-6">Status</label>
+                        <select asp-for="@Model.Status" class="form-select" style="border: 1px solid #00A97F; border-radius: 8px;" disabled>
+                            <option value="0">Inactive</option>
+                            <option value="1" selected>Active</option>
+                            <option value="2">Block</option>
+                            <option value="3">Deleted</option>
+                        </select>
+                        <span asp-validation-for="@Model.Status" class="text-danger"></span>
+                    }
+                    else
+                    {
+                        <label class="form-label fw-bold fs-6">Status</label>
+                        <select asp-for="@Model.Status" class="form-select" style="border: 1px solid #00A97F; border-radius: 8px;">
+                            <option value="0">Inactive</option>
+                            <option value="1">Active</option>
+                            <option value="2">Block</option>
+                            <option value="3">Deleted</option>
+                        </select>
+                    }
                 </div>
             </div>
         </div>
@@ -339,11 +352,11 @@
                                 else if (item.ProviderName.Contains("Cloudinary"))
                                 {
                                     <div class="imageUrl p-2 mb-2" id="item-@index">
-@*                                         <div class="text-end delete-btn">
-                                            <button onclick="removeItem(@index)" title="Delete" type="button">
-                                                <i class="fa-solid fa-delete-left text-danger"></i>
-                                            </button>
-                                        </div> *@
+                                        @*                                         <div class="text-end delete-btn">
+                        <button onclick="removeItem(@index)" title="Delete" type="button">
+                        <i class="fa-solid fa-delete-left text-danger"></i>
+                        </button>
+                        </div> *@
                                         <div class="text-end">
                                             <button class="delete-btn" title="Delete" type="button" data-bs-toggle="modal"
                                                     data-bs-target="#deleteImageFileModal" onclick="setDeleteIndex(@index)">
@@ -525,10 +538,10 @@
 
             // Hiển thị thông tin file
             const fileInfo = `
-                                                                                    <strong>File Name:</strong> <span class="d-inline-block text-truncate" style="max-width: 400px;">${file.name}</span> <br>
-                                                                                                                <strong>File Size:</strong> ${(file.size / 1024 / 1024).toFixed(2)} MB <br>
+                                                                                        <strong>File Name:</strong> <span class="d-inline-block text-truncate" style="max-width: 400px;">${file.name}</span> <br>
+                                                                                                                    <strong>File Size:</strong> ${(file.size / 1024 / 1024).toFixed(2)} MB <br>
 
-                                                                                                            `;
+                                                                                                                `;
             document.getElementById('fileInfo').innerHTML = fileInfo;
         }
     }
@@ -620,15 +633,14 @@
         document.getElementById('paid-tab').onclick = switchToPaid;
     });
 
-    function confirmUploadGame() 
-    {
+    function confirmUploadGame() {
         // Mở file explorer (tạo event click giả lập)
         document.getElementById('fileInput').click();
-@*         const modal = document.getElementById(`overrideGameFileModal`);
-        if (modal) {
+    @*         const modal = document.getElementById(`overrideGameFileModal`);
+            if (modal) {
             modal.classList.remove("show");
-        } *@
-    }
+            } *@
+        }
 </script>
 @section Scripts {
 
@@ -667,7 +679,7 @@
     </div>
 </div>
 
-@* 
+@*
 <!-- Modal Delete Game File (Chung cho tất cả) -->
 <div class="modal fade" id="deleteGameFileModal" tabindex="-1" aria-labelledby="deleteGameFileModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">

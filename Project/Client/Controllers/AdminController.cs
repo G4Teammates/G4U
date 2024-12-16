@@ -36,9 +36,6 @@ using Client.Models.ReportDTO;
 using System;
 using Client.Models.Enum.ProductEnum;
 
-
-
-
 namespace Client.Controllers
 {
     public class AdminController(IUserService userService, IHelperService helperService, IRepoProduct repoProduct, ITokenProvider tokenProvider, ICategoriesService categoryService, IOrderService orderService, ICommentService commentService, IRepoStastistical repoStatistical, IReportsService reportsService, IExportService exportService) : Controller
@@ -615,8 +612,8 @@ namespace Client.Controllers
         }
 
         [HttpPost]
-        [RequestSizeLimit(60 * 1024 * 1024)] // 50MB
-        [RequestFormLimits(MultipartBodyLengthLimit = 60 * 1024 * 1024)] // Đặt giới hạn cho form multipart
+        [RequestSizeLimit(100 * 1024 * 1024)] // 50MB
+        [RequestFormLimits(MultipartBodyLengthLimit = 100 * 1024 * 1024)] // Đặt giới hạn cho form multipart
         public async Task<IActionResult> UpdateProduct(UpdateProductModel model)
         {
             if (!ModelState.IsValid)
@@ -676,10 +673,9 @@ namespace Client.Controllers
             }
         }
 
-
         [HttpPost]
-        [RequestSizeLimit(60 * 1024 * 1024)] // 50MB
-        [RequestFormLimits(MultipartBodyLengthLimit = 60 * 1024 * 1024)] // Đặt giới hạn cho form multipart
+        [RequestSizeLimit(100 * 1024 * 1024)] // 50MB
+        [RequestFormLimits(MultipartBodyLengthLimit = 100 * 1024 * 1024)] // Đặt giới hạn cho form multipart
         public async Task<IActionResult> CreateProduct(CreateProductModel model)
         {
             if (!ModelState.IsValid)
@@ -996,12 +992,8 @@ namespace Client.Controllers
                 return RedirectToAction(nameof(ProductsManager));
             }
 
-
-
             return View("ProductsManager", productViewModel); // Trả về view ProductsManager với danh sách sản phẩm đã lọc
         }
-
-
         #endregion
 
 

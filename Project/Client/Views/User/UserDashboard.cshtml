@@ -177,15 +177,38 @@
                                 <small style="min-width: 150px">
                                     <a class="text-decoration-none" asp-controller="User" asp-action="EditProduct" asp-route-id="@product.Id">Edit</a> |
                                     <a class="text-decoration-none text-secondary">Analytics</a> |
-                                    @* <a href="">Widget</a> |  *@
-                                    <a class="text-decoration-none text-secondary">More</a>
+                                    @* <a class="text-decoration-none text-secondary" href="">Widget</a> | *@
+                                    <a class="text-decoration-none text-secondary">More</a> |
                                     @* <a class="text-decoration-none text-secondary">More</a> | *@
-                                    @* <a asp-controller="User" asp-action="DeleteProduct" asp-route-id="@product.Id" class="text-danger text-decoration-none">Delete</a> *@
+                                    <a asp-controller="User" asp-action="DeleteProduct" asp-route-id="@product.Id" class="text-danger text-decoration-none">Delete</a>
                                 </small>
                             </div>
                         </div>
                         @* <span class="badge bg-secondary">DRAFT</span> *@
-                        <span class="badge bg-primary">PUBLIC</span>
+
+                        @switch (product.Status)
+                        {
+                            case Client.Models.Enum.ProductEnum.ProductStatus.Active:
+                                {
+                                    <span class="badge bg-primary">ACTIVE</span>
+                                    break;
+                                }
+                            case Client.Models.Enum.ProductEnum.ProductStatus.Inactive:
+                                {
+                                    <span class="badge bg-secondary">INACTIVE</span>
+                                    break;
+                                }
+                            case Client.Models.Enum.ProductEnum.ProductStatus.Block:
+                                {
+                                    <span class="badge bg-warning">BLOCK</span>
+                                    break;
+                                }
+                            case Client.Models.Enum.ProductEnum.ProductStatus.Deleted:
+                                {
+                                    <span class="badge bg-danger">DELETED</span>
+                                    break;
+                                }
+                        }
                     }
                 </div>
             }
