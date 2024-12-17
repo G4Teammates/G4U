@@ -1897,7 +1897,17 @@ namespace ProductMicroservice.Repostories
                 }
 
                 // Đường dẫn đến 7z.exe
-                string sevenZipPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Tools", "7z.exe");
+                //string sevenZipPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Tools", "7z.exe");
+
+                // Lấy thư mục gốc của project (2 cấp trên thư mục bin)
+                string projectRoot = Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory)
+                                              .Parent // Lên một cấp (Debug/Release)
+                                              .Parent // Lên một cấp nữa (bin)
+                                              .Parent // Lên một cấp nữa (Product Microservice)
+                                              .FullName;
+
+                // Kết hợp đường dẫn đến Tools trong ProductMicroservice
+                string sevenZipPath = Path.Combine(projectRoot, "Tools", "7z.exe");
 
                 // Lệnh kiểm tra file với mật khẩu
                 string arguments = $"t \"{tempFilePath}\" -p\"{password}\""; // "t" để kiểm tra file, "-p" cung cấp mật khẩu
