@@ -319,13 +319,13 @@
                 <!-- Hình ảnh hiển thị -->
                 @if (Images.Count > 0)
                 {
-                    <img id="coverImagePreview" src="@Images[0].Url" alt="Cover Image" class="border mb-3" style="min-width:200px; max-height:200px; min-height:150px; max-width:300px" />
+                    <img id="coverImagePreview" src="@Images[0].Url" alt="Cover Image" class="border mb-3" style="min-width:200px; max-height:500px; min-height:150px; max-width:300px" />
                     <input type="file" class="d-none" asp-for="ImageFiles" id="coverImageInput" accept="image/*" />
                     <span class="text-danger" asp-validation-for="ImageFiles"></span>
                 }
                 else
                 {
-                    <img id="coverImagePreview" src="~/Image/avatar.jpeg" alt="Cover Image" class="border mb-3" style="min-width:200px; max-height:200px; min-height:150px; max-width:300px" />
+                    <img id="coverImagePreview" src="~/Image/avatar.jpeg" alt="Cover Image" class="border mb-3" style="min-width:200px; max-height:500px; min-height:150px; max-width:300px" />
                     <input type="file" class="d-none" asp-for="ImageFiles" id="coverImageInput" accept="image/*" />
                     <span class="text-danger" asp-validation-for="ImageFiles"></span>
                 }
@@ -364,7 +364,7 @@
                                             </button>
                                         </div>
                                         <div class="text-center">
-                                            <img src="@item.Url" class="" style="min-width:200px; max-height:200px; min-height:150px; max-width:300px" />
+                                            <img src="@item.Url" class="" style="min-width:200px; max-height:500px; min-height:150px; max-width:300px" />
                                             @* <input type="file" multiple class="form-control mb-2" asp-for="@item" /> *@
                                         </div>
                                         <span class="text-danger" asp-validation-for="@item.Url"></span>
