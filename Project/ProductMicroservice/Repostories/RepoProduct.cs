@@ -336,6 +336,7 @@ namespace ProductMicroservice.Repostories
                                 // Xóa link cũ
                                 linkModel.Remove(existingGoogleDriveLink);
                             }
+
                             string scan = await _helper.ScanFileForVirus(gameFiles);
                             if (scan != "OK")
                             {
