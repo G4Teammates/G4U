@@ -23,7 +23,7 @@
     </div>
 }
 
-<form asp-action="CreateProduct" method="post" enctype="multipart/form-data">
+<form asp-action="CreateProduct" method="post" enctype="multipart/form-data" id="productForm">
     <div asp-validation-summary="ModelOnly"></div>
 
     <!-- Name -->
@@ -43,16 +43,17 @@
     <!-- Price -->
     <div class="form-group">
         <label asp-for="@Model.Price" class="control-label"></label>
-        <input asp-for="@Model.Price" class="form-control" type="number" step="0.01" placeholder="Nhập giá trị VNĐ"/>
+        <input asp-for="@Model.Price" class="form-control" type="number" step="0.01" id="price" placeholder="Nhập giá trị VNĐ"/>
         <span asp-validation-for="@Model.Price" class="text-danger"></span>
     </div>
 
     <!-- Discount -->
     <div class="form-group">
         <label asp-for="@Model.Discount" class="control-label"></label>
-        <input asp-for="@Model.Discount" class="form-control" type="number" step="0.01" max="99.99" />
+        <input asp-for="@Model.Discount" class="form-control" type="number" id="discount" step="0.01" max="99.99" />
         <span asp-validation-for="@Model.Discount" class="text-danger"></span>
     </div>
+    <p id="error-message" class="text-danger"></p>
 
 
     <!-- Categories -->
@@ -127,7 +128,7 @@
 
     <!-- Submit Button -->
     <div class="form-group mt-3 text-center">
-        <input type="submit" value="Create" class="btn btn-danger w-50" />
+        <input type="submit" value="Create" class="btn btn-danger w-50" id="submitBtn" />
     </div>
     <div class="form-group mt-3 text-center">
         <a href="@Url.Action("ProductsManager")" class="btn btn-primary w-50">Cancel</a>
@@ -139,3 +140,43 @@
     @await Html.PartialAsync("_ValidationScriptsPartial")
 
 }
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const priceInput = document.getElementById('price');
+        const discountInput = document.getElementById('discount');
+        const errorMessage = document.getElementById('error-message');
+        const productForm = document.getElementById('productForm');
+        const submitBtn = document.getElementById('submitBtn');
+
+        // Hàm kiểm tra và hiển thị lỗi
+        function validateInputs() {
+            const price = parseFloat(priceInput.value) || 0; // Giá trị của price
+            const discount = parseFloat(discountInput.value) || 0; // Giá trị của discount
+
+            // Nếu giá = 0 mà discount khác 0, hiển thị lỗi
+            if (price === 0 && discount !== 0) {
+                errorMessage.textContent = 'Không thể áp dụng giảm giá khi giá trị bằng 0.';
+                discountInput.value = 0; // Reset discount về 0
+                submitBtn.disabled = true; // Vô hiệu hóa nút submit
+                return false;
+            } else {
+                errorMessage.textContent = ''; // Xóa thông báo lỗi
+                submitBtn.disabled = false; // Bật nút submit
+                return true;
+            }
+        }
+
+        // Lắng nghe sự kiện khi giá trị thay đổi
+        priceInput.addEventListener('input', validateInputs);
+        discountInput.addEventListener('input', validateInputs);
+
+        // Ngăn gửi form nếu đang có lỗi
+        productForm.addEventListener('submit', function (event) {
+            if (!validateInputs()) {
+                event.preventDefault(); // Ngăn form gửi đi
+            }
+        });
+    });
+
+
+</script>

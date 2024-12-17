@@ -504,6 +504,7 @@
                                                                 ? products.Description.Substring(0, 100) + "..."
                                                                 : products.Description)
                                                         </p>
+                                                        <p>@product.Price.ToString("N0")<span>VND</span></p>
                                                         @*  <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@products.Id" class="btn_orther">Read More</a> *@
                                                         <div class="row d-flex align-items-center justify-content-between">
                                                             <a asp-controller="Product" asp-action="ProductDetail" asp-route-Id="@products.Id" class="ms-3 col-md-5 text-center btn_orther">Read More</a>
