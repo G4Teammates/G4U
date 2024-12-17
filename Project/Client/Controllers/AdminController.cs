@@ -585,7 +585,10 @@ namespace Client.Controllers
 
         {
             int pageNumber = (page ?? 1);
-            ProductViewModel product = new();
+            ProductViewModel product = new()
+            {
+                CreateProductModel = new CreateProductModel()
+            };
             try
             {
                 // Lấy tất cả danh mục
@@ -758,7 +761,7 @@ namespace Client.Controllers
                 };
 
                 // Gọi API CreateProductAsync
-                var response = await _productService.CreateProductAsync(
+                var response = await _productService.CreateProductCloneAsync(
                     model.Name,
                     model.Description,
                     model.Price,
@@ -768,8 +771,8 @@ namespace Client.Controllers
                     model.Status,
                     model.imageFiles,
                     request,
-                    model.Username
-                    /*model.winrarPassword*/);
+                    model.Username,
+                    model.winrarPassword);
 
                 if (response != null && response.IsSuccess)
                 {
