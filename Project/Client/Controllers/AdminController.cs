@@ -782,7 +782,7 @@ namespace Client.Controllers
                 else
                 {
                     TempData["error"] = response?.Message ?? "An unknown error occurred.";
-                    return View(model);
+                    return RedirectToAction(nameof(ProductsManager));
                 }
             }
             catch (Exception ex)

@@ -328,15 +328,6 @@ namespace ProductMicroservice.Repostories
                         // Kiểm duyệt và upload cho gameFile nếu có
                         if (gameFiles != null)
                         {
-                            // Tìm link Google Drive cũ
-                            var existingGoogleDriveLink = linkModel.FirstOrDefault(l => l.ProviderName == "Google Drive");
-
-                            if (existingGoogleDriveLink != null)
-                            {
-                                // Xóa link cũ
-                                linkModel.Remove(existingGoogleDriveLink);
-                            }
-
                             string scan = await _helper.ScanFileForVirus(gameFiles);
                             if (scan != "OK")
                             {
@@ -344,6 +335,14 @@ namespace ProductMicroservice.Repostories
                             }
                             else
                             {
+                                // Tìm link Google Drive cũ
+                                var existingGoogleDriveLink = linkModel.FirstOrDefault(l => l.ProviderName == "Google Drive");
+
+                                if (existingGoogleDriveLink != null)
+                                {
+                                    // Xóa link cũ
+                                    linkModel.Remove(existingGoogleDriveLink);
+                                }
                                 var gameLink = await _helper.UploadFileToGoogleDrive(gameFiles);
                                 linkModel.Add(new LinkModel
                                 {
