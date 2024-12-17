@@ -137,6 +137,23 @@ namespace ProductMicroservice.Repostories.Helper
 
                     var reportResult = JsonConvert.DeserializeObject<VirusTotalReportResult>(reportResponse.Content);
 
+                    // Kiểm tra nếu báo cáo null hoặc không có thông tin
+                    if (reportResult?.Data?.Attributes?.LastAnalysisStats == null)
+                    {
+                        return "Error: Invalid report data";
+                    }
+
+                    // Lấy thống kê quét
+                    var stats = reportResult.Data.Attributes.LastAnalysisStats;
+
+                    // Kiểm tra số lượng trình quét phát hiện file là "malicious"
+                    if (stats.Malicious > 0)
+                    {
+                        // Nếu file không an toàn, trả về thông báo hoặc thực hiện chặn
+                        return $"File is not safe! Detected by {stats.Malicious} scanners.";
+                    }
+
+                    // Nếu file an toàn
                     return "OK";
                 }
 
