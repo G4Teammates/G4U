@@ -16,7 +16,7 @@
                                 <input type="hidden" asp-for="@Model.Id" />
 
                                 <!-- Username (Hidden) -->
-                                <div class="form-group mb-3" style="display: none;">
+                                <div class="form-group mb-3">
                                     <label asp-for="@Model.Username" class="font-weight-bold">Username</label>
                                     <input type="text" asp-for="@Model.Username" class="form-control form-control-sm" /> <!-- Thay đổi kích thước -->
                                     <span asp-validation-for="@Model.Username" class="text-danger"></span>

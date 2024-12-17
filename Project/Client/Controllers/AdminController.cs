@@ -39,7 +39,7 @@ using Client.Models.Enum.ProductEnum;
 namespace Client.Controllers
 {
     public class AdminController(IUserService userService, IHelperService helperService, IRepoProduct repoProduct, ITokenProvider tokenProvider, ICategoriesService categoryService, IOrderService orderService, ICommentService commentService, IRepoStastistical repoStatistical, IReportsService reportsService, IExportService exportService) : Controller
-    { 
+    {
         #region declaration and initialization
         public readonly IUserService _userService = userService;
         public readonly IHelperService _helperService = helperService;
@@ -173,19 +173,34 @@ namespace Client.Controllers
         [HttpPost]
         public async Task<IActionResult> Export(DateTime datetime)
         {
-            ResponseModel response = new();
-            string url = HttpContext.Request.Path.Value;
-            if (response.IsSuccess)
+            string url = "";
+            // Gọi service để thực hiện export
+            ResponseModel response = await _exportService.Export(datetime);
+
+            // Kiểm tra kết quả trả về
+            if (response != null && response.IsSuccess)
             {
-                response = await _exportService.Export(datetime);
-                url = response.Result.ToString();
+                url = response.Result?.ToString();
                 TempData["success"] = "Export success";
+
+                // Kiểm tra url hợp lệ
+                if (!string.IsNullOrEmpty(url))
+                {
+                    return Redirect(url);
+                }
+                else
+                {
+                    TempData["error"] = "Invalid export URL.";
+                }
             }
             else
             {
-                TempData["error"] = "Can't export at time. Please try again later";
+                TempData["error"] = "Export failed. Please try again later.";
             }
-            return Redirect(url);
+
+
+            // Chuyển hướng người dùng đến trang hiện tại nếu lỗi xảy ra
+            return RedirectToAction(nameof(AdminDashboard));
         }
 
         #endregion
@@ -345,8 +360,19 @@ namespace Client.Controllers
 
                 ResponseModel? response = await _userService.UpdateUser(updateUser);
 
+                IEnumerable<Claim> claim = HttpContext.User.Claims;
+                var email = claim.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value!;
+                var username = claim.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value!;
+
                 if (response != null && response.IsSuccess)
                 {
+                    SendMailModel mail = new SendMailModel()
+                    {
+                        Email = updateUser.Email,
+                        Subject = "Update user",
+                        Body = $"Admin {username} has been modify your account {updateUser.Username}"
+                    };
+                    await _helperService.SendMail(mail);
                     TempData["success"] = "User updated successfully";
                     return RedirectToAction(nameof(UsersManager));
                 }
@@ -382,6 +408,9 @@ namespace Client.Controllers
         [HttpPost]
         public async Task<IActionResult> UserDelete(UsersDTO user)
         {
+            IEnumerable<Claim> claim = HttpContext.User.Claims;
+            var email = claim.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value!;
+            var username = claim.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value!;
             if (user.Role != UserRole.Admin)
             {
                 ResponseModel? response = await _userService.ChangeStatus(user.Id, UserStatus.Deleted);
@@ -389,6 +418,17 @@ namespace Client.Controllers
                 if (response != null && response.IsSuccess)
                 {
                     UsersDTO? model = JsonConvert.DeserializeObject<UsersDTO>(Convert.ToString(response.Result));
+
+
+                    SendMailModel mail = new SendMailModel()
+                    {
+                        Email = model.Email,
+                        Subject = "Update user",
+                        Body = $"Admin {username} has been modify your account {model.Username}"
+                    };
+                    await _helperService.SendMail(mail);
+
+
                     TempData["success"] = "Delete user is success";
                     return RedirectToAction(nameof(UsersManager));
                 }
@@ -423,7 +463,7 @@ namespace Client.Controllers
 
             try
             {
-                if(query==null || query == "")
+                if (query == null || query == "")
                 {
                     return RedirectToAction(nameof(UsersManager));
                 }
@@ -628,6 +668,9 @@ namespace Client.Controllers
                 var numOfView = model.Interactions.NumberOfViews;
                 var numOfLike = model.Interactions.NumberOfLikes;
                 var numOfDisLike = model.Interactions.NumberOfDisLikes;
+                IEnumerable<Claim> claim = HttpContext.User.Claims;
+                var email = claim.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value!;
+                var username = claim.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value!;
 
                 // Tạo đối tượng ScanFileRequest
                 var request = new ScanFileRequest
@@ -655,8 +698,27 @@ namespace Client.Controllers
                     (int)model.Status, model.CreatedAt, model.ImageFiles,
                     request, model.UserName, model.Interactions.UserLikes, model.Interactions.UserDisLikes, model.WinrarPassword);
 
+                var responseUser = await _userService.FindUsers(model.UserName, 1, 1);
+
+                ICollection<UsersDTO> users = JsonConvert.DeserializeObject<ICollection<UsersDTO>>(responseUser.Result.ToString());
+
+                var user = users.FirstOrDefault();
+
+                if (user == null)
+                {
+                    TempData["error"] = "User not found";
+                    return RedirectToAction(nameof(ProductsManager));
+                }
+
                 if (response.IsSuccess)
                 {
+                    SendMailModel mail = new SendMailModel()
+                    {
+                        Email = user.Email,
+                        Subject = "Update product",
+                        Body = $"Admin {username} has been modify your product {product.Name}"
+                    };
+                    await _helperService.SendMail(mail);
                     TempData["success"] = "Product updated successfully";
                     return RedirectToAction(nameof(ProductsManager));
                 }
@@ -696,7 +758,7 @@ namespace Client.Controllers
                 };
 
                 // Gọi API CreateProductAsync
-                var response = await _productService.CreateProductCloneAsync(
+                var response = await _productService.CreateProductAsync(
                     model.Name,
                     model.Description,
                     model.Price,
@@ -706,8 +768,8 @@ namespace Client.Controllers
                     model.Status,
                     model.imageFiles,
                     request,
-                    model.Username,
-                    model.winrarPassword);
+                    model.Username
+                    /*model.winrarPassword*/);
 
                 if (response != null && response.IsSuccess)
                 {
@@ -777,7 +839,7 @@ namespace Client.Controllers
                 ResponseModel? response3 = await _categoryService.GetAllCategoryAsync(1, 9999);
                 ResponseModel? response4 = await _productService.SearchProductAsync(searchString, 1, 9999);
                 var total = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response2.Result.ToString()!));
-               
+
                 if (response != null && response.IsSuccess)
                 {
                     var resultCount = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response4.Result.ToString()!));
@@ -946,8 +1008,8 @@ namespace Client.Controllers
             try
             {
                 // Gọi API để lấy danh sách tất cả sản phẩm
-                ResponseModel? response2 = await _productService.GetAllProductAsync(1, 99);
-                ResponseModel? response3 = await _categoryService.GetAllCategoryAsync(1, 99);
+                ResponseModel? response2 = await _productService.GetAllProductAsync(1, int.MaxValue);
+                ResponseModel? response3 = await _categoryService.GetAllCategoryAsync(1, int.MaxValue);
 
                 // Deserialize dữ liệu sản phẩm từ API
                 var allProducts = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response2.Result.ToString()!));
@@ -1539,8 +1601,8 @@ namespace Client.Controllers
                 ResponseModel? response2 = await _categoryService.GetAllCategoryAsync(1, 99);
                 ResponseModel? response3 = await _categoryService.SearchProductAsync(searchString, page, int.MaxValue);
                 /*var total = JsonConvert.DeserializeObject<ICollection<CategoriesModel>>(Convert.ToString(response2.Result.ToString()!));*/
-                
-                if (response.Result.ToString() != "[]" && response.IsSuccess )
+
+                if (response.Result.ToString() != "[]" && response.IsSuccess)
                 {
                     var resultCount = JsonConvert.DeserializeObject<ICollection<CategoriesModel>>(Convert.ToString(response3.Result.ToString()!));
                     categoryViewModel.Categories = JsonConvert.DeserializeObject<ICollection<CategoriesModel>>(Convert.ToString(response.Result.ToString()!));
@@ -1769,9 +1831,9 @@ namespace Client.Controllers
                 ResponseModel? response = await _commentService.SearchCmtAsync(searchString, page, pageSize);
                 ResponseModel? response2 = await _commentService.GetAllCommentAsync(1, 99);
                 ResponseModel? response3 = await _commentService.SearchCmtAsync(searchString, 1, 9999);
-               /* var total = JsonConvert.DeserializeObject<ICollection<CommentDTOModel>>(Convert.ToString(response2.Result.ToString()!));*/
-                
-                if ( response.Result != "" && response.IsSuccess)
+                /* var total = JsonConvert.DeserializeObject<ICollection<CommentDTOModel>>(Convert.ToString(response2.Result.ToString()!));*/
+
+                if (response.Result != "" && response.IsSuccess)
                 {
                     var resultCount = JsonConvert.DeserializeObject<ICollection<ProductModel>>(Convert.ToString(response3.Result.ToString()!));
                     cmtViewModel.Comment = JsonConvert.DeserializeObject<ICollection<CommentDTOModel>>(Convert.ToString(response.Result.ToString()!));
@@ -1978,7 +2040,7 @@ namespace Client.Controllers
             try
             {
                 // Gọi service CreateCommentAsync
-                var response = await _reportService.CreateReport(model,un);
+                var response = await _reportService.CreateReport(model, un);
 
                 if (response != null && response.IsSuccess)
                 {
