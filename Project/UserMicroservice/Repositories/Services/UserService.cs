@@ -453,14 +453,14 @@ namespace UserMicroservice.Repositories.Services
                 user.Status = status;
                 user.UpdatedAt = DateTime.UtcNow;
 
-                if (user.Status == UserStatus.Deleted)
-                {
-                    await _helper.SendEmailAsync(user.Email, "Account Deletion", "Your account has been deleted. If you did not request this, please contact us immediately.");
-                }
-                else if (user.Status == UserStatus.Block)
-                {
-                    await _helper.SendEmailAsync(user.Email, "Account Blocked", "Your account has been blocked. If you did not request this, please contact us immediately.");
-                }
+                //if (user.Status == UserStatus.Deleted)
+                //{
+                //    await _helper.SendEmailAsync(user.Email, "Account Deletion", $"Your account has been deleted by. If you did not request this, please contact us immediately.");
+                //}
+                //else if (user.Status == UserStatus.Block)
+                //{
+                //    await _helper.SendEmailAsync(user.Email, "Account Blocked", "Your account has been blocked. If you did not request this, please contact us immediately.");
+                //}
 
 
                 _context.Users.Update(user);

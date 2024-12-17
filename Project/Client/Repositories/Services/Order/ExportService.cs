@@ -16,7 +16,7 @@ namespace Client.Repositories.Services.Order
             return await _baseService.SendAsync(new RequestModel()
             {
                 ApiType = StaticTypeApi.ApiType.POST,
-                Url = StaticTypeApi.APIGateWay + "/Export?datetime=" + dateTime
+                Url = StaticTypeApi.APIGateWay + "/Export?datetime=" + dateTime.Year.ToString() + "-" + dateTime.Month.ToString(),
             });
         }
     }

@@ -57,7 +57,7 @@ namespace OrderMicroservice.Repositories.Services
                     }
                 };
 
-                var timeoutTask = Task.Delay(5000);
+                var timeoutTask = Task.Delay(10000);
                 var completedTask = await Task.WhenAny(tcs.Task, timeoutTask);
 
                 if (completedTask == timeoutTask)
